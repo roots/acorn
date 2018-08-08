@@ -1,0 +1,28 @@
+language: php
+sudo: false
+dist: trusty
+php:
+  - 7.1
+  - 7.2
+  - nightly
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - php: nightly
+
+cache:
+  apt: true
+  directories:
+    - $HOME/.composer/cache
+    - vendor
+
+before_install:
+  - travis_retry composer self-update
+
+install:
+  - travis_retry composer install -o --prefer-dist --no-interaction --no-progress --no-scripts --no-suggest
+
+script:
+  - composer lint
+  - composer test
