@@ -83,6 +83,29 @@ class Asset implements AssetContract
         return "{$this->manifest->path()}/{$this->revved()}";
     }
 
+    /**
+     * Check whether the asset exists on the file system
+     *
+     * @return bool
+     */
+    public function exists()
+    {
+        return file_exists($this->path());
+    }
+
+    /**
+     * Get the contents of the asset
+     *
+     * @return string|false
+     */
+    public function contents()
+    {
+        if (! $this->exists()) {
+            return false;
+        }
+        return file_get_contents($this->path());
+    }
+
     /** {@inheritdoc} */
     public function __toString()
     {
