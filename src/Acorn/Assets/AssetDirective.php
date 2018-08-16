@@ -4,8 +4,8 @@ namespace Roots\Acorn\Assets;
 
 class AssetDirective
 {
-    public function __invoke($asset)
+    public function __invoke($expression)
     {
-        return sprintf("<?= %s('%s'); ?>", '\Roots\asset', $asset);
+        return sprintf("<?= %s(%s); ?>", '\Roots\asset', $expression);
     }
 }
