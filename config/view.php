@@ -52,7 +52,7 @@ return [
     | View Namespaces
     |--------------------------------------------------------------------------
     |
-    | Blade has an underutilized feature that allows developers to add
+    | View engine has an underutilized feature that allows developers to add
     | supplemental view paths that may contain conflictingly named views.
     | These paths are prefixed with a namespace to get around the conflicts.
     | A use case might be including views from within a plugin folder.
@@ -86,11 +86,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | View Directives
+    | Blade Directives
     |--------------------------------------------------------------------------
     |
-    | The namespaces where view components reside. Components can be referenced
-    | with camelCase & dot notation.
+    | Directives are used by Blade to extend its functionality. The classes
+    | listed below should be invokable. They will be called by the DI container
+    | prior to being invoked.
     |
     */
 
