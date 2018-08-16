@@ -11,6 +11,7 @@ class AssetDirectiveTest extends TestCase
     {
         $directive = new \Roots\Acorn\Assets\AssetDirective();
 
-        $this->assertEquals("<?= \Roots\asset('scripts/main.js'); ?>", $directive('scripts/main.js'));
+        $this->assertEquals("<?= \Roots\asset('scripts/main.js'); ?>", $directive("'scripts/main.js'"));
+        $this->assertEquals('<?= \Roots\asset($file); ?>', $directive('$file'));
     }
 }
