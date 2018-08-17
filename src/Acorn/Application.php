@@ -7,8 +7,6 @@ use Illuminate\Events\EventServiceProvider;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Roots\Acorn\Filesystem\FilesystemServiceProvider;
-// use Roots\Acorn\Assets\ManifestServiceProvider;
-// use Roots\Acorn\View\ViewServiceProvider;
 
 /**
  * Application container
