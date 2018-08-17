@@ -71,6 +71,17 @@ class ViewServiceProvider extends ViewServiceProviderBase
         }
     }
 
+    public function preflight()
+    {
+        /** @var \Roots\Acorn\Filesystem\Filesystem $files */
+        $files = $this->app['files'];
+        $compiled_dir = $this->app['config']['view.compiled'];
+
+        if (! $files->exists($compiled_dir) {
+            $files->makeDirectory($compiled_dir, 0755, true);
+        }
+    }
+
     public function attachDirectives()
     {
         $blade = $this->app['view']->getEngineResolver()->resolve('blade')->getCompiler();
