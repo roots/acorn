@@ -74,8 +74,6 @@ class Application extends Container
     {
         $this->register(new EventServiceProvider($this));
         $this->register(new FilesystemServiceProvider($this));
-        // $this->register(new ViewServiceProvider($this));
-        // $this->register(new ManifestServiceProvider($this));
     }
 
     /**
@@ -319,6 +317,10 @@ class Application extends Container
     {
         if (method_exists($provider, 'boot')) {
             return $this->call([$provider, 'boot']);
+        }
+
+        if ($this->config['app.preflight'] && method_exists($provider, 'preflight')) {
+            return $this->call([$provider, 'preflight']);
         }
     }
 
