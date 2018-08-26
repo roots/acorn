@@ -77,7 +77,7 @@ class ViewServiceProvider extends ViewServiceProviderBase
         $files = $this->app['files'];
         $compiled_dir = $this->app['config']['view.compiled'];
 
-        if (! $files->exists($compiled_dir) {
+        if (! $files->exists($compiled_dir)) {
             $files->makeDirectory($compiled_dir, 0755, true);
         }
     }
