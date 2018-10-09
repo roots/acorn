@@ -55,7 +55,7 @@ class ViewServiceProvider extends ViewServiceProviderBase
             $id = basename($compiled, '.php');
             $loader = dirname($compiled) . "/{$id}-loader.php";
             if (! file_exists($loader)) {
-                file_put_contents($loader, "<?= \\Roots\\view('{$view}', \$data ?? []); ?>");
+                file_put_contents($loader, "<?= \\Roots\\view('{$view}', \$data ?? get_defined_vars()); ?>");
             }
             return $loader;
         });
