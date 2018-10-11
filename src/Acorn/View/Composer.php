@@ -47,7 +47,7 @@ abstract class Composer
      * @param \Illuminate\View\View $view
      * @return array
      */
-    public function override($data = [], $view = null)
+    public function override($data, $view)
     {
         return [];
     }
@@ -59,7 +59,7 @@ abstract class Composer
      * @param \Illuminate\View\View $view
      * @return array
      */
-    public function with($data = [], $view = null)
+    public function with($data, $view)
     {
         return [];
     }
