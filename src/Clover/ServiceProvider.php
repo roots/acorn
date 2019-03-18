@@ -1,8 +1,6 @@
 <?php
 
-namespace PluginNamespace;
-
-use function Roots\config;
+namespace Roots\Clover;
 
 use Roots\Clover\Concerns\Lifecycle;
 use Roots\Acorn\ServiceProvider as BaseServiceProvider;
