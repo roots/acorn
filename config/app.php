@@ -3,7 +3,7 @@
 use function Roots\env;
 
 return [
-    
+
     /*
     |--------------------------------------------------------------------------
     | Preflight Checks
@@ -14,7 +14,7 @@ return [
     | or doing any other checks to ensure the service is functional.
     |
     */
-    
+
     'preflight' => false,
 
     /*
@@ -57,7 +57,7 @@ return [
     'providers' => [
         // Roots\Acorn\Assets\ManifestServiceProvider::class,
         // Roots\Acorn\View\ViewServiceProvider::class,
-        // Roots\Acorn\Sage\SageServiceProvider::class,
+        // Roots\Sage\SageServiceProvider::class,
     ],
 
     /*

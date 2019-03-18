@@ -2,8 +2,8 @@
 
 namespace Roots\Acorn\Tests\Unit;
 
-use PHPUnit\Framework\TestCase;
 use Roots\Acorn\Tests\VirtualFileSystem;
+use PHPUnit\Framework\TestCase;
 
 class SageViewFinderTest extends TestCase
 {
@@ -75,7 +75,7 @@ class SageViewFinderTest extends TestCase
 
     protected function getFinder()
     {
-        return new \Roots\Acorn\Sage\ViewFinder(
+        return new \Roots\Sage\ViewFinder(
             new \Roots\Acorn\View\FileViewFinder(
                 new \Illuminate\Filesystem\Filesystem(),
                 ["{$this->filesystem}/sage/resources/views"]

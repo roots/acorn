@@ -1,10 +1,10 @@
 <?php
 
-namespace Roots\Acorn\Sage;
+namespace Roots\Sage;
 
-use Illuminate\Container\Container;
 use function Roots\view;
 use function Roots\add_filters;
+use Illuminate\Container\Container;
 
 class Sage
 {
