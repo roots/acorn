@@ -1,9 +1,9 @@
 <?php
 
-namespace Roots\Acorn\Sage;
+namespace Roots\Sage;
 
-use Illuminate\Filesystem\Filesystem;
 use Roots\Acorn\View\FileViewFinder;
+use Illuminate\Filesystem\Filesystem;
 
 class ViewFinder
 {
