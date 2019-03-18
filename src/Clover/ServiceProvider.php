@@ -17,19 +17,17 @@ abstract class ServiceProvider extends BaseServiceProvider
      */
     public function register()
     {
-        // Exit early if no config file exists
-        if (!file_exists($configFile = dirname($this->meta->plugin) . "/config/{$this->meta->key}.php")) {
+        if (!$configFile = $this->locateConfig()) {
             return;
         }
+
         $this->mergeConfigFrom($configFile, $this->meta->key);
         $config = $this->app['config']->get($this->meta->key);
-        $providers = array_filter($config['providers'], function ($provider) {
-            return $provider !== static::class;
-        });
-        array_map([$this->app, 'register'], $providers);
-        $this->app->singleton($this->meta->key, PluginName::class);
-        if ($this->app->bound('view') && isset($config['views'])) {
-            $this->loadViewsFrom($config['views'], $this->meta->key);
+
+        $this->registerProviders($config['providers'] ?? []);
+
+        if ($views = $config['views'] ?? null) {
+            $this->loadViews($views);
         }
     }
 
@@ -47,5 +45,33 @@ abstract class ServiceProvider extends BaseServiceProvider
         }
 
         $plugin->run();
+    }
+
+    /**
+     * If a config file can be located, load specified providers and views
+     */
+    protected function locateConfig()
+    {
+        if (file_exists($configFile = dirname($this->meta->plugin) . "/config/{$this->meta->key}.php")) {
+            return $configFile;
+        }
+        return null;
+    }
+
+    protected function registerProviders(iterable $providers)
+    {
+        // Prevent endless loop
+        $providers = array_filter($providers, function ($provider) {
+            return $provider !== static::class;
+        });
+
+        array_map([$this->app, 'register'], $providers);
+    }
+
+    protected function loadViews($views)
+    {
+        if ($this->app->bound('view')) {
+            $this->loadViewsFrom($views, $this->meta->key);
+        }
     }
 }
