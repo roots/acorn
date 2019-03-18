@@ -13,4 +13,4 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-add_action('after_setup_theme', 'Roots\bootloader', 5);
+Roots\add_actions(['after_setup_theme', 'rest_api_init'], 'Roots\bootloader', 5);
