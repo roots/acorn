@@ -7,6 +7,9 @@ use Roots\Acorn\ServiceProvider as BaseServiceProvider;
 
 abstract class ServiceProvider extends BaseServiceProvider
 {
+    /** @var \Roots\Clover\Meta */
+    protected $meta;
+
     /**
      * Register the plugin with the application container.
      *
@@ -42,5 +45,7 @@ abstract class ServiceProvider extends BaseServiceProvider
         if (in_array(Lifecycle::class, class_uses($plugin))) {
             $plugin->lifecycle("{$this->meta->key}.meta");
         }
+
+        $plugin->run();
     }
 }
