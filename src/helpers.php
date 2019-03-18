@@ -2,10 +2,10 @@
 
 namespace Roots;
 
-use Illuminate\View\View;
-use Roots\Acorn\Application;
-use Roots\Acorn\Assets\Asset;
 use Roots\Acorn\Assets\Manifest;
+use Roots\Acorn\Assets\Asset;
+use Roots\Acorn\Application;
+use Illuminate\View\View;
 
 /**
  * Get the available container instance.
@@ -105,7 +105,7 @@ function view($view = null, $data = [], $mergeData = [])
 function bootloader()
 {
     if ($features = get_theme_support('sage')) {
-        app()->register(\Roots\Acorn\Sage\SageServiceProvider::class);
+        app()->register(\Roots\Sage\SageServiceProvider::class);
 
         if ($features === true) {
             $features = ['assets', 'blade'];

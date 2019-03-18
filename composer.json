@@ -19,7 +19,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Roots\\Acorn\\": "src/Acorn/"
+      "Roots\\": "src/"
     },
     "files": [
       "src/helpers.php",
