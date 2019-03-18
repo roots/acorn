@@ -19,9 +19,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Roots\\Acorn\\": "src/Acorn/",
-      "Roots\\Sage\\": "src/Sage/",
-      "Roots\\Clover\\": "src/Clover/"
+      "Roots\\": "src/",
     },
     "files": [
       "src/helpers.php",
