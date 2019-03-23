@@ -2,8 +2,8 @@
 
 namespace Roots\Acorn\Tests\Unit;
 
-use PHPUnit\Framework\TestCase;
 use Roots\Acorn\Tests\VirtualFileSystem;
+use PHPUnit\Framework\TestCase;
 
 class FileViewFinderTest extends TestCase
 {
@@ -19,7 +19,7 @@ class FileViewFinderTest extends TestCase
     /** @test */
     public function it_should_find_other_files_based_on_delimeter_breakpoints_in_specified_name()
     {
-        $this->markTestSkipped(); // Feature has been removed, but might be added back
+        $this->markTestSkipped("Feature has been removed, but might be added back");
         $finder = $this->getFinder();
 
         $this->assertEquals("{$this->filesystem}/views/foo.blade.php", $finder->find('foo'));

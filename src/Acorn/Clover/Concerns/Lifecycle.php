@@ -1,8 +1,8 @@
 <?php
 
-namespace Roots\Clover\Concerns;
+namespace Roots\Acorn\Clover\Concerns;
 
-use Roots\Clover\Meta;
+use Roots\Acorn\Clover\Meta;
 
 trait Lifecycle
 {

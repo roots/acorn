@@ -2,11 +2,13 @@
 
 namespace Roots\Acorn;
 
-use Illuminate\Container\Container;
-use Illuminate\Events\EventServiceProvider;
-use Illuminate\Support\ServiceProvider;
+use Roots\Acorn\Concerns\Bindings;
+use Roots\Acorn\Concerns\Application as LaravelApplication;
 use Illuminate\Support\Str;
-use Roots\Acorn\Filesystem\FilesystemServiceProvider;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Facade;
+use Illuminate\Contracts\Foundation\Application as ApplicationContract;
+use Illuminate\Container\Container;
 
 /**
  * Application container
@@ -14,124 +16,118 @@ use Roots\Acorn\Filesystem\FilesystemServiceProvider;
  * Barebones version of Laravel's Application container.
  *
  * @copyright Roots Team, Taylor Otwell
- * @license   https://github.com/laravel/framework/blob/v5.6.25/LICENSE.md MIT
- * @license   https://github.com/laravel/lumen-framework/blob/v5.6.3/LICENSE.md MIT
- * @link      https://github.com/laravel/framework/blob/v5.6.25/src/Illuminate/Foundation/Application.php
- * @link      https://github.com/laravel/lumen-framework/blob/v5.6.3/src/Application.php
+ * @license   https://github.com/laravel/framework/blob/v5.8.4/LICENSE.md MIT
+ * @license   https://github.com/laravel/lumen-framework/blob/v5.8.2/LICENSE.md MIT
+ * @link      https://github.com/laravel/framework/blob/v5.8.4/src/Illuminate/Foundation/Application.php
+ * @link      https://github.com/laravel/lumen-framework/blob/v5.8.2/src/Application.php
  */
-class Application extends Container
+class Application extends Container implements ApplicationContract
 {
-    const VERSION = 'Acorn (1.0.0) (Laravel Components 5.7.*)';
+    use LaravelApplication, Bindings;
 
-    /** {@inheritDoc} */
-    protected static $instance;
+    const VERSION = 'Acorn (1.0.0) (Laravel Components 5.8.*)';
 
-    /** @var boolean */
-    protected $booted = false;
+    /**  @var bool Indicates if the class aliases have been registered. */
+    protected static $aliasesRegistered = false;
 
-    /** @var array Booting callbacks */
-    protected $bootingCallbacks = [];
-
-    /** @var array Booted callbacks */
-    protected $bootedCallbacks = [];
-
-    /** @var \Illuminate\Support\ServiceProvider[] All of the registered service providers. */
-    protected $serviceProviders = [];
+    /** @var array All of the loaded configuration files. */
+    protected $loadedConfigurations = [];
 
     /**
      * Create a new Acorn application instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($basePath = null)
     {
-        $this->registerBaseBindings();
-        $this->registerBaseServiceProviders();
+        if ($basePath) {
+            $this->basePath = $basePath;
+        }
+        $this->registerContainerBindings();
+        $this->bootstrapContainer();
+    }
+
+    /**
+     * Bootstrap the application container.
+     *
+     * @return void
+     */
+    protected function bootstrapContainer()
+    {
+        static::setInstance($this);
+        $this->instance('app', $this);
+        $this->instance(Container::class, $this);
+        $this->instance(parent::class, $this);
+        $this->instance(self::class, $this);
+        $this->instance(static::class, $this);
         $this->registerCoreContainerAliases();
     }
 
     /**
-     * Register the basic bindings into the container.
+     * Configure and load the given component and provider.
      *
-     * @return void
+     * @param  string  $config
+     * @param  \Illuminate\Support\ServiceProvider[]|\Illuminate\Support\ServiceProvider  $providers
+     * @param  string|null  $return
+     * @return mixed
      */
-    protected function registerBaseBindings()
+    public function loadComponent($config, $providers, $return = null)
     {
-        static::setInstance($this);
+        $this->configure($config);
 
-        $this->instance('app', $this);
-        $this->instance(self::class, $this);
-        $this->instance(static::class, $this);
-        $this->instance(parent::class, $this);
-    }
-
-    /**
-     * Register all of the base service providers.
-     *
-     * @return void
-     */
-    protected function registerBaseServiceProviders()
-    {
-        $this->register(new EventServiceProvider($this));
-        $this->register(new FilesystemServiceProvider($this));
-    }
-
-    /**
-     * Get the version number of the application.
-     *
-     * @return string
-     */
-    public function version()
-    {
-        return static::VERSION;
-    }
-
-    /**
-     * Get or check the current application environment.
-     *
-     * @return string|bool
-     */
-    public function environment()
-    {
-        $env = ($this['env'] ?? WP_ENV ??  'production');
-
-        if (func_num_args() === 0) {
-            return $env;
+        foreach ((array) $providers as $provider) {
+            $this->register($provider);
         }
 
-        $patterns = is_array(func_get_arg(0)) ? func_get_arg(0) : func_get_args();
-        return Str::is($patterns, $env);
+        return $this->make($return ?: $config);
     }
 
     /**
-     * Determine if the application is running in the console.
+     * Load a configuration file into the application.
      *
-     * @return bool
+     * @param  string  $name
+     * @return void
      */
-    public function runningInConsole()
+    public function configure($name)
     {
-        return defined('WP_CLI_VERSION') || php_sapi_name() === 'cli' || php_sapi_name() === 'phpdbg';
+        if (isset($this->loadedConfigurations[$name])) {
+            return;
+        }
+
+        $this->loadedConfigurations[$name] = true;
+
+        $path = $this->getConfigurationPath($name);
+
+        if ($path) {
+            $this->make('config')->set($name, require $path);
+        }
     }
 
     /**
-     * Determine if the application is running unit tests.
+     * Get the path to the given configuration file.
      *
-     * @return bool
-     */
-    public function runningUnitTests()
-    {
-        /* unit testing in wordpress lmao 😂 */
-        return $this->environment('testing');
-    }
-
-    /**
-     * Determine if the application is currently down for maintenance.
+     * If no name is provided, then we'll return the path to the config folder.
      *
-     * @return bool
+     * @param  string|null  $name
+     * @return string
      */
-    public function isDownForMaintenance()
+    public function getConfigurationPath($name = null)
     {
-        return file_exists(ABSPATH . '.maintenance');
+        if (! $name) {
+            $appConfigDir = $this->basePath('config') . '/';
+            if (file_exists($appConfigDir)) {
+                return $appConfigDir;
+            } elseif (file_exists($path = dirname(dirname(__DIR__)) . '/config/')) {
+                return $path;
+            }
+        } else {
+            $appConfigPath = $this->basePath('config') . "/{$name}.php";
+            if (file_exists($appConfigPath)) {
+                return $appConfigPath;
+            } elseif (file_exists($path = dirname(dirname(__DIR__)) . "/config/{$name}.php")) {
+                return $path;
+            }
+        }
     }
 
     /**
@@ -143,7 +139,7 @@ class Application extends Container
     {
         // phpcs:disable
         $this->alias([
-            'app'                  => [\Acorn\Application\Container::class, \Illuminate\Foundation\Application::class, \Illuminate\Contracts\Container\Container::class, \Illuminate\Contracts\Foundation\Application::class,  \Psr\Container\ContainerInterface::class],
+            'app'                  => [\Acorn\Application\Container::class, \Illuminate\Contracts\Container\Container::class, \Illuminate\Contracts\Foundation\Application::class,  \Psr\Container\ContainerInterface::class],
             'assets.manifest'      => [\Acorn\Assets\Manifest::class],
             'auth'                 => [\Illuminate\Auth\AuthManager::class, \Illuminate\Contracts\Auth\Factory::class],
             'auth.driver'          => [\Illuminate\Contracts\Auth\Guard::class],
@@ -205,81 +201,6 @@ class Application extends Container
     }
 
     /**
-     * Register a service provider with the application.
-     *
-     * @param  \Illuminate\Support\ServiceProvider|string  $provider
-     * @param  bool   $force
-     * @return \Illuminate\Support\ServiceProvider
-     */
-    public function register($provider, $force = false)
-    {
-        if (($registered = $this->getProvider($provider)) && ! $force) {
-            return $registered;
-        }
-
-        if (is_string($provider)) {
-            $provider = new $provider($this);
-        }
-
-        if (method_exists($provider, 'register')) {
-            $provider->register();
-        }
-
-        $this->markAsRegistered($provider);
-
-        if ($this->booted) {
-            $this->bootProvider($provider);
-        }
-    }
-
-    /**
-     * Get the registered service provider instance if it exists.
-     *
-     * @param  \Illuminate\Support\ServiceProvider|string  $provider
-     * @return \Illuminate\Support\ServiceProvider|null
-     */
-    public function getProvider($provider)
-    {
-        if ($provider instanceof ServiceProvider) {
-            $provider = get_class($provider);
-        }
-        return $this->serviceProviders[$provider] ?? null;
-    }
-
-    /**
-     * Resolve a service provider instance from the class name.
-     *
-     * @param  string  $provider
-     * @return \Illuminate\Support\ServiceProvider
-     */
-    public function resolveProvider($provider)
-    {
-        return new $provider($this);
-    }
-
-    /**
-     * Mark the given provider as registered.
-     *
-     * @param  \Illuminate\Support\ServiceProvider  $provider
-     * @return void
-     */
-    protected function markAsRegistered($provider)
-    {
-        $this->serviceProviders[get_class($provider)] = $provider;
-    }
-
-    /**
-     * Register a deferred provider and service.
-     *
-     * @param  string  $provider
-     * @return void
-     */
-    public function registerDeferredProvider($provider)
-    {
-        $this->register($provider);
-    }
-
-    /**
      * Resolve the given type from the container.
      *
      * @param  string $abstract
@@ -289,59 +210,37 @@ class Application extends Container
     public function make($abstract, array $parameters = [])
     {
         $abstract = $this->getAlias($abstract);
+
+        if (! $this->bound($abstract)) {
+            $this->makeWithBinding($abstract);
+        }
+
         return parent::make($abstract, $parameters);
     }
 
-    public function boot()
+    /**
+     * Register the aliases (AKA "Facades") for the application.
+     *
+     * @return void
+     */
+    public function withAliases()
     {
-        if ($this->booted) {
+        Facade::clearResolvedInstances();
+        Facade::setFacadeApplication($this);
+
+        if (static::$aliasesRegistered) {
             return;
         }
 
-        array_map([$this, 'call'], $this->bootingCallbacks);
+        spl_autoload_register(function ($alias) {
+            $aliases = config('app.aliases');
+            if (isset($aliases[$alias])) {
+                return \class_alias($aliases[$alias], $alias);
+            }
+        }, true, true);
 
-        array_map([$this, 'bootProvider'], $this->serviceProviders);
+        require_once dirname(__DIR__) . '/globals.php';
 
-        array_map([$this, 'call'], $this->bootedCallbacks);
-
-        $this->booted = true;
-    }
-
-    /**
-     * Boot the given service provider.
-     *
-     * @param  \Illuminate\Support\ServiceProvider  $provider
-     * @return mixed
-     */
-    protected function bootProvider(ServiceProvider $provider)
-    {
-        if (method_exists($provider, 'boot')) {
-            return $this->call([$provider, 'boot']);
-        }
-
-        if ($this->config['app.preflight'] && method_exists($provider, 'preflight')) {
-            return $this->call([$provider, 'preflight']);
-        }
-    }
-
-    public function booting(callable $callback)
-    {
-        $this->bootingCallbacks[] = $callback;
-    }
-
-
-    public function booted(callable $callback)
-    {
-        $this->bootedCallbacks[] = $callback;
-
-        if ($this->isBooted()) {
-            $this->call($callback);
-        }
-    }
-
-
-    public function isBooted()
-    {
-        return $this->booted;
+        static::$aliasesRegistered = true;
     }
 }

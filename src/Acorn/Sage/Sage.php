@@ -1,6 +1,6 @@
 <?php
 
-namespace Roots\Sage;
+namespace Roots\Acorn\Sage;
 
 use function Roots\view;
 use function Roots\add_filters;

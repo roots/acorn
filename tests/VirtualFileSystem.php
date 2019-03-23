@@ -11,7 +11,7 @@ trait VirtualFileSystem
 {
     protected $filesystem;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->filesystem = new class ($this->fixtures()) {
             /** @var \org\bovigo\vfs\vfsStreamDirectory */

@@ -2,8 +2,8 @@
 
 namespace Roots\Acorn\Tests\Unit;
 
-use PHPUnit\Framework\TestCase;
 use Roots\Acorn\Tests\VirtualFileSystem;
+use PHPUnit\Framework\TestCase;
 
 class ManifestTest extends TestCase
 {
@@ -16,7 +16,7 @@ class ManifestTest extends TestCase
         '/app/themes/sage/dist/styles/main-123456.css' => '/* css */',
     ];
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->fsSetUp();
         $jsonManifest = json_encode($this->manifest());
