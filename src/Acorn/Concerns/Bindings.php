@@ -6,7 +6,6 @@ use Zend\Diactoros\Response as PsrResponse;
 use Roots\Acorn\Contracts\Binder;
 use Illuminate\Support\Composer;
 use Illuminate\Log\LogManager;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Config\Repository as ConfigRepository;
 
@@ -36,7 +35,7 @@ trait Bindings
             'registerDatabaseBindings' => ['db', \Illuminate\Database\Eloquent\Factory::class],
             'registerEncrypterBindings' => ['encrypter', \Illuminate\Contracts\Encryption\Encrypter::class],
             'registerEventBindings' => ['events', \Illuminate\Contracts\Events\Dispatcher::class],
-            'registerFilesBindings' => ['files'],
+            'registerFilesBindings' => ['files', \Roots\Acorn\Filesystem\Filesystem::class, \Illuminate\Filesystem\Filesystem::class],
             'registerFilesystemBindings' => ['filesystem', \Illuminate\Contracts\Filesystem\Factory::class],
             'registerHashBindings' => ['hash', \Illuminate\Contracts\Hashing\Hasher::class],
             'registerLogBindings' => ['log', \Psr\Log\LoggerInterface::class],
@@ -220,7 +219,7 @@ trait Bindings
     protected function registerFilesBindings()
     {
         $this->singleton('files', function () {
-            return new Filesystem();
+            return new \Roots\Acorn\Filesystem\Filesystem();
         });
     }
 
@@ -234,7 +233,7 @@ trait Bindings
         $this->singleton('filesystem', function () {
             return $this->loadComponent(
                 'filesystems',
-                \Illuminate\Filesystem\FilesystemServiceProvider::class,
+                \Roots\Acorn\Filesystem\FilesystemServiceProvider::class,
                 'filesystem'
             );
         });

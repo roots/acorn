@@ -9,7 +9,7 @@ class SageFeatures
     public function bootstrap(Application $app)
     {
         $features = get_theme_support('sage');
-        $app->register(\Roots\Sage\SageServiceProvider::class);
+        $app->register(\Roots\Acorn\Sage\SageServiceProvider::class);
 
         if ($features === true) {
             $features = ['assets', 'blade'];

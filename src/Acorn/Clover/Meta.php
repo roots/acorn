@@ -1,6 +1,6 @@
 <?php
 
-namespace Roots\Clover;
+namespace Roots\Acorn\Clover;
 
 use Illuminate\Support\Arr;
 use Illuminate\Config\Repository;

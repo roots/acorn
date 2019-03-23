@@ -110,19 +110,24 @@ function bootloader()
     }
     $booted = true;
 
+    $bootstrap = [];
+    $application_basepath = locate_template('config') ?: dirname(__DIR__);
+
+    if (get_theme_support('sage')) {
+        $application_basepath = dirname(get_theme_file_path());
+        $bootstrap[] = \Roots\Acorn\Bootstrap\SageFeatures::class;
+    }
+
+    $bootstrap[] = \Roots\Acorn\Bootstrap\LoadConfiguration::class;
     $application_basepath = apply_filters(
         'acorn/basepath',
         \defined('ACORN_BASEPATH')
             ? ACORN_BASEPATH
-            : env('ACORN_BASEPATH', locate_template('config') ?: dirname(__DIR__))
+            : env('ACORN_BASEPATH', $application_basepath)
     );
 
     $app = new \Roots\Acorn\Application($application_basepath);
 
-    $bootstrap = [\Roots\Acorn\Bootstrap\LoadConfiguration::class];
-    if (get_theme_support('sage')) {
-        $bootstrap[] = \Roots\Acorn\Bootstrap\SageFeatures::class;
-    }
     $app->bootstrapWith(apply_filters('acorn/bootstrap', $bootstrap));
 
     if (apply_filters('acorn/globals', false)) {

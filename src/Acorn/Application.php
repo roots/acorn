@@ -2,7 +2,6 @@
 
 namespace Roots\Acorn;
 
-use Roots\Acorn\Filesystem\FilesystemServiceProvider;
 use Roots\Acorn\Concerns\Bindings;
 use Roots\Acorn\Concerns\Application as LaravelApplication;
 use Illuminate\Support\Str;

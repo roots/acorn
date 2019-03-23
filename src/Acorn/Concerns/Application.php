@@ -233,7 +233,7 @@ trait Application
                 $this->make(PackageManifest::class)->providers()
             ]);
 
-        (new ProviderRepository($this, new Filesystem(), $this->getCachedServicesPath()))
+        (new ProviderRepository($this, new \Roots\Acorn\Filesystem\Filesystem(), $this->getCachedServicesPath()))
             ->load($providers->collapse()->toArray());
     }
 

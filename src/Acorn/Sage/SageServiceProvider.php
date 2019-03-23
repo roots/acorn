@@ -1,11 +1,11 @@
 <?php
 
-namespace Roots\Sage;
+namespace Roots\Acorn\Sage;
 
 use function Roots\add_filters;
-use Roots\Sage\ViewFinder;
-use Roots\Sage\Sage;
 use Roots\Acorn\ServiceProvider;
+use Roots\Acorn\Sage\ViewFinder;
+use Roots\Acorn\Sage\Sage;
 use Roots\Acorn\Config;
 
 class SageServiceProvider extends ServiceProvider

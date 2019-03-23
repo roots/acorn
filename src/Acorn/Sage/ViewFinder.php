@@ -1,9 +1,9 @@
 <?php
 
-namespace Roots\Sage;
+namespace Roots\Acorn\Sage;
 
 use Roots\Acorn\View\FileViewFinder;
-use Illuminate\Filesystem\Filesystem;
+use Roots\Acorn\Filesystem\Filesystem;
 
 class ViewFinder
 {
@@ -73,7 +73,7 @@ class ViewFinder
      */
     protected function getRelativeViewPaths()
     {
-        /** @var \Illuminate\Filesystem\Filesystem $filesystem */
+        /** @var \Roots\Acorn\Filesystem\Filesystem $filesystem */
         $filesystem = $this->finder->getFilesystem();
 
         return array_unique(array_map(function ($viewsPath) use ($filesystem) {

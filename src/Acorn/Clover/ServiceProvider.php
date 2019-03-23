@@ -1,13 +1,13 @@
 <?php
 
-namespace Roots\Clover;
+namespace Roots\Acorn\Clover;
 
-use Roots\Clover\Concerns\Lifecycle;
 use Roots\Acorn\ServiceProvider as BaseServiceProvider;
+use Roots\Acorn\Clover\Concerns\Lifecycle;
 
 abstract class ServiceProvider extends BaseServiceProvider
 {
-    /** @var \Roots\Clover\Meta */
+    /** @var \Roots\Acorn\Clover\Meta */
     protected $meta;
 
     /**
