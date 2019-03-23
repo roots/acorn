@@ -12,7 +12,10 @@ class Meta extends Repository
      */
     public function set($key, $value = null)
     {
-        \trigger_error(sprintf(__('%s is immutable and cannot be modified after instantiation.', 'acorn'), __CLASS__), E_USER_ERROR);
+        \trigger_error(sprintf(
+            __('%s is immutable and cannot be modified after instantiation.', 'acorn'),
+            __CLASS__
+        ), E_USER_ERROR);
     }
 
     /**

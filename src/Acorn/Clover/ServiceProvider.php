@@ -41,7 +41,7 @@ abstract class ServiceProvider extends BaseServiceProvider
         $plugin = $this->app[$this->meta->key];
 
         if (in_array(Lifecycle::class, class_uses($plugin))) {
-            $plugin->lifecycle("{$this->meta->key}.meta");
+            $plugin->lifecycle($this->meta);
         }
 
         $plugin->run();
