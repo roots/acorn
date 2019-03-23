@@ -35,6 +35,7 @@
     "illuminate/config": "^5.8",
     "illuminate/container": "^5.8",
     "illuminate/contracts": "^5.8",
+    "illuminate/database": "^5.8",
     "illuminate/events": "^5.8",
     "illuminate/filesystem": "^5.8",
     "illuminate/support": "^5.8",
