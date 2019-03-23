@@ -58,6 +58,7 @@ return [
         // Roots\Acorn\Assets\ManifestServiceProvider::class,
         // Roots\Acorn\View\ViewServiceProvider::class,
         // Roots\Sage\SageServiceProvider::class,
+        // Illuminate\Database\DatabaseServiceProvider::class,
     ],
 
     /*
