@@ -4,6 +4,7 @@ dist: trusty
 php:
   - 7.1
   - 7.2
+  - 7.3
   - nightly
 
 matrix:
@@ -18,6 +19,7 @@ cache:
     - vendor
 
 before_install:
+  - phpenv config-rm xdebug.ini || true
   - travis_retry composer self-update
 
 install:
