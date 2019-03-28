@@ -2,8 +2,10 @@
 
 namespace Roots\Acorn\View;
 
-use Illuminate\View\ViewServiceProvider as ViewServiceProviderBase;
 use Illuminate\View\View;
+use Illuminate\View\ViewServiceProvider as ViewServiceProviderBase;
+use Roots\Acorn\View\Composers\Debugger;
+use Roots\Acorn\View\Directives\InjectionDirective;
 
 class ViewServiceProvider extends ViewServiceProviderBase
 {
@@ -85,7 +87,9 @@ class ViewServiceProvider extends ViewServiceProviderBase
     public function attachDirectives()
     {
         $blade = $this->app['view']->getEngineResolver()->resolve('blade')->getCompiler();
-        foreach ($this->app['config']['view.directives'] as $name => $handler) {
+        $directives = $this->app['config']['view.directives'];
+        $directives += ['inject' => InjectionDirective::class];
+        foreach ($directives as $name => $handler) {
             if (!is_callable($handler)) {
                 $handler = $this->app->make($handler);
             }
@@ -103,6 +107,6 @@ class ViewServiceProvider extends ViewServiceProviderBase
 
     public function attachDebugger()
     {
-        $this->app['view']->composer('*', Composers\Debugger::class);
+        $this->app['view']->composer('*', Debugger::class);
     }
 }
