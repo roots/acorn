@@ -111,16 +111,16 @@ function bootloader()
     $booted = true;
 
     $bootstrap = [
-        \Roots\Acorn\Bootstrap\RegisterGlobals::class
+        \Roots\Acorn\Bootstrap\RegisterGlobals::class,
+        \Roots\Acorn\Bootstrap\SageFeatures::class,
+        \Roots\Acorn\Bootstrap\LoadBindings::class,
+        \Roots\Acorn\Bootstrap\LoadConfiguration::class,
     ];
     $application_basepath = dirname(locate_template('config') ?: __DIR__);
 
     if (get_theme_support('sage')) {
         $application_basepath = dirname(get_theme_file_path());
-        $bootstrap[] = \Roots\Acorn\Bootstrap\SageFeatures::class;
     }
-
-    $bootstrap[] = \Roots\Acorn\Bootstrap\LoadConfiguration::class;
     $application_basepath = apply_filters(
         'acorn/basepath',
         \defined('ACORN_BASEPATH')
