@@ -2,10 +2,10 @@
 
 namespace Roots;
 
-use Roots\Acorn\Assets\Manifest;
-use Roots\Acorn\Assets\Asset;
-use Roots\Acorn\Application;
 use Illuminate\View\View;
+use Roots\Acorn\Application;
+use Roots\Acorn\Assets\Asset;
+use Roots\Acorn\Assets\Manifest;
 
 /**
  * Get the available container instance.
@@ -111,7 +111,7 @@ function bootloader()
     $booted = true;
 
     $bootstrap = [];
-    $application_basepath = locate_template('config') ?: dirname(__DIR__);
+    $application_basepath = dirname(locate_template('config') ?: __DIR__);
 
     if (get_theme_support('sage')) {
         $application_basepath = dirname(get_theme_file_path());
@@ -137,5 +137,6 @@ function bootloader()
     if ($app->isBooted()) {
         return;
     }
+
     $app->boot();
 }
