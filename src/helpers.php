@@ -110,7 +110,9 @@ function bootloader()
     }
     $booted = true;
 
-    $bootstrap = [];
+    $bootstrap = [
+        \Roots\Acorn\Bootstrap\RegisterGlobals::class
+    ];
     $application_basepath = dirname(locate_template('config') ?: __DIR__);
 
     if (get_theme_support('sage')) {
@@ -129,10 +131,6 @@ function bootloader()
     $app = new \Roots\Acorn\Application($application_basepath);
 
     $app->bootstrapWith(apply_filters('acorn/bootstrap', $bootstrap));
-
-    if (apply_filters('acorn/globals', false)) {
-        $app->withAliases();
-    }
 
     if ($app->isBooted()) {
         return;

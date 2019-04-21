@@ -2,13 +2,12 @@
 
 namespace Roots\Acorn;
 
-use Roots\Acorn\Concerns\Bindings;
-use Roots\Acorn\Concerns\Application as LaravelApplication;
-use Illuminate\Support\Str;
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Facade;
-use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Foundation\Application as ApplicationContract;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
+use Roots\Acorn\Concerns\Application as LaravelApplication;
+use Roots\Acorn\Concerns\Bindings;
 
 /**
  * Application container
@@ -225,9 +224,6 @@ class Application extends Container implements ApplicationContract
      */
     public function withAliases()
     {
-        Facade::clearResolvedInstances();
-        Facade::setFacadeApplication($this);
-
         if (static::$aliasesRegistered) {
             return;
         }
