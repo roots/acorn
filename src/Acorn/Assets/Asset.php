@@ -3,6 +3,7 @@
 namespace Roots\Acorn\Assets;
 
 use Roots\Acorn\Contracts\Assets\Asset as AssetContract;
+use Illuminate\Support\Str;
 
 class Asset implements AssetContract
 {
@@ -56,7 +57,7 @@ class Asset implements AssetContract
      */
     public function revved()
     {
-        return ($this->manifest[$this->path] ?? $this->original());
+        return ($this->manifest[Str::start($this->path, '/')] ?? $this->original());
     }
 
     /**
@@ -68,7 +69,7 @@ class Asset implements AssetContract
      */
     public function uri()
     {
-        return "{$this->manifest->uri()}/{$this->revved()}";
+        return $this->manifest->uri() . $this->revved();
     }
 
     /**
@@ -80,7 +81,7 @@ class Asset implements AssetContract
      */
     public function path()
     {
-        return "{$this->manifest->path()}/{$this->revved()}";
+        return strtok($this->manifest->path() . $this->revved(), '?');
     }
 
     /**
