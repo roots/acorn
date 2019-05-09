@@ -81,7 +81,7 @@ class Asset implements AssetContract
      */
     public function path()
     {
-        return strtok($this->manifest->path() . $this->revved(), '?');
+        return Str::before($this->manifest->path() . $this->revved(), '?');
     }
 
     /**
