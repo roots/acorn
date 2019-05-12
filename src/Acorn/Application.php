@@ -130,6 +130,20 @@ class Application extends Container implements ApplicationContract
     }
 
     /**
+     * Register all of the configured providers.
+     *
+     * @return void
+     */
+    public function registerConfiguredProviders()
+    {
+        collect($this['config']['app']['providers'])->each(
+            function (string $provider) {
+                $this->register($provider);
+            }
+        );
+    }
+
+    /**
      * Register the core class aliases in the container.
      *
      * @return void

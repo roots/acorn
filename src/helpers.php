@@ -114,6 +114,7 @@ function bootloader()
         \Roots\Acorn\Bootstrap\SageFeatures::class,
         \Roots\Acorn\Bootstrap\LoadConfiguration::class,
         \Roots\Acorn\Bootstrap\LoadBindings::class,
+        \Roots\Acorn\Bootstrap\RegisterProviders::class,
         \Roots\Acorn\Bootstrap\RegisterGlobals::class,
     ];
     $application_basepath = dirname(locate_template('config') ?: __DIR__);
