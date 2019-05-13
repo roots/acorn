@@ -3,6 +3,7 @@
 namespace Roots\Acorn\Sage;
 
 use function Roots\add_filters;
+
 use Roots\Acorn\Config;
 use Roots\Acorn\Sage\Sage;
 use Roots\Acorn\Sage\ViewFinder;
