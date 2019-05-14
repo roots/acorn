@@ -3,6 +3,7 @@
 namespace Roots\Acorn\Assets;
 
 use Roots\Acorn\Contracts\Assets\Asset as AssetContract;
+use Illuminate\Support\Str;
 
 class Asset implements AssetContract
 {
@@ -50,13 +51,13 @@ class Asset implements AssetContract
     /**
      * Get the asset's cache-busted relative path
      *
-     * Example: styles/a1b2c3.min.css
+     * Example: /styles/a1b2c3.min.css
      *
      * @return string
      */
     public function revved()
     {
-        return ($this->manifest[$this->path] ?? $this->original());
+        return Str::start($this->manifest[Str::start($this->path, '/')] ?? $this->original(), '/');
     }
 
     /**
@@ -68,7 +69,7 @@ class Asset implements AssetContract
      */
     public function uri()
     {
-        return "{$this->manifest->uri()}/{$this->revved()}";
+        return $this->manifest->uri() . $this->revved();
     }
 
     /**
@@ -80,7 +81,7 @@ class Asset implements AssetContract
      */
     public function path()
     {
-        return "{$this->manifest->path()}/{$this->revved()}";
+        return Str::before($this->manifest->path() . $this->revved(), '?');
     }
 
     /**

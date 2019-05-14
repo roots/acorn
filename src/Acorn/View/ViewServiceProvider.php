@@ -90,7 +90,7 @@ class ViewServiceProvider extends ViewServiceProviderBase
         $directives = $this->app['config']['view.directives'];
         $directives += ['inject' => InjectionDirective::class];
         foreach ($directives as $name => $handler) {
-            if (!is_callable($handler)) {
+            if (! is_callable($handler)) {
                 $handler = $this->app->make($handler);
             }
             $blade->directive($name, $handler);

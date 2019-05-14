@@ -17,7 +17,7 @@ abstract class ServiceProvider extends BaseServiceProvider
      */
     public function register()
     {
-        if (!$configFile = $this->locateConfig()) {
+        if (! $configFile = $this->locateConfig()) {
             return;
         }
 
