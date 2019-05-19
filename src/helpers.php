@@ -521,6 +521,7 @@ function bootloader()
         \Roots\Acorn\Bootstrap\LoadBindings::class,
         \Roots\Acorn\Bootstrap\RegisterProviders::class,
         \Roots\Acorn\Bootstrap\RegisterGlobals::class,
+        \Roots\Acorn\Bootstrap\WPCLI::class,
     ];
     $application_basepath = dirname(locate_template('config') ?: __DIR__);
 
