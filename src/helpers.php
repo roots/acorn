@@ -463,8 +463,17 @@ function today($tz = null)
  * @copyright Taylor Otwell
  * @link      https://github.com/laravel/framework/blob/v5.8.17/src/Illuminate/Foundation/helpers.php#L301-L324
  */
-function cookie($name = null, $value = null, $minutes = 0, $path = null, $domain = null, $secure = false, $httpOnly = true, $raw = false, $sameSite = null)
-{
+function cookie(
+    $name = null,
+    $value = null,
+    $minutes = 0,
+    $path = null,
+    $domain = null,
+    $secure = false,
+    $httpOnly = true,
+    $raw = false,
+    $sameSite = null
+) {
     $cookie = app(CookieFactory::class);
     if (is_null($name)) {
         return $cookie;
