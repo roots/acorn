@@ -2,10 +2,10 @@
 
 namespace Roots\Acorn\Concerns;
 
-use Illuminate\Support\Str;
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 
 /**
  * Required methods to satisfy Laravel Application contract
@@ -46,6 +46,15 @@ trait Application
     /** @var string The custom application path defined by the developer. */
     protected $appPath;
 
+    /** @var string The custom database path defined by the developer. */
+    protected $databasePath;
+
+    /** @var string The custom environment path defined by the developer. */
+    protected $environmentPath;
+
+    /** @var string The custom database path defined by the developer. */
+    protected $storagePath;
+
     /** @var string The application namespace. */
     protected $namespace;
 
@@ -57,6 +66,18 @@ trait Application
     public function version()
     {
         return static::VERSION;
+    }
+
+    /**
+     * Get the path to the application "app" directory.
+     *
+     * @param  string  $path
+     * @return string
+     */
+    public function path($path = '')
+    {
+        $appPath = $this->appPath ?: $this->basePath . DIRECTORY_SEPARATOR . 'app';
+        return $appPath . ($path ? DIRECTORY_SEPARATOR . $path : $path);
     }
 
     /**
@@ -131,6 +152,20 @@ trait Application
     public function environmentPath()
     {
         return $this->environmentPath ?: $this->basePath;
+    }
+
+    /**
+     * Get the path to the public / web directory.
+     *
+     * @copyright Taylor Otwell
+     * @license   https://github.com/laravel/framework/blob/v5.8.17/LICENSE.md MIT
+     * @link https://github.com/laravel/framework/blob/v5.8.17/src/Illuminate/Foundation/Application.php#L393-L401
+     *
+     * @return string
+     */
+    public function publicPath()
+    {
+        return $this->basePath . DIRECTORY_SEPARATOR . 'public';
     }
 
     /**
