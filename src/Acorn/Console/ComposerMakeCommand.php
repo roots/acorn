@@ -24,7 +24,7 @@ class ComposerMakeCommand extends GeneratorCommand
      *
      * ## EXAMPLES
      *
-     *     wp acorn composer:make
+     *     wp acorn make:composer
      */
     public function __invoke($args, $assoc_args)
     {
