@@ -671,13 +671,13 @@ trait Application
 
         foreach ((array) data_get($composer, 'autoload.psr-4') as $namespace => $path) {
             foreach ((array) $path as $pathChoice) {
-                if (realpath($this->path()) === realpath($this->basePath() . $pathChoice)) {
+                if (realpath($this->path()) === realpath($this->basePath($pathChoice))) {
                     return $this->namespace = $namespace;
                 }
             }
         }
 
-        throw new RuntimeException(
+        throw new \RuntimeException(
             __('Unable to detect application namespace.', 'acorn')
         );
     }
