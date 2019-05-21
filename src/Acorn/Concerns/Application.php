@@ -591,7 +591,7 @@ trait Application
      */
     public function getCachedConfigPath()
     {
-        return $_ENV['APP_CONFIG_CACHE'] ?? $this->bootstrapPath() . '/cache/config.php';
+        return $_ENV['APP_CONFIG_CACHE'] ?? $this->storagePath() . '/framework/cache/config.php';
     }
 
     /**

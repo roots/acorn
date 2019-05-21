@@ -29,6 +29,16 @@ class WPCLI
         );
 
         \WP_CLI::add_command(
+            'acorn config:cache',
+            $this->app->make(\Roots\Acorn\Console\ConfigCacheCommand::class)
+        );
+
+        \WP_CLI::add_command(
+            'acorn config:clear',
+            $this->app->make(\Roots\Acorn\Console\ConfigClearCommand::class)
+        );
+
+        \WP_CLI::add_command(
             'acorn vendor:publish',
             $this->app->make(\Roots\Acorn\Console\VendorPublishCommand::class)
         );
