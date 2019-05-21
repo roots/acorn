@@ -12,7 +12,7 @@ class DummyClass extends Composer
      * @var array
      */
     protected static $views = [
-        //
+        'dummy-views'
     ];
 
     /**
