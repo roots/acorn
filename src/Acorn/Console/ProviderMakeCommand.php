@@ -2,7 +2,6 @@
 
 namespace Roots\Acorn\Console;
 
-use function Roots\config;
 use Roots\Acorn\Filesystem\Filesystem;
 
 class ProviderMakeCommand extends GeneratorCommand
@@ -24,6 +23,8 @@ class ProviderMakeCommand extends GeneratorCommand
      * ## EXAMPLES
      *
      *     wp acorn make:provider
+     *
+     * @return void
      */
     public function __invoke($args, $assoc_args)
     {

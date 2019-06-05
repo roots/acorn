@@ -11,7 +11,8 @@ class WPCLI
     public function bootstrap(Application $app)
     {
         $this->app = $app;
-        if ($app->runningInConsole() && \defined('WP_CLI') && WP_CLI) {
+
+        if ($this->app->runningInConsole() && \defined('WP_CLI') && WP_CLI) {
             $this->registerCommands();
         }
     }
@@ -51,6 +52,11 @@ class WPCLI
         \WP_CLI::add_command(
             'acorn make:composer',
             $this->app->make(\Roots\Acorn\Console\ComposerMakeCommand::class)
+        );
+
+        \WP_CLI::add_command(
+            'acorn package:discover',
+            $this->app->make(\Roots\Acorn\Console\PackageDiscoverCommand::class)
         );
     }
 }

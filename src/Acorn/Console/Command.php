@@ -2,7 +2,6 @@
 
 namespace Roots\Acorn\Console;
 
-use function Roots\value;
 use Illuminate\Support\Traits\Macroable;
 use Roots\Acorn\Application;
 use Roots\Acorn\Filesystem\Filesystem;
