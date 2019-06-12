@@ -30,9 +30,8 @@ class FileViewFinder extends FileViewFinderBase
         $view = $this->normalizePath($file);
         $paths = $this->normalizePath($this->paths);
         $hints = array_map([$this, 'normalizePath'], $this->hints);
-        $extensions = implode('|', array_map('preg_quote', $this->extensions));
 
-        $view = preg_replace('#\.(' . $extensions . ')$#', '', $view);
+        $view = $this->stripExtensions($view);
         $view = str_replace($paths, '', $view);
         foreach ($hints as $hintNamespace => $hintPaths) {
             $test = str_replace($hintPaths, '', $view);
@@ -53,6 +52,19 @@ class FileViewFinder extends FileViewFinderBase
     }
 
     /**
+     * Remove recognized extensions from path
+     *
+     * @param string $file relative path to view file
+     * @return string view name
+     */
+    protected function stripExtensions($path)
+    {
+        $extensions = implode('|', array_map('preg_quote', $this->getExtensions()));
+
+        return preg_replace("/\.({$extensions})$/", '', $path);
+    }
+
+    /**
      * Normalize paths
      *
      * @param string|string[] $path
@@ -61,6 +73,6 @@ class FileViewFinder extends FileViewFinderBase
      */
     protected function normalizePath($path, $separator = '/')
     {
-        return preg_replace('#[\/]+#', $separator, $path);
+        return preg_replace('#[\\/]+#', $separator, $path);
     }
 }
