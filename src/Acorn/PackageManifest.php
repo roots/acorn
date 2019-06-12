@@ -55,7 +55,7 @@ class PackageManifest
         $this->files = $files;
         $this->basePath = $basePath;
         $this->manifestPath = $manifestPath;
-        $this->vendorPath = $basePath.'/vendor';
+        $this->vendorPath = $basePath . '/vendor';
     }
 
     /**
@@ -112,7 +112,7 @@ class PackageManifest
     {
         $packages = [];
 
-        if ($this->files->exists($path = $this->vendorPath.'/composer/installed.json')) {
+        if ($this->files->exists($path = $this->vendorPath . '/composer/installed.json')) {
             $packages = json_decode($this->files->get($path), true);
         }
 
@@ -135,7 +135,7 @@ class PackageManifest
      */
     protected function format($package)
     {
-        return str_replace($this->vendorPath.'/', '', $package);
+        return str_replace($this->vendorPath . '/', '', $package);
     }
 
     /**
@@ -145,12 +145,12 @@ class PackageManifest
      */
     protected function packagesToIgnore()
     {
-        if (! file_exists($this->basePath.'/composer.json')) {
+        if (! file_exists($this->basePath . '/composer.json')) {
             return [];
         }
 
         return json_decode(file_get_contents(
-            $this->basePath.'/composer.json'
+            $this->basePath . '/composer.json'
         ), true)['extra']['acorn']['dont-discover'] ?? [];
     }
 
@@ -165,11 +165,12 @@ class PackageManifest
     protected function write(array $manifest)
     {
         if (! is_writable(dirname($this->manifestPath))) {
-            throw new Exception('The '.dirname($this->manifestPath).' directory must be present and writable.');
+            throw new Exception('The ' . dirname($this->manifestPath) . ' directory must be present and writable.');
         }
 
         $this->files->replace(
-            $this->manifestPath, '<?php return '.var_export($manifest, true).';'
+            $this->manifestPath,
+            '<?php return ' . var_export($manifest, true) . ';'
         );
     }
 }

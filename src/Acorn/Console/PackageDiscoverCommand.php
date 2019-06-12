@@ -2,10 +2,22 @@
 
 namespace Roots\Acorn\Console;
 
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Filesystem\Filesystem;
 use Roots\Acorn\PackageManifest;
 
 class PackageDiscoverCommand extends Command
 {
+    /** @var \Roots\Acorn\PackageManifest */
+    protected $manifest;
+
+    public function __construct(Filesystem $files, Application $app, PackageManifest $manifest)
+    {
+        parent::__construct($files, $app);
+
+        $this->manifest = $manifest;
+    }
+
     /**
      * Discover and publish vendor packages.
      *
@@ -17,22 +29,12 @@ class PackageDiscoverCommand extends Command
      */
     public function __invoke($args, $assoc_args)
     {
-        $this->handle();
-    }
+        $this->manifest->build();
 
-    /**
-     * Return the package manifest.
-     *
-     * @return \Roots\Acorn\PackageManifest
-     */
-    public function handle(PackageManifest $manifest)
-    {
-        $manifest->build();
-
-        foreach (array_keys($manifest->manifest) as $package) {
-            $this->line("Discovered Package: <info>{$package}</info>");
+        foreach (array_keys($this->manifest->manifest) as $package) {
+            $this->info("Discovered Package: {$package}");
         }
 
-        $this->info('Package manifest generated successfully.');
+        $this->success('Package manifest generated successfully.');
     }
 }

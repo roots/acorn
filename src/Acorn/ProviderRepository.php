@@ -3,8 +3,8 @@
 namespace Roots\Acorn;
 
 use Exception;
-use Roots\Acorn\Filesystem\Filesystem;
 use Roots\Acorn\Application;
+use Roots\Acorn\Filesystem\Filesystem;
 
 class ProviderRepository
 {
@@ -152,7 +152,7 @@ class ProviderRepository
                 }
 
                 $manifest['when'][$provider] = $instance->when();
-            }
+            } // phpcs:ignore
 
             // If the service providers are not deferred, we will simply add it to an
             // array of eagerly loaded providers that will get registered on every
@@ -191,7 +191,8 @@ class ProviderRepository
         }
 
         $this->files->put(
-            $this->manifestPath, '<?php return '.var_export($manifest, true).';'
+            $this->manifestPath,
+            '<?php return ' . var_export($manifest, true) . ';'
         );
 
         return array_merge(['when' => []], $manifest);

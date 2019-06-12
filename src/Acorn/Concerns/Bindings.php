@@ -2,12 +2,13 @@
 
 namespace Roots\Acorn\Concerns;
 
-use Zend\Diactoros\Response as PsrResponse;
-use Roots\Acorn\Contracts\Binder;
-use Illuminate\Support\Composer;
-use Illuminate\Log\LogManager;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Config\Repository as ConfigRepository;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Log\LogManager;
+use Illuminate\Support\Composer;
+use Roots\Acorn\Contracts\Binder;
+use Roots\Acorn\PackageManifest;
+use Zend\Diactoros\Response as PsrResponse;
 
 trait Bindings
 {
@@ -36,7 +37,7 @@ trait Bindings
             'registerEncrypterBindings' => ['encrypter', \Illuminate\Contracts\Encryption\Encrypter::class],
             'registerEventBindings' => ['events', \Illuminate\Contracts\Events\Dispatcher::class],
             'registerFilesBindings' => ['files', \Roots\Acorn\Filesystem\Filesystem::class, \Illuminate\Filesystem\Filesystem::class],
-            'registerFilesystemBindings' => ['filesystem', \Illuminate\Contracts\Filesystem\Factory::class],
+            'registerFilesystemBindings' => ['filesystem', 'filesystem.cloud', 'filesystem.disk', \Illuminate\Contracts\Filesystem\Factory::class, \Illuminate\Contracts\Filesystem\Cloud::class, \Illuminate\Contracts\Filesystem\Filesystem::class],
             'registerHashBindings' => ['hash', \Illuminate\Contracts\Hashing\Hasher::class],
             'registerLogBindings' => ['log', \Psr\Log\LoggerInterface::class],
             'registerQueueBindings' => ['queue', 'queue.connection', \Illuminate\Contracts\Queue\Factory::class, \Illuminate\Contracts\Queue\Queue::class],
@@ -44,7 +45,7 @@ trait Bindings
             'registerPsrRequestBindings' => [\Psr\Http\Message\ServerRequestInterface::class, \Psr\Http\Message\ResponseInterface::class],
             'registerTranslationBindings' => ['translator'],
             'registerUrlGeneratorBindings' => ['url'],
-            'registerValidatorBindings' => ['validator'],
+            'registerValidatorBindings' => ['validator', \Illuminate\Contracts\Validation\Factory::class],
             'registerValidatorBindings' => [\Illuminate\Contracts\Validation\Factory::class],
             'registerViewBindings' => ['view', \Illuminate\Contracts\View\Factory::class],
         ] as $method => $abstracts) {
@@ -235,6 +236,22 @@ trait Bindings
                 'filesystems',
                 \Roots\Acorn\Filesystem\FilesystemServiceProvider::class,
                 'filesystem'
+            );
+        });
+
+        $this->singleton('filesystem.disk', function () {
+            return $this->loadComponent(
+                'filesystems',
+                \Roots\Acorn\Filesystem\FilesystemServiceProvider::class,
+                'filesystem.disk'
+            );
+        });
+
+        $this->singleton('filesystem.cloud', function () {
+            return $this->loadComponent(
+                'filesystems',
+                \Roots\Acorn\Filesystem\FilesystemServiceProvider::class,
+                'filesystem.cloud'
             );
         });
     }

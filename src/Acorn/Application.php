@@ -7,11 +7,11 @@ use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
-use Roots\Acorn\PackageManifest;
-use Roots\Acorn\ProviderRepository;
-use Roots\Acorn\Filesystem\Filesystem;
 use Roots\Acorn\Concerns\Application as LaravelApplication;
 use Roots\Acorn\Concerns\Bindings;
+use Roots\Acorn\Filesystem\Filesystem;
+use Roots\Acorn\PackageManifest;
+use Roots\Acorn\ProviderRepository;
 
 /**
  * Application container
@@ -162,7 +162,7 @@ class Application extends Container implements ApplicationContract
                 $this->make(PackageManifest::class)->providers()
             ]);
 
-        (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPath()))
+        (new ProviderRepository($this, new Filesystem(), $this->getCachedServicesPath()))
             ->load($providers->collapse()->toArray());
     }
 
