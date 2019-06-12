@@ -24,7 +24,7 @@ class SageFeatures
     {
         $features = apply_filters('acorn/sage.features', get_theme_support('sage'));
         if ($features === true) {
-            $features = ['assets', 'blade', 'structure'];
+            $features = ['assets', 'blade'];
         }
         return $features;
     }
@@ -37,22 +37,5 @@ class SageFeatures
     protected function featureBlade(Application $app)
     {
         $app->register(\Roots\Acorn\View\ViewServiceProvider::class);
-    }
-
-    protected function featureStructure(Application $app)
-    {
-        add_filters([
-            'theme_file_path',
-            'theme_file_uri',
-            'parent_theme_file_path',
-            'parent_theme_file_uri',
-        ], function ($path, $file) {
-            if (empty($file)) {
-                return dirname($path);
-            }
-
-            $path = preg_replace("#{$file}$#", '', $path);
-            return dirname($path) . '/' . $file;
-        }, 10);
     }
 }

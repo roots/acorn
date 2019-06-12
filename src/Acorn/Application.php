@@ -24,13 +24,23 @@ class Application extends Container implements ApplicationContract
 {
     use LaravelApplication, Bindings;
 
-    const VERSION = 'Acorn (1.0.0) (Laravel Components 5.8.*)';
+    public const VERSION = 'Acorn (1.0.0) (Laravel Components 5.8.*)';
 
     /**  @var bool Indicates if the class aliases have been registered. */
     protected static $aliasesRegistered = false;
 
     /** @var array All of the loaded configuration files. */
     protected $loadedConfigurations = [];
+
+    /**
+     * Get the globally available instance of the container.
+     *
+     * @return static
+     */
+    public static function getInstance()
+    {
+        return static::$instance;
+    }
 
     /**
      * Create a new Acorn application instance.

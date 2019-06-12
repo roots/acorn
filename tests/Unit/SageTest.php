@@ -7,13 +7,13 @@ use PHPUnit\Framework\TestCase;
 class SageTest extends TestCase
 {
     /** @test */
-    public function it_should_share_the_loop_post_with_view()
+    public function it_should_compile_list_of_theme_templates()
     {
         $this->markTestIncomplete();
     }
 
     /** @test */
-    public function it_should_boot_from_plugins_loaded_or_after_setup_theme()
+    public function it_should_share_the_loop_post_with_view()
     {
         $this->markTestIncomplete();
     }

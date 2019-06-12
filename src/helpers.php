@@ -507,41 +507,15 @@ function session($key = null, $default = null)
 /**
  * Acorn bootloader
  */
-function bootloader()
+function bootloader($callback = null)
 {
-    static $booted;
-    if ($booted) {
-        return;
-    }
-    $booted = true;
+    static $bootloader;
 
-    $bootstrap = [
-        \Roots\Acorn\Bootstrap\SageFeatures::class,
-        \Roots\Acorn\Bootstrap\LoadConfiguration::class,
-        \Roots\Acorn\Bootstrap\LoadBindings::class,
-        \Roots\Acorn\Bootstrap\RegisterProviders::class,
-        \Roots\Acorn\Bootstrap\RegisterGlobals::class,
-        \Roots\Acorn\Bootstrap\WPCLI::class,
-    ];
-    $application_basepath = dirname(locate_template('config') ?: __DIR__);
-
-    if (get_theme_support('sage')) {
-        $application_basepath = dirname(get_theme_file_path());
-    }
-    $application_basepath = apply_filters(
-        'acorn/basepath',
-        \defined('ACORN_BASEPATH')
-            ? ACORN_BASEPATH
-            : env('ACORN_BASEPATH', $application_basepath)
-    );
-
-    $app = new \Roots\Acorn\Application($application_basepath);
-
-    $app->bootstrapWith(apply_filters('acorn/bootstrap', $bootstrap));
-
-    if ($app->isBooted()) {
-        return;
+    if (! $bootloader) {
+        $bootloader = new \Roots\Acorn\Bootloader();
     }
 
-    $app->boot();
+    if (is_callable($callback)) {
+        $bootloader->call($callback);
+    }
 }
