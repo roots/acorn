@@ -2,8 +2,8 @@
 
 namespace Roots\Acorn\Tests\Unit;
 
-use Roots\Acorn\Tests\VirtualFileSystem;
 use PHPUnit\Framework\TestCase;
+use Roots\Acorn\Tests\VirtualFileSystem;
 
 class FileViewFinderTest extends TestCase
 {
@@ -39,6 +39,7 @@ class FileViewFinderTest extends TestCase
             "page.blade.php",
             "page.php",
             "page.css",
+            'page.html',
         ];
 
         $this->assertEquals($expected, $views);

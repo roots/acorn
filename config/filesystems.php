@@ -60,6 +60,13 @@ return [
             'visibility' => 'public',
         ],
 
+        'theme' => [
+            'driver' => 'local',
+            'root' => STYLESHEETPATH,
+            'url' => get_stylesheet_directory_uri(),
+            'visibility' => 'public',
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

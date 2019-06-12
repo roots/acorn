@@ -2,58 +2,46 @@
 
 namespace Roots\Acorn\Sage;
 
-use Roots\Acorn\View\FileViewFinder;
 use Roots\Acorn\Filesystem\Filesystem;
+use Roots\Acorn\View\FileViewFinder;
 
 class ViewFinder
 {
     /** @var \Roots\Acorn\View\FileViewFinder */
     protected $finder;
 
-    /** @var string Path used by WordPress's internal `locate_template()` function */
-    protected $path;
+    /** @var \Roots\Acorn\Filesystem\Filesystem */
+    protected $files;
 
-    public function __construct(FileViewFinder $finder, $path = STYLESHEETPATH)
+    /** @var string Base path for theme or plugin in which views are located */
+    protected $base_path;
+
+    public function __construct(FileViewFinder $finder, Filesystem $files, $base_path = STYLESHEETPATH)
     {
         $this->finder = $finder;
-        $this->path = $path;
+        $this->files = $files;
+        $this->base_path = realpath($base_path) ?: $base_path;
     }
 
-    public function locate($view)
+    public function locate($file)
     {
-        if (is_iterable($view)) {
-            return array_merge(...array_map([$this, 'locate'], $view));
+        if (is_iterable($file)) {
+            return array_merge(...array_map([$this, 'locate'], $file));
         }
 
-        $views = array_unique(array_merge(...array_map(function ($view) {
-            return array_unique(array_merge([$view], array_map(function ($viewPath) use ($view) {
-                return "{$viewPath}/{$view}";
-            }, $this->getRelativeViewPaths())));
-        }, $this->finder->getPossibleViewFilesFromPath($view))));
-
-        $views = array_map('trim', $views, array_fill(0, count($views), '\\/.'));
-
-        return $views;
-    }
-
-    /**
-     * Set the absolute base path
-     *
-     * @param string $path Typically the path used by WordPress's internal `locate_template()` function
-     */
-    public function setPath($path)
-    {
-        $this->path = $path;
-    }
-
-    /**
-     * Get the current absolute base path
-     *
-     * @return string
-     */
-    public function getPath()
-    {
-        return $this->path;
+        return $this->getRelativeViewPaths()
+            ->flatMap(function ($viewPath) use ($file) {
+                return collect($this->finder->getPossibleViewFilesFromPath($file))
+                    ->merge([$file])
+                    ->map(function ($file) use ($viewPath) {
+                        return "{$viewPath}/{$file}";
+                    });
+            })
+            ->unique()
+            ->map(function ($file) {
+                return trim($file, '\\/');
+            })
+            ->toArray();
     }
 
     /**
@@ -67,17 +55,25 @@ class ViewFinder
     }
 
     /**
-     * Get relative view paths from absolute base path
+     * Get view finder
+     *
+     * @return \Roots\Acorn\Filesystem\Filesystem
+     */
+    public function getFilesystem()
+    {
+        return $this->files;
+    }
+
+    /**
+     * Get list of view paths relative to the base path
      *
      * @return array relative view paths
      */
     protected function getRelativeViewPaths()
     {
-        /** @var \Roots\Acorn\Filesystem\Filesystem $filesystem */
-        $filesystem = $this->finder->getFilesystem();
-
-        return array_unique(array_map(function ($viewsPath) use ($filesystem) {
-            return $filesystem->getRelativePath("{$this->path}/", $viewsPath);
-        }, $this->finder->getPaths()));
+        return collect($this->finder->getPaths())
+        ->map(function ($viewsPath) {
+            return $this->files->getRelativePath("{$this->base_path}/", $viewsPath);
+        });
     }
 }
