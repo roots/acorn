@@ -2,13 +2,17 @@
 
 namespace Roots\Acorn\Console;
 
-use function Roots\config;
 use Roots\Acorn\Filesystem\Filesystem;
 
 class ViewClearCommand extends Command
 {
     /**
      * Clear all compiled view files
+     *
+     * ## EXAMPLES
+     *
+     *     wp acorn view:clear
+     *
      */
     public function __invoke($args, $assoc_args)
     {

@@ -250,29 +250,6 @@ trait Application
     }
 
     /**
-     * Register all of the configured providers.
-     *
-     * @copyright Taylor Otwell
-     * @license   https://github.com/laravel/framework/blob/v5.8.5/LICENSE.md MIT
-     * @link https://github.com/laravel/framework/blob/v5.8.5/src/Illuminate/Foundation/Application.php#L559-L575
-     *
-     * @return void
-     */
-    public function registerConfiguredProviders()
-    {
-        $providers = (new Collection($this->config['app.providers']))
-            ->partition(function ($provider) {
-                return Str::startsWith($provider, ['Illuminate\\', 'Roots\\']);
-            })
-            ->splice(1, 0, [
-                $this->make(PackageManifest::class)->providers()
-            ]);
-
-        (new ProviderRepository($this, new \Roots\Acorn\Filesystem\Filesystem(), $this->getCachedServicesPath()))
-            ->load($providers->collapse()->toArray());
-    }
-
-    /**
      * Register a service provider with the application.
      *
      * @copyright Taylor Otwell
@@ -605,7 +582,7 @@ trait Application
      */
     public function getCachedServicesPath()
     {
-        return $_ENV['APP_SERVICES_CACHE'] ?? $this->bootstrapPath() . '/cache/services.php';
+        return $_ENV['APP_SERVICES_CACHE'] ?? $this->storagePath() . '/framework/cache/services.php';
     }
 
     /**
@@ -619,7 +596,7 @@ trait Application
      */
     public function getCachedPackagesPath()
     {
-        return $_ENV['APP_PACKAGES_CACHE'] ?? $this->bootstrapPath() . '/cache/packages.php';
+        return $_ENV['APP_PACKAGES_CACHE'] ?? $this->storagePath() . '/framework/cache/packages.php';
     }
 
     /**
@@ -633,7 +610,63 @@ trait Application
      */
     public function getCachedRoutesPath()
     {
-        return $_ENV['APP_ROUTES_CACHE'] ?? $this->bootstrapPath() . '/cache/routes.php';
+        return $_ENV['APP_ROUTES_CACHE'] ?? $this->storagePath() . '/framework/cache/routes.php';
+    }
+
+    /**
+     * Get the application's deferred services.
+     *
+     * @copyright Taylor Otwell
+     * @license   https://github.com/laravel/framework/blob/v5.8.5/LICENSE.md MIT
+     * @link https://github.com/laravel/framework/blob/v5.8.5/src/Illuminate/Foundation/Application.php#L1003-L1011
+     *
+     * @return array
+     */
+    public function getDeferredServices()
+    {
+        return $this->deferredServices;
+    }
+    /**
+     * Set the application's deferred services.
+     *
+     * @copyright Taylor Otwell
+     * @license   https://github.com/laravel/framework/blob/v5.8.5/LICENSE.md MIT
+     * @link https://github.com/laravel/framework/blob/v5.8.5/src/Illuminate/Foundation/Application.php#L1013-L1022
+     *
+     * @param  array  $services
+     * @return void
+     */
+    public function setDeferredServices(array $services)
+    {
+        $this->deferredServices = $services;
+    }
+    /**
+     * Add an array of services to the application's deferred services.
+     *
+     * @copyright Taylor Otwell
+     * @license   https://github.com/laravel/framework/blob/v5.8.5/LICENSE.md MIT
+     * @link https://github.com/laravel/framework/blob/v5.8.5/src/Illuminate/Foundation/Application.php#L1024-L1033
+     *
+     * @param  array  $services
+     * @return void
+     */
+    public function addDeferredServices(array $services)
+    {
+        $this->deferredServices = array_merge($this->deferredServices, $services);
+    }
+    /**
+     * Determine if the given service is a deferred service.
+     *
+     * @copyright Taylor Otwell
+     * @license   https://github.com/laravel/framework/blob/v5.8.5/LICENSE.md MIT
+     * @link https://github.com/laravel/framework/blob/v5.8.5/src/Illuminate/Foundation/Application.php#L1035-L1044
+     *
+     * @param  string  $service
+     * @return bool
+     */
+    public function isDeferredService($service)
+    {
+        return isset($this->deferredServices[$service]);
     }
 
     /**

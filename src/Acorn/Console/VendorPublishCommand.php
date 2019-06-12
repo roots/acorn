@@ -3,7 +3,6 @@
 namespace Roots\Acorn\Console;
 
 use function Roots\base_path;
-use function Roots\config;
 use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
 use League\Flysystem\MountManager;
@@ -42,6 +41,8 @@ class VendorPublishCommand extends Command
      * ## EXAMPLES
      *
      *     wp acorn vendor:publish
+     *
+     * @return void
      */
     public function __invoke($args, $assoc_args)
     {

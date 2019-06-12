@@ -4,10 +4,14 @@ namespace Roots\Acorn;
 
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
+use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Roots\Acorn\Concerns\Application as LaravelApplication;
 use Roots\Acorn\Concerns\Bindings;
+use Roots\Acorn\Filesystem\Filesystem;
+use Roots\Acorn\PackageManifest;
+use Roots\Acorn\ProviderRepository;
 
 /**
  * Application container
@@ -52,6 +56,7 @@ class Application extends Container implements ApplicationContract
         if ($basePath) {
             $this->basePath = $basePath;
         }
+
         $this->registerContainerBindings();
         $this->bootstrapContainer();
     }
@@ -64,11 +69,14 @@ class Application extends Container implements ApplicationContract
     protected function bootstrapContainer()
     {
         static::setInstance($this);
+
         $this->instance('app', $this);
         $this->instance(Container::class, $this);
+
         $this->instance(parent::class, $this);
         $this->instance(self::class, $this);
         $this->instance(static::class, $this);
+
         $this->registerCoreContainerAliases();
     }
 
@@ -146,11 +154,16 @@ class Application extends Container implements ApplicationContract
      */
     public function registerConfiguredProviders()
     {
-        collect($this['config']['app']['providers'])->each(
-            function (string $provider) {
-                $this->register($provider);
-            }
-        );
+        $providers = Collection::make($this->config['app.providers'])
+            ->partition(function ($provider) {
+                return Str::startsWith($provider, ['Illuminate\\', 'Roots\\']);
+            })
+            ->splice(1, 0, [
+                $this->make(PackageManifest::class)->providers()
+            ]);
+
+        (new ProviderRepository($this, new Filesystem(), $this->getCachedServicesPath()))
+            ->load($providers->collapse()->toArray());
     }
 
     /**
@@ -253,7 +266,8 @@ class Application extends Container implements ApplicationContract
         }
 
         spl_autoload_register(function ($alias) {
-            $aliases = config('app.aliases');
+            $aliases = array_merge($this->config['app.aliases'], $this->make(PackageManifest::class)->aliases());
+
             if (isset($aliases[$alias])) {
                 return \class_alias($aliases[$alias], $alias);
             }

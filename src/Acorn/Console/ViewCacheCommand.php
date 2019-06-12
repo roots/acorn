@@ -11,7 +11,13 @@ class ViewCacheCommand extends Command
     /**
      * Compile all of the application's Blade templates
      *
+     * ## EXAMPLES
+     *
+     *     wp acorn config:cache
+     *
      * @when before_run_command
+     *
+     * @return void
      */
     public function __invoke($args, $assoc_args)
     {
