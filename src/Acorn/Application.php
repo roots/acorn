@@ -157,10 +157,11 @@ class Application extends Container implements ApplicationContract
         $providers = Collection::make($this->config['app.providers'])
             ->partition(function ($provider) {
                 return Str::startsWith($provider, ['Illuminate\\', 'Roots\\']);
-            })
-            ->splice(1, 0, [
-                $this->make(PackageManifest::class)->providers()
-            ]);
+            });
+
+        $providers->splice(1, 0, [
+            $this->make(PackageManifest::class)->providers()
+        ]);
 
         (new ProviderRepository($this, new Filesystem(), $this->getCachedServicesPath()))
             ->load($providers->collapse()->toArray());
