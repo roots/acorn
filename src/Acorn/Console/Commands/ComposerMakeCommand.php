@@ -1,6 +1,8 @@
 <?php
 
-namespace Roots\Acorn\Console;
+namespace Roots\Acorn\Console\Commands;
+
+use Roots\Acorn\Console\GeneratorCommand;
 
 class ComposerMakeCommand extends GeneratorCommand
 {

@@ -1,6 +1,8 @@
 <?php
 
-namespace Roots\Acorn\Console;
+namespace Roots\Acorn\Console\Commands;
+
+use Roots\Acorn\Console\Command;
 
 class ConfigClearCommand extends Command
 {

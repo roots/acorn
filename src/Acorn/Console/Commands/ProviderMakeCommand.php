@@ -1,7 +1,8 @@
 <?php
 
-namespace Roots\Acorn\Console;
+namespace Roots\Acorn\Console\Commands;
 
+use Roots\Acorn\Console\GeneratorCommand;
 use Roots\Acorn\Filesystem\Filesystem;
 
 class ProviderMakeCommand extends GeneratorCommand

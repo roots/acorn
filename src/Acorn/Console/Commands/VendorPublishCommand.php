@@ -1,8 +1,9 @@
 <?php
 
-namespace Roots\Acorn\Console;
+namespace Roots\Acorn\Console\Commands;
 
 use function Roots\base_path;
+use Roots\Acorn\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
 use League\Flysystem\MountManager;
