@@ -1,7 +1,8 @@
 <?php
 
-namespace Roots\Acorn\Console;
+namespace Roots\Acorn\Console\Commands;
 
+use Roots\Acorn\Console\Command;
 use Illuminate\Support\Collection;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;

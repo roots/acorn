@@ -7,7 +7,6 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Log\LogManager;
 use Illuminate\Support\Composer;
 use Roots\Acorn\Contracts\Binder;
-use Roots\Acorn\PackageManifest;
 use Zend\Diactoros\Response as PsrResponse;
 
 trait Bindings

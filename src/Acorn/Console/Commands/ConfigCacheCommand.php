@@ -1,7 +1,8 @@
 <?php
 
-namespace Roots\Acorn\Console;
+namespace Roots\Acorn\Console\Commands;
 
+use Roots\Acorn\Console\Command;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use LogicException;
 use Throwable;

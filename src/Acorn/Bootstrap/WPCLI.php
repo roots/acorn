@@ -21,42 +21,57 @@ class WPCLI
     {
         \WP_CLI::add_command(
             'acorn view:cache',
-            $this->app->make(\Roots\Acorn\Console\ViewCacheCommand::class)
+            $this->app->make(\Roots\Acorn\Console\Commands\ViewCacheCommand::class)
         );
 
         \WP_CLI::add_command(
             'acorn view:clear',
-            $this->app->make(\Roots\Acorn\Console\ViewClearCommand::class)
+            $this->app->make(\Roots\Acorn\Console\Commands\ViewClearCommand::class)
         );
 
         \WP_CLI::add_command(
             'acorn config:cache',
-            $this->app->make(\Roots\Acorn\Console\ConfigCacheCommand::class)
+            $this->app->make(\Roots\Acorn\Console\Commands\ConfigCacheCommand::class)
         );
 
         \WP_CLI::add_command(
             'acorn config:clear',
-            $this->app->make(\Roots\Acorn\Console\ConfigClearCommand::class)
+            $this->app->make(\Roots\Acorn\Console\Commands\ConfigClearCommand::class)
         );
 
         \WP_CLI::add_command(
             'acorn vendor:publish',
-            $this->app->make(\Roots\Acorn\Console\VendorPublishCommand::class)
+            $this->app->make(\Roots\Acorn\Console\Commands\VendorPublishCommand::class)
         );
 
         \WP_CLI::add_command(
             'acorn make:provider',
-            $this->app->make(\Roots\Acorn\Console\ProviderMakeCommand::class)
+            $this->app->make(\Roots\Acorn\Console\Commands\ProviderMakeCommand::class)
         );
 
         \WP_CLI::add_command(
             'acorn make:composer',
-            $this->app->make(\Roots\Acorn\Console\ComposerMakeCommand::class)
+            $this->app->make(\Roots\Acorn\Console\Commands\ComposerMakeCommand::class)
         );
 
         \WP_CLI::add_command(
             'acorn package:discover',
-            $this->app->make(\Roots\Acorn\Console\PackageDiscoverCommand::class)
+            $this->app->make(\Roots\Acorn\Console\Commands\PackageDiscoverCommand::class)
+        );
+
+        \WP_CLI::add_command(
+            'acorn package:clear',
+            $this->app->make(\Roots\Acorn\Console\Commands\PackageClearCommand::class)
+        );
+
+        \WP_CLI::add_command(
+            'acorn optimize',
+            $this->app->make(\Roots\Acorn\Console\Commands\OptimizeCommand::class)
+        );
+
+        \WP_CLI::add_command(
+            'acorn optimize:clear',
+            $this->app->make(\Roots\Acorn\Console\Commands\OptimizeClearCommand::class)
         );
     }
 }

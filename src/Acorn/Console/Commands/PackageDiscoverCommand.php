@@ -1,10 +1,11 @@
 <?php
 
-namespace Roots\Acorn\Console;
+namespace Roots\Acorn\Console\Commands;
 
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Filesystem\Filesystem;
+use Roots\Acorn\Console\Command;
+use Roots\Acorn\Filesystem\Filesystem;
 use Roots\Acorn\PackageManifest;
+use Illuminate\Contracts\Foundation\Application;
 
 class PackageDiscoverCommand extends Command
 {
