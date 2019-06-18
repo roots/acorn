@@ -2,6 +2,7 @@
 
 namespace Roots\Acorn\View;
 
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\View\View;
 use Illuminate\View\ViewServiceProvider as ViewServiceProviderBase;
 use Roots\Acorn\View\Composers\Debugger;
@@ -73,10 +74,8 @@ class ViewServiceProvider extends ViewServiceProviderBase
         }
     }
 
-    public function preflight()
+    public function preflight(Filesystem $files)
     {
-        /** @var \Roots\Acorn\Filesystem\Filesystem $files */
-        $files = $this->app['files'];
         $compiled_dir = $this->app['config']['view.compiled'];
 
         if (! $files->exists($compiled_dir)) {
