@@ -77,6 +77,12 @@ class Application extends Container implements ApplicationContract
         $this->instance(self::class, $this);
         $this->instance(static::class, $this);
 
+        $this->instance(PackageManifest::class, new PackageManifest(
+            new Filesystem(),
+            $this->basePath(),
+            $this->getCachedPackagesPath()
+        ));
+
         $this->registerCoreContainerAliases();
     }
 
@@ -266,8 +272,10 @@ class Application extends Container implements ApplicationContract
             return;
         }
 
-        spl_autoload_register(function ($alias) {
-            $aliases = array_merge($this->config['app.aliases'], $this->make(PackageManifest::class)->aliases());
+        $aliases = $this->make(PackageManifest::class)->aliases();
+
+        spl_autoload_register(function ($alias) use ($aliases) {
+            $aliases = array_merge($this->config['app.aliases'], $aliases);
 
             if (isset($aliases[$alias])) {
                 return \class_alias($aliases[$alias], $alias);
