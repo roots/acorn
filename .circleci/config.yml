@@ -29,14 +29,14 @@ orbs:
           - checkout
           - restore_cache:
               keys:
-                - v1-php-{{ .Environment.PHP_VERSION }}-{{ checksum "composer.lock" }}
+                - v1-php-{{ .Environment.PHP_VERSION }}-{{ checksum "composer.json" }}
                 - v1-php-{{ .Environment.PHP_VERSION }}-
                 - v1-php-
           - run: composer install -n --prefer-dist --no-scripts --no-suggest
           - run: composer lint
           - run: composer test
           - save_cache:
-              key: v1-php-{{ .Environment.PHP_VERSION }}-{{ checksum "composer.lock" }}
+              key: v1-php-{{ .Environment.PHP_VERSION }}-{{ checksum "composer.json" }}
               paths:
                 - vendor
 
