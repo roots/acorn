@@ -9,7 +9,14 @@ use Roots\Acorn\Assets\Asset;
 use Roots\Acorn\Assets\Contracts\Asset as AssetContract;
 use Roots\Acorn\Assets\Contracts\Manifest as ManifestContract;
 
-class RelativePathManifest implements ManifestContract, \ArrayAccess, \Countable, \IteratorAggregate, \JsonSerializable, Arrayable, Jsonable
+class RelativePathManifest implements
+    Arrayable,
+    \ArrayAccess,
+    \Countable,
+    \IteratorAggregate,
+    Jsonable,
+    \JsonSerializable,
+    ManifestContract
 {
     /** @var array */
     protected $manifest;
