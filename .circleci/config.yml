@@ -6,12 +6,18 @@ orbs:
       php-73:
         docker:
           - image: 'circleci/php:7.3-stretch'
+        environment:
+          PHP_VERSION: '7.3'
       php-72:
         docker:
           - image: 'circleci/php:7.2-stretch'
+        environment:
+          PHP_VERSION: '7.2'
       php-71:
         docker:
           - image: 'circleci/php:7.1-stretch'
+        environment:
+          PHP_VERSION: '7.1'
     jobs:
       build-php:
         parameters:
@@ -23,13 +29,14 @@ orbs:
           - checkout
           - restore_cache:
               keys:
-                - composer-v1-{{ checksum "composer.lock" }}
-                - composer-v1-
+                - v1-php-{{ .Environment.PHP_VERSION }}-{{ checksum "composer.json" }}
+                - v1-php-{{ .Environment.PHP_VERSION }}-
+                - v1-php-
           - run: composer install -n --prefer-dist --no-scripts --no-suggest
           - run: composer lint
           - run: composer test
           - save_cache:
-              key: composer-v1-{{ checksum "composer.lock" }}
+              key: v1-php-{{ .Environment.PHP_VERSION }}-{{ checksum "composer.json" }}
               paths:
                 - vendor
 

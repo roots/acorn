@@ -2,13 +2,13 @@
 
 namespace Roots\Acorn\Assets;
 
-use Roots\Acorn\Contracts\Assets\Asset as AssetContract;
 use Illuminate\Support\Str;
+use Roots\Acorn\Assets\Contracts\Asset as AssetContract;
 
 class Asset implements AssetContract
 {
-    /** @var \Roots\Acorn\Assets\Manifest */
-    protected $manifest;
+    /** @var string */
+    protected $uri;
 
     /** @var string */
     protected $path;
@@ -16,90 +16,35 @@ class Asset implements AssetContract
     /**
      * Get asset from manifest
      *
-     * @param  string $path Relative path of the asset before cache-busting
-     * @param  \Roots\Acorn\Assets\Manifest
-     * @return \Roots\Acorn\Assets\Asset
+     * @param  string $path Local path
+     * @param  string $uri Remote URI
      */
-    public function __construct(string $path, Manifest $manifest)
+    public function __construct(string $path, string $uri)
     {
-        $this->path     = $path;
-        $this->manifest = $manifest;
+        $this->path = Str::before($path, '?');
+        $this->uri = $uri;
     }
 
-    /**
-     * Get the manifest that references the asset
-     *
-     * @return \Roots\Acorn\Assets\Manifest
-     */
-    public function getManifest()
+    /** {@inheritdoc} */
+    public function uri() : string
     {
-        return $this->manifest;
+        return $this->uri;
     }
 
-    /**
-     * Get the asset's original relative path
-     *
-     * Example: styles/main.css
-     *
-     * @return string
-     */
-    public function original()
+    /** {@inheritdoc} */
+    public function path() : string
     {
         return $this->path;
     }
 
-    /**
-     * Get the asset's cache-busted relative path
-     *
-     * Example: /styles/a1b2c3.min.css
-     *
-     * @return string
-     */
-    public function revved()
-    {
-        return Str::start($this->manifest[Str::start($this->path, '/')] ?? $this->original(), '/');
-    }
-
-    /**
-     * Get the asset's remote URI
-     *
-     * Example: https://example.com/app/themes/sage/dist/styles/a1b2c3.min.css
-     *
-     * @return string
-     */
-    public function uri()
-    {
-        return $this->manifest->uri() . $this->revved();
-    }
-
-    /**
-     * Get the asset's local path
-     *
-     * Example: /srv/www/example.com/current/web/app/themes/sage/dist/styles/a1b2c3.min.css
-     *
-     * @return string
-     */
-    public function path()
-    {
-        return Str::before($this->manifest->path() . $this->revved(), '?');
-    }
-
-    /**
-     * Check whether the asset exists on the file system
-     *
-     * @return bool
-     */
-    public function exists()
+    /** {@inheritdoc} */
+    public function exists() : bool
     {
         return file_exists($this->path());
     }
 
-    /**
-     * Get the contents of the asset
-     *
-     * @return string|false
-     */
-    public function contents()
+    /** {@inheritdoc} */
+    public function contents() : string
     {
         if (! $this->exists()) {
             return false;

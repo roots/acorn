@@ -62,23 +62,13 @@ function config($key = null, $default = null)
 /**
  * Get asset from manifest
  *
- * @param  string $asset Relative path of the asset before cache-busting
- * @param  \Roots\Acorn\Assets\Manifest $manifest
+ * @param  string $key Asset key, typically a relative path to the asset
+ * @param  string $manifest Name of registered manifest
  * @return \Roots\Acorn\Assets\Asset
  */
-function asset($asset, Manifest $manifest = null)
+function asset($key, $manifest = null)
 {
-    if (! $manifest) {
-        $manifest = app('assets.manifest');
-    }
-
-    /*
-     * Massage the asset reference slightly to alleviate common issues
-     */
-    $asset = str_replace('\\', '/', $asset);
-    $asset = ltrim($asset, '/');
-
-    return new Asset($asset, $manifest);
+    return app('assets')->manifest($manifest)->get($key);
 }
 
 /**
