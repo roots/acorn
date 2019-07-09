@@ -41,14 +41,14 @@
     "illuminate/support": "^5.8",
     "illuminate/view": "^5.8",
     "league/flysystem": "^1.0",
-    "roots/support": "dev-master"
+    "roots/support": "dev-master",
+    "symfony/var-dumper": "^4.3"
   },
   "require-dev": {
     "mikey179/vfsstream": "^1.6",
     "phpunit/phpunit": "^7.5|^8.0",
     "roave/security-advisories": "dev-master",
-    "squizlabs/php_codesniffer": "^3.3",
-    "symfony/var-dumper": "^4.2"
+    "squizlabs/php_codesniffer": "^3.3"
   },
   "scripts": {
     "lint": [
