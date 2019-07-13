@@ -31,7 +31,7 @@ class SageFeatures
 
     protected function featureAssets(Application $app)
     {
-        $app->register(\Roots\Acorn\Assets\ManifestServiceProvider::class);
+        $app->register(\Roots\Acorn\Assets\AssetsServiceProvider::class);
     }
 
     protected function featureBlade(Application $app)

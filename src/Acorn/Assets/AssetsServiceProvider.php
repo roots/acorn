@@ -4,7 +4,7 @@ namespace Roots\Acorn\Assets;
 
 use Roots\Acorn\ServiceProvider;
 
-class ManifestServiceProvider extends ServiceProvider
+class AssetsServiceProvider extends ServiceProvider
 {
     /** {@inheritDoc} */
     public function register()
