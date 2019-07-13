@@ -141,6 +141,20 @@ trait Application
     }
 
     /**
+     * Get the path to the language files.
+     *
+     * @copyright Taylor Otwell
+     * @license   https://github.com/laravel/framework/blob/v5.8.5/LICENSE.md MIT
+     * @link https://github.com/laravel/framework/blob/v5.8.5/src/Illuminate/Foundation/Application.php#L383-L391
+     *
+     * @return string
+     */
+    public function langPath()
+    {
+        return $this->resourcePath() . DIRECTORY_SEPARATOR . 'lang';
+    }
+
+    /**
      * Get the path to the environment file directory.
      *
      * @copyright Taylor Otwell
