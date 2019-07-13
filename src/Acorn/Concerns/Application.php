@@ -49,8 +49,8 @@ trait Application
     /** @var string The custom database path defined by the developer. */
     protected $databasePath;
 
-    /** @var string The custom environment path defined by the developer. */
-    protected $environmentPath;
+    /** @var string The custom public path defined by the developer. */
+    protected $publicPath;
 
     /** @var string The custom database path defined by the developer. */
     protected $storagePath;
@@ -71,6 +71,10 @@ trait Application
     /**
      * Get the path to the application "app" directory.
      *
+     * @copyright Taylor Otwell
+     * @license   https://github.com/laravel/framework/blob/v5.8.5/LICENSE.md MIT
+     * @link https://github.com/laravel/framework/blob/v5.8.5/src/Illuminate/Foundation/Application.php#L296-L307
+     *
      * @param  string  $path
      * @return string
      */
@@ -78,6 +82,22 @@ trait Application
     {
         $appPath = $this->appPath ?: $this->basePath . DIRECTORY_SEPARATOR . 'app';
         return $appPath . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+    }
+
+    /**
+     * Set the application directory.
+     *
+     * @copyright Taylor Otwell
+     * @license   https://github.com/laravel/framework/blob/v5.8.5/LICENSE.md MIT
+     * @link https://github.com/laravel/framework/blob/v5.8.5/src/Illuminate/Foundation/Application.php#L309-L322
+     *
+     * @param  string  $path
+     * @return $this
+     */
+    public function useAppPath($path)
+    {
+        $this->appPath = $path;
+        return $this;
     }
 
     /**
@@ -141,6 +161,22 @@ trait Application
     }
 
     /**
+     * Set the database directory.
+     *
+     * @copyright Taylor Otwell
+     * @license   https://github.com/laravel/framework/blob/v5.8.5/LICENSE.md MIT
+     * @link https://github.com/laravel/framework/blob/v5.8.5/src/Illuminate/Foundation/Application.php#L368-L381
+     *
+     * @param  string  $path
+     * @return $this
+     */
+    public function useDatabasePath($path)
+    {
+        $this->databasePath = $path;
+        return $this;
+    }
+
+    /**
      * Get the path to the language files.
      *
      * @copyright Taylor Otwell
@@ -155,20 +191,6 @@ trait Application
     }
 
     /**
-     * Get the path to the environment file directory.
-     *
-     * @copyright Taylor Otwell
-     * @license   https://github.com/laravel/framework/blob/v5.8.5/LICENSE.md MIT
-     * @link https://github.com/laravel/framework/blob/v5.8.5/src/Illuminate/Foundation/Application.php#L439-L447
-     *
-     * @return string
-     */
-    public function environmentPath()
-    {
-        return $this->environmentPath ?: $this->basePath;
-    }
-
-    /**
      * Get the path to the public / web directory.
      *
      * @copyright Taylor Otwell
@@ -179,7 +201,19 @@ trait Application
      */
     public function publicPath()
     {
-        return $this->basePath . DIRECTORY_SEPARATOR . 'public';
+        return $this->publicPath ?? $this->basePath . DIRECTORY_SEPARATOR . 'public';
+    }
+
+    /**
+     * Set the public path.
+     *
+     * @param  string  $path
+     * @return $this
+     */
+    public function usePublicPath($path)
+    {
+        $this->publicPath = $path;
+        return $this;
     }
 
     /**
@@ -209,6 +243,22 @@ trait Application
     public function storagePath()
     {
         return $this->storagePath ?: $this->basePath . DIRECTORY_SEPARATOR . 'storage';
+    }
+
+    /**
+     * Set the storage directory.
+     *
+     * @copyright Taylor Otwell
+     * @license   https://github.com/laravel/framework/blob/v5.8.5/LICENSE.md MIT
+     * @link https://github.com/laravel/framework/blob/v5.8.5/src/Illuminate/Foundation/Application.php#L413-L426
+     *
+     * @param  string  $path
+     * @return $this
+     */
+    public function useStoragePath($path)
+    {
+        $this->storagePath = $path;
+        return $this;
     }
 
     /**
@@ -544,34 +594,6 @@ trait Application
     }
 
     /**
-     * Get the environment file the application is using.
-     *
-     * @copyright Taylor Otwell
-     * @license   https://github.com/laravel/framework/blob/v5.8.5/LICENSE.md MIT
-     * @link https://github.com/laravel/framework/blob/v5.8.5/src/Illuminate/Foundation/Application.php#L475-L483
-     *
-     * @return string
-     */
-    public function environmentFile()
-    {
-        return $this->environmentFile ?: '.env';
-    }
-
-    /**
-     * Get the fully qualified path to the environment file.
-     *
-     * @copyright Taylor Otwell
-     * @license   https://github.com/laravel/framework/blob/v5.8.5/LICENSE.md MIT
-     * @link https://github.com/laravel/framework/blob/v5.8.5/src/Illuminate/Foundation/Application.php#L485-L493
-     *
-     * @return string
-     */
-    public function environmentFilePath()
-    {
-        return $this->environmentPath() . DIRECTORY_SEPARATOR . $this->environmentFile();
-    }
-
-    /**
      * Get the path to the configuration cache file.
      *
      * @copyright Taylor Otwell
@@ -825,23 +847,6 @@ trait Application
     }
 
     /**
-     * Set the environment file to be loaded during bootstrapping.
-     *
-     * @copyright Taylor Otwell
-     * @license   https://github.com/laravel/framework/blob/v5.8.5/LICENSE.md MIT
-     * @link https://github.com/laravel/framework/blob/v5.8.5/src/Illuminate/Foundation/Application.php#L462-L473
-     *
-     * @param  string  $file
-     * @return $this
-     */
-    public function loadEnvironmentFrom($file)
-    {
-        $this->environmentFile = $file;
-
-        return $this;
-    }
-
-    /**
      * Determine if the application routes are cached.
      *
      * @copyright Taylor Otwell
@@ -901,5 +906,46 @@ trait Application
         foreach ($this->terminatingCallbacks as $terminating) {
             $this->call($terminating);
         }
+    }
+
+    /**
+     * This method is not used.
+     *
+     * @return string
+     */
+    public function environmentFile()
+    {
+        //--
+    }
+
+    /**
+     * This method is not used.
+     *
+     * @return string
+     */
+    public function environmentFilePath()
+    {
+        // --
+    }
+
+    /**
+     * This method is not used.
+     *
+     * @return string
+     */
+    public function environmentPath()
+    {
+        // --
+    }
+
+    /**
+     * This method is not used.
+     *
+     * @param string
+     * @return string
+     */
+    public function loadEnvironmentFrom($file)
+    {
+        // --
     }
 }
