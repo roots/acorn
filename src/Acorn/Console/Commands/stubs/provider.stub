@@ -2,7 +2,7 @@
 
 namespace DummyNamespace;
 
-use Illuminate\Support\ServiceProvider;
+use Roots\Acorn\ServiceProvider;
 
 class DummyClass extends ServiceProvider
 {

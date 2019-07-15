@@ -2,20 +2,49 @@
 
 namespace Roots\Acorn\Console\Commands;
 
-use Roots\Acorn\Console\Command;
 use Roots\Acorn\Filesystem\Filesystem;
 
 class ViewClearCommand extends Command
 {
     /**
-     * Clear all compiled view files
+     * The console command signature.
      *
-     * ## EXAMPLES
-     *
-     *     wp acorn view:clear
-     *
+     * @var string
      */
-    public function __invoke($args, $assoc_args)
+    protected $signature = 'view:clear';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Clears all compiled view files';
+
+    /**
+     * The filesystem instance.
+     *
+     * @var \Illuminate\Filesystem\Filesystem
+     */
+    protected $files;
+
+    /**
+     * Create a new view clear command instance.
+     *
+     * @param  \Illuminate\Filesystem\Filesystem  $files
+     * @return void
+     */
+    public function __construct(Filesystem $files)
+    {
+        parent::__construct();
+        $this->files = $files;
+    }
+
+    /**
+     * Execute the console command.
+     *
+     * @return mixed
+     */
+    public function handle()
     {
         $path = $this->app['config']['view.compiled'];
 
@@ -23,7 +52,10 @@ class ViewClearCommand extends Command
             $this->error('View path not found.');
         }
 
-        $this->files->delete($this->files->glob("{$path}/*"));
-        $this->success('Compiled views cleared!');
+        $this->files->delete(
+            $this->files->glob("{$path}/*")
+        );
+
+        $this->info('Compiled views cleared!');
     }
 }

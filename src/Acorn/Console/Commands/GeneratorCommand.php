@@ -1,21 +1,39 @@
 <?php
 
-namespace Roots\Acorn\Console;
+namespace Roots\Acorn\Console\Commands;
 
-use function Roots\config;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
+use Roots\Acorn\Filesystem\Filesystem;
+use Symfony\Component\Console\Input\InputArgument;
 
 abstract class GeneratorCommand extends Command
 {
-    /** @var string The type of class being generated. */
+    /**
+     * The filesystem instance.
+     *
+     * @var \Roots\Acorn\Filesystem\Filesystem
+     */
+    protected $files;
+
+    /**
+     * The type of class being generated.
+     *
+     * @var string
+     */
     protected $type;
 
-    /** @var string The name of the provider */
-    protected $name;
+    /**
+     * Create a new controller creator command instance.
+     *
+     * @param  \Illuminate\Filesystem\Filesystem  $files
+     * @return void
+     */
+    public function __construct(Filesystem $files)
+    {
+        parent::__construct();
 
-    /** @var bool Force the creation of the provider */
-    protected $force = false;
+        $this->files = $files;
+    }
 
     /**
      * Get the stub file for the generator.
@@ -39,7 +57,9 @@ abstract class GeneratorCommand extends Command
         // First we will check to see if the class already exists. If it does, we don't want
         // to create the class and overwrite the user's code. So, we will bail out so the
         // code is untouched. Otherwise, we will continue generating this class' files.
-        if ((! $this->force) && $this->alreadyExists($this->getNameInput())) {
+        if ((! $this->hasOption('force') ||
+             ! $this->option('force')) &&
+             $this->alreadyExists($this->getNameInput())) {
             $this->error($this->type . ' already exists!');
 
             return false;
@@ -52,7 +72,7 @@ abstract class GeneratorCommand extends Command
 
         $this->files->put($path, $this->buildClass($name));
 
-        $this->success($this->type . ' created successfully.');
+        $this->info($this->type . ' created successfully.');
     }
 
     /**
@@ -152,8 +172,8 @@ abstract class GeneratorCommand extends Command
     protected function replaceNamespace(&$stub, $name)
     {
         $stub = str_replace(
-            ['DummyNamespace', 'DummyRootNamespace'],
-            [$this->getNamespace($name), $this->rootNamespace()],
+            ['DummyNamespace', 'DummyRootNamespace', 'NamespacedDummyUserModel'],
+            [$this->getNamespace($name), $this->rootNamespace(), $this->userProviderModel()],
             $stub
         );
 
@@ -192,7 +212,13 @@ abstract class GeneratorCommand extends Command
      */
     protected function getNameInput()
     {
-        return trim($this->name);
+        $name = $this->argument('name');
+
+        if (is_array($name)) {
+            $name = array_pop($name);
+        }
+
+        return trim($name);
     }
 
     /**
@@ -217,5 +243,17 @@ abstract class GeneratorCommand extends Command
         $provider = config("auth.guards.{$guard}.provider");
 
         return config("auth.providers.{$provider}.model");
+    }
+
+    /**
+     * Get the console command arguments.
+     *
+     * @return array
+     */
+    protected function getArguments()
+    {
+        return [
+            ['name', InputArgument::REQUIRED, 'The name of the class'],
+        ];
     }
 }

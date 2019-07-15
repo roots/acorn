@@ -2,31 +2,60 @@
 
 namespace Roots\Acorn\Console\Commands;
 
-use Roots\Acorn\Console\Command;
-use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
-use LogicException;
 use Throwable;
+use LogicException;
+use Roots\Acorn\Application;
+use Roots\Acorn\Filesystem\Filesystem;
+use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 
 class ConfigCacheCommand extends Command
 {
     /**
-     * Create a cache file for faster configuration loading
+     * The console command name.
      *
-     * ## EXAMPLES
+     * @var string
+     */
+    protected $name = 'config:cache';
+
+    /**
+     * The console command description.
      *
-     *     wp acorn config:cache
+     * @var string
+     */
+    protected $description = 'Create a cache file for faster configuration loading';
+
+    /**
+     * The filesystem instance.
+     *
+     * @var \Illuminate\Filesystem\Filesystem
+     */
+    protected $files;
+
+    /**
+     * Create a new config cache command instance.
+     *
+     * @param  \Illuminate\Filesystem\Filesystem  $files
+     * @return void
+     */
+    public function __construct(Filesystem $files)
+    {
+        parent::__construct();
+
+        $this->files = $files;
+    }
+
+    /**
+     * Execute the console command.
      *
      * @return void
      *
      * @throws \LogicException
      */
-    public function __invoke($args, $assoc_args)
+    public function handle()
     {
         $this->call('config:clear');
 
-        $this->parse($assoc_args);
-
-        $config = $this->getFreshConfiguration();
+        $config = $this->getConfig();
 
         $configPath = $this->app->getCachedConfigPath();
 
@@ -43,15 +72,15 @@ class ConfigCacheCommand extends Command
             throw new LogicException('Your configuration files are not serializable.', 0, $e);
         }
 
-        $this->success('Configuration cached successfully!');
+        $this->info('Configuration cached successfully!');
     }
 
     /**
-     * Boot a fresh copy of the application configuration.
+     * Return a copy of the application configuration.
      *
      * @return array
      */
-    protected function getFreshConfiguration()
+    protected function getConfig()
     {
         return $this->app['config']->all();
     }

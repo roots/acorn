@@ -2,60 +2,80 @@
 
 namespace Roots\Acorn\Console\Commands;
 
-use function Roots\base_path;
-use Roots\Acorn\Console\Command;
 use Illuminate\Support\Arr;
-use Illuminate\Support\ServiceProvider;
 use League\Flysystem\MountManager;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\ServiceProvider;
+use League\Flysystem\Filesystem as Flysystem;
+use League\Flysystem\Adapter\Local as LocalAdapter;
 
 class VendorPublishCommand extends Command
 {
-    /** @var string The provider to publish. */
-    protected $provider = null;
-
-    /** @var array Tags to publish */
-    protected $tags = [];
-
-    /** @var bool Publish assets for all service providers without prompt */
-    protected $all = false;
-
-    /** @var bool Overwrite any existing files */
-    protected $force = false;
+    /**
+     * The filesystem instance.
+     *
+     * @var \Illuminate\Filesystem\Filesystem
+     */
+    protected $files;
 
     /**
-     * Publish any publishable assets from vendor packages
+     * The provider to publish.
      *
-     * ## OPTIONS
+     * @var string
+     */
+    protected $provider = null;
+
+    /**
+     * The tags to publish.
      *
-     * [--force]
-     * : Overwrite any existing files
+     * @var array
+     */
+    protected $tags = [];
+
+    /**
+     * The console command signature.
      *
-     * [--all]
-     * : Publish assets for all service providers without prompt
+     * @var string
+     */
+    protected $signature = 'vendor:publish {--force : Overwrite any existing files}
+                    {--all : Publish assets for all service providers without prompt}
+                    {--provider= : The service provider that has assets you want to publish}
+                    {--tag=* : One or many tags that have assets you want to publish}';
+
+    /**
+     * The console command description.
      *
-     * [--provider=<provider>]
-     * : The service provider that has assets you want to publish
+     * @var string
+     */
+    protected $description = 'Publish any publishable assets from vendor packages';
+
+    /**
+     * Create a new command instance.
      *
-     * [--tags=<tags>]
-     * : One or many (comma separated) tags that have assets you want to publish
-     *
-     * ## EXAMPLES
-     *
-     *     wp acorn vendor:publish
+     * @param  \Illuminate\Filesystem\Filesystem  $files
+     * @return void
+     */
+    public function __construct(Filesystem $files)
+    {
+        parent::__construct();
+
+        $this->files = $files;
+    }
+
+    /**
+     * Execute the console command.
      *
      * @return void
      */
-    public function __invoke($args, $assoc_args)
+    public function handle()
     {
-        $this->parse($assoc_args);
-
         $this->determineWhatShouldBePublished();
 
         foreach ($this->tags ?: [null] as $tag) {
             $this->publishTag($tag);
         }
 
-        $this->success('Publishing complete.');
+        $this->info('Publishing complete.');
     }
 
     /**
@@ -65,9 +85,13 @@ class VendorPublishCommand extends Command
      */
     protected function determineWhatShouldBePublished()
     {
-        if ($this->all) {
+        if ($this->option('all')) {
             return;
         }
+
+        [$this->provider, $this->tags] = [
+            $this->option('provider'), (array) $this->option('tag'),
+        ];
 
         if (! $this->provider && ! $this->tags) {
             $this->promptForProviderOrTag();
@@ -82,7 +106,7 @@ class VendorPublishCommand extends Command
     protected function promptForProviderOrTag()
     {
         $choice = $this->choice(
-            "Which provider's or tag's files would you like to publish?",
+            "Which provider or tag's files would you like to publish?",
             $choices = $this->publishableChoices()
         );
 
@@ -101,9 +125,9 @@ class VendorPublishCommand extends Command
     protected function publishableChoices()
     {
         return array_merge(
-            ['Publish files from all providers and tags listed below'],
-            preg_filter('/^/', 'Provider: ', Arr::sort(ServiceProvider::publishableProviders())),
-            preg_filter('/^/', 'Tag: ', Arr::sort(ServiceProvider::publishableGroups()))
+            ['<comment>Publish files from all providers and tags listed below</comment>'],
+            preg_filter('/^/', '<comment>Provider: </comment>', Arr::sort(ServiceProvider::publishableProviders())),
+            preg_filter('/^/', '<comment>Tag: </comment>', Arr::sort(ServiceProvider::publishableGroups()))
         );
     }
 
@@ -116,6 +140,7 @@ class VendorPublishCommand extends Command
     protected function parseChoice($choice)
     {
         [$type, $value] = explode(': ', strip_tags($choice));
+
         if ($type === 'Provider') {
             $this->provider = $value;
         } elseif ($type === 'Tag') {
@@ -144,7 +169,9 @@ class VendorPublishCommand extends Command
      */
     protected function pathsToPublish($tag)
     {
-        return ServiceProvider::pathsToPublish($this->provider, $tag);
+        return ServiceProvider::pathsToPublish(
+            $this->provider, $tag
+        );
     }
 
     /**
@@ -161,6 +188,7 @@ class VendorPublishCommand extends Command
         } elseif ($this->files->isDirectory($from)) {
             return $this->publishDirectory($from, $to);
         }
+
         $this->error("Can't locate path: <{$from}>");
     }
 
@@ -173,9 +201,11 @@ class VendorPublishCommand extends Command
      */
     protected function publishFile($from, $to)
     {
-        if (! $this->files->exists($to) || $this->force) {
+        if (! $this->files->exists($to) || $this->option('force')) {
             $this->createParentDirectory(dirname($to));
+
             $this->files->copy($from, $to);
+
             $this->status($from, $to, 'File');
         }
     }
@@ -193,6 +223,7 @@ class VendorPublishCommand extends Command
             'from' => new Flysystem(new LocalAdapter($from)),
             'to' => new Flysystem(new LocalAdapter($to)),
         ]));
+
         $this->status($from, $to, 'Directory');
     }
 
@@ -205,8 +236,8 @@ class VendorPublishCommand extends Command
     protected function moveManagedFiles($manager)
     {
         foreach ($manager->listContents('from://', true) as $file) {
-            if ($file['type'] === 'file' && (! $manager->has('to://' . $file['path']) || $this->option('force'))) {
-                $manager->put('to://' . $file['path'], $manager->read('from://' . $file['path']));
+            if ($file['type'] === 'file' && (! $manager->has('to://'.$file['path']) || $this->option('force'))) {
+                $manager->put('to://'.$file['path'], $manager->read('from://'.$file['path']));
             }
         }
     }
@@ -234,8 +265,10 @@ class VendorPublishCommand extends Command
      */
     protected function status($from, $to, $type)
     {
-        $from = str_replace(base_path(), '', realpath($from));
-        $to = str_replace(base_path(), '', realpath($to));
-        $this->info('Copied ' . $type . ' [' . $from . '] To [' . $to . ']');
+        $from = str_replace($this->app->basePath(), '', realpath($from));
+
+        $to = str_replace($this->app->basePath(), '', realpath($to));
+
+        $this->line('<info>Copied '.$type.'</info> <comment>['.$from.']</comment> <info>To</info> <comment>['.$to.']</comment>');
     }
 }

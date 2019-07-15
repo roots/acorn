@@ -2,24 +2,33 @@
 
 namespace Roots\Acorn\Console\Commands;
 
-use Roots\Acorn\Console\Command;
-
 class OptimizeClearCommand extends Command
 {
-    /**
-     * Remove cached framework files.
+   /**
+     * The console command signature.
      *
-     * ## EXAMPLES
-     *
-     *     wp acorn optimize:clear
-     *
+     * @var string
      */
-    public function __invoke($args, $assoc_args)
+    protected $signature = 'optimize:clear';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Remove cached framework files.';
+
+   /**
+     * Execute the console command.
+     *
+     * @return mixed
+     */
+    public function handle()
     {
         $this->call('config:clear');
         $this->call('view:clear');
         $this->call('package:clear');
 
-        $this->success('Caches cleared successfully!');
+        $this->info('Caches cleared successfully!');
     }
 }

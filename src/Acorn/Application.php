@@ -87,6 +87,23 @@ class Application extends Container implements ApplicationContract
     }
 
     /**
+     * Prepare the application to execute a console command.
+     *
+     * @param  bool  $aliases
+     * @return void
+     */
+    public function prepareForConsoleCommand($aliases = true)
+    {
+        $this->withAliases($aliases);
+
+        $this->make('cache');
+
+        $this->configure('database');
+
+        $this->register('Illuminate\Database\MigrationServiceProvider');
+    }
+
+    /**
      * Configure and load the given component and provider.
      *
      * @param  string  $config
@@ -182,7 +199,7 @@ class Application extends Container implements ApplicationContract
     {
         // phpcs:disable
         $this->alias([
-            'app'                  => [\Acorn\Application\Container::class, \Illuminate\Contracts\Container\Container::class, \Illuminate\Contracts\Foundation\Application::class,  \Psr\Container\ContainerInterface::class],
+            'app'                  => [\Acorn\Application\Container::class, \Illuminate\Contracts\Container\Container::class, \Illuminate\Contracts\Foundation\Application::class, \Psr\Container\ContainerInterface::class],
             'assets.manifest'      => [\Acorn\Assets\Manifest::class],
             'auth'                 => [\Illuminate\Auth\AuthManager::class, \Illuminate\Contracts\Auth\Factory::class],
             'auth.driver'          => [\Illuminate\Contracts\Auth\Guard::class],
