@@ -32,6 +32,7 @@ trait Bindings
             'registerCacheBindings' => ['cache', 'cache.store', \Illuminate\Contracts\Cache\Factory::class, \Illuminate\Contracts\Cache\Repository::class],
             'registerComposerBindings' => ['composer'],
             'registerConfigBindings' => ['config'],
+            'registerConsoleBindings' => ['artisan', 'console', \Acorn\Console\Kernel::class, \Illuminate\Contracts\Console\Kernel::class],
             'registerDatabaseBindings' => ['db', \Illuminate\Database\Eloquent\Factory::class],
             'registerEncrypterBindings' => ['encrypter', \Illuminate\Contracts\Encryption\Encrypter::class],
             'registerEventBindings' => ['events', \Illuminate\Contracts\Events\Dispatcher::class],
@@ -45,6 +46,7 @@ trait Bindings
             'registerTranslationBindings' => ['translator'],
             'registerUrlGeneratorBindings' => ['url'],
             'registerValidatorBindings' => ['validator', \Illuminate\Contracts\Validation\Factory::class],
+            'registerValidatorBindings' => [\Illuminate\Contracts\Validation\Factory::class],
             'registerViewBindings' => ['view', \Illuminate\Contracts\View\Factory::class],
         ] as $method => $abstracts) {
             foreach($abstracts as $abstract) {
@@ -141,6 +143,7 @@ trait Bindings
         $this->singleton('cache', function () {
             return $this->loadComponent('cache', \Illuminate\Cache\CacheServiceProvider::class);
         });
+
         $this->singleton('cache.store', function () {
             return $this->loadComponent('cache', \Illuminate\Cache\CacheServiceProvider::class, 'cache.store');
         });
@@ -168,6 +171,16 @@ trait Bindings
         $this->singleton('config', function () {
             return new ConfigRepository();
         });
+    }
+
+    /**
+     * Registeer container bindings for the application.
+     *
+     * @return void
+     */
+    protected function registerConsoleBindings()
+    {
+        $this->singleton('console', \Roots\Acorn\Console\Kernel::class);
     }
 
     /**
@@ -274,9 +287,8 @@ trait Bindings
      */
     protected function registerLogBindings()
     {
-        $this->singleton(\Psr\Log\LoggerInterface::class, function () {
-            $this->configure('logging');
-            return new LogManager($this);
+        $this->singleton('log', function () {
+            return $this->loadComponent('log', \Illuminate\Log\LogServiceProvider::class);
         });
     }
 
@@ -304,7 +316,7 @@ trait Bindings
     {
         $this->singleton('translator', function () {
             $this->configure('app');
-            $this->instance('path.lang', $this->langPath());
+            $this->instance('path.lang', $this->getLanguagePath());
             $this->register(\Illuminate\Translation\TranslationServiceProvider::class);
             return $this->make('translator');
         });

@@ -144,7 +144,7 @@ class Bootloader
             \Roots\Acorn\Bootstrap\RegisterGlobals::class,
             \Roots\Acorn\Bootstrap\LoadBindings::class,
             \Roots\Acorn\Bootstrap\RegisterProviders::class,
-            \Roots\Acorn\Bootstrap\WPCLI::class,
+            \Roots\Acorn\Bootstrap\Console::class,
         ];
 
         return \apply_filters('acorn/bootstrap', $bootstrap);

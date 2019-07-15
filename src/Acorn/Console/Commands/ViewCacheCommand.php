@@ -2,25 +2,32 @@
 
 namespace Roots\Acorn\Console\Commands;
 
-use Roots\Acorn\Console\Command;
 use Illuminate\Support\Collection;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
 class ViewCacheCommand extends Command
 {
-    /**
-     * Compile all of the application's Blade templates
+   /**
+     * The console command signature.
      *
-     * ## EXAMPLES
-     *
-     *     wp acorn config:cache
-     *
-     * @when before_run_command
-     *
-     * @return void
+     * @var string
      */
-    public function __invoke($args, $assoc_args)
+    protected $signature = 'view:cache';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Compile all of the application\'s Blade templates';
+
+   /**
+     * Execute the console command.
+     *
+     * @return mixed
+     */
+    public function handle()
     {
         $this->call('view:clear');
 
@@ -28,7 +35,7 @@ class ViewCacheCommand extends Command
             $this->compileViews($this->bladeFilesIn([$path]));
         });
 
-        $this->success('Blade templates cached successfully!');
+        $this->info('Blade templates cached successfully!');
     }
 
     /**

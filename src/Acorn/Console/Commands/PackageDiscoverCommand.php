@@ -2,40 +2,38 @@
 
 namespace Roots\Acorn\Console\Commands;
 
-use Roots\Acorn\Console\Command;
-use Roots\Acorn\Filesystem\Filesystem;
 use Roots\Acorn\PackageManifest;
-use Illuminate\Contracts\Foundation\Application;
 
 class PackageDiscoverCommand extends Command
 {
-    /** @var \Roots\Acorn\PackageManifest */
-    protected $manifest;
-
-    public function __construct(Filesystem $files, Application $app, PackageManifest $manifest)
-    {
-        parent::__construct($files, $app);
-
-        $this->manifest = $manifest;
-    }
+    /**
+     * The console command signature.
+     *
+     * @var string
+     */
+    protected $signature = 'package:discover';
 
     /**
-     * Discover and publish vendor packages.
+     * The console command description.
      *
-     * ## EXAMPLES
+     * @var string
+     */
+    protected $description = 'Rebuild the cached package manifest';
+
+    /**
+     * Execute the console command.
      *
-     *     wp acorn package:discover
-     *
+     * @param  \Illuminate\Foundation\PackageManifest  $manifest
      * @return void
      */
-    public function __invoke($args, $assoc_args)
+    public function handle(PackageManifest $manifest)
     {
-        $this->manifest->build();
+        $manifest->build();
 
-        foreach (array_keys($this->manifest->manifest) as $package) {
-            $this->info("Discovered Package: {$package}");
+        foreach (array_keys($manifest->manifest) as $package) {
+            $this->line("Discovered Package: <info>{$package}</info>");
         }
 
-        $this->success('Package manifest generated successfully.');
+        $this->info('Package manifest generated successfully.');
     }
 }

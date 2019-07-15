@@ -2,7 +2,9 @@
 
 namespace Roots\Acorn\Filesystem;
 
-class Filesystem extends \Illuminate\Filesystem\Filesystem
+use Illuminate\Filesystem\Filesystem as FilesystemBase;
+
+class Filesystem extends FilesystemBase
 {
     /**
      * Normalizes file path separators

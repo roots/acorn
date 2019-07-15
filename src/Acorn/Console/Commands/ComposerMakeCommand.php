@@ -2,42 +2,36 @@
 
 namespace Roots\Acorn\Console\Commands;
 
-use Roots\Acorn\Console\GeneratorCommand;
-
 class ComposerMakeCommand extends GeneratorCommand
 {
-    /** @var string The type of class being generated. */
-    protected $type = 'Composer';
-
-    /** @var array List of views served by the composer */
-    protected $views = [];
+    /**
+     * The console command signature.
+     *
+     * @var string
+     */
+    protected $signature = 'make:composer {name* : The name of your Composer class.}
+                           {--views= : List of views served by the composer}
+                           {--force : Overwrite any existing files}';
 
     /**
-     * Create a new composer class
+     * The console command description.
      *
-     * ## OPTIONS
-     *
-     * <name>
-     * : The name of the composer.
-     *
-     * [--views]
-     * : List of views served by the composer
-     *
-     * [--force]
-     * : Overwrite any existing files
-     *
-     * ## EXAMPLES
-     *
-     *     wp acorn make:composer
-     *
-     * @return void
+     * @var string
      */
-    public function __invoke($args, $assoc_args)
-    {
-        list($name) = $args;
-        $this->parse($assoc_args + compact('name'));
-        $this->handle();
-    }
+    protected $description = 'Create a new Composer class';
+    /**
+     * The type of class being generated.
+     *
+     * @var string
+     */
+    protected $type = 'Composer';
+
+    /**
+     * List of views served by the composer
+     *
+     * @var array
+     */
+    protected $views = [];
 
     /**
      * Get the stub file for the generator.
@@ -71,7 +65,7 @@ class ComposerMakeCommand extends GeneratorCommand
     {
         $stub = parent::buildClass($name);
 
-        return $this->replaceViews($stub, $this->views);
+        return $this->replaceViews($stub, explode(' ', $this->option('views')));
     }
 
     /**
@@ -84,6 +78,6 @@ class ComposerMakeCommand extends GeneratorCommand
     protected function replaceViews($stub, $views)
     {
         $views = implode("',\n        '", $views);
-        return str_replace("'dummy-views'", empty($views) ? '//' : "'{$views}'", $stub);
+        return str_replace('DummyViews', empty($views) ? '//' : "'{$views}'", $stub);
     }
 }

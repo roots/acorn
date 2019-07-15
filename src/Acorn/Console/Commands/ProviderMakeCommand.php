@@ -2,37 +2,28 @@
 
 namespace Roots\Acorn\Console\Commands;
 
-use Roots\Acorn\Console\GeneratorCommand;
-use Roots\Acorn\Filesystem\Filesystem;
-
 class ProviderMakeCommand extends GeneratorCommand
 {
-    /** @var string The type of class being generated */
-    protected $type = 'Provider';
+    /**
+     * The console command name.
+     *
+     * @var string
+     */
+    protected $name = 'make:provider';
 
     /**
-     * Create a new service provider class
+     * The console command description.
      *
-     * ## OPTIONS
-     *
-     * <name>
-     * : The name of the provider.
-     *
-     * [--force]
-     * : Overwrite any existing files
-     *
-     * ## EXAMPLES
-     *
-     *     wp acorn make:provider
-     *
-     * @return void
+     * @var string
      */
-    public function __invoke($args, $assoc_args)
-    {
-        list($name) = $args;
-        $this->parse($assoc_args + compact('name'));
-        $this->handle();
-    }
+    protected $description = 'Create a new service provider class';
+
+    /**
+     * The type of class being generated.
+     *
+     * @var string
+     */
+    protected $type = 'Provider';
 
     /**
      * Get the stub file for the generator.
@@ -43,7 +34,6 @@ class ProviderMakeCommand extends GeneratorCommand
     {
         return __DIR__ . '/stubs/provider.stub';
     }
-
 
     /**
      * Get the default namespace for the class.

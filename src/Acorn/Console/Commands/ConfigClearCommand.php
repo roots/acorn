@@ -2,23 +2,52 @@
 
 namespace Roots\Acorn\Console\Commands;
 
-use Roots\Acorn\Console\Command;
+use Roots\Acorn\Filesystem\Filesystem;
 
 class ConfigClearCommand extends Command
 {
+   /**
+     * The console command signature.
+     *
+     * @var string
+     */
+    protected $signature = 'config:clear';
+
     /**
-     * Remove the configuration cache file
+     * The console command description.
      *
-     * ## EXAMPLES
+     * @var string
+     */
+    protected $description = 'Remove the configuration cache file';
+
+    /**
+     * The filesystem instance.
      *
-     *     wp acorn config:clear
+     * @var \Illuminate\Filesystem\Filesystem
+     */
+    protected $files;
+
+    /**
+     * Create a new config clear command instance.
      *
+     * @param  \Illuminate\Filesystem\Filesystem  $files
      * @return void
      */
-    public function __invoke($args, $assoc_args)
+    public function __construct(Filesystem $files)
+    {
+        parent::__construct();
+        $this->files = $files;
+    }
+
+   /**
+     * Execute the console command.
+     *
+     * @return mixed
+     */
+    public function handle()
     {
         $this->files->delete($this->app->getCachedConfigPath());
 
-        $this->success('Configuration cache cleared!');
+        $this->info('Configuration cache cleared!');
     }
 }

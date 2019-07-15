@@ -2,21 +2,28 @@
 
 namespace Roots\Acorn\Console\Commands;
 
-use Roots\Acorn\Console\Command;
-use Roots\Acorn\Filesystem\Filesystem;
-
 class PackageClearCommand extends Command
 {
-    /**
-     * Remove compiled services and packages files.
+   /**
+     * The console command signature.
      *
-     * ## EXAMPLES
-     *
-     *     wp acorn package:clear
-     *
-     * @return void
+     * @var string
      */
-    public function __invoke($args, $assoc_args)
+    protected $signature = 'package:clear';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Remove compiled service and package files.';
+
+   /**
+     * Execute the console command.
+     *
+     * @return mixed
+     */
+    public function handle()
     {
         if (file_exists($servicesPath = $this->app->getCachedServicesPath())) {
             @unlink($servicesPath);
@@ -26,6 +33,6 @@ class PackageClearCommand extends Command
             @unlink($packagesPath);
         }
 
-        $this->success('Compiled services and packages files removed!');
+        $this->info('Compiled services and packages files removed!');
     }
 }

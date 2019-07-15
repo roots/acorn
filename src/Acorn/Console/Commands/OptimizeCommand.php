@@ -2,24 +2,33 @@
 
 namespace Roots\Acorn\Console\Commands;
 
-use Roots\Acorn\Console\Command;
-
 class OptimizeCommand extends Command
 {
-    /**
-     * Generate and cache framework files.
+   /**
+     * The console command signature.
      *
-     * ## EXAMPLES
-     *
-     *     wp acorn optimize
-     *
+     * @var string
      */
-    public function __invoke($args, $assoc_args)
+    protected $signature = 'optimize';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Generate and cache framework files';
+
+   /**
+     * Execute the console command.
+     *
+     * @return mixed
+     */
+    public function handle()
     {
         $this->call('config:cache');
         $this->call('view:cache');
         $this->call('package:discover');
 
-        $this->success('Files cached successfully!');
+        $this->info('Files cached successfully!');
     }
 }
