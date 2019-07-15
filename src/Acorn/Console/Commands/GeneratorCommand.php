@@ -228,7 +228,7 @@ abstract class GeneratorCommand extends Command
      */
     protected function rootNamespace()
     {
-        return $this->laravel->getNamespace();
+        return $this->app->getNamespace();
     }
 
     /**

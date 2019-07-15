@@ -57,7 +57,7 @@ class ConfigCacheCommand extends Command
 
         $config = $this->getConfig();
 
-        $configPath = $this->laravel->getCachedConfigPath();
+        $configPath = $this->app->getCachedConfigPath();
 
         $this->files->put(
             $configPath,
