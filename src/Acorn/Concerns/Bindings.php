@@ -46,7 +46,6 @@ trait Bindings
             'registerTranslationBindings' => ['translator'],
             'registerUrlGeneratorBindings' => ['url'],
             'registerValidatorBindings' => ['validator', \Illuminate\Contracts\Validation\Factory::class],
-            'registerValidatorBindings' => [\Illuminate\Contracts\Validation\Factory::class],
             'registerViewBindings' => ['view', \Illuminate\Contracts\View\Factory::class],
         ] as $method => $abstracts) {
             foreach($abstracts as $abstract) {
@@ -316,7 +315,7 @@ trait Bindings
     {
         $this->singleton('translator', function () {
             $this->configure('app');
-            $this->instance('path.lang', $this->getLanguagePath());
+            $this->instance('path.lang', $this->langPath());
             $this->register(\Illuminate\Translation\TranslationServiceProvider::class);
             return $this->make('translator');
         });
