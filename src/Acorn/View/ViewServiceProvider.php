@@ -67,6 +67,7 @@ class ViewServiceProvider extends ViewServiceProviderBase
     public function boot()
     {
         $this->attachDirectives();
+        $this->attachComponents();
         $this->attachComposers();
 
         if ($this->app['config']['view.debug']) {
@@ -93,6 +94,18 @@ class ViewServiceProvider extends ViewServiceProviderBase
                 $handler = $this->app->make($handler);
             }
             $blade->directive($name, $handler);
+        }
+    }
+
+    public function attachComponents()
+    {
+        $components = $this->app->config['view.components'];
+
+        if (! empty($components)) {
+            $blade = $this->app['view']->getEngineResolver()->resolve('blade')->getCompiler();
+            foreach ($components as $alias => $view) {
+                $blade->component($view, $alias);
+            }
         }
     }
 
