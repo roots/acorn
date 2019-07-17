@@ -3,6 +3,7 @@
 namespace Roots\Acorn\View;
 
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Arr;
 use Illuminate\View\View;
 use Illuminate\View\ViewServiceProvider as ViewServiceProviderBase;
 use Roots\Acorn\View\Composers\Debugger;
@@ -101,7 +102,7 @@ class ViewServiceProvider extends ViewServiceProviderBase
     {
         $components = $this->app->config['view.components'];
 
-        if (! empty($components)) {
+        if (is_array($components) && Arr::isAssoc($components)) {
             $blade = $this->app['view']->getEngineResolver()->resolve('blade')->getCompiler();
             foreach ($components as $alias => $view) {
                 $blade->component($view, $alias);
