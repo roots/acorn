@@ -42,6 +42,10 @@ class LoadConfiguration
         $app->detectEnvironment(function () use ($config) {
             return $config->get('app.env', defined('WP_ENV') ? \WP_ENV : 'production');
         });
+
+        date_default_timezone_set($config->get('app.timezone', 'UTC'));
+
+        mb_internal_encoding('UTF-8');
     }
 
     /**
