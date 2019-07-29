@@ -71,7 +71,7 @@ class Sage
      */
     public function attach()
     {
-        $this->attachPostVariable();
+        $this->attachPostFilter();
         $this->attachCommentsTemplateFilter();
         $this->attachSearchFormFilter();
         $this->attachBodyClassFilter();
