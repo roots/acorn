@@ -42,6 +42,16 @@ class ViewServiceProvider extends ViewServiceProviderBase
     }
 
     /**
+     * Return an instance of View.
+     *
+     * @return Illuminate\View\View
+     */
+    protected function view()
+    {
+        return $this->app['view'];
+    }
+
+    /**
      * Register View Finder
      *
      * @return void
@@ -112,10 +122,10 @@ class ViewServiceProvider extends ViewServiceProviderBase
      */
     public function preflight(Filesystem $files)
     {
-        $compiled_dir = $this->app['config']['view.compiled'];
+        $storageDir = $this->app['config']['view.compiled'];
 
-        if (! $files->exists($compiled_dir)) {
-            $files->makeDirectory($compiled_dir, 0755, true);
+        if (! $files->exists($storageDir)) {
+            $files->makeDirectory($storageDir, 0755, true);
         }
     }
 
@@ -126,7 +136,7 @@ class ViewServiceProvider extends ViewServiceProviderBase
      */
     public function attachDirectives()
     {
-        $blade = $this->app['view']->getEngineResolver()->resolve('blade')->getCompiler();
+        $blade = $this->view()->getEngineResolver()->resolve('blade')->getCompiler();
         $directives = $this->app['config']['view.directives'];
         $directives += ['inject' => InjectionDirective::class];
 
@@ -149,7 +159,7 @@ class ViewServiceProvider extends ViewServiceProviderBase
         $components = $this->app->config['view.components'];
 
         if (is_array($components) && Arr::isAssoc($components)) {
-            $blade = $this->app['view']->getEngineResolver()->resolve('blade')->getCompiler();
+            $blade = $this->view()->getEngineResolver()->resolve('blade')->getCompiler();
 
             foreach ($components as $alias => $view) {
                 $blade->component($view, $alias);
@@ -164,10 +174,8 @@ class ViewServiceProvider extends ViewServiceProviderBase
      */
     public function attachComposers()
     {
-        $view = $this->app['view'];
-
         foreach ($this->app->config['view.composers'] as $composer) {
-            $view->composer($composer::views(), $composer);
+            $this->view()->composer($composer::views(), $composer);
         }
 
         $paths = collect($this->app->path('Composers'))
@@ -191,7 +199,7 @@ class ViewServiceProvider extends ViewServiceProviderBase
 
             if (is_subclass_of($composer, Composer::class) &&
                 ! (new ReflectionClass($composer))->isAbstract()) {
-                $view->composer($composer::views(), $composer);
+                $this->view()->composer($composer::views(), $composer);
             }
         }
     }
@@ -203,6 +211,6 @@ class ViewServiceProvider extends ViewServiceProviderBase
      */
     public function attachDebugger()
     {
-        $this->app['view']->composer('*', Debugger::class);
+        $this->view()->composer('*', Debugger::class);
     }
 }
