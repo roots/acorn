@@ -2,8 +2,8 @@
 
 namespace Roots\Acorn\Console\Commands;
 
-use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Console\Command as CommandBase;
+use Illuminate\Console\Scheduling\Schedule;
 
 abstract class Command extends CommandBase
 {

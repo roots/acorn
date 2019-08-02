@@ -2,15 +2,15 @@
 
 namespace Roots\Acorn\View;
 
-use ReflectionClass;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Illuminate\View\ViewServiceProvider as ViewServiceProviderBase;
-use Symfony\Component\Finder\Finder;
+use ReflectionClass;
 use Roots\Acorn\View\Composers\Debugger;
 use Roots\Acorn\View\Directives\InjectionDirective;
+use Symfony\Component\Finder\Finder;
 
 class ViewServiceProvider extends ViewServiceProviderBase
 {
@@ -178,23 +178,18 @@ class ViewServiceProvider extends ViewServiceProviderBase
             $this->view()->composer($composer::views(), $composer);
         }
 
-        $paths = collect($this->app->path('Composers'))
-            ->unique()
-            ->filter(function ($path) {
-                return is_dir($path);
-            });
-
-        if ($paths->isEmpty()) {
+        if (! is_dir($path = $this->app->path('Composers'))) {
             return;
         }
 
         $namespace = $this->app->getNamespace();
 
-        foreach ((new Finder())->in($paths->all())->files() as $composer) {
+        // TODO: This should be cacheable, perhaps via `wp acorn` command
+        foreach ((new Finder())->in($path)->files() as $composer) {
             $composer = $namespace . str_replace(
                 ['/', '.php'],
                 ['\\', ''],
-                Str::after($composer->getPathname(), realpath($this->app->path()) . DIRECTORY_SEPARATOR)
+                Str::after($composer->getPathname(), $this->app->path() . DIRECTORY_SEPARATOR)
             );
 
             if (is_subclass_of($composer, Composer::class) &&
