@@ -1,7 +1,9 @@
 <?php
 
-use function Roots\env;
 use Illuminate\Support\Str;
+
+use function Roots\env;
+use function Roots\storage_path;
 
 return [
 
@@ -50,7 +52,7 @@ return [
 
         'file' => [
             'driver' => 'file',
-            'path' => get_theme_file_path('storage/framework/cache/data'),
+            'path' => storage_path('framework/cache/data'),
         ],
 
         'memcached' => [
