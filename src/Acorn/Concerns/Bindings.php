@@ -149,7 +149,7 @@ trait Bindings
         });
 
         $this->app->singleton('memcached.connector', function () {
-            return new \Illuminate\Cache\MemcachedConnector;
+            return new \Illuminate\Cache\MemcachedConnector();
         });
     }
 
