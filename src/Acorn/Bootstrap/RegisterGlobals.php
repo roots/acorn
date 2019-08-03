@@ -18,7 +18,7 @@ class RegisterGlobals
         Facade::clearResolvedInstances();
         Facade::setFacadeApplication($app);
 
-        if (! apply_filters('acorn/globals', false)) {
+        if (! $app->config->get('app.globals', false)) {
             return;
         }
 

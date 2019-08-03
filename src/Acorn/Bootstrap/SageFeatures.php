@@ -2,7 +2,6 @@
 
 namespace Roots\Acorn\Bootstrap;
 
-use function Roots\add_filters;
 use Illuminate\Contracts\Foundation\Application;
 
 class SageFeatures
