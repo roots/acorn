@@ -139,12 +139,17 @@ trait Bindings
      */
     protected function registerCacheBindings()
     {
-        $this->singleton('cache', function () {
-            return $this->loadComponent('cache', \Illuminate\Cache\CacheServiceProvider::class);
+        $this->app->singleton('cache', function ($app) {
+            $this->configure('cache');
+            return new \Illuminate\Cache\CacheManager($app);
         });
 
-        $this->singleton('cache.store', function () {
-            return $this->loadComponent('cache', \Illuminate\Cache\CacheServiceProvider::class, 'cache.store');
+        $this->app->singleton('cache.store', function ($app) {
+            return $app['cache']->driver();
+        });
+
+        $this->app->singleton('memcached.connector', function () {
+            return new \Illuminate\Cache\MemcachedConnector;
         });
     }
 

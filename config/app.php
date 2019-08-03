@@ -16,7 +16,7 @@ return [
     */
 
     'preflight' => false,
-    
+
     /*
     |--------------------------------------------------------------------------
     | Global Helpers
@@ -72,6 +72,7 @@ return [
         // Roots\Acorn\View\ViewServiceProvider::class,
         // Roots\Sage\SageServiceProvider::class,
         // Illuminate\Database\DatabaseServiceProvider::class,
+        // Illuminate\Cache\CacheServiceProvider::class,
     ],
 
     /*
