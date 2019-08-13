@@ -13,7 +13,10 @@ trait Arrayable
     {
         return collect((new \ReflectionClass(static::class))->getMethods(\ReflectionMethod::IS_PUBLIC))
             ->filter(function ($method) {
-                return ! in_array($method->name, array_merge($this->ignore, ['compose', 'toArray', 'with', 'views', 'override']));
+                return ! in_array($method->name, array_merge(
+                    $this->ignore,
+                    ['compose', 'toArray', 'with', 'views', 'override']
+                ));
             })
             ->filter(function ($method) {
                 return ! Str::startsWith($method->name, ['__', 'cache']);
