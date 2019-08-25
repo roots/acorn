@@ -2,12 +2,16 @@
 
 namespace Roots\Acorn\View;
 
-use Illuminate\View\View;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 abstract class Composer
 {
+    /** @var string[] List of views to receive data by this composer */
     protected static $views;
+
+    /** @var \Illuminate\View\View Current view */
+    protected $view;
 
     /**
      * List of views served by this composer
@@ -33,21 +37,31 @@ abstract class Composer
      */
     public function compose(View $view)
     {
-        $view->with(array_merge(
-            $this->with($view->getData(), $view),
-            $view->getData(),
-            $this->override($view->getData(), $view)
-        ));
+        $this->view = $view;
+
+        $view->with($this->getData());
     }
 
     /**
      * Data to be passed to view before rendering
      *
-     * @param array $data
-     * @param \Illuminate\View\View $view
      * @return array
      */
-    public function override($data, $view)
+    protected function getData()
+    {
+        return array_merge(
+            $this->with(),
+            $this->view->getData(),
+            $this->override()
+        );
+    }
+
+    /**
+     * Data to be passed to view before rendering
+     *
+     * @return array
+     */
+    protected function with()
     {
         return [];
     }
@@ -55,11 +69,9 @@ abstract class Composer
     /**
      * Data to be passed to view before rendering
      *
-     * @param array $data
-     * @param \Illuminate\View\View $view
      * @return array
      */
-    public function with($data, $view)
+    protected function override()
     {
         return [];
     }
