@@ -10,7 +10,7 @@ class Debugger
     /**
      * Create a new Debugger instance.
      *
-     * @param Application $app
+     * @param \Roots\Acorn\Application $app
      */
     public function __construct(Application $app)
     {
