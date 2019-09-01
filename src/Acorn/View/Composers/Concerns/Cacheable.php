@@ -114,11 +114,11 @@ trait Cacheable
     }
 
     /**
-     * Data to be passed to view before rendering
+     * Data to be merged and passed to the view before rendering.
      *
      * @return array
      */
-    protected function getData()
+    protected function merge()
     {
         $key = $this->cache_key ?? hash('crc32b', static::class . serialize(
             get_queried_object()

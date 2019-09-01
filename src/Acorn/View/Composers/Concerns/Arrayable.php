@@ -7,8 +7,18 @@ use Illuminate\Support\Str;
 
 trait Arrayable
 {
+    /**
+     * Ignored Methods
+     *
+     * @var string[]
+     */
     protected $ignore = [];
 
+    /**
+     * Maps available class methods to an array.
+     *
+     * @return array
+     */
     public function toArray()
     {
         return collect((new \ReflectionClass(static::class))->getMethods(\ReflectionMethod::IS_PUBLIC))
