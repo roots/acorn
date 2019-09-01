@@ -7,8 +7,9 @@ use Illuminate\Support\Fluent;
 trait AcfFields
 {
     /**
-     * ACF data to be passed to view before rendering
+     * ACF data to be passed to the view before rendering.
      *
+     * @param  int $post_id
      * @return array
      */
     protected function fields($post_id = null)
