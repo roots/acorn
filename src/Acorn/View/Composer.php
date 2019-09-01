@@ -68,7 +68,7 @@ abstract class Composer
     {
         return array_merge(
             $this->with(),
-            $this->data->toArray(),
+            $this->view->getData(),
             $this->override()
         );
     }

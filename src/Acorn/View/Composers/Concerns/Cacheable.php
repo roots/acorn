@@ -131,7 +131,7 @@ trait Cacheable
 
         return array_merge(
             $with,
-            $this->data->toArray(),
+            $this->view->getData(),
             $this->override()
         );
     }

@@ -38,7 +38,7 @@ class Debugger
             }
 
             return $value;
-        }, $view->merge());
+        }, $view->getData());
 
         if ($this->debugLevel === 'data') {
             var_dump($data);

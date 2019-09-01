@@ -10,7 +10,7 @@ trait Arrayable
     /**
      * Ignored Methods
      *
-     * @var array
+     * @var string[]
      */
     protected $ignore = [];
 
