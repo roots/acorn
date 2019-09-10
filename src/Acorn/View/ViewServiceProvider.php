@@ -62,6 +62,10 @@ class ViewServiceProvider extends ViewServiceProviderBase
             $finder = new FileViewFinder($app['files'], array_unique($app['config']['view.paths']));
 
             foreach ($app['config']['view.namespaces'] as $namespace => $hints) {
+                $hints = array_merge(array_map(function ($path) use ($namespace) {
+                    return "{$path}/vendor/{$namespace}";
+                }, $finder->getPaths()), (array) $hints);
+                
                 $finder->addNamespace($namespace, $hints);
             }
 
