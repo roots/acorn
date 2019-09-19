@@ -2,6 +2,8 @@
 
 namespace Roots\Acorn\Console\Commands;
 
+use Illuminate\Support\Str;
+
 class ComposerMakeCommand extends GeneratorCommand
 {
     /**
@@ -65,7 +67,8 @@ class ComposerMakeCommand extends GeneratorCommand
     {
         $stub = parent::buildClass($name);
 
-        return $this->replaceViews($stub, explode(' ', $this->option('views')))->replaceSlugs($stub, $this->getNameInput());
+        return $this->replaceViews($stub, explode(' ', $this->option('views')))
+            ->replaceSlugs($stub, $this->getNameInput());
     }
 
     /**
