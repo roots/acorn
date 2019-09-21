@@ -202,7 +202,11 @@ abstract class GeneratorCommand extends Command
     {
         $class = str_replace($this->getNamespace($name) . '\\', '', $name);
 
-        return str_replace('DummyClass', $class, $stub);
+        return str_replace(
+            ['DummyClass', 'DummySlug', 'DummyCamel', 'DummySnake'],
+            [$class, Str::slug($class), Str::camel($class), Str::snake($class)],
+            $slug
+        );
     }
 
     /**
