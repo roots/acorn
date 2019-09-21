@@ -66,9 +66,10 @@ class ComposerMakeCommand extends GeneratorCommand
     protected function buildClass($name)
     {
         $stub = parent::buildClass($name);
+        $stub = $this->replaceViews($stub, explode(' ', $this->option('views')));
+        $stub = $this->replaceSlugs($stub, $this->getNameInput());
 
-        return $this->replaceViews($stub, explode(' ', $this->option('views')))
-            ->replaceSlugs($stub, $this->getNameInput());
+        return $stub;
     }
 
     /**
@@ -81,9 +82,8 @@ class ComposerMakeCommand extends GeneratorCommand
     protected function replaceViews($stub, $views)
     {
         $views = implode("',\n        '", $views);
-        $stub = str_replace('DummyViews', empty($views) ? '//' : "'{$views}'", $stub);
         
-        return $this;
+        return str_replace('DummyViews', empty($views) ? '//' : "'{$views}'", $stub);
     }
     
     /**
@@ -95,8 +95,6 @@ class ComposerMakeCommand extends GeneratorCommand
      */
     protected function replaceSlugs($stub, $name)
     {
-        $stub = str_replace('DummySlug', Str::slug($name), $stub);
-        
-        return $this;
+        return str_replace('DummySlug', Str::slug($name), $stub);
     }
 }
