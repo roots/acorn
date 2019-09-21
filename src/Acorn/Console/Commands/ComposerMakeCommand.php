@@ -77,7 +77,7 @@ class ComposerMakeCommand extends GeneratorCommand
      *
      * @param  string  $stub
      * @param  array   $views
-     * @return $this
+     * @return string
      */
     protected function replaceViews($stub, $views)
     {
@@ -91,7 +91,7 @@ class ComposerMakeCommand extends GeneratorCommand
      *
      * @param  string  $stub
      * @param  string  $name
-     * @return $this
+     * @return string
      */
     protected function replaceSlugs($stub, $name)
     {
