@@ -13,8 +13,7 @@ class Sage
 {
     use Concerns\FiltersBodyClass,
         Concerns\FiltersTemplates,
-        Concerns\FiltersThePost,
-        Concerns\FiltersViews;
+        Concerns\FiltersThePost;
 
     /** @var \Illuminate\Contracts\Container\Container */
     protected $app;
