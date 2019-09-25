@@ -21,7 +21,6 @@ class SageServiceProvider extends ServiceProvider
     {
         if ($this->app->bound('view')) {
             $this->bindCompatFilters();
-            $this->bindViewFilters();
         }
     }
 
@@ -59,20 +58,5 @@ class SageServiceProvider extends ServiceProvider
             'singular_template_hierarchy',
             'attachment_template_hierarchy',
         ], $sage->filter('template_hierarchy'), 10);
-    }
-
-    /**
-     * Sage view filters
-     *
-     * These filters direct WordPress to views within Sage.
-     *
-     * @return void
-     */
-    protected function bindViewFilters()
-    {
-        $sage = $this->app['sage'];
-
-        add_filter('comments_template', $sage->filter('comments_template'), 100);
-        add_filter('get_search_form', $sage->filter('search_form'), 100);
     }
 }
