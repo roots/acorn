@@ -3,6 +3,7 @@
 namespace Roots\Acorn\View\Composers\Concerns;
 
 use Illuminate\Support\Fluent;
+use Illuminate\Support\Str;
 
 trait AcfFields
 {
@@ -17,7 +18,7 @@ trait AcfFields
         return collect(\get_fields($post_id))
             ->mapWithKeys(function ($value, $key) {
                 $value = is_array($value) ? new Fluent($value) : $value;
-                return [$key => method_exists($this, $key) ? $this->{$key}($value) : $value];
+                return [$key => method_exists($this, $key = Str::camel($key)) ? $this->{$key}($value) : $value];
             })->all();
     }
 }
