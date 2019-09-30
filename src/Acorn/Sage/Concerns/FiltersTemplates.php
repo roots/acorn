@@ -28,14 +28,16 @@ trait FiltersTemplates
     public function filterTemplateInclude($file)
     {
         $view = $this->fileFinder
-            ->getPossibleViewNameFromPath(realpath($file));
+            ->getPossibleViewNameFromPath($file = realpath($file));
+
+        $view = trim($view, '\\/.');
 
         /** Gather data to be passed to view */
         $data = array_reduce(get_body_class(), function ($data, $class) use ($view, $file) {
             return apply_filters("sage/template/{$class}/data", $data, $view, $file);
         }, []);
 
-        $this->app['sage.view'] = $view;
+        $this->app['sage.view'] = $this->view->exists($view) ? $view : $file;
         $this->app['sage.data'] = $data;
 
         return get_template_directory() . '/index.php';
