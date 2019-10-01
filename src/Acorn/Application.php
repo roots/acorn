@@ -270,6 +270,10 @@ class Application extends Container implements ApplicationContract
     public function make($abstract, array $parameters = [])
     {
         $abstract = $this->getAlias($abstract);
+        
+        if ($this->isDeferredService($abstract) && ! isset($this->instances[$abstract])) {
+            $this->loadDeferredProvider($abstract);
+        }
 
         if (! $this->bound($abstract)) {
             $this->makeWithBinding($abstract);
