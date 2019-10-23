@@ -42,7 +42,7 @@ class FileViewFinder extends FileViewFinderBase
             }
         }
 
-        $view = ltrim($view, '/');
+        $view = ltrim($view, '/\\');
 
         if ($namespace) {
             $view = "{$namespace}::$view";
