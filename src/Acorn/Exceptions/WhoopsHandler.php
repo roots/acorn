@@ -96,7 +96,7 @@ class WhoopsHandler
     protected function directoriesExceptVendor()
     {
         return Arr::except(
-            array_flip((new Filesystem)->directories(base_path())),
+            array_flip((new Filesystem())->directories(base_path())),
             [base_path('vendor')]
         );
     }
@@ -152,26 +152,28 @@ class WhoopsHandler
     /**
      * Determine if the error provider should return an Ajax response.
      *
-	 * @return bool
-	 */
-	protected function isAjax() {
-		return defined('DOING_AJAX') && DOING_AJAX;
+     * @return bool
+     */
+    protected function isAjax()
+    {
+        return defined('DOING_AJAX') && DOING_AJAX;
     }
 
     /**
      * Determine if the error provider should return a response for the Rest API.
      *
-	 * @return bool
-	 */
-	protected function isRest() {
-		if (defined('REST_REQUEST') && REST_REQUEST) {
-			return true;
+     * @return bool
+     */
+    protected function isRest()
+    {
+        if (defined('REST_REQUEST') && REST_REQUEST) {
+            return true;
         }
 
-		if (! empty($_SERVER['REQUEST_URI']) && Str::contains($_SERVER['REQUEST_URI'], rest_get_url_prefix())) {
-			return true;
+        if (! empty($_SERVER['REQUEST_URI']) && Str::contains($_SERVER['REQUEST_URI'], rest_get_url_prefix())) {
+            return true;
         }
 
-		return false;
+        return false;
     }
 }

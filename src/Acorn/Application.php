@@ -26,7 +26,8 @@ use Roots\Acorn\ProviderRepository;
  */
 class Application extends Container implements ApplicationContract
 {
-    use LaravelApplication, Bindings;
+    use LaravelApplication;
+    use Bindings;
 
     public const VERSION = 'Acorn (1.0.0) (Laravel Components 5.8.*)';
 

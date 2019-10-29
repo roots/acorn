@@ -11,10 +11,10 @@ use Roots\Acorn\View\FileViewFinder;
 
 class Sage
 {
-    use Concerns\FiltersBodyClass,
-        Concerns\FiltersTemplates,
-        Concerns\FiltersThePost,
-        Concerns\FiltersViews;
+    use Concerns\FiltersBodyClass;
+    use Concerns\FiltersTemplates;
+    use Concerns\FiltersThePost;
+    use Concerns\FiltersViews;
 
     /**
      * The application implementation.

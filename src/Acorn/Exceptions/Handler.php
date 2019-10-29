@@ -79,7 +79,7 @@ class Handler implements ExceptionHandlerContract
      */
     protected function renderExceptionWithWhoops(Exception $e)
     {
-        return tap(new Whoops, function ($whoops) {
+        return tap(new Whoops(), function ($whoops) {
             $whoops->appendHandler($this->whoopsHandler());
             $whoops->allowQuit(false);
         })->handleException($e);
@@ -95,7 +95,7 @@ class Handler implements ExceptionHandlerContract
         try {
             return app(HandlerInterface::class);
         } catch (BindingResolutionException $e) {
-            return (new WhoopsHandler)->forDebug();
+            return (new WhoopsHandler())->forDebug();
         }
     }
 

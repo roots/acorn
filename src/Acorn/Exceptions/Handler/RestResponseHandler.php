@@ -16,25 +16,26 @@ class RestResponseHandler extends JsonResponseHandler
      */
     protected $returnFrames = true;
 
-	/**
+    /**
      * Handle the request.
      *
-	 * @return void
-	 */
-	public function handle() {
-		$data = Formatter::formatExceptionAsDataArray($this->getInspector(), $this->addTraceToOutput());
+     * @return void
+     */
+    public function handle()
+    {
+        $data = Formatter::formatExceptionAsDataArray($this->getInspector(), $this->addTraceToOutput());
 
-		if (Misc::canSendHeaders()) {
-			status_header(500);
-			header('Content-Type: application/json; charset=utf-8');
+        if (Misc::canSendHeaders()) {
+            status_header(500);
+            header('Content-Type: application/json; charset=utf-8');
         }
 
-		echo wp_json_encode([
-			'code' => $data['type'],
-			'message' => $data['message'],
-			'data' => $data,
+        echo wp_json_encode([
+            'code' => $data['type'],
+            'message' => $data['message'],
+            'data' => $data,
         ], JSON_PRETTY_PRINT);
 
-		return Handler::QUIT;
-	}
+        return Handler::QUIT;
+    }
 }

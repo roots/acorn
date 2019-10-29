@@ -196,8 +196,10 @@ class ViewServiceProvider extends ViewServiceProviderBase
                 Str::after($composer->getPathname(), $this->app->path() . DIRECTORY_SEPARATOR)
             );
 
-            if (is_subclass_of($composer, Composer::class) &&
-                ! (new ReflectionClass($composer))->isAbstract()) {
+            if (
+                is_subclass_of($composer, Composer::class) &&
+                ! (new ReflectionClass($composer))->isAbstract()
+            ) {
                 $this->view()->composer($composer::views(), $composer);
             }
         }

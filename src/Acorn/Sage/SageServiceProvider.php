@@ -2,11 +2,12 @@
 
 namespace Roots\Acorn\Sage;
 
-use function Roots\add_filters;
 use Roots\Acorn\Config;
 use Roots\Acorn\Sage\Sage;
 use Roots\Acorn\Sage\ViewFinder;
 use Roots\Acorn\ServiceProvider;
+
+use function Roots\add_filters;
 
 class SageServiceProvider extends ServiceProvider
 {

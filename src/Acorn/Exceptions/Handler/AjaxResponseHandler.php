@@ -16,22 +16,23 @@ class AjaxResponseHandler extends JsonResponseHandler
      */
     protected $returnFrames = true;
 
-	/**
+    /**
      * Handle the request.
      *
-	 * @return void
-	 */
-	public function handle() {
-		if (Misc::canSendHeaders()) {
-			status_header(500);
-			header('Content-Type: application/json; charset=utf-8');
+     * @return void
+     */
+    public function handle()
+    {
+        if (Misc::canSendHeaders()) {
+            status_header(500);
+            header('Content-Type: application/json; charset=utf-8');
         }
 
-		echo wp_json_encode([
-			'success' => false,
-			'data' => Formatter::formatExceptionAsDataArray($this->getInspector(), $this->addTraceToOutput()),
+        echo wp_json_encode([
+            'success' => false,
+            'data' => Formatter::formatExceptionAsDataArray($this->getInspector(), $this->addTraceToOutput()),
         ], JSON_PRETTY_PRINT);
 
-		return Handler::QUIT;
-	}
+        return Handler::QUIT;
+    }
 }

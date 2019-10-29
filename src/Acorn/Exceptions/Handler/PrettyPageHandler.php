@@ -52,7 +52,7 @@ class PrettyPageHandler extends PrettyPageHandlerBase
             ->filter()
             ->all();
         })
-		->put('WP_Post Data', function () {
+        ->put('WP_Post Data', function () {
             $post = get_post();
 
             if (! $post instanceof WP_Post) {

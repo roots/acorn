@@ -367,8 +367,10 @@ function logger($message = null, array $context = [])
  */
 function report($exception)
 {
-    if ($exception instanceof Throwable &&
-        ! $exception instanceof Exception) {
+    if (
+        $exception instanceof Throwable &&
+        ! $exception instanceof Exception
+    ) {
         $exception = new FatalThrowableError($exception);
     }
     app(ExceptionHandler::class)->report($exception);
