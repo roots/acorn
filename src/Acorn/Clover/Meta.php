@@ -9,6 +9,10 @@ class Meta extends Repository
 {
     /**
      * Disable the set() method because Meta is immutable.
+     *
+     * @param  string $key
+     * @param  mixed  $value
+     * @return \trigger_error
      */
     public function set($key, $value = null)
     {
@@ -19,7 +23,10 @@ class Meta extends Repository
     }
 
     /**
-     * Allow object notation
+     * Allow object notation.
+     *
+     * @param  string $key
+     * @return mixed
      */
     public function __get($key)
     {

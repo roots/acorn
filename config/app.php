@@ -6,29 +6,16 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Preflight Checks
+    | Application Name
     |--------------------------------------------------------------------------
     |
-    | This value allows service providers to execute preflight tasks after
-    | booting. These tasks include creating directories, databases, and files,
-    | or doing any other checks to ensure the service is functional.
+    | This value is the name of your application. This value is used when the
+    | framework needs to place the application's name in a notification or
+    | any other location as required by the application or its packages.
     |
     */
 
-    'preflight' => false,
-
-    /*
-    |--------------------------------------------------------------------------
-    | Global Helpers
-    |--------------------------------------------------------------------------
-    |
-    | This value enables the usage of various Acorn helpers without the need
-    | to specify a namespace. This defaults to false as to not pollute the
-    | global namespace.
-    |
-    */
-
-    'globals' => false,
+    'name' => env('APP_NAME', wp_get_theme()->get('Name')),
 
     /*
     |--------------------------------------------------------------------------
@@ -58,6 +45,71 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Application Timezone
+    |--------------------------------------------------------------------------
+    |
+    | Here you may specify the default timezone for your application, which
+    | will be used by the PHP date and date-time functions. We have gone
+    | ahead and set this to a sensible default for you out of the box.
+    |
+    */
+
+    'timezone' => get_option('timezone_string', 'UTC'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Preflight Checks
+    |--------------------------------------------------------------------------
+    |
+    | This value allows service providers to execute preflight tasks after
+    | booting. These tasks include creating directories, databases, and files,
+    | or doing any other checks to ensure the service is functional.
+    |
+    */
+
+    'preflight' => env('WP_ENV', 'production') !== 'production',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Global Helpers
+    |--------------------------------------------------------------------------
+    |
+    | This value enables the usage of various Acorn helpers without the need
+    | to specify a namespace. This defaults to false as to not pollute the
+    | global namespace.
+    |
+    */
+
+    'globals' => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application Locale Configuration
+    |--------------------------------------------------------------------------
+    |
+    | The application locale determines the default locale that will be used
+    | by the translation service provider. You are free to set this value
+    | to any of the locales which will be supported by the application.
+    |
+    */
+
+    'locale' => get_locale(),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application Fallback Locale
+    |--------------------------------------------------------------------------
+    |
+    | The fallback locale determines the locale to use when the current one
+    | is not available. You may change the value to correspond to any of
+    | the language folders that are provided through your application.
+    |
+    */
+
+    'fallback_locale' => 'en',
+
+    /*
+    |--------------------------------------------------------------------------
     | Autoloaded Service Providers
     |--------------------------------------------------------------------------
     |
@@ -68,11 +120,8 @@ return [
     */
 
     'providers' => [
-        // Roots\Acorn\Assets\AssetsServiceProvider::class,
-        // Roots\Acorn\View\ViewServiceProvider::class,
-        // Roots\Sage\SageServiceProvider::class,
-        // Illuminate\Database\DatabaseServiceProvider::class,
-        // Illuminate\Cache\CacheServiceProvider::class,
+        // App\Providers\AppServiceProvider::class,
+        // App\SomeService\SomeServiceServiceProvider::class,
     ],
 
     /*

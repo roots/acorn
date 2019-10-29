@@ -10,13 +10,22 @@ use Roots\Acorn\ServiceProvider;
 
 class SageServiceProvider extends ServiceProvider
 {
-    /** {@inheritDoc} */
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
     public function register()
     {
         $this->app->singleton('sage', Sage::class);
         $this->app->bind('sage.finder', ViewFinder::class);
     }
 
+    /**
+     * Bootstrap any application services.
+     *
+     * @return void
+     */
     public function boot()
     {
         if ($this->app->bound('view')) {

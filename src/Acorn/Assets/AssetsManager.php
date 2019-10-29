@@ -14,15 +14,32 @@ use Roots\Acorn\Assets\RelativePathManifest;
  */
 class AssetsManager
 {
-    /** @var \Illuminate\Contracts\Foundation\Application Application container */
+    /**
+     * Application container
+     *
+     * @var \Illuminate\Contracts\Foundation\Application
+     */
     protected $app;
 
-    /** @var \Roots\Acorn\Assets\Contracts\Manifest[] Resolved manifests */
+    /**
+     * Resolved manifests
+     *
+     * @var \Roots\Acorn\Assets\Contracts\Manifest[]
+     */
     protected $manifests;
 
-    /** @var array Registered custom manifest creators */
+    /**
+     * Registered custom manifest creators
+     *
+     * @var array
+     */
     protected $customCreators = [];
 
+    /**
+     * Initialize the AssetManager instance.
+     *
+     * @param ContainerInterface $app
+     */
     public function __construct(ContainerInterface $app)
     {
         $this->app = $app;
@@ -58,7 +75,7 @@ class AssetsManager
         return $this->manifests[$name] = $manifest;
     }
 
-   /**
+    /**
      * Resolve the given manifest.
      *
      * @param  string  $name

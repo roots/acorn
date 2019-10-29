@@ -7,11 +7,19 @@ use Roots\Acorn\Assets\Contracts\Asset as AssetContract;
 
 class Asset implements AssetContract
 {
-    /** @var string */
-    protected $uri;
-
-    /** @var string */
+    /**
+     * Local path
+     *
+     * @var string
+     */
     protected $path;
+
+    /**
+     * Remote URI
+     *
+     * @var string
+     */
+    protected $uri;
 
     /**
      * Get asset from manifest

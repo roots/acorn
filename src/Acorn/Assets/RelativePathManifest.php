@@ -30,9 +30,10 @@ class RelativePathManifest implements
     /**
      * Manifest constructor
      *
-     * @param string $path
-     * @param string $uri
-     * @param iterable|\Illuminate\Contracts\Support\Arrayable $manifest
+     * @param  string $path
+     * @param  string $uri
+     * @param  iterable|\Illuminate\Contracts\Support\Arrayable $manifest
+     * @return void
      */
     public function __construct(string $path, string $uri, $manifest = [])
     {

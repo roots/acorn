@@ -3,39 +3,32 @@
 namespace Roots\Acorn\Exceptions;
 
 use Exception;
-use Illuminate\Contracts\Debug\ExceptionHandler;
-use Symfony\Component\Debug\Exception\FlattenException;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Contracts\Debug\ExceptionHandler as ExceptionHandlerContract;
+use Illuminate\Support\Arr;
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\Debug\ExceptionHandler as SymfonyExceptionHandler;
+use Symfony\Component\Debug\Exception\FlattenException;
+use Whoops\Handler\HandlerInterface;
+use Whoops\Run as Whoops;
 
-class Handler implements ExceptionHandler
+use function Roots\app;
+use function Roots\base_path;
+use function Roots\config;
+
+class Handler implements ExceptionHandlerContract
 {
-    /**
-     * A list of the exception types that should not be reported.
-     *
-     * @var array
-     */
-    protected $dontReport = [];
-
     /**
      * Report or log an exception.
      *
      * @param  \Exception  $e
-     * @return void
+     * @return mixed
+     *
+     * @throws \Exception
      */
     public function report(Exception $e)
     {
-        if ($this->shouldntReport($e)) {
-            return;
-        }
-
-        try {
-            $logger = app('Psr\Log\LoggerInterface');
-        } catch (Exception $ex) {
-            throw $e; // throw the original exception
-        }
-
-        $logger->error($e, ['exception' => $e]);
+        //
     }
 
     /**
@@ -46,7 +39,7 @@ class Handler implements ExceptionHandler
      */
     public function shouldReport(Exception $e)
     {
-        return ! $this->shouldntReport($e);
+        //
     }
 
     /**
@@ -57,67 +50,67 @@ class Handler implements ExceptionHandler
      */
     protected function shouldntReport(Exception $e)
     {
-        foreach ($this->dontReport as $type) {
-            if ($e instanceof $type) {
-                return true;
-            }
-        }
-
-        return false;
+        //
     }
 
     /**
-     * Render an exception into an HTTP response.
+     * Render an exception into a response.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  void        $request
      * @param  \Exception  $e
-     * @return \Illuminate\Http\Response
+     * @return string
      */
     public function render($request, Exception $e)
     {
-        $fe = FlattenException::create($e);
-
-        $handler = new SymfonyExceptionHandler(env('APP_DEBUG', config('app.debug', false)));
-
-        $decorated = $this->decorate($handler->getContent($fe), $handler->getStylesheet($fe));
-
-        $response = new Response($decorated, $fe->getStatusCode(), $fe->getHeaders());
-
-        $response->exception = $e;
-
-        return $response;
+        try {
+            return $this->isDebug() && class_exists(Whoops::class)
+                        ? $this->renderExceptionWithWhoops($e)
+                        : $this->renderExceptionWithSymfony($e, $this->isDebug());
+        } catch (Exception $e) {
+            return $this->renderExceptionWithSymfony($e, $this->isDebug());
+        }
     }
 
     /**
-     * Get the html response content.
+     * Render an exception to a string using "Whoops".
      *
-     * @param  string  $content
-     * @param  string  $css
+     * @param  \Exception  $e
      * @return string
      */
-    protected function decorate($content, $css)
+    protected function renderExceptionWithWhoops(Exception $e)
     {
-        // phpcs:disable
-        return <<<EOF
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta name="robots" content="noindex,nofollow" />
-        <style>
-            /* Copyright (c) 2010, Yahoo! Inc. All rights reserved. Code licensed under the BSD License: http://developer.yahoo.com/yui/license.html */
-            html{color:#000;background:#FFF;}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0;padding:0;}table{border-collapse:collapse;border-spacing:0;}fieldset,img{border:0;}address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal;}li{list-style:none;}caption,th{text-align:left;}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal;}q:before,q:after{content:'';}abbr,acronym{border:0;font-variant:normal;}sup{vertical-align:text-top;}sub{vertical-align:text-bottom;}input,textarea,select{font-family:inherit;font-size:inherit;font-weight:inherit;}input,textarea,select{*font-size:100%;}legend{color:#000;}
-            html { background: #eee; padding: 10px }
-            img { border: 0; }
-            #sf-resetcontent { width:970px; margin:0 auto; }
-            $css
-        </style>
-    </head>
-    <body>
-        $content
-    </body>
-</html>
-EOF;
-        // phpcs:enable
+        return tap(new Whoops, function ($whoops) {
+            $whoops->appendHandler($this->whoopsHandler());
+            $whoops->allowQuit(false);
+        })->handleException($e);
+    }
+
+    /**
+     * Get the Whoops handler for the application.
+     *
+     * @return \Whoops\Handler\Handler
+     */
+    protected function whoopsHandler()
+    {
+        try {
+            return app(HandlerInterface::class);
+        } catch (BindingResolutionException $e) {
+            return (new WhoopsHandler)->forDebug();
+        }
+    }
+
+    /**
+     * Render an exception to a string using Symfony.
+     *
+     * @param  \Exception  $e
+     * @param  bool  $debug
+     * @return string
+     */
+    protected function renderExceptionWithSymfony(Exception $e, $debug)
+    {
+        echo (new SymfonyExceptionHandler($debug))->getHtml(
+            FlattenException::create($e)
+        );
     }
 
     /**
@@ -130,5 +123,27 @@ EOF;
     public function renderForConsole($output, Exception $e)
     {
         (new ConsoleApplication())->renderException($e, $output);
+    }
+
+    /**
+     * Indicates if the application is in debug mode.
+     *
+     * @return bool
+     */
+    protected function isDebug()
+    {
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            return true;
+        }
+
+        if (defined('WP_DEBUG_DISPLAY') && WP_DEBUG_DISPLAY) {
+            return true;
+        }
+
+        if (config('app.debug', false)) {
+            return true;
+        }
+
+        return false;
     }
 }

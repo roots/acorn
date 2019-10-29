@@ -6,6 +6,12 @@ use Roots\Acorn\Clover\Meta;
 
 trait Lifecycle
 {
+    /**
+     * Hook and fire lifecycle actions for the application.
+     *
+     * @param  Meta $meta
+     * @return void
+     */
     public function lifecycle(Meta $meta)
     {
         if (method_exists($this, 'activate')) {
@@ -25,9 +31,9 @@ trait Lifecycle
         }
 
         if (method_exists($this, 'beforeUninstall')) {
-            add_action('pre_uninstall_plugin', function ($plugin, $uninstallable_plugins) use ($meta) {
+            add_action('pre_uninstall_plugin', function ($plugin, $uninstallable) use ($meta) {
                 if ($meta->basename === $plugin) {
-                    $this->beforeUninstall($plugin, $uninstallable_plugins);
+                    $this->beforeUninstall($plugin, $uninstallable);
                 }
             }, 10, 2);
         }
