@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Debug\ExceptionHandler as ExceptionHandlerContract;
 use Illuminate\Support\Arr;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\Debug\ExceptionHandler as SymfonyExceptionHandler;
 use Symfony\Component\Debug\Exception\FlattenException;
@@ -19,6 +20,13 @@ use function Roots\config;
 class Handler implements ExceptionHandlerContract
 {
     /**
+     * A list of the exception types that are not reported.
+     *
+     * @var array
+     */
+    protected $dontReport = [];
+
+    /**
      * Report or log an exception.
      *
      * @param  \Exception  $e
@@ -28,7 +36,24 @@ class Handler implements ExceptionHandlerContract
      */
     public function report(Exception $e)
     {
-        //
+        if ($this->shouldntReport($e)) {
+            return;
+        }
+
+        if (is_callable($reportCallable = [$e, 'report'])) {
+            return $this->container->call($reportCallable);
+        }
+
+        try {
+            $logger = app(LoggerInterface::class);
+        } catch (Exception $ex) {
+            throw $e;
+        }
+
+        $logger->error(
+            $e->getMessage(),
+            ['exception' => $e]
+        );
     }
 
     /**
@@ -39,7 +64,7 @@ class Handler implements ExceptionHandlerContract
      */
     public function shouldReport(Exception $e)
     {
-        //
+        return ! $this->shouldntReport($e);
     }
 
     /**
@@ -50,7 +75,9 @@ class Handler implements ExceptionHandlerContract
      */
     protected function shouldntReport(Exception $e)
     {
-        //
+        return ! is_null(Arr::first($this->dontReport, function ($type) use ($e) {
+            return $e instanceof $type;
+        }));
     }
 
     /**
