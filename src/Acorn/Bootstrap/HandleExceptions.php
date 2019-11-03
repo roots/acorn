@@ -34,6 +34,10 @@ class HandleExceptions
      */
     public function bootstrap(Application $app)
     {
+        if (! $app->environment('development')) {
+            return;
+        }
+
         self::$reservedMemory = str_repeat('x', 10240);
 
         $this->app = $app;
@@ -43,10 +47,6 @@ class HandleExceptions
         set_error_handler([$this, 'handleError']);
         set_exception_handler([$this, 'handleException']);
         register_shutdown_function([$this, 'handleShutdown']);
-
-        if (! $app->environment('development')) {
-            ini_set('display_errors', 'Off');
-        }
 
         $this->app->singleton(
             \Illuminate\Contracts\Debug\ExceptionHandler::class,

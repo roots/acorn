@@ -45,13 +45,13 @@ return [
 
         'single' => [
             'driver' => 'single',
-            'path' => storage_path('logs/sage.log'),
+            'path' => storage_path('logs/app.log'),
             'level' => 'debug',
         ],
 
         'daily' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/sage.log'),
+            'path' => storage_path('logs/app.log'),
             'level' => 'debug',
             'days' => 14,
         ],

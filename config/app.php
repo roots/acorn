@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', wp_get_theme()->get('Name')),
+    'name' => env('APP_NAME', get_bloginfo('name')),
 
     /*
     |--------------------------------------------------------------------------
@@ -28,7 +28,7 @@ return [
     |
     */
 
-    'env' => env('WP_ENV', 'production'),
+    'env' => defined('WP_ENV') ? WP_ENV : env('WP_ENV', 'production'),
 
     /*
     |--------------------------------------------------------------------------
@@ -41,7 +41,7 @@ return [
     |
     */
 
-    'debug' => env('WP_DEBUG', false),
+    'debug' => WP_DEBUG,
 
     /*
     |--------------------------------------------------------------------------
@@ -67,7 +67,7 @@ return [
     |
     */
 
-    'preflight' => env('WP_ENV', 'production') !== 'production',
+    'preflight' => false,
 
     /*
     |--------------------------------------------------------------------------
