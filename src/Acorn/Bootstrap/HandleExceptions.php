@@ -34,7 +34,7 @@ class HandleExceptions
      */
     public function bootstrap(Application $app)
     {
-        if (! $app->environment('development')) {
+        if (! $app->environment('development') && ! $app->runningInConsole()) {
             return;
         }
 
