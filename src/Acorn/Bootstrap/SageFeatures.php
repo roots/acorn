@@ -3,7 +3,6 @@
 namespace Roots\Acorn\Bootstrap;
 
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Support\Arr;
 
 class SageFeatures
 {
