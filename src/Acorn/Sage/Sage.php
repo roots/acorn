@@ -11,21 +11,37 @@ use Roots\Acorn\View\FileViewFinder;
 
 class Sage
 {
-    use Concerns\FiltersBodyClass,
-        Concerns\FiltersTemplates,
-        Concerns\FiltersThePost,
-        Concerns\FiltersViews;
+    use Concerns\FiltersBodyClass;
+    use Concerns\FiltersTemplates;
+    use Concerns\FiltersThePost;
+    use Concerns\FiltersViews;
 
-    /** @var \Illuminate\Contracts\Container\Container */
+    /**
+     * The application implementation.
+     *
+     * @var \Illuminate\Contracts\Container\Container
+     */
     protected $app;
 
-    /** @var \Roots\Acorn\Sage\ViewFinder */
+    /**
+     * The ViewFinder instance.
+     *
+     * @var \Roots\Acorn\Sage\ViewFinder
+     */
     protected $sageFinder;
 
-    /** @var \Roots\Acorn\View\FileViewFinder */
+    /**
+     * The FileViewFinder instance.
+     *
+     * @var \Roots\Acorn\View\FileViewFinder
+     */
     protected $fileFinder;
 
-    /** @var \Illuminate\Contracts\View\Factory */
+    /**
+     * The View Factory instance.
+     *
+     * @var \Illuminate\Contracts\View\Factory
+     */
     protected $view;
 
     /**

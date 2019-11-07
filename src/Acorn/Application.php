@@ -26,14 +26,23 @@ use Roots\Acorn\ProviderRepository;
  */
 class Application extends Container implements ApplicationContract
 {
-    use LaravelApplication, Bindings;
+    use LaravelApplication;
+    use Bindings;
 
     public const VERSION = 'Acorn (1.0.0) (Laravel Components 5.8.*)';
 
-    /**  @var bool Indicates if the class aliases have been registered. */
+    /**
+     * Indicates if the class aliases have been registered.
+     *
+     * @var bool
+     */
     protected static $aliasesRegistered = false;
 
-    /** @var array All of the loaded configuration files. */
+    /**
+     * All of the loaded configuration files.
+     *
+     * @var array
+     */
     protected $loadedConfigurations = [];
 
     /**
@@ -95,12 +104,7 @@ class Application extends Container implements ApplicationContract
     public function prepareForConsoleCommand($aliases = true)
     {
         $this->withAliases($aliases);
-
         $this->make('cache');
-
-        $this->configure('database');
-
-        $this->register('Illuminate\Database\MigrationServiceProvider');
     }
 
     /**
@@ -270,7 +274,7 @@ class Application extends Container implements ApplicationContract
     public function make($abstract, array $parameters = [])
     {
         $abstract = $this->getAlias($abstract);
-        
+
         if ($this->isDeferredService($abstract) && ! isset($this->instances[$abstract])) {
             $this->loadDeferredProvider($abstract);
         }

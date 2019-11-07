@@ -9,9 +9,9 @@ class Filesystem extends FilesystemBase
     /**
      * Normalizes file path separators
      *
-     * @param mixed  $path      Path or array of paths to be normalized
-     * @param string $separator Path separator, default is `/`
-     * @return mixed Normalized path or array of paths
+     * @param  mixed  $path
+     * @param  string $separator
+     * @return mixed
      */
     public function normalizePath($path, $separator = '/')
     {
@@ -21,9 +21,9 @@ class Filesystem extends FilesystemBase
     /**
      * Get relative path of target from specified base
      *
-     * @param string $basePath   The base path
-     * @param string $targetPath The target path
-     * @return string The relative target path
+     * @param string  $basePath
+     * @param string  $targetPath
+     * @return string
      *
      * @copyright Fabien Potencier
      * @license   MIT

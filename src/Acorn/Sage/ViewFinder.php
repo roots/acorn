@@ -7,22 +7,40 @@ use Roots\Acorn\View\FileViewFinder;
 
 class ViewFinder
 {
-    /** @var \Roots\Acorn\View\FileViewFinder */
+    /**
+     * The FileViewFinder instance.
+     *
+     * @var \Roots\Acorn\View\FileViewFinder
+     */
     protected $finder;
 
-    /** @var \Roots\Acorn\Filesystem\Filesystem */
+    /**
+     * The Filesystem instance.
+     *
+     * @var \Roots\Acorn\Filesystem\Filesystem
+     */
     protected $files;
 
-    /** @var string Base path for theme or plugin in which views are located */
-    protected $base_path;
+    /**
+     * Base path for theme or plugin in which views are located.
+     *
+     * @var string
+     */
+    protected $path;
 
-    public function __construct(FileViewFinder $finder, Filesystem $files, $base_path = STYLESHEETPATH)
+    public function __construct(FileViewFinder $finder, Filesystem $files, $path = STYLESHEETPATH)
     {
         $this->finder = $finder;
         $this->files = $files;
-        $this->base_path = realpath($base_path) ?: $base_path;
+        $this->path = realpath($path) ?: $path;
     }
 
+    /**
+     * Locate available view files.
+     *
+     * @param  mixed  $file
+     * @return array
+     */
     public function locate($file)
     {
         if (is_iterable($file)) {
@@ -45,7 +63,7 @@ class ViewFinder
     }
 
     /**
-     * Get view finder
+     * Return the FileViewFinder instance.
      *
      * @return \Roots\Acorn\View\FileViewFinder
      */
@@ -55,7 +73,7 @@ class ViewFinder
     }
 
     /**
-     * Get view finder
+     * Return the Filesystem instance.
      *
      * @return \Roots\Acorn\Filesystem\Filesystem
      */
@@ -67,13 +85,13 @@ class ViewFinder
     /**
      * Get list of view paths relative to the base path
      *
-     * @return array relative view paths
+     * @return array
      */
     protected function getRelativeViewPaths()
     {
         return collect($this->finder->getPaths())
         ->map(function ($viewsPath) {
-            return $this->files->getRelativePath("{$this->base_path}/", $viewsPath);
+            return $this->files->getRelativePath("{$this->path}/", $viewsPath);
         });
     }
 }

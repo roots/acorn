@@ -2,12 +2,12 @@
 
 namespace Roots\Acorn\View;
 
+use ReflectionClass;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Illuminate\View\ViewServiceProvider as ViewServiceProviderBase;
-use ReflectionClass;
 use Roots\Acorn\View\Composers\Debugger;
 use Roots\Acorn\View\Directives\InjectionDirective;
 use Symfony\Component\Finder\Finder;
@@ -15,7 +15,7 @@ use Symfony\Component\Finder\Finder;
 class ViewServiceProvider extends ViewServiceProviderBase
 {
     /**
-     * Register services.
+     * Register any application services.
      *
      * @return void
      */
@@ -26,7 +26,7 @@ class ViewServiceProvider extends ViewServiceProviderBase
     }
 
     /**
-     * Bootstrap services.
+     * Bootstrap any application services.
      *
      * @return void
      */
@@ -44,7 +44,7 @@ class ViewServiceProvider extends ViewServiceProviderBase
     /**
      * Return an instance of View.
      *
-     * @return Illuminate\View\View
+     * @return \Illuminate\View\View
      */
     protected function view()
     {
@@ -65,7 +65,7 @@ class ViewServiceProvider extends ViewServiceProviderBase
                 $hints = array_merge(array_map(function ($path) use ($namespace) {
                     return "{$path}/vendor/{$namespace}";
                 }, $finder->getPaths()), (array) $hints);
-                
+
                 $finder->addNamespace($namespace, $hints);
             }
 
@@ -196,8 +196,10 @@ class ViewServiceProvider extends ViewServiceProviderBase
                 Str::after($composer->getPathname(), $this->app->path() . DIRECTORY_SEPARATOR)
             );
 
-            if (is_subclass_of($composer, Composer::class) &&
-                ! (new ReflectionClass($composer))->isAbstract()) {
+            if (
+                is_subclass_of($composer, Composer::class) &&
+                ! (new ReflectionClass($composer))->isAbstract()
+            ) {
                 $this->view()->composer($composer::views(), $composer);
             }
         }

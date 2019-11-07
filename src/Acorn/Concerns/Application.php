@@ -537,7 +537,7 @@ trait Application
     protected function fireAppCallbacks(array $callbacks)
     {
         foreach ($callbacks as $callback) {
-            call_user_func($callback, $this);
+            $callback($this);
         }
     }
 
@@ -915,7 +915,7 @@ trait Application
      */
     public function environmentFile()
     {
-        //--
+        //
     }
 
     /**
@@ -925,7 +925,7 @@ trait Application
      */
     public function environmentFilePath()
     {
-        // --
+        //
     }
 
     /**
@@ -935,7 +935,7 @@ trait Application
      */
     public function environmentPath()
     {
-        // --
+        //
     }
 
     /**
@@ -946,6 +946,6 @@ trait Application
      */
     public function loadEnvironmentFrom($file)
     {
-        // --
+        //
     }
 }

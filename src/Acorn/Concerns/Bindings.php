@@ -63,7 +63,8 @@ trait Bindings
      */
     public function makeWithBinding($abstract)
     {
-        if (array_key_exists($abstract, $this->availableBindings)
+        if (
+            array_key_exists($abstract, $this->availableBindings)
             && ! array_key_exists($this->availableBindings[$abstract], $this->ranServiceBinders)
         ) {
             $this->{$method = $this->availableBindings[$abstract]}();

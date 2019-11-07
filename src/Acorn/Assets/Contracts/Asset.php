@@ -11,7 +11,7 @@ interface Asset
      *
      * @return string
      */
-    public function uri() : string;
+    public function uri(): string;
 
     /**
      * Get the asset's local path
@@ -20,14 +20,14 @@ interface Asset
      *
      * @return string
      */
-    public function path() : string;
+    public function path(): string;
 
     /**
      * Check whether the asset exists on the file system
      *
      * @return bool
      */
-    public function exists() : bool;
+    public function exists(): bool;
 
     /**
      * Get the contents of the asset

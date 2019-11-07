@@ -7,11 +7,19 @@ use Roots\Acorn\Assets\Contracts\Asset as AssetContract;
 
 class Asset implements AssetContract
 {
-    /** @var string */
-    protected $uri;
-
-    /** @var string */
+    /**
+     * Local path
+     *
+     * @var string
+     */
     protected $path;
+
+    /**
+     * Remote URI
+     *
+     * @var string
+     */
+    protected $uri;
 
     /**
      * Get asset from manifest
@@ -26,25 +34,25 @@ class Asset implements AssetContract
     }
 
     /** {@inheritdoc} */
-    public function uri() : string
+    public function uri(): string
     {
         return $this->uri;
     }
 
     /** {@inheritdoc} */
-    public function path() : string
+    public function path(): string
     {
         return $this->path;
     }
 
     /** {@inheritdoc} */
-    public function exists() : bool
+    public function exists(): bool
     {
         return file_exists($this->path());
     }
 
     /** {@inheritdoc} */
-    public function contents() : string
+    public function contents(): string
     {
         if (! $this->exists()) {
             return false;

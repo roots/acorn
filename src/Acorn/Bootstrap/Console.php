@@ -2,13 +2,24 @@
 
 namespace Roots\Acorn\Bootstrap;
 
-use Roots\Acorn\Application;
 use WP_CLI;
+use Roots\Acorn\Application;
 
 class Console
 {
+    /**
+     * The application implementation.
+     *
+     * @var \Roots\Acorn\Application
+     */
     protected $app;
 
+    /**
+     * Bootstrap the given application.
+     *
+     * @param  \Roots\Acorn\Application  $app
+     * @return void
+     */
     public function bootstrap(Application $app)
     {
         $this->app = $app;

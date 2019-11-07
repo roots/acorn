@@ -237,8 +237,10 @@ class Kernel implements KernelContract
                 Str::after($command->getPathname(), realpath($this->app->path()) . DIRECTORY_SEPARATOR)
             );
 
-            if (is_subclass_of($command, Command::class) &&
-                ! (new ReflectionClass($command))->isAbstract()) {
+            if (
+                is_subclass_of($command, Command::class) &&
+                ! (new ReflectionClass($command))->isAbstract()
+            ) {
                 Console::starting(function ($console) use ($command) {
                     $console->resolve($command);
                 });

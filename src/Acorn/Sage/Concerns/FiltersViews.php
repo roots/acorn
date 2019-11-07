@@ -2,8 +2,9 @@
 
 namespace Roots\Acorn\Sage\Concerns;
 
-use function Roots\view;
 use Illuminate\Support\Str;
+
+use function Roots\view;
 
 trait FiltersViews
 {

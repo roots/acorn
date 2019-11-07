@@ -63,5 +63,4 @@ return [
     */
 
     'migrations' => 'migrations',
-
 ];

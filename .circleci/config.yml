@@ -13,11 +13,6 @@ orbs:
           - image: 'circleci/php:7.2-stretch'
         environment:
           PHP_VERSION: '7.2'
-      php-71:
-        docker:
-          - image: 'circleci/php:7.1-stretch'
-        environment:
-          PHP_VERSION: '7.1'
     jobs:
       build-php:
         parameters:
@@ -49,6 +44,3 @@ workflows:
       - acorn/build-php:
           name: build-php-72
           executor: acorn/php-72
-      - acorn/build-php:
-          name: build-php-71
-          executor: acorn/php-71

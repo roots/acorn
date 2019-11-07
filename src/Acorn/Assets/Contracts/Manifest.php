@@ -11,5 +11,5 @@ interface Manifest
      *
      * @return \Roots\Acorn\Assets\Contracts\Asset
      */
-    public function get($key) : Asset;
+    public function get($key): Asset;
 }

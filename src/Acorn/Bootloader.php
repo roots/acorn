@@ -2,10 +2,11 @@
 
 namespace Roots\Acorn;
 
-use function Roots\add_filters;
-use function Roots\env;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Roots\Acorn\Application;
+
+use function Roots\add_filters;
+use function Roots\env;
 
 class Bootloader
 {
@@ -43,7 +44,7 @@ class Bootloader
      * @param callable $callback
      * @return static;
      */
-    public function call(callable $callback) : Bootloader
+    public function call(callable $callback): Bootloader
     {
         if (! $this->ready()) {
             $this->queue[] = $callback;
@@ -59,7 +60,7 @@ class Bootloader
      *
      * @return bool
      */
-    public function ready() : bool
+    public function ready(): bool
     {
         if ($this->ready) {
             return true;
@@ -100,7 +101,7 @@ class Bootloader
      *
      * @return \Illuminate\Contracts\Foundation\Application
      */
-    protected function app() : ApplicationContract
+    protected function app(): ApplicationContract
     {
         static $app;
 
@@ -122,7 +123,7 @@ class Bootloader
      *
      * @return string
      */
-    protected function basePath() : string
+    protected function basePath(): string
     {
         $basepath = \dirname(\locate_template('config') ?: __DIR__ . '/../');
 
@@ -136,11 +137,12 @@ class Bootloader
      *
      * @return string[]
      */
-    protected function bootstrap() : array
+    protected function bootstrap(): array
     {
         $bootstrap = [
             \Roots\Acorn\Bootstrap\SageFeatures::class,
             \Roots\Acorn\Bootstrap\LoadConfiguration::class,
+            \Roots\Acorn\Bootstrap\HandleExceptions::class,
             \Roots\Acorn\Bootstrap\RegisterGlobals::class,
             \Roots\Acorn\Bootstrap\LoadBindings::class,
             \Roots\Acorn\Bootstrap\RegisterProviders::class,

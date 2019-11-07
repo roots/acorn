@@ -8,7 +8,7 @@ use Illuminate\Contracts\Cache\Repository as Cache;
 class Schedule extends ScheduleBase
 {
     /**
-     * Create a new event instance.
+     * Create a new Schedule instance.
      *
      * @param  \Illuminate\Contracts\Cache\Repository $cache
      * @return void

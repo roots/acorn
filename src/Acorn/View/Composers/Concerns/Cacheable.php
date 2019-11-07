@@ -2,9 +2,10 @@
 
 namespace Roots\Acorn\View\Composers\Concerns;
 
-use function Roots\cache;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
+
+use function Roots\cache;
 
 trait Cacheable
 {

@@ -30,9 +30,10 @@ class RelativePathManifest implements
     /**
      * Manifest constructor
      *
-     * @param string $path
-     * @param string $uri
-     * @param iterable|\Illuminate\Contracts\Support\Arrayable $manifest
+     * @param  string $path
+     * @param  string $uri
+     * @param  iterable|\Illuminate\Contracts\Support\Arrayable $manifest
+     * @return void
      */
     public function __construct(string $path, string $uri, $manifest = [])
     {
@@ -50,7 +51,7 @@ class RelativePathManifest implements
      *
      * @return void
      */
-    public function set($original, $revved) : void
+    public function set($original, $revved): void
     {
         $this->manifest[$this->normalizeRelativePath($original)] = $this->normalizeRelativePath($revved);
     }
@@ -61,7 +62,7 @@ class RelativePathManifest implements
      * @param string $key Key for locating asset within the manifest
      * @return \Roots\Acorn\Assets\Asset
      */
-    public function get($key) : AssetContract
+    public function get($key): AssetContract
     {
         $key = $this->normalizeRelativePath($key);
         $relative_path = $this->manifest[$key] ?? $key;
@@ -73,7 +74,7 @@ class RelativePathManifest implements
      *
      * @return string
      */
-    protected function normalizeRelativePath(string $path) : string
+    protected function normalizeRelativePath(string $path): string
     {
         $path = str_replace('\\', '/', $path);
         return ltrim($path, '/');
@@ -81,7 +82,7 @@ class RelativePathManifest implements
 
 
     /** {@inheritdoc} */
-    public function offsetExists($key) : bool
+    public function offsetExists($key): bool
     {
         return array_key_exists($key, $this->manifest);
     }
@@ -91,31 +92,31 @@ class RelativePathManifest implements
      *
      * @return \Roots\Acorn\Assets\Asset
      */
-    public function offsetGet($key) : Asset
+    public function offsetGet($key): Asset
     {
         return $this->get($key);
     }
 
     /** {@inheritdoc} */
-    public function offsetSet($key, $value) : void
+    public function offsetSet($key, $value): void
     {
         $this->set($key, $value);
     }
 
     /** {@inheritdoc} */
-    public function offsetUnset($key) : void
+    public function offsetUnset($key): void
     {
         unset($this->manifest[$key]);
     }
 
     /** {@inheritdoc} */
-    public function count() : int
+    public function count(): int
     {
         return count($this->manifest);
     }
 
     /** {@inheritdoc} */
-    public function getIterator() : ArrayIterator
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->manifest);
     }
@@ -127,13 +128,13 @@ class RelativePathManifest implements
     }
 
     /** {@inheritdoc} */
-    public function toJson($options = 0) : string
+    public function toJson($options = 0): string
     {
         return json_encode($this->jsonSerialize(), $options);
     }
 
     /** {@inheritdoc} */
-    public function toArray() : array
+    public function toArray(): array
     {
         return $this->manifest;
     }
@@ -143,7 +144,7 @@ class RelativePathManifest implements
      *
      * @return string
      */
-    public function uri() : string
+    public function uri(): string
     {
         return $this->uri;
     }
@@ -153,7 +154,7 @@ class RelativePathManifest implements
      *
      * @return string
      */
-    public function path() : string
+    public function path(): string
     {
         return $this->path;
     }

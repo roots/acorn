@@ -33,6 +33,7 @@ class FileViewFinder extends FileViewFinderBase
 
         $view = $this->stripExtensions($view);
         $view = str_replace($paths, '', $view);
+
         foreach ($hints as $hintNamespace => $hintPaths) {
             $test = str_replace($hintPaths, '', $view);
             if ($view !== $test) {
@@ -54,7 +55,7 @@ class FileViewFinder extends FileViewFinderBase
     /**
      * Remove recognized extensions from path
      *
-     * @param string $file relative path to view file
+     * @param  string $file relative path to view file
      * @return string view name
      */
     protected function stripExtensions($path)
@@ -67,8 +68,8 @@ class FileViewFinder extends FileViewFinderBase
     /**
      * Normalize paths
      *
-     * @param string|string[] $path
-     * @param string $separator
+     * @param  string|string[] $path
+     * @param  string          $separator
      * @return string|string[]
      */
     protected function normalizePath($path, $separator = '/')

@@ -14,15 +14,32 @@ use Roots\Acorn\Assets\RelativePathManifest;
  */
 class AssetsManager
 {
-    /** @var \Illuminate\Contracts\Foundation\Application Application container */
+    /**
+     * Application container
+     *
+     * @var \Illuminate\Contracts\Foundation\Application
+     */
     protected $app;
 
-    /** @var \Roots\Acorn\Assets\Contracts\Manifest[] Resolved manifests */
+    /**
+     * Resolved manifests
+     *
+     * @var \Roots\Acorn\Assets\Contracts\Manifest[]
+     */
     protected $manifests;
 
-    /** @var array Registered custom manifest creators */
+    /**
+     * Registered custom manifest creators
+     *
+     * @var array
+     */
     protected $customCreators = [];
 
+    /**
+     * Initialize the AssetManager instance.
+     *
+     * @param ContainerInterface $app
+     */
     public function __construct(ContainerInterface $app)
     {
         $this->app = $app;
@@ -35,7 +52,7 @@ class AssetsManager
      * @param  \Roots\Acorn\Assets\Contracts\Manifest $manifest
      * @return static
      */
-    public function register(string $name, Manifest $manifest) : self
+    public function register(string $name, Manifest $manifest): self
     {
         $this->manifests[$name] = $manifest;
 
@@ -49,7 +66,7 @@ class AssetsManager
      * @param  array $config
      * @return \Roots\Acorn\Assets\Contracts\Manifest
      */
-    public function manifest(string $name = null, array $config = null) : Manifest
+    public function manifest(string $name = null, array $config = null): Manifest
     {
         $name = $name ?: $this->getDefaultManifest();
 
@@ -58,7 +75,7 @@ class AssetsManager
         return $this->manifests[$name] = $manifest;
     }
 
-   /**
+    /**
      * Resolve the given manifest.
      *
      * @param  string  $name
@@ -66,7 +83,7 @@ class AssetsManager
      *
      * @throws \InvalidArgumentException
      */
-    protected function resolve(string $name, ?array $config) : Manifest
+    protected function resolve(string $name, ?array $config): Manifest
     {
         $config = $config ?? $this->getConfig($name);
         $strategy = $config['strategy'] ?? 'relative';
@@ -90,7 +107,7 @@ class AssetsManager
      * @param  array  $config
      * @return \Roots\Acorn\Assets\Contracts\Manifest
      */
-    protected function callCustomCreator(array $config) : Manifest
+    protected function callCustomCreator(array $config): Manifest
     {
         return $this->customCreators[$config['strategy']]($this->app, $config);
     }
@@ -101,7 +118,7 @@ class AssetsManager
      * @param  array $config
      * @return \Roots\Acorn\Assets\RelativePathManifest
      */
-    public function createRelativeManifest(array $config) : RelativePathManifest
+    public function createRelativeManifest(array $config): RelativePathManifest
     {
         $manifest = $this->getJsonManifest($config['manifest']);
 
@@ -114,7 +131,7 @@ class AssetsManager
      * @param string $jsonManifest Path to .json file
      * @return array
      */
-    protected function getJsonManifest(string $jsonManifest) : array
+    protected function getJsonManifest(string $jsonManifest): array
     {
         $files = $this->app->get('files');
 
@@ -127,7 +144,7 @@ class AssetsManager
      * @param  string  $name
      * @return array
      */
-    protected function getConfig(string $name) : array
+    protected function getConfig(string $name): array
     {
         return $this->app->get('config')["assets.manifests.{$name}"];
     }
