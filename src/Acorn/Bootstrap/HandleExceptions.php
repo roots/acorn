@@ -5,7 +5,7 @@ namespace Roots\Acorn\Bootstrap;
 use ErrorException;
 use Exception;
 use Illuminate\Contracts\Debug\ExceptionHandler;
-use Roots\Acorn\Application;
+use Illuminate\Contracts\Foundation\Application;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Debug\Exception\FatalErrorException;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
@@ -34,13 +34,12 @@ class HandleExceptions
      */
     public function bootstrap(Application $app)
     {
-        if (! $app->environment('development') && ! $app->runningInConsole()) {
-            return;
-        }
-
+        $this->app = $app;
         self::$reservedMemory = str_repeat('x', 10240);
 
-        $this->app = $app;
+        if ($this->hasHandler() || ! $this->isDebug()) {
+            return;
+        }
 
         error_reporting(-1 & ~E_USER_NOTICE);
 
@@ -176,5 +175,33 @@ class HandleExceptions
     protected function getExceptionHandler()
     {
         return $this->app->make(ExceptionHandler::class);
+    }
+
+    /**
+     * Determine if a fatal error handler drop-in exists.
+     *
+     * @return bool
+     */
+    protected function hasHandler()
+    {
+        if ($this->app->runningInConsole()) {
+            return;
+        }
+
+        return is_readable(WP_CONTENT_DIR . '/fatal-error-handler.php');
+    }
+
+    /**
+     * Determine if application debugging is enabled.
+     *
+     * @return bool
+     */
+    protected function isDebug()
+    {
+        if ($this->app->runningInConsole()) {
+            return;
+        }
+
+        return $this->app->config->get('app.debug', WP_DEBUG);
     }
 }

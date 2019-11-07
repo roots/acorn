@@ -90,11 +90,11 @@ class Handler implements ExceptionHandlerContract
     public function render($request, Exception $e)
     {
         try {
-            return $this->isDebug() && class_exists(Whoops::class)
+            return app()->environment('development') && class_exists(Whoops::class)
                         ? $this->renderExceptionWithWhoops($e)
-                        : $this->renderExceptionWithSymfony($e, $this->isDebug());
+                        : $this->renderExceptionWithSymfony($e, app()->environment('development'));
         } catch (Exception $e) {
-            return $this->renderExceptionWithSymfony($e, $this->isDebug());
+            return $this->renderExceptionWithSymfony($e, app()->environment('development'));
         }
     }
 
@@ -150,27 +150,5 @@ class Handler implements ExceptionHandlerContract
     public function renderForConsole($output, Exception $e)
     {
         (new ConsoleApplication())->renderException($e, $output);
-    }
-
-    /**
-     * Indicates if the application is in debug mode.
-     *
-     * @return bool
-     */
-    protected function isDebug()
-    {
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            return true;
-        }
-
-        if (defined('WP_DEBUG_DISPLAY') && WP_DEBUG_DISPLAY) {
-            return true;
-        }
-
-        if (config('app.debug', false)) {
-            return true;
-        }
-
-        return false;
     }
 }
