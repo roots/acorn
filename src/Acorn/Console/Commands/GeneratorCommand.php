@@ -207,7 +207,7 @@ abstract class GeneratorCommand extends Command
         return str_replace(
             ['DummyClass', 'DummySlug', 'DummyCamel', 'DummySnake'],
             [$class, Str::slug($class), Str::camel($class), Str::snake($class)],
-            $slug
+            $stub
         );
     }
 
