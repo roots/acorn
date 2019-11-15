@@ -39,7 +39,7 @@ interface Asset
     /**
      * Get the returned value of the asset
      *
-     * @return array|false
+     * @return mixed|false
      */
     public function get();
 }
