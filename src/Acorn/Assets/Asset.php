@@ -57,7 +57,22 @@ class Asset implements AssetContract
         if (! $this->exists()) {
             return false;
         }
+
         return file_get_contents($this->path());
+    }
+
+    /**
+     * Get the returned value of the asset
+     *
+     * @return mixed|false
+     */
+    public function get()
+    {
+        if (! $this->exists()) {
+            return false;
+        }
+
+        return include $this->path();
     }
 
     /** {@inheritdoc} */
