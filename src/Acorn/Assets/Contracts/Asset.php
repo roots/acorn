@@ -35,4 +35,11 @@ interface Asset
      * @return string|false
      */
     public function contents();
+
+    /**
+     * Get the returned value of the asset
+     *
+     * @return array|false
+     */
+    public function get();
 }

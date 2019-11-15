@@ -57,7 +57,18 @@ class Asset implements AssetContract
         if (! $this->exists()) {
             return false;
         }
+
         return file_get_contents($this->path());
+    }
+
+    /** {@inheritdoc} */
+    public function get(): array
+    {
+        if (! $this->exists()) {
+            return false;
+        }
+
+        return require_once($this->path());
     }
 
     /** {@inheritdoc} */
