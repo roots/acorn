@@ -68,7 +68,7 @@ class Asset implements AssetContract
             return false;
         }
 
-        return require_once($this->path());
+        return include $this->path();
     }
 
     /** {@inheritdoc} */
