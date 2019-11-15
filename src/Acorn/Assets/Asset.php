@@ -61,8 +61,12 @@ class Asset implements AssetContract
         return file_get_contents($this->path());
     }
 
-    /** {@inheritdoc} */
-    public function get(): array
+    /**
+     * Get the returned value of the asset
+     *
+     * @return mixed|false
+     */
+    public function get()
     {
         if (! $this->exists()) {
             return false;
