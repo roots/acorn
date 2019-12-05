@@ -54,6 +54,7 @@ class Kernel implements KernelContract
         'Roots\Acorn\Console\Commands\PackageClearCommand',
         'Roots\Acorn\Console\Commands\PackageDiscoverCommand',
         'Roots\Acorn\Console\Commands\ProviderMakeCommand',
+        'Roots\Acorn\Console\Commands\SummaryCommand',
         'Roots\Acorn\Console\Commands\VendorPublishCommand',
         'Roots\Acorn\Console\Commands\ViewCacheCommand',
         'Roots\Acorn\Console\Commands\ViewClearCommand',

@@ -23,7 +23,7 @@ abstract class GeneratorCommand extends Command
     protected $type;
 
     /**
-     * Create a new controller creator command instance.
+     * Create a new Generator command instance.
      *
      * @param  \Illuminate\Filesystem\Filesystem  $files
      * @return void
