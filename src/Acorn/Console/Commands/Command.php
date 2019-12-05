@@ -27,7 +27,7 @@ abstract class Command extends CommandBase
      * Write a string in a title box.
      *
      * @param  string $title
-     * @return void
+     * @return \Roots\Acorn\Console\Commands\Command
      */
     public function title($title)
     {
@@ -46,7 +46,7 @@ abstract class Command extends CommandBase
     /**
      * Clear the current line in console output.
      *
-     * @return mixed
+     * @return \Roots\Acorn\Console\Commands\Command
      */
     public function clearLine()
     {
