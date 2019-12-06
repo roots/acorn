@@ -29,7 +29,12 @@ class Application extends Container implements ApplicationContract
     use LaravelApplication;
     use Bindings;
 
-    public const VERSION = 'Acorn (1.0.0) (Laravel Components 5.8.*)';
+    /**
+     * The Laravel framework version.
+     *
+     * @var string
+     */
+    public const VERSION = 'Acorn 1.0.0 (Laravel Components 6.*)';
 
     /**
      * Indicates if the class aliases have been registered.
