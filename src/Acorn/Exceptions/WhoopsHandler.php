@@ -4,13 +4,8 @@ namespace Roots\Acorn\Exceptions;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Whoops\Handler\JsonResponseHandler;
-use Roots\Acorn\Exceptions\Handler\AjaxResponseHandler;
 use Roots\Acorn\Exceptions\Handler\PrettyPageHandler;
-use Roots\Acorn\Exceptions\Handler\RestResponseHandler;
 
-use function Roots\app;
 use function Roots\base_path;
 use function Roots\config;
 
@@ -42,35 +37,13 @@ class WhoopsHandler
      */
     public function forDebug()
     {
-        return tap($this->handler(), function ($handler) {
+        return tap(new PrettyPageHandler(), function ($handler) {
             $handler->handleUnconditionally(true);
 
             $this->registerApplicationPaths($handler)
                  ->registerBlacklist($handler)
                  ->registerEditor($handler);
         });
-    }
-
-    /**
-     * Return the appropriate handler for the Whoops instance.
-     *
-     * @return mixed
-     */
-    public function handler()
-    {
-        if ($this->isAjax()) {
-            return new AjaxResponseHandler();
-        }
-
-        if ($this->isRest()) {
-            return new RestResponseHandler();
-        }
-
-        if ($this->isJson()) {
-            return new JsonResponseHandler();
-        }
-
-        return new PrettyPageHandler();
     }
 
     /**
@@ -137,43 +110,5 @@ class WhoopsHandler
         }
 
         return $this;
-    }
-
-    /**
-     * Determine if the provider should return JSON.
-     *
-     * @return bool
-     */
-    protected function isJson()
-    {
-        return app()->runningInConsole();
-    }
-
-    /**
-     * Determine if the error provider should return an Ajax response.
-     *
-     * @return bool
-     */
-    protected function isAjax()
-    {
-        return defined('DOING_AJAX') && DOING_AJAX;
-    }
-
-    /**
-     * Determine if the error provider should return a response for the Rest API.
-     *
-     * @return bool
-     */
-    protected function isRest()
-    {
-        if (defined('REST_REQUEST') && REST_REQUEST) {
-            return true;
-        }
-
-        if (! empty($_SERVER['REQUEST_URI']) && Str::contains($_SERVER['REQUEST_URI'], rest_get_url_prefix())) {
-            return true;
-        }
-
-        return false;
     }
 }
