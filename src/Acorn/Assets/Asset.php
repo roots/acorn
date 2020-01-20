@@ -75,6 +75,20 @@ class Asset implements AssetContract
         return include $this->path();
     }
 
+    /**
+     * Get and decode the JSON contents of the asset
+     *
+     * @return array
+     */
+    public function toJson()
+    {
+        if (! $this->contents()) {
+            return false;
+        }
+
+        return json_decode($this->contents(), true);
+    }
+
     /** {@inheritdoc} */
     public function __toString()
     {
