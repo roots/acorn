@@ -24,7 +24,7 @@ class Console
     {
         $this->app = $app;
 
-        if ($this->app->runningInConsole()) {
+        if ($this->app->runningInConsole() && class_exists('WP_CLI')) {
             WP_CLI::add_command('acorn', function () {
                 $args = [];
 
