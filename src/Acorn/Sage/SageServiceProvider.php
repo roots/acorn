@@ -82,7 +82,7 @@ class SageServiceProvider extends ServiceProvider
     {
         $sage = $this->app['sage'];
 
-        add_filter('comments_template', $sage->filter('comments_template'), 100);
-        add_filter('get_search_form', $sage->filter('search_form'), 100);
+        add_filter('comments_template', $sage->filter('comments_template'), 10);
+        add_filter('get_search_form', $sage->filter('search_form'), 10);
     }
 }
