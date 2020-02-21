@@ -3,6 +3,7 @@
 /**
  * Application Functions
  */
+
 if (! function_exists('app')) {
     function app(...$args)
     {
