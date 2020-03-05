@@ -18,11 +18,9 @@ class DummyClass extends Composer
     /**
      * Data to be passed to view before rendering.
      *
-     * @param  array $data
-     * @param  \Illuminate\View\View $view
      * @return array
      */
-    public function with($data, $view)
+    public function with()
     {
         return [
             //
