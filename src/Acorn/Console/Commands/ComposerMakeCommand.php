@@ -2,23 +2,23 @@
 
 namespace Roots\Acorn\Console\Commands;
 
+use Symfony\Component\Console\Input\InputOption;
+
 class ComposerMakeCommand extends GeneratorCommand
 {
     /**
-     * The console command signature.
+     * The console command name.
      *
      * @var string
      */
-    protected $signature = 'make:composer {name* : The name of your Composer class.}
-                           {--views= : List of views served by the composer}
-                           {--force : Overwrite any existing files}';
+    protected $name = 'make:composer';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a new Composer class';
+    protected $description = 'Create a new view composer class';
     /**
      * The type of class being generated.
      *
@@ -51,7 +51,7 @@ class ComposerMakeCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\Composers';
+        return $rootNamespace . '\View\Composers';
     }
 
     /**
@@ -79,5 +79,18 @@ class ComposerMakeCommand extends GeneratorCommand
     {
         $views = implode("',\n        '", $views);
         return str_replace('DummyViews', empty($views) ? '//' : "'{$views}'", $stub);
+    }
+
+    /**
+     * Get the console command options.
+     *
+     * @return array
+     */
+    protected function getOptions()
+    {
+        return [
+            ['force', null, InputOption::VALUE_NONE, 'Create the class even if the view composer already exists'],
+            ['views', null, InputOption::VALUE_NONE, 'Create a view composer with a pre-defined set of views'],
+        ];
     }
 }

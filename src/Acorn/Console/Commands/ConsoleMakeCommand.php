@@ -3,24 +3,22 @@
 namespace Roots\Acorn\Console\Commands;
 
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 
 class ConsoleMakeCommand extends GeneratorCommand
 {
     /**
-     * The console command signature.
+     * The console command name.
      *
      * @var string
      */
-    protected $signature = 'make:command {name* : The name of the command}
-                           {--command : The terminal command that should be assigned.}';
+    protected $name = 'make:command';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a new Acorn command';
+    protected $description = 'Create a new console command';
 
     /**
      * The type of class being generated.
@@ -62,5 +60,18 @@ class ConsoleMakeCommand extends GeneratorCommand
     protected function getDefaultNamespace($rootNamespace)
     {
         return $rootNamespace . '\Console\Commands';
+    }
+
+    /**
+     * Get the console command options.
+     *
+     * @return array
+     */
+    protected function getOptions()
+    {
+        return [
+            ['force', null, InputOption::VALUE_NONE, 'Create the class even if the console command already exists'],
+            ['command', null, InputOption::VALUE_NONE, 'Optionally set the command syntax when creating the class'],
+        ];
     }
 }

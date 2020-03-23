@@ -11,10 +11,10 @@ if (! function_exists('app')) {
     }
 }
 
-if (! function_exists('config')) {
-    function config(...$args)
+if (! function_exists('app_path')) {
+    function app_path(...$args)
     {
-        return Roots\config(...$args);
+        return Roots\app_path(...$args);
     }
 }
 
@@ -25,17 +25,24 @@ if (! function_exists('asset')) {
     }
 }
 
-if (! function_exists('view')) {
-    function view(...$args)
+if (! function_exists('base_path')) {
+    function base_path(...$args)
     {
-        return Roots\view(...$args);
+        return Roots\base_path(...$args);
     }
 }
 
-if (! function_exists('resolve')) {
-    function resolve(...$args)
+if (! function_exists('bcrypt')) {
+    function bcrypt(...$args)
     {
-        return Roots\resolve(...$args);
+        return Roots\bcrypt(...$args);
+    }
+}
+
+if (! function_exists('broadcast')) {
+    function broadcast(...$args)
+    {
+        return Roots\broadcast(...$args);
     }
 }
 
@@ -46,24 +53,10 @@ if (! function_exists('cache')) {
     }
 }
 
-if (! function_exists('validator')) {
-    function validator(...$args)
+if (! function_exists('config')) {
+    function config(...$args)
     {
-        return Roots\validator(...$args);
-    }
-}
-
-if (! function_exists('app_path')) {
-    function app_path(...$args)
-    {
-        return Roots\app_path(...$args);
-    }
-}
-
-if (! function_exists('base_path')) {
-    function base_path(...$args)
-    {
-        return Roots\base_path(...$args);
+        return Roots\config(...$args);
     }
 }
 
@@ -81,41 +74,6 @@ if (! function_exists('database_path')) {
     }
 }
 
-if (! function_exists('public_path')) {
-    function public_path(...$args)
-    {
-        return Roots\public_path(...$args);
-    }
-}
-
-if (! function_exists('resource_path')) {
-    function resource_path(...$args)
-    {
-        return Roots\resource_path(...$args);
-    }
-}
-
-if (! function_exists('storage_path')) {
-    function storage_path(...$args)
-    {
-        return Roots\storage_path(...$args);
-    }
-}
-
-if (! function_exists('bcrypt')) {
-    function bcrypt(...$args)
-    {
-        return Roots\bcrypt(...$args);
-    }
-}
-
-if (! function_exists('encrypt')) {
-    function encrypt(...$args)
-    {
-        return Roots\encrypt(...$args);
-    }
-}
-
 if (! function_exists('decrypt')) {
     function decrypt(...$args)
     {
@@ -123,10 +81,10 @@ if (! function_exists('decrypt')) {
     }
 }
 
-if (! function_exists('broadcast')) {
-    function broadcast(...$args)
+if (! function_exists('encrypt')) {
+    function encrypt(...$args)
     {
-        return Roots\broadcast(...$args);
+        return Roots\encrypt(...$args);
     }
 }
 
@@ -144,20 +102,6 @@ if (! function_exists('logger')) {
     }
 }
 
-if (! function_exists('report')) {
-    function report(...$args)
-    {
-        return Roots\report(...$args);
-    }
-}
-
-if (! function_exists('rescue')) {
-    function rescue(...$args)
-    {
-        return Roots\rescue(...$args);
-    }
-}
-
 if (! function_exists('logs')) {
     function logs(...$args)
     {
@@ -172,6 +116,48 @@ if (! function_exists('now')) {
     }
 }
 
+if (! function_exists('public_path')) {
+    function public_path(...$args)
+    {
+        return Roots\public_path(...$args);
+    }
+}
+
+if (! function_exists('report')) {
+    function report(...$args)
+    {
+        return Roots\report(...$args);
+    }
+}
+
+if (! function_exists('rescue')) {
+    function rescue(...$args)
+    {
+        return Roots\rescue(...$args);
+    }
+}
+
+if (! function_exists('resolve')) {
+    function resolve(...$args)
+    {
+        return Roots\resolve(...$args);
+    }
+}
+
+if (! function_exists('resource_path')) {
+    function resource_path(...$args)
+    {
+        return Roots\resource_path(...$args);
+    }
+}
+
+if (! function_exists('storage_path')) {
+    function storage_path(...$args)
+    {
+        return Roots\storage_path(...$args);
+    }
+}
+
 if (! function_exists('today')) {
     function today(...$args)
     {
@@ -179,24 +165,13 @@ if (! function_exists('today')) {
     }
 }
 
-if (! function_exists('cookie')) {
-    function cookie(...$args)
+if (! function_exists('view')) {
+    function view(...$args)
     {
-        return Roots\cookie(...$args);
+        return Roots\view(...$args);
     }
 }
 
-if (! function_exists('session')) {
-    function session(...$args)
-    {
-        return Roots\session(...$args);
-    }
-}
-
-
-/**
- * Helper functions
- */
 if (! function_exists('env')) {
     function env(...$args)
     {

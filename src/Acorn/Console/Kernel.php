@@ -14,7 +14,6 @@ use Symfony\Component\Finder\Finder;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Console\Application as Console;
 use Illuminate\Contracts\Console\Kernel as KernelContract;
-use Symfony\Component\Debug\Exception\FatalThrowableError;
 
 class Kernel implements KernelContract
 {
@@ -49,6 +48,7 @@ class Kernel implements KernelContract
         'Roots\Acorn\Console\Commands\ConfigCacheCommand',
         'Roots\Acorn\Console\Commands\ConfigClearCommand',
         'Roots\Acorn\Console\Commands\ConsoleMakeCommand',
+        'Roots\Acorn\Console\Commands\ComponentMakeCommand',
         'Roots\Acorn\Console\Commands\OptimizeClearCommand',
         'Roots\Acorn\Console\Commands\OptimizeCommand',
         'Roots\Acorn\Console\Commands\PackageClearCommand',
@@ -109,8 +109,6 @@ class Kernel implements KernelContract
 
             return 1;
         } catch (Throwable $e) {
-            $e = new FatalThrowableError($e);
-
             $this->reportException($e);
 
             $this->renderException($output, $e);
@@ -252,10 +250,10 @@ class Kernel implements KernelContract
     /**
      * Report the exception to the exception handler.
      *
-     * @param  \Exception  $e
+     * @param  \Throwable  $e
      * @return void
      */
-    protected function reportException(Exception $e)
+    protected function reportException(Throwable $e)
     {
         $this->app['Illuminate\Contracts\Debug\ExceptionHandler']->report($e);
     }
@@ -264,10 +262,10 @@ class Kernel implements KernelContract
      * Report the exception to the exception handler.
      *
      * @param  \Symfony\Component\Console\Output\OutputInterface  $output
-     * @param  \Exception  $e
+     * @param  \Throwable  $e
      * @return void
      */
-    protected function renderException($output, Exception $e)
+    protected function renderException($output, Throwable $e)
     {
         $this->app['Illuminate\Contracts\Debug\ExceptionHandler']->renderForConsole($output, $e);
     }

@@ -5,11 +5,11 @@ namespace Roots\Acorn\Console\Commands;
 class PackageClearCommand extends Command
 {
    /**
-     * The console command signature.
+     * The console command name.
      *
      * @var string
      */
-    protected $signature = 'package:clear';
+    protected $name = 'package:clear';
 
     /**
      * The console command description.

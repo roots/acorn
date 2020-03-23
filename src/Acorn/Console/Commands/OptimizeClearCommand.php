@@ -5,11 +5,11 @@ namespace Roots\Acorn\Console\Commands;
 class OptimizeClearCommand extends Command
 {
    /**
-     * The console command signature.
+     * The console command name.
      *
      * @var string
      */
-    protected $signature = 'optimize:clear';
+    protected $name = 'optimize:clear';
 
     /**
      * The console command description.

@@ -7,11 +7,11 @@ use Roots\Acorn\PackageManifest;
 class PackageDiscoverCommand extends Command
 {
     /**
-     * The console command signature.
+     * The console command name.
      *
      * @var string
      */
-    protected $signature = 'package:discover';
+    protected $name = 'package:discover';
 
     /**
      * The console command description.
