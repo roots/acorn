@@ -28,7 +28,7 @@ return [
     |
     */
 
-    'compiled' => wp_upload_dir()['basedir'] . '/acorn-cache',
+    'compiled' => get_theme_file_path('/storage/framework/views'),
 
     /*
     |--------------------------------------------------------------------------
@@ -49,7 +49,7 @@ return [
     | View Namespaces
     |--------------------------------------------------------------------------
     |
-    | View engine has an underutilized feature that allows developers to add
+    | Blade has an underutilized feature that allows developers to add
     | supplemental view paths that may contain conflictingly named views.
     | These paths are prefixed with a namespace to get around the conflicts.
     | A use case might be including views from within a plugin folder.
@@ -66,58 +66,15 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | View Composers
+    | View Directives
     |--------------------------------------------------------------------------
     |
-    | View composers allow data to always be passed to certain views. This can
-    | be useful when passing data to components such as hero elements,
-    | navigation, banners, etc.
-    |
-    */
-
-    'composers' => [
-        // App\Composers\Title::class,
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Blade Directives
-    |--------------------------------------------------------------------------
-    |
-    | Directives are used by Blade to extend its functionality. The classes
-    | listed below should be invokable. They will be called by the DI container
-    | prior to being invoked.
+    | The namespaces where view components reside. Components can be referenced
+    | with camelCase & dot notation.
     |
     */
 
     'directives' => [
-        'asset'  => Roots\Acorn\Assets\AssetDirective::class
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Blade Component Aliases
-    |--------------------------------------------------------------------------
-    |
-    | Component aliases allow you to use a shorthand to call a Blade component.
-    | Instead of referencing your components like this:
-    |
-    | @component('components.alert', ['type' => 'warning'])
-    |   {{ __('Page not found') }}
-    | @endcomponent
-    |
-    | You can use an alias instead:
-    |
-    | @alert(['type' => 'error'])
-    |   {{ __('Page not found') }}
-    | @endalert
-    |
-    | Use the key to set the alias and the value to set the path to the
-    | view.
-    |
-    */
-
-    'components' => [
-        // 'alert'  => 'components.alert',
+        'asset'  => Roots\Acorn\Assets\AssetDirective::class,
     ],
 ];

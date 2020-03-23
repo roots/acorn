@@ -240,15 +240,11 @@ abstract class GeneratorCommand extends Command
     /**
      * Get the model for the default guard's user provider.
      *
-     * @return string|null
+     * @return void
      */
     protected function userProviderModel()
     {
-        $guard = config('auth.defaults.guard');
-
-        $provider = config("auth.guards.{$guard}.provider");
-
-        return config("auth.providers.{$provider}.model");
+        //
     }
 
     /**

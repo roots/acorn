@@ -7,11 +7,11 @@ use Roots\Acorn\Filesystem\Filesystem;
 class ConfigClearCommand extends Command
 {
    /**
-     * The console command signature.
+     * The console command name.
      *
      * @var string
      */
-    protected $signature = 'config:clear';
+    protected $name = 'config:clear';
 
     /**
      * The console command description.

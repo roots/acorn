@@ -5,11 +5,11 @@ namespace Roots\Acorn\Console\Commands;
 class OptimizeCommand extends Command
 {
    /**
-     * The console command signature.
+     * The console command name.
      *
      * @var string
      */
-    protected $signature = 'optimize';
+    protected $name = 'optimize';
 
     /**
      * The console command description.

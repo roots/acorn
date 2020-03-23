@@ -42,10 +42,11 @@ return [
 
         'array' => [
             'driver' => 'array',
+            'serialize' => false,
         ],
 
         'database' => [
-            'driver' => 'mysql',
+            'driver' => 'database',
             'table' => 'cache',
             'connection' => null,
         ],
@@ -87,7 +88,6 @@ return [
             'table' => env('DYNAMODB_CACHE_TABLE', 'cache'),
             'endpoint' => env('DYNAMODB_ENDPOINT'),
         ],
-
     ],
 
     /*
@@ -101,5 +101,6 @@ return [
     |
     */
 
-    'prefix' => env('CACHE_PREFIX', Str::slug(env('APP_NAME', wp_get_theme()->get('Name')), '_') . '_cache'),
+    'prefix' => env('CACHE_PREFIX', Str::slug(env('APP_NAME', wp_get_theme()->get('Name')), '_').'_cache'),
+
 ];

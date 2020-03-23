@@ -59,7 +59,9 @@ class SummaryCommand extends ListCommand
         $this->input = $input;
 
         if ($this->input->getOption('format') === $this->format && ! $this->input->getOption('raw')) {
-            return $this->title()->usage()->commands();
+            $this->title()->usage()->commands();
+
+            return 0;
         }
 
         return parent::execute($this->input, $this->output);

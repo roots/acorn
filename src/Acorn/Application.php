@@ -34,7 +34,7 @@ class Application extends Container implements ApplicationContract
      *
      * @var string
      */
-    public const VERSION = 'Acorn 1.0.0 (Laravel Components 6.*)';
+    public const VERSION = 'Acorn 1.x (Laravel 7.x)';
 
     /**
      * Indicates if the class aliases have been registered.

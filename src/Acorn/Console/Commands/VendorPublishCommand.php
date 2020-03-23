@@ -2,12 +2,12 @@
 
 namespace Roots\Acorn\Console\Commands;
 
-use Illuminate\Support\Arr;
-use League\Flysystem\MountManager;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
-use League\Flysystem\Filesystem as Flysystem;
 use League\Flysystem\Adapter\Local as LocalAdapter;
+use League\Flysystem\Filesystem as Flysystem;
+use League\Flysystem\MountManager;
 
 class VendorPublishCommand extends Command
 {
@@ -156,8 +156,16 @@ class VendorPublishCommand extends Command
      */
     protected function publishTag($tag)
     {
+        $published = false;
+
         foreach ($this->pathsToPublish($tag) as $from => $to) {
             $this->publishItem($from, $to);
+
+            $published = true;
+        }
+
+        if ($published === false) {
+            $this->error('Unable to locate publishable resources.');
         }
     }
 
@@ -236,8 +244,8 @@ class VendorPublishCommand extends Command
     protected function moveManagedFiles($manager)
     {
         foreach ($manager->listContents('from://', true) as $file) {
-            if ($file['type'] === 'file' && (! $manager->has('to://'.$file['path']) || $this->option('force'))) {
-                $manager->put('to://'.$file['path'], $manager->read('from://'.$file['path']));
+            if ($file['type'] === 'file' && (! $manager->has('to://' . $file['path']) || $this->option('force'))) {
+                $manager->put('to://' . $file['path'], $manager->read('from://' . $file['path']));
             }
         }
     }
@@ -269,6 +277,6 @@ class VendorPublishCommand extends Command
 
         $to = str_replace($this->app->basePath(), '', realpath($to));
 
-        $this->line('<info>Copied '.$type.'</info> <comment>['.$from.']</comment> <info>To</info> <comment>['.$to.']</comment>');
+        $this->line('<info>Copied ' . $type . '</info> <comment>[' . $from . ']</comment> <info>To</info> <comment>[' . $to . ']</comment>');
     }
 }
