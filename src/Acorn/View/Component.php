@@ -2,7 +2,7 @@
 
 namespace Roots\Acorn\View;
 
-use Illuminate\View\ComponentBase;
+use Illuminate\View\Component as ComponentBase;
 
 use function Roots\view;
 
