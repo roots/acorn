@@ -43,7 +43,7 @@ class Console
                 $kernel->commands();
 
                 $status = $kernel->handle(
-                    $input = new \Symfony\Component\Console\Input\ArgvInput(array_slice($args, 2)),
+                    $input = new \Symfony\Component\Console\Input\ArgvInput(array_slice($args, 1)),
                     new \Symfony\Component\Console\Output\ConsoleOutput()
                 );
 
