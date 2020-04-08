@@ -6,6 +6,7 @@ use ErrorException;
 use Exception;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Support\Arr;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\ErrorHandler\Error\FatalError;
 use Throwable;
@@ -27,6 +28,13 @@ class HandleExceptions
     protected $app;
 
     /**
+     * A list of the error types that are ignored.
+     *
+     * @var array
+     */
+    protected $ignoredErrors = ['E_USER_DEPRECATED'];
+
+    /**
      * Bootstrap the given application.
      *
      * @param  \Roots\Acorn\Application  $app
@@ -41,8 +49,6 @@ class HandleExceptions
         if ($this->hasHandler() || ! $this->isDebug()) {
             return;
         }
-
-        error_reporting(-1 & ~E_USER_NOTICE);
 
         set_error_handler([$this, 'handleError']);
 
@@ -71,7 +77,14 @@ class HandleExceptions
     public function handleError($level, $message, $file = '', $line = 0, $context = [])
     {
         if (error_reporting() & $level) {
-            throw new ErrorException($message, 0, $level, $file, $line);
+            if (
+                $this->shouldIgnore($e = new ErrorException($message, 0, $level, $file, $line)) &&
+                ! $this->app->runningInConsole()
+            ) {
+                return;
+            }
+
+            throw $e;
         }
     }
 
@@ -157,6 +170,30 @@ class HandleExceptions
     protected function isFatal($type)
     {
         return in_array($type, [E_COMPILE_ERROR, E_CORE_ERROR, E_ERROR, E_PARSE]);
+    }
+
+    /**
+     * Determine if the error type should be ignored.
+     *
+     * @param  \Throwable  $e
+     * @return bool
+     */
+    public function shouldIgnore(Throwable $e)
+    {
+        return ! $this->shouldntIgnore($e);
+    }
+
+    /**
+     * Determine if the exception is in the ignore list.
+     *
+     * @param  \Throwable  $e
+     * @return bool
+     */
+    protected function shouldntIgnore(Throwable $e)
+    {
+        return ! is_null(Arr::first($this->ignoredErrors, function ($type) use ($e) {
+            return $e instanceof $type;
+        }));
     }
 
     /**
