@@ -3,7 +3,6 @@
 namespace Roots\Acorn\View\Composers\Concerns;
 
 use Illuminate\Support\Facades\Cache;
-use Illuminate\View\View;
 
 use function Roots\cache;
 

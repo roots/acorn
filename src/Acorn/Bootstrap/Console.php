@@ -27,10 +27,10 @@ class Console
         if ($this->app->runningInConsole() && class_exists('WP_CLI')) {
             WP_CLI::add_command('acorn', function () {
                 $config = WP_CLI::get_configurator();
-                [$args] = $config->parse_args($_SERVER['argv']);
+                $args = array_slice($_SERVER['argv'], 1);
 
-                if (preg_match('/' . $config::ALIAS_REGEX . '/', $args[1])) {
-                    array_splice($args, 1, 1);
+                if (preg_match('/' . $config::ALIAS_REGEX . '/', $args[0])) {
+                    $args = array_slice($args, 1);
                 }
 
                 $this->app->singleton(
@@ -43,7 +43,7 @@ class Console
                 $kernel->commands();
 
                 $status = $kernel->handle(
-                    $input = new \Symfony\Component\Console\Input\ArgvInput(array_slice($args, 1)),
+                    $input = new \Symfony\Component\Console\Input\ArgvInput($args),
                     new \Symfony\Component\Console\Output\ConsoleOutput()
                 );
 
