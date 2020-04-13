@@ -2,7 +2,6 @@
 
 namespace Roots\Acorn\Sage;
 
-use Roots\Acorn\Config;
 use Roots\Acorn\Sage\Sage;
 use Roots\Acorn\Sage\ViewFinder;
 use Roots\Acorn\ServiceProvider;

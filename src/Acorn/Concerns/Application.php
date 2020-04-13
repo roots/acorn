@@ -3,7 +3,6 @@
 namespace Roots\Acorn\Concerns;
 
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 

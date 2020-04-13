@@ -5,7 +5,6 @@ namespace Roots\Acorn;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Illuminate\Support\Collection;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Roots\Acorn\Concerns\Application as LaravelApplication;
 use Roots\Acorn\Concerns\Bindings;

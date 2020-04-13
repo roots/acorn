@@ -3,11 +3,7 @@
 namespace Roots\Acorn\Concerns;
 
 use Illuminate\Config\Repository as ConfigRepository;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Log\LogManager;
 use Illuminate\Support\Composer;
-use Roots\Acorn\Contracts\Binder;
-use Zend\Diactoros\Response as PsrResponse;
 
 trait Bindings
 {

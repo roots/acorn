@@ -5,10 +5,7 @@ namespace Roots\Acorn\Exceptions\Handler;
 use WP;
 use WP_Query;
 use WP_Post;
-use Whoops\Exception\Formatter;
-use Whoops\Handler\Handler;
 use Whoops\Handler\PrettyPageHandler as PrettyPageHandlerBase;
-use Whoops\Util\Misc;
 use Illuminate\Support\Collection;
 
 class PrettyPageHandler extends PrettyPageHandlerBase
