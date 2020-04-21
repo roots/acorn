@@ -41,6 +41,9 @@ abstract class Composer
         }
 
         $view = array_slice(explode('\\', static::class), 2);
+        if (isset($view[0]) && 'Composers' === $view[0]) {
+            unset($view[0]);
+        }
         $view = array_map([Str::class, 'snake'], $view, array_fill(0, count($view), '-'));
         return implode('/', $view);
     }
