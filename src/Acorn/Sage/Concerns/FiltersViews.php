@@ -2,8 +2,6 @@
 
 namespace Roots\Acorn\Sage\Concerns;
 
-use Illuminate\Support\Str;
-
 use function Roots\view;
 
 trait FiltersViews
@@ -18,17 +16,11 @@ trait FiltersViews
      */
     public function filterCommentsTemplate($file)
     {
-        if (Str::startsWith($file, [STYLESHEETPATH, TEMPLATEPATH])) {
-            $file = ltrim(str_replace([STYLESHEETPATH, TEMPLATEPATH], '', $file), '\\/');
+        if (file_exists($file)) {
+            return $file;
         }
 
-        if ($file === 'comments.php') {
-            $file = 'partials/comments.blade.php';
-        }
-
-        return view(
-            $this->fileFinder->getPossibleViewNameFromPath($file)
-        )->makeLoader();
+        return view()->exists('partials.comments') ? view('partials.comments')->makeLoader() : null;
     }
 
     /**
