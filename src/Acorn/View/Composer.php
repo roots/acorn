@@ -40,7 +40,7 @@ abstract class Composer
             return static::$views;
         }
 
-        $view = array_slice(explode('\\', static::class), 2);
+        $view = array_slice(explode('\\', static::class), 3);
         $view = array_map([Str::class, 'snake'], $view, array_fill(0, count($view), '-'));
         return implode('/', $view);
     }
