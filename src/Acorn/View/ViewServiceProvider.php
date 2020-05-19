@@ -178,6 +178,14 @@ class ViewServiceProvider extends ViewServiceProviderBase
      */
     public function attachComposers()
     {
+        $composers = $this->app->config['view.composers'];
+        
+        if (is_array($composers) && Arr::isAssoc($composers)) {
+            foreach ($composers as $composer) {
+                $this->view()->composer($composer::views(), $composer);
+            }
+        }
+                                                                     
         if (! is_dir($path = $this->app->path('View/Composers'))) {
             return;
         }
