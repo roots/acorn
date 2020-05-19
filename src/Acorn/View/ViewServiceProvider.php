@@ -182,7 +182,7 @@ class ViewServiceProvider extends ViewServiceProviderBase
         
         if (is_array($composers) && Arr::isAssoc($composers)) {
             foreach ($composers as $composer) {
-                $this->view()->composer($composer::views(), $composer);	
+                $this->view()->composer($composer::views(), $composer);
             }
         }
                                                                      
