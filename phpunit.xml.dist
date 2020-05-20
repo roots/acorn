@@ -21,6 +21,7 @@
         <directory suffix=".blade.php">./</directory>
         <directory>./config</directory>
         <directory>./vendor</directory>
+        <directory>./tests</directory>
       </exclude>
     </whitelist>
   </filter>

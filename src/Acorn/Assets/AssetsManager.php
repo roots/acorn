@@ -2,9 +2,12 @@
 
 namespace Roots\Acorn\Assets;
 
+use Closure;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Roots\Acorn\Assets\Contracts\Manifest;
-use Roots\Acorn\Assets\RelativePathManifest;
+
+use function json_decode;
 
 /**
  * Manage assets manifests
@@ -81,7 +84,7 @@ class AssetsManager
      * @param  string  $name
      * @return \Roots\Acorn\Assets\Contracts\Manifest
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function resolve(string $name, ?array $config): Manifest
     {
@@ -135,7 +138,7 @@ class AssetsManager
     {
         $files = $this->app->get('files');
 
-        return $files->exists($jsonManifest) ? \json_decode($files->get($jsonManifest), true) : [];
+        return $files->exists($jsonManifest) ? json_decode($files->get($jsonManifest), true) : [];
     }
 
     /**
@@ -163,7 +166,7 @@ class AssetsManager
      * Register a custom manifest creator Closure.
      *
      * @param  string    $strategy
-     * @param  \Closure  $callback
+     * @param  Closure  $callback
      * @return $this
      */
     public function extend($strategy, Closure $callback)
