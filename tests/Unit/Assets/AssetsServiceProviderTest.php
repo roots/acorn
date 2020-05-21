@@ -29,7 +29,7 @@ class AssetsServiceProviderTest extends TestCase
             function (): array {
                 return [
                     'assets.default' => 'test',
-                    'assets.manifests.test' => ['manifest' => '', 'path' => 'test', 'uri' => 'test']
+                    'assets.manifests.test' => ['manifest' => '', 'path' => 'test', 'uri' => 'test'],
                 ];
             }
         );

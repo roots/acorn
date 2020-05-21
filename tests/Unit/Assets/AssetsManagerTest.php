@@ -38,7 +38,9 @@ class AssetsManagerTest extends TestCase
     public function testConfig(): void
     {
         $expected = new RelativePathManifest('', '');
-        $manager = new AssetsManager(new ContainerStub(['config' => ['assets.manifests.foo' => ['strategy' => 'bar']]]));
+        $manager = new AssetsManager(
+            new ContainerStub(['config' => ['assets.manifests.foo' => ['strategy' => 'bar']]])
+        );
         $manager->extend('bar', function () use ($expected): Manifest {
             return $expected;
         });
