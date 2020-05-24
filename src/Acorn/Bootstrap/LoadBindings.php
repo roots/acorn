@@ -14,7 +14,7 @@ class LoadBindings
      */
     public function bootstrap(Application $app)
     {
-        if (class_uses($app, Roots\Acorn\Concerns\Bindings::class)) {
+        if (class_uses($app, \Roots\Acorn\Concerns\Bindings::class)) {
             $app->registerContainerBindings();
         }
     }

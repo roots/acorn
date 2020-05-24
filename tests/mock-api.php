@@ -134,3 +134,29 @@ if (! function_exists('doing_action')) {
         return doing_filter($key);
     }
 }
+
+if (! function_exists('__')) {
+    function __(): string
+    {
+        return mock_translation(...func_get_args());
+    }
+}
+
+if (! function_exists('_x')) {
+    function _x(): string
+    {
+        return mock_translation(...func_get_args());
+    }
+}
+
+if (! function_exists('_e')) {
+    function _e(): void
+    {
+        echo mock_translation(...func_get_args());
+    }
+}
+
+function mock_translation()
+{
+    return 'translated.' . func_get_arg(0);
+}

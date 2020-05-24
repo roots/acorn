@@ -2,11 +2,11 @@
 
 namespace Roots\Acorn\Tests\Unit\TestDouble;
 
-use Psr\Container\ContainerInterface;
+use Psr\Container\ContainerInterface as PsrContainerInterface;
 
 use function array_key_exists;
 
-final class ContainerStub implements ContainerInterface
+final class ContainerStub implements PsrContainerInterface
 {
     /** @var array<string, mixed> */
     private $map;
