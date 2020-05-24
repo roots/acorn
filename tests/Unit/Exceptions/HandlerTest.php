@@ -2,12 +2,12 @@
 
 namespace Roots\Acorn\Tests\Unit\Exceptions;
 
+use Illuminate\Http\Request;
 use PHPUnit\Framework\TestCase;
 use Roots\Acorn\Application;
 use Roots\Acorn\Exceptions\Handler;
 use Roots\Acorn\Tests\Unit\TestDouble\OutputStub;
 use RuntimeException;
-use stdClass;
 
 use function implode;
 
@@ -17,20 +17,28 @@ final class HandlerTest extends TestCase
     private $handler;
     /** @var Application */
     private $container;
+    /** @var string */
+    private $env;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->container = new Application();
+        $this->env = 'development';
+        $this->container->bind('env', function () {
+            return $this->env;
+        });
         $this->handler = new Handler($this->container);
     }
 
-    public function testRender(): void
+    public function testRenderSymfonyErrorPageWithoutErrorMessageForProduction(): void
     {
-        $this->markTestIncomplete('What exactly is the $request param from render method');
-        // If it is \Illuminate\Http\Request we are missing a dependency for it
+        $this->env = 'production';
 
-        $this->handler->render(new stdClass(), new RuntimeException());
+        $content = $this->handler->render(Request::create('/'), new RuntimeException('Foo Bar'));
+
+        self::assertStringContainsString('500 Internal Server Error', $content);
+        self::assertStringNotContainsString('Foo bar', $content);
     }
 
     public function testRenderForConsoleRendersErrorMessage(): void
