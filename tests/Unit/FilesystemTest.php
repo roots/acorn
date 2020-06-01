@@ -27,4 +27,17 @@ class FilesystemTest extends TestCase
 
         $this->assertEquals('../../plugins/my-plugin/', $relative);
     }
+
+    /** @test */
+    public function it_should_return_empty_string_when_base_and_target_path_are_equal()
+    {
+        $filesystem = new \Roots\Acorn\Filesystem\Filesystem();
+
+        $relative = $filesystem->getRelativePath(
+            '/app/themes/sage/',
+            '/app/themes/sage/'
+        );
+
+        $this->assertEquals('', $relative);
+    }
 }
