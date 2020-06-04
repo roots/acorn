@@ -404,7 +404,8 @@ function view($view = null, $data = [], $mergeData = [])
         return $factory;
     }
 
-    return $factory->make($view, $data, $mergeData);
+    return $factory->exists($view)
+        ? $factory->make($view, $data, $mergeData) : $factory->file($view, $data, $mergeData);
 }
 
 /**
