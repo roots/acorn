@@ -84,4 +84,12 @@ final class ViewFactoryStub implements Factory
     {
         return array_values($this->map[$namespace] ?? []);
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getShared(): array
+    {
+        return $this->shared;
+    }
 }

@@ -38,7 +38,7 @@ class ServiceProviderTest extends TestCase
 
         self::assertContains('dummy-plugin', $this->getViewFactoryFromApp()->getRegisteredNamespaces());
         $paths = $this->getViewFactoryFromApp()->getPathsForNamespace('dummy-plugin');
-        self::assertStringContainsString('acorn/tests/Unit/fixtures/plugin/config/../resources/views', $paths[0]);
+        self::assertStringContainsString('acorn/tests/Unit/__fixtures__/plugin/config/../resources/views', $paths[0]);
     }
 
     public function testRegisterProvidersFromPluginConfig(): void
@@ -74,7 +74,7 @@ class ServiceProviderTest extends TestCase
         $meta = new Meta(
             [
                 'key' => 'dummy-plugin',
-                'plugin' => __DIR__ . '/../fixtures/plugin/dummy-plugin.php',
+                'plugin' => __DIR__ . '/../__fixtures__/plugin/dummy-plugin.php',
             ]
         );
         $this->plugin = new PluginStub($meta);
