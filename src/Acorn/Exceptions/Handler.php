@@ -148,7 +148,7 @@ class Handler implements ExceptionHandlerContract
     /**
      * Render an exception into a response.
      *
-     * @param  void        $request
+     * @param  \Illuminate\Http\Request  $request
      * @param  \Throwable  $e
      * @return string
      *

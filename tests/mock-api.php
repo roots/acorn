@@ -8,6 +8,7 @@ define('STYLESHEETPATH', WP_CONTENT_DIR . '/themes/sage-child');
 define('TEMPLATEPATH', WP_CONTENT_DIR . '/themes/sage');
 
 $GLOBALS['mock-hooks'] = [];
+$GLOBALS['body-class'] = [];
 
 if (! function_exists('content_url')) {
     function content_url()
@@ -93,7 +94,9 @@ if (! function_exists('apply_filters')) {
         if (array_key_exists($key, $GLOBALS['mock-hooks'])) {
             $callback = $GLOBALS['mock-hooks'][$key];
             unset($GLOBALS['mock-hooks'][$key]);
-            $value = call_user_func($callback, $value);
+            $args = func_get_args();
+            unset($args[0]);
+            $value = call_user_func($callback, ...$args);
         }
 
         return $value;
@@ -133,4 +136,81 @@ if (! function_exists('doing_action')) {
     {
         return doing_filter($key);
     }
+}
+
+if (! function_exists('__')) {
+    function __(): string
+    {
+        return mock_translation(...func_get_args());
+    }
+}
+
+if (! function_exists('_x')) {
+    function _x(): string
+    {
+        return mock_translation(...func_get_args());
+    }
+}
+
+if (! function_exists('_e')) {
+    function _e(): void
+    {
+        echo mock_translation(...func_get_args());
+    }
+}
+
+if (! function_exists('_cleanup_header_comment')) {
+    /**
+     * Strip close comment and close php tags from file headers used by WP.
+     * @link https://github.com/WordPress/WordPress/blob/5.2.1/wp-includes/functions.php#L5480-L5492
+     *
+     * @param string $str Header comment to clean up.
+     * @return string
+     */
+    function _cleanup_header_comment($str)
+    {
+        return trim(preg_replace('/\s*(?:\*\/|\?>).*/', '', $str));
+    }
+}
+
+if (! function_exists('sanitize_key')) {
+    /**
+     * Sanitizes a string key.
+     * @link https://github.com/WordPress/WordPress/blob/5.2.1/wp-includes/formatting.php#L2114-L2138
+     *
+     * @param string $key String key
+     * @return string Sanitized key
+     */
+    function sanitize_key($key)
+    {
+        $key = strtolower($key);
+        $key = preg_replace('/[^a-z0-9_\-]/', '', $key);
+        return $key;
+    }
+}
+
+if (! function_exists('get_body_class')) {
+    function get_body_class()
+    {
+        return $GLOBALS['body-class'];
+    }
+}
+
+if (! function_exists('get_template_directory')) {
+    function get_template_directory()
+    {
+        return TEMPLATEPATH;
+    }
+}
+
+if (! class_exists('WP_Post')) {
+    final class WP_Post
+    {
+
+    }
+}
+
+function mock_translation()
+{
+    return 'translated.' . func_get_arg(0);
 }

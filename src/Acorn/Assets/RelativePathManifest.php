@@ -2,24 +2,27 @@
 
 namespace Roots\Acorn\Assets;
 
+use ArrayAccess;
+use ArrayIterator;
+use Countable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
-use Illuminate\Support\Str;
-use Roots\Acorn\Assets\Asset;
+use IteratorAggregate;
+use JsonSerializable;
 use Roots\Acorn\Assets\Contracts\Asset as AssetContract;
 use Roots\Acorn\Assets\Contracts\Manifest as ManifestContract;
 
 class RelativePathManifest implements
     Arrayable,
-    \ArrayAccess,
-    \Countable,
-    \IteratorAggregate,
+    ArrayAccess,
+    Countable,
+    IteratorAggregate,
     Jsonable,
-    \JsonSerializable,
+    JsonSerializable,
     ManifestContract
 {
     /** @var array */
-    protected $manifest;
+    protected $manifest = [];
 
     /** @var string */
     protected $path;
