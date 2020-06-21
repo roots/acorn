@@ -82,6 +82,8 @@ class ViewServiceProvider extends ViewServiceProviderBase
      */
     public function registerMacros()
     {
+        $app = $this->app;
+
         /**
          * Get the compiled path of the view
          *
@@ -104,14 +106,14 @@ class ViewServiceProvider extends ViewServiceProviderBase
          *
          * @return string
          */
-        View::macro('makeLoader', function () {
+        View::macro('makeLoader', function () use ($app) {
             $view = $this->getName();
-            $compiled = $this->getCompiled();
-            $id = basename($compiled, '.php');
-            $loader = dirname($compiled) . "/{$id}-loader.php";
+            $path = $this->getPath();
+            $id = md5($this->getCompiled());
+            $compiled_path = $app['config']['view.compiled'];
 
-            if (! file_exists($loader)) {
-                file_put_contents($loader, "<?= \\Roots\\view('{$view}', \$data ?? get_defined_vars())->render(); ?>");
+            if (! file_exists($loader = "{$compiled_path}/{$id}-loader.php")) {
+                file_put_contents($loader, "<?= \\Roots\\view('{$view}', \$data ?? get_defined_vars())->render(); ?>\n<?php /**PATH {$path} ENDPATH**/ ?>");
             }
 
             return $loader;
