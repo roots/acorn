@@ -111,9 +111,12 @@ class ViewServiceProvider extends ViewServiceProviderBase
             $path = $this->getPath();
             $id = md5($this->getCompiled());
             $compiled_path = $app['config']['view.compiled'];
+            
+            $content = "<?= \\Roots\\view('{$view}', \$data ?? get_defined_vars())->render(); ?>"
+                . "\n<?php /**PATH {$path} ENDPATH**/ ?>";
 
             if (! file_exists($loader = "{$compiled_path}/{$id}-loader.php")) {
-                file_put_contents($loader, "<?= \\Roots\\view('{$view}', \$data ?? get_defined_vars())->render(); ?>\n<?php /**PATH {$path} ENDPATH**/ ?>");
+                file_put_contents($loader, $content);
             }
 
             return $loader;
