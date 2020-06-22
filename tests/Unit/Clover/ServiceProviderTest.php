@@ -38,7 +38,7 @@ class ServiceProviderTest extends TestCase
 
         self::assertContains('dummy-plugin', $this->getViewFactoryFromApp()->getRegisteredNamespaces());
         $paths = $this->getViewFactoryFromApp()->getPathsForNamespace('dummy-plugin');
-        self::assertStringContainsString('acorn/tests/Unit/__fixtures__/plugin/config/../resources/views', $paths[0]);
+        self::assertStringContainsString('tests/Unit/__fixtures__/plugin/config/../resources/views', $paths[0]);
     }
 
     public function testRegisterProvidersFromPluginConfig(): void
