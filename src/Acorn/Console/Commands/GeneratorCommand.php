@@ -33,16 +33,11 @@ abstract class GeneratorCommand extends GeneratorCommandBase
     protected function replaceClass($stub, $name)
     {
         $class = str_replace($this->getNamespace($name) . '\\', '', $name);
-        $class = str_replace(
-            ['DummySlug', 'DummyCamel', 'DummySnake'],
-            [Str::slug($class), Str::camel($class), Str::snake($class)],
-            $stub
-        );
 
         return str_replace(
-            ['DummyClass', '{{ class }}', '{{class}}'],
-            $class,
-            $stub
+            ['DummySlug', 'DummyCamel', 'DummySnake'],
+            [Str::slug($class), Str::camel($class), Str::snake($class)],
+            parent::replaceClass($stub, $name)
         );
     }
 
