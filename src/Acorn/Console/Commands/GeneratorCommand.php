@@ -40,7 +40,7 @@ abstract class GeneratorCommand extends GeneratorCommandBase
         );
 
         return str_replace(
-            ['{{ class }}', '{{class}}'],
+            ['DummyClass', '{{ class }}', '{{class}}'],
             $class,
             $stub
         );
