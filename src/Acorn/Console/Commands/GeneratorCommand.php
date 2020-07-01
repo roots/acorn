@@ -49,6 +49,16 @@ abstract class GeneratorCommand extends GeneratorCommandBase
     /**
      * {@inheritdoc}
      */
+    protected function getPath($name)
+    {
+        $name = Str::replaceFirst($this->rootNamespace(), '', $name);
+
+        return $this->app->path() . '/' . str_replace('\\', '/', $name) . '.php';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function getNameInput()
     {
         return trim(
