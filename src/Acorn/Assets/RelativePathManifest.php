@@ -21,6 +21,8 @@ class RelativePathManifest implements
     JsonSerializable,
     ManifestContract
 {
+    use AssetsMixable;
+
     /** @var array */
     protected $manifest = [];
 
@@ -42,6 +44,11 @@ class RelativePathManifest implements
     {
         $this->path = $path;
         $this->uri = $uri;
+
+        if ($mixHotUri = $this->getMixHotUri($path)) {
+            $this->uri = $mixHotUri;
+        }
+
         $manifest = $manifest instanceof Arrayable ? $manifest->toArray() : (array) $manifest;
 
         foreach ($manifest as $key => $value) {
