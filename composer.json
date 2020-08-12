@@ -49,6 +49,7 @@
     "illuminate/support": "^7.0",
     "illuminate/view": "^7.0",
     "league/flysystem": "^1.0",
+    "ramsey/uuid": "^3.7|^4.0",
     "roots/support": "dev-master",
     "symfony/error-handler": "^5.0",
     "symfony/var-dumper": "^5.0"
