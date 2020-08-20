@@ -63,7 +63,7 @@ class Handler implements ExceptionHandlerContract
      * @param  \Throwable  $e
      * @return mixed
      *
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function report(Throwable $e)
     {
