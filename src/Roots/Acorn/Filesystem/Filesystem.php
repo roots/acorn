@@ -19,6 +19,34 @@ class Filesystem extends FilesystemBase
     }
 
     /**
+     * Find the closest file up the directory tree.
+     *
+     * @param string $path
+     * @param string $file
+     * @return string|null
+     */
+    public function closest($path, $file)
+    {
+        $current_directory = $path;
+
+        while ($this->isReadable($current_directory)) {
+            if ($this->isFile($composer_path = $current_directory . DIRECTORY_SEPARATOR . $file)) {
+                return $composer_path;
+            }
+
+            $parent_directory = $this->dirname($current_directory);
+
+            if (empty($parent_directory) || $parent_directory === $current_directory) {
+                break;
+            }
+
+            $current_directory = $parent_directory;
+        }
+
+        return null;
+    }
+
+    /**
      * Get relative path of target from specified base
      *
      * @param string  $basePath

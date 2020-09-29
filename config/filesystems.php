@@ -1,6 +1,8 @@
 <?php
 
 use function Roots\env;
+use function Roots\public_path;
+use function Roots\storage_path;
 
 return [
 
@@ -66,5 +68,20 @@ return [
             'bucket' => env('AWS_BUCKET'),
             'url' => env('AWS_URL'),
         ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Symbolic Links
+    |--------------------------------------------------------------------------
+    |
+    | Here you may configure the symbolic links that will be created when the
+    | `storage:link` Artisan command is executed. The array keys should be
+    | the locations of the links and the values should be their targets.
+    |
+    */
+
+    'links' => [
+        // public_path('app/uploads') => storage_path('app/uploads'),
     ],
 ];

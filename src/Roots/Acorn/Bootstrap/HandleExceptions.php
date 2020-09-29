@@ -3,30 +3,13 @@
 namespace Roots\Acorn\Bootstrap;
 
 use ErrorException;
-use Exception;
 use Throwable;
-use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Foundation\Bootstrap\HandleExceptions as FoundationHandleExceptionsBootstrapper;
 use Illuminate\Support\Arr;
-use Symfony\Component\Console\Output\ConsoleOutput;
-use Symfony\Component\ErrorHandler\Error\FatalError;
 
-class HandleExceptions
+class HandleExceptions extends FoundationHandleExceptionsBootstrapper
 {
-    /**
-     * Reserved memory so that errors can be displayed properly on memory exhaustion.
-     *
-     * @var string
-     */
-    public static $reservedMemory;
-
-    /**
-     * The application instance.
-     *
-     * @var \Roots\Acorn\Application
-     */
-    protected $app;
-
     /**
      * A list of the error types that are ignored.
      *
@@ -76,54 +59,15 @@ class HandleExceptions
      */
     public function handleError($level, $message, $file = '', $line = 0, $context = [])
     {
-        if (error_reporting() & $level) {
-            if (
-                $this->shouldIgnore($e = new ErrorException($message, 0, $level, $file, $line)) &&
-                ! $this->app->runningInConsole()
-            ) {
-                return;
-            }
-
-            throw $e;
-        }
-    }
-
-    /**
-     * Handle an uncaught exception from the application.
-     *
-     * Note: Most exceptions can be handled via the try / catch block in
-     * the HTTP and Console kernels. But, fatal error exceptions must
-     * be handled differently since they are not normal exceptions.
-     *
-     * @param  \Throwable  $e
-     * @return void
-     */
-    public function handleException(Throwable $e)
-    {
-        try {
-            self::$reservedMemory = null;
-
-            $this->getExceptionHandler()->report($e);
-        } catch (Exception $e) {
-            //
+        if (! (error_reporting() & $level)) {
+            return;
         }
 
-        if ($this->app->runningInConsole()) {
-            $this->renderForConsole($e);
-        } else {
-            $this->renderHttpResponse($e);
+        if ($this->shouldIgnore($e = new ErrorException($message, 0, $level, $file, $line))) {
+            return;
         }
-    }
 
-    /**
-     * Render an exception to the console.
-     *
-     * @param  \Exception  $e
-     * @return void
-     */
-    protected function renderForConsole(Exception $e)
-    {
-        $this->getExceptionHandler()->renderForConsole(new ConsoleOutput(), $e);
+        throw $e;
     }
 
     /**
@@ -138,72 +82,16 @@ class HandleExceptions
     }
 
     /**
-     * Handle the PHP shutdown event.
-     *
-     * @return void
-     */
-    public function handleShutdown()
-    {
-        if (! is_null($error = error_get_last()) && $this->isFatal($error['type'])) {
-            $this->handleException($this->fatalErrorFromPhpError($error, 0));
-        }
-    }
-
-    /**
-     * Create a new fatal error instance from an error array.
-     *
-     * @param  array  $error
-     * @param  int|null  $traceOffset
-     * @return \Symfony\Component\ErrorHandler\Error\FatalError
-     */
-    protected function fatalErrorFromPhpError(array $error, $traceOffset = null)
-    {
-        return new FatalError($error['message'], 0, $error, $traceOffset);
-    }
-
-    /**
-     * Determine if the error type is fatal.
-     *
-     * @param  int  $type
-     * @return bool
-     */
-    protected function isFatal($type)
-    {
-        return in_array($type, [E_COMPILE_ERROR, E_CORE_ERROR, E_ERROR, E_PARSE]);
-    }
-
-    /**
      * Determine if the error type should be ignored.
      *
      * @param  \Throwable  $e
      * @return bool
      */
-    public function shouldIgnore(Throwable $e)
+    public function shouldIgnore(Throwable $e): bool
     {
-        return ! $this->shouldntIgnore($e);
-    }
-
-    /**
-     * Determine if the exception is in the ignore list.
-     *
-     * @param  \Throwable  $e
-     * @return bool
-     */
-    protected function shouldntIgnore(Throwable $e)
-    {
-        return ! is_null(Arr::first($this->ignoredErrors, function ($type) use ($e) {
+        return !$this->app->runningInConsole() && is_null(Arr::first($this->ignoredErrors, function ($type) use ($e) {
             return $e instanceof $type;
         }));
-    }
-
-    /**
-     * Get an instance of the exception handler.
-     *
-     * @return \Illuminate\Contracts\Debug\ExceptionHandler
-     */
-    protected function getExceptionHandler()
-    {
-        return $this->app->make(ExceptionHandler::class);
     }
 
     /**
@@ -211,10 +99,10 @@ class HandleExceptions
      *
      * @return bool
      */
-    protected function hasHandler()
+    protected function hasHandler(): bool
     {
         if ($this->app->runningInConsole()) {
-            return;
+            return false;
         }
 
         return is_readable(WP_CONTENT_DIR . '/fatal-error-handler.php');
@@ -225,12 +113,12 @@ class HandleExceptions
      *
      * @return bool
      */
-    protected function isDebug()
+    protected function isDebug(): bool
     {
         if ($this->app->runningInConsole()) {
-            return;
+            return false;
         }
 
-        return $this->app->config->get('app.debug', WP_DEBUG);
+        return (bool) $this->app->config->get('app.debug', WP_DEBUG);
     }
 }

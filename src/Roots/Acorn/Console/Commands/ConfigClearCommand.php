@@ -2,7 +2,7 @@
 
 namespace Roots\Acorn\Console\Commands;
 
-use Illuminate\Contracts\Filesystem\Filesystem;
+use Roots\Acorn\Filesystem\Filesystem;
 
 class ConfigClearCommand extends Command
 {

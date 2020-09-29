@@ -17,7 +17,6 @@
 
     <file>acorn.php</file>
     <file>src</file>
-    <file>tests</file>
 
     <!-- We should be cognizant of long lines, but handle it case-by-case -->
     <rule ref="Generic.Files.LineLength.TooLong">

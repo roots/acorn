@@ -3,9 +3,8 @@
 namespace Roots\Acorn;
 
 use Composer\Script\Event;
-use Roots\Acorn\Application;
+use Roots\Acorn\Console\Console;
 use Roots\Acorn\Filesystem\Filesystem;
-use Roots\Acorn\PackageManifest;
 
 class ComposerScripts
 {
@@ -58,15 +57,9 @@ class ComposerScripts
      */
     protected static function buildManifest()
     {
-        $app = new Application(getcwd());
+        $console = new Console(new Filesystem(), getcwd());
 
-        $app->instance(PackageManifest::class, new PackageManifest(
-            new Filesystem(),
-            $app->basePath(),
-            $app->getCachedPackagesPath()
-        ));
-
-        $app->make(PackageManifest::class)->build();
+        $console->packageDiscover();
     }
 
     /**
@@ -76,14 +69,8 @@ class ComposerScripts
      */
     protected static function clearCompiled()
     {
-        $app = new Application(getcwd());
+        $console = new Console(new Filesystem(), getcwd());
 
-        if (file_exists($servicesPath = $app->getCachedServicesPath())) {
-            @unlink($servicesPath);
-        }
-
-        if (file_exists($packagesPath = $app->getCachedPackagesPath())) {
-            @unlink($packagesPath);
-        }
+        $console->packageClear();
     }
 }

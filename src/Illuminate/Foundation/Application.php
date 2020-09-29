@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @copyright Taylor Otwell
- * @license https://github.com/laravel/framework/blob/8.x/LICENSE.md MIT
- * @see https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/Application.php
- */
-
 namespace Illuminate\Foundation;
 
 use Closure;
@@ -39,7 +33,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
      *
      * @var string
      */
-    const VERSION = '8.x-dev';
+    const VERSION = '8.7.1';
 
     /**
      * The base path for the Laravel installation.

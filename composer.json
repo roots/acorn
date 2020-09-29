@@ -76,6 +76,7 @@
   "prefer-stable": true,
   "scripts": {
     "lint": "phpcs",
+    "lint:fix": "phpcbf",
     "test": "phpunit",
     "coverage": "phpunit --coverage-html coverage"
   }

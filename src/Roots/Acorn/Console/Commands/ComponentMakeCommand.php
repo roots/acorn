@@ -51,20 +51,22 @@ class ComponentMakeCommand extends GeneratorCommand
      */
     protected function writeView()
     {
-        $view = collect(explode('/', $this->argument('name')))
-            ->map(function ($part) {
-                return Str::kebab($part);
-            })
-            ->implode('.');
-
-        $path = resource_path('views') . '/' . str_replace('.', '/', 'components.' . $view);
+        $path = $this->viewPath(
+            str_replace('.', '/', 'components.' . $this->getView()) . '.blade.php'
+        );
 
         if (! $this->files->isDirectory(dirname($path))) {
             $this->files->makeDirectory(dirname($path), 0777, true, true);
         }
 
+        if ($this->files->exists($path) && ! $this->option('force')) {
+            $this->error('View already exists!');
+
+            return;
+        }
+
         file_put_contents(
-            $path . '.blade.php',
+            $path,
             '<div>
   <!-- Hello World. -->
 </div>'
@@ -89,9 +91,25 @@ class ComponentMakeCommand extends GeneratorCommand
 
         return str_replace(
             'DummyView',
-            '$this->view(\'components.' . Str::kebab(class_basename($name)) . '\')',
+            '$this->view(\'components.' . $this->getView() . '\')',
             parent::buildClass($name)
         );
+    }
+
+    /**
+     * Get the view name relative to the components directory.
+     *
+     * @return string view
+     */
+    protected function getView()
+    {
+        $name = str_replace('\\', '/', $this->argument('name'));
+
+        return collect(explode('/', $name))
+            ->map(function ($part) {
+                return Str::kebab($part);
+            })
+            ->implode('.');
     }
 
     /**

@@ -5,9 +5,7 @@ namespace Roots\Acorn\Console;
 use WP_CLI;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Contracts\Debug\ExceptionHandler;
 use Roots\Acorn\Console\Kernel;
-use Roots\Acorn\Exceptions\Handler;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use TypeError;
@@ -42,8 +40,6 @@ class AcornWpCliCommand
         if (preg_match('/' . $config::ALIAS_REGEX . '/', $args[0])) {
             $args = array_slice($args, 1);
         }
-
-        $this->app->singleton(ExceptionHandler::class, Handler::class);
 
         $kernel = $this->app->make(Kernel::class);
 

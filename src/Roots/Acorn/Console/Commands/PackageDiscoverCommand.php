@@ -2,7 +2,7 @@
 
 namespace Roots\Acorn\Console\Commands;
 
-use Roots\Acorn\PackageManifest;
+use Illuminate\Foundation\PackageManifest;
 
 class PackageDiscoverCommand extends Command
 {

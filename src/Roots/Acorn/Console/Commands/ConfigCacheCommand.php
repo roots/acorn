@@ -4,7 +4,7 @@ namespace Roots\Acorn\Console\Commands;
 
 use Throwable;
 use LogicException;
-use Illuminate\Contracts\Filesystem\Filesystem;
+use Roots\Acorn\Filesystem\Filesystem;
 
 class ConfigCacheCommand extends Command
 {
