@@ -2,6 +2,7 @@
 
 namespace Roots\Acorn;
 
+use Composer\Autoload\ClassLoader;
 use Composer\Script\Event;
 use Roots\Acorn\Application;
 use Roots\Acorn\Filesystem\Filesystem;
@@ -17,10 +18,11 @@ class ComposerScripts
      */
     public static function postInstall(Event $event)
     {
-        require_once $event->getComposer()->getConfig()->get('vendor-dir') . '/autoload.php';
+        $loader = require $event->getComposer()->getConfig()->get('vendor-dir') . '/autoload.php';
+        $basePath = static::getAppBasePath($loader);
 
-        static::clearCompiled();
-        static::buildManifest();
+        static::clearCompiled($basePath);
+        static::buildManifest($basePath);
     }
 
     /**
@@ -31,10 +33,11 @@ class ComposerScripts
      */
     public static function postUpdate(Event $event)
     {
-        require_once $event->getComposer()->getConfig()->get('vendor-dir') . '/autoload.php';
+        $loader = require $event->getComposer()->getConfig()->get('vendor-dir') . '/autoload.php';
+        $basePath = static::getAppBasePath($loader);
 
-        static::clearCompiled();
-        static::buildManifest();
+        static::clearCompiled($basePath);
+        static::buildManifest($basePath);
     }
 
     /**
@@ -45,20 +48,22 @@ class ComposerScripts
      */
     public static function postAutoloadDump(Event $event)
     {
-        require_once $event->getComposer()->getConfig()->get('vendor-dir') . '/autoload.php';
+        $loader = require $event->getComposer()->getConfig()->get('vendor-dir') . '/autoload.php';
+        $basePath = static::getAppBasePath($loader);
 
-        static::clearCompiled();
-        static::buildManifest();
+        static::clearCompiled($basePath);
+        static::buildManifest($basePath);
     }
 
     /**
      * Build the Acorn package manifest and write it to disk.
      *
+     * @param  string   $basePath
      * @return void
      */
-    protected static function buildManifest()
+    protected static function buildManifest($basePath)
     {
-        $app = new Application(getcwd());
+        $app = new Application($basePath);
 
         $app->instance(PackageManifest::class, new PackageManifest(
             new Filesystem(),
@@ -72,11 +77,12 @@ class ComposerScripts
     /**
      * Clear the cached Acorn bootstrapping files.
      *
+     * @param  string   $basePath
      * @return void
      */
-    protected static function clearCompiled()
+    protected static function clearCompiled($basePath)
     {
-        $app = new Application(getcwd());
+        $app = new Application($basePath);
 
         if (file_exists($servicesPath = $app->getCachedServicesPath())) {
             @unlink($servicesPath);
@@ -85,5 +91,22 @@ class ComposerScripts
         if (file_exists($packagesPath = $app->getCachedPackagesPath())) {
             @unlink($packagesPath);
         }
+    }
+
+    /**
+     * Get base path for Application registered by App\ namespace or fallback to current dir
+     *
+     * @param  \Composer\Autoload\ClassLoader   $loader
+     * @return string
+     */
+    protected static function getAppBasePath(ClassLoader $loader)
+    {
+        $psr4 = $loader->getPrefixesPsr4();
+
+        if (!empty($psr4['App\\']) && ($namespacePath = array_shift($psr4['App\\']))) {
+            return dirname($namespacePath);
+        }
+
+        return getcwd();
     }
 }
