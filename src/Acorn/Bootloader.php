@@ -140,6 +140,7 @@ class Bootloader
     protected function bootstrap(): array
     {
         $bootstrap = [
+            \Roots\Acorn\Bootstrap\CaptureRequest::class,
             \Roots\Acorn\Bootstrap\SageFeatures::class,
             \Roots\Acorn\Bootstrap\LoadConfiguration::class,
             \Roots\Acorn\Bootstrap\HandleExceptions::class,
