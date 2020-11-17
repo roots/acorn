@@ -7,7 +7,7 @@ use ReflectionFunction;
 use ReflectionMethod;
 use RuntimeException;
 
-use function Roots\add_actions as add_actions;
+use function Roots\add_filters as add_filters;
 
 abstract class Filter implements Contract
 {
@@ -40,7 +40,7 @@ abstract class Filter implements Contract
      */
     public function apply(): void
     {
-        add_actions(
+        add_filters(
             $this->getTag(),
             $this->getHandle(),
             $this->getPriority(),
