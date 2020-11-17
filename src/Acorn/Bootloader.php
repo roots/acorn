@@ -145,6 +145,7 @@ class Bootloader
             \Roots\Acorn\Bootstrap\HandleExceptions::class,
             \Roots\Acorn\Bootstrap\RegisterGlobals::class,
             \Roots\Acorn\Bootstrap\LoadBindings::class,
+            \Roots\Acorn\Bootstrap\ApplyFilters::class,
             \Roots\Acorn\Bootstrap\RegisterProviders::class,
             \Roots\Acorn\Bootstrap\Console::class,
         ];
