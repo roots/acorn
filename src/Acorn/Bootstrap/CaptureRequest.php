@@ -15,7 +15,7 @@ class CaptureRequest
      */
     public function bootstrap(Application $app)
     {
-    	$app->instance('request', \Illuminate\Http\Request::capture());
-	    Facade::clearResolvedInstance('request');
+        $app->instance('request', \Illuminate\Http\Request::capture());
+        Facade::clearResolvedInstance('request');
     }
 }
