@@ -38,4 +38,11 @@ interface Filter
      * @return array
      */
     public function getTag(): iterable;
+
+    /**
+     * Remove filter from system.
+     *
+     * @return void
+     */
+    public function remove(): void;
 }

@@ -8,6 +8,7 @@ use ReflectionMethod;
 use RuntimeException;
 
 use function Roots\add_filters as add_filters;
+use function Roots\remove_filters as remove_filters;
 
 abstract class Filter implements Contract
 {
@@ -142,5 +143,19 @@ abstract class Filter implements Contract
     public function getTag(): iterable
     {
         return $this->tag;
+    }
+
+    /**
+     * Remove filter from system.
+     *
+     * @return void
+     */
+    public function remove(): void
+    {
+        remove_filters(
+            $this->getTag(),
+            $this->getHandle(),
+            $this->getPriority()
+        );
     }
 }
