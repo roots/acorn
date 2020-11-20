@@ -72,9 +72,6 @@ abstract class Filter implements Contract
             // if is static method call
             // we need to divide string to classname and method
             if ($isStaticMethod) {
-                // if is static method call
-                // we need to divide string to classname and method
-
                 $handle = [
                     substr($handle, 0, $methodCallPosition), // classname
                     substr($handle, ($methodCallPosition + 2)) // method
