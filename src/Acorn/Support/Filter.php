@@ -45,7 +45,7 @@ abstract class Filter implements Contract
             $this->getTag(),
             $this->getHandle(),
             $this->getPriority(),
-            $this->getAcceptedArgs()
+            $this->calculateAcceptedArgs()
         );
     }
 
@@ -57,7 +57,7 @@ abstract class Filter implements Contract
      * @return int
      * @throws \ReflectionException
      */
-    public function getAcceptedArgs(): int
+    public function calculateAcceptedArgs(): int
     {
         // get handle callback
         $handle = $this->getHandle();
