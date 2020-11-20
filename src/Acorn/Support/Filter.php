@@ -2,10 +2,10 @@
 
 namespace Roots\Acorn\Support;
 
-use Roots\Acorn\Support\Contracts\Filter as Contract;
 use ReflectionFunction;
 use ReflectionMethod;
 use RuntimeException;
+use Roots\Acorn\Support\Contracts\Filter as Contract;
 
 use function Roots\add_filters as add_filters;
 use function Roots\remove_filters as remove_filters;
@@ -51,10 +51,10 @@ abstract class Filter implements Contract
 
     /**
      * Get accepted arguments number.
-     * The number of accepted arguments is automatically counted by ReflectionMethod.
+     * The number of accepted arguments is automatically counted
+     * by reflection mechanism.
      *
      * @return int
-     * @throws \ReflectionException
      * @throws \ReflectionException
      */
     public function getAcceptedArgs(): int
@@ -69,16 +69,8 @@ abstract class Filter implements Contract
 
         // check handle if object method call
         if (is_array($handle) || $isStaticMethod) {
-            // object method call must have exactly two parameters
-            if (!$isStaticMethod && ($parametersCount = count($handle)) != 2) {
-                throw new RuntimeException(
-                    sprintf(
-                        'Object method call must have exactly 2 parameters. Now have [%d].',
-                        $parametersCount
-                    )
-                );
-            }
-
+            // if is static method call
+            // we need to divide string to classname and method
             if ($isStaticMethod) {
                 // if is static method call
                 // we need to divide string to classname and method
@@ -107,7 +99,7 @@ abstract class Filter implements Contract
      * Get filter handle method.
      *
      * @return callable
-     * @throw \RuntimeException When handle method does not exist.
+     * @throws \RuntimeException
      */
     public function getHandle(): callable
     {
@@ -115,7 +107,7 @@ abstract class Filter implements Contract
         if (!method_exists($this, $this->handleMethodName)) {
             throw new RuntimeException(
                 sprintf(
-                    'The filter [%s] must implement a method [%s].',
+                    'The filter [%s] does not have method [%s] which is handle.',
                     get_class($this),
                     $this->handleMethodName
                 )
