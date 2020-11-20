@@ -31,7 +31,9 @@ abstract class Filter implements Contract
      *
      * @var iterable
      */
-    protected $tag = 'init';
+    protected $tag = [
+        'init',
+    ];
 
     /**
      * Apply filter in system.

@@ -36,7 +36,9 @@ class I18n extends Filter
      *
      * @var string
      */
-    protected $tag = 'after_setup_theme';
+    protected $tag = [
+        'after_setup_theme'
+    ];
 
     /**
      * I18n filter constructor.
