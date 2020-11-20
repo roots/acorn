@@ -40,6 +40,20 @@ interface Filter
     public function getTag(): iterable;
 
     /**
+     * Set filter priority.
+     *
+     * @param int $priority
+     */
+    public function setPriority(int $priority): void;
+
+    /**
+     * Set filter tag.
+     *
+     * @param iterable $tag
+     */
+    public function setTag(iterable $tag): void;
+
+    /**
      * Remove filter from system.
      *
      * @return void
