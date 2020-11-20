@@ -138,6 +138,30 @@ abstract class Filter implements Contract
     }
 
     /**
+     * Set filter priority.
+     *
+     * @param int $priority
+     *
+     * @return void
+     */
+    public function setPriority(int $priority): void
+    {
+        $this->priority = $priority;
+    }
+
+    /**
+     * Set filter tag.
+     *
+     * @param iterable $tag
+     *
+     * @return void
+     */
+    public function setTag(iterable $tag): void
+    {
+        $this->tag = $tag;
+    }
+
+    /**
      * Remove filter from system.
      *
      * @return void
