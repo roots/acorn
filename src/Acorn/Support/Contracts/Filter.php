@@ -16,7 +16,7 @@ interface Filter
      *
      * @return int
      */
-    public function getAcceptedArgs(): int;
+    public function calculateAcceptedArgs(): int;
 
     /**
      * Get filter handle method.
