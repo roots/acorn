@@ -111,7 +111,7 @@ class ViewServiceProvider extends ViewServiceProviderBase
             $path = $this->getPath();
             $id = md5($this->getCompiled());
             $compiled_path = $app['config']['view.compiled'];
-            
+
             $content = "<?= \\Roots\\view('{$view}', \$data ?? get_defined_vars())->render(); ?>"
                 . "\n<?php /**PATH {$path} ENDPATH**/ ?>";
 
@@ -184,13 +184,13 @@ class ViewServiceProvider extends ViewServiceProviderBase
     public function attachComposers()
     {
         $composers = $this->app->config['view.composers'];
-        
+
         if (is_array($composers) && Arr::isAssoc($composers)) {
             foreach ($composers as $composer) {
                 $this->view()->composer($composer::views(), $composer);
             }
         }
-                                                                     
+
         if (! is_dir($path = $this->app->path('View/Composers'))) {
             return;
         }
