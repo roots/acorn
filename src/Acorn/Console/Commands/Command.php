@@ -4,6 +4,7 @@ namespace Roots\Acorn\Console\Commands;
 
 use Illuminate\Console\Command as CommandBase;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Illuminate\Console\Parser;
@@ -48,7 +49,13 @@ abstract class Command extends CommandBase
             null // default
         );
 
-        parent::__construct($this->name = $name);
+        $this->setDefinition(new InputDefinition());
+
+        if (null !== $name || null !== $name = static::getDefaultName()) {
+            $this->setName($name);
+        }
+
+        $this->configure();
 
         // After parsing the signature we will spin through the arguments and options
         // and set them on this command. These will already be changed into proper
