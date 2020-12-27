@@ -17,6 +17,7 @@ class WhoopsHandler
      * @var array
      */
     protected $blacklist = [
+        'DATABASE_URL',
         'DB_USER',
         'DB_PASSWORD',
         'AUTH_KEY',
