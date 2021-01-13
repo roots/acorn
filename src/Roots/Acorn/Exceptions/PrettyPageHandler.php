@@ -1,6 +1,6 @@
 <?php
 
-namespace Roots\Acorn\Exceptions\Handler;
+namespace Roots\Acorn\Exceptions;
 
 use WP;
 use WP_Query;

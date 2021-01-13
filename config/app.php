@@ -58,19 +58,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Preflight Checks
-    |--------------------------------------------------------------------------
-    |
-    | This value allows service providers to execute preflight tasks after
-    | booting. These tasks include creating directories, databases, and files,
-    | or doing any other checks to ensure the service is functional.
-    |
-    */
-
-    'preflight' => env('WP_ENV', 'production') !== 'production',
-
-    /*
-    |--------------------------------------------------------------------------
     | Global Helpers
     |--------------------------------------------------------------------------
     |

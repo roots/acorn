@@ -1,16 +1,12 @@
 <?php
 
-namespace Roots\Acorn\Exceptions;
+namespace Illuminate\Foundation\Exceptions;
 
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Foundation\Exceptions\WhoopsHandler as FoundationWhoopsHandler;
 use Illuminate\Support\Arr;
 use Whoops\Handler\PrettyPageHandler;
 
-use function Roots\base_path;
-use function Roots\config;
-
-class WhoopsHandler extends FoundationWhoopsHandler
+class WhoopsHandler
 {
     /**
      * Create a new Whoops handler for debug mode.
@@ -26,6 +22,21 @@ class WhoopsHandler extends FoundationWhoopsHandler
                  ->registerBlacklist($handler)
                  ->registerEditor($handler);
         });
+    }
+
+    /**
+     * Register the application paths with the handler.
+     *
+     * @param  \Whoops\Handler\PrettyPageHandler  $handler
+     * @return $this
+     */
+    protected function registerApplicationPaths($handler)
+    {
+        $handler->setApplicationPaths(
+            array_flip($this->directoriesExceptVendor())
+        );
+
+        return $this;
     }
 
     /**

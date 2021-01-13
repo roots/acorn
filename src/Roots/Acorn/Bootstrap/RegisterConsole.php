@@ -16,7 +16,7 @@ class RegisterConsole
      */
     public function bootstrap(Application $app)
     {
-        if (!$app->runningInConsole() || !class_exists('WP_CLI')) {
+        if (! $app->runningInConsole() || ! class_exists('WP_CLI')) {
             return;
         }
 

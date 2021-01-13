@@ -5,15 +5,9 @@ namespace Roots\Acorn\Console\Commands;
 use Illuminate\Support\Str;
 use Illuminate\Console\GeneratorCommand as GeneratorCommandBase;
 use Illuminate\Contracts\Foundation\Application;
-use Roots\Acorn\Console\Concerns\{ClearLine, Exec, Task, Title};
 
 abstract class GeneratorCommand extends GeneratorCommandBase
 {
-    use ClearLine;
-    use Exec;
-    use Task;
-    use Title;
-
     /**
      * The application implementation.
      *

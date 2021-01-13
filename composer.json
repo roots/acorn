@@ -36,7 +36,7 @@
     }
   },
   "require": {
-    "php": "^7.2.5",
+    "php": "^7.3|^8.0",
     "ext-json": "*",
     "illuminate/cache": "^8.0",
     "illuminate/config": "^8.0",
@@ -50,10 +50,10 @@
     "illuminate/support": "^8.0",
     "illuminate/view": "^8.0",
     "league/flysystem": "^1.0",
-    "ramsey/uuid": "^4.0",
+    "ramsey/uuid": "^4.1",
     "roots/support": "dev-master",
-    "symfony/error-handler": "^5.0",
-    "symfony/var-dumper": "^5.1"
+    "symfony/error-handler": "^5.2",
+    "symfony/var-dumper": "^5.2"
   },
   "require-dev": {
     "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
