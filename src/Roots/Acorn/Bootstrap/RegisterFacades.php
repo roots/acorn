@@ -18,6 +18,7 @@ class RegisterFacades
     public function bootstrap(Application $app)
     {
         Facade::clearResolvedInstances();
+
         Facade::setFacadeApplication($app);
 
         if (! $app->config->get('app.globals', false)) {
