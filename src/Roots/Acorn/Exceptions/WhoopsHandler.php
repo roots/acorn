@@ -13,6 +13,24 @@ use function Roots\config;
 class WhoopsHandler extends FoundationWhoopsHandler
 {
     /**
+     * WordPress environment secrets.
+     *
+     * @var array
+     */
+    protected $secrets = [
+        'DB_PASSWORD',
+        'DATABASE_URL',
+        'AUTH_KEY',
+        'SECURE_AUTH_KEY',
+        'LOGGED_IN_KEY',
+        'NONCE_KEY',
+        'AUTH_SALT',
+        'SECURE_AUTH_SALT',
+        'LOGGED_IN_SALT',
+        'NONCE_SALT',
+    ];
+
+    /**
      * Create a new Whoops handler for debug mode.
      *
      * @return \Whoops\Handler\PrettyPageHandler
@@ -49,7 +67,12 @@ class WhoopsHandler extends FoundationWhoopsHandler
      */
     protected function registerBlacklist($handler)
     {
-        foreach (config('app.debug_blacklist', config('app.debug_hide', [])) as $key => $secrets) {
+        $blacklist = array_merge_recursive([
+            '_ENV' => $this->secrets,
+            '_SERVER' => $this->secrets
+        ], config('app.debug_blacklist', config('app.debug_hide', [])));
+
+        foreach ($blacklist as $key => $secrets) {
             foreach ($secrets as $secret) {
                 $handler->blacklist($key, $secret);
             }
