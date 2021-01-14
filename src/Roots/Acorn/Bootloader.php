@@ -72,7 +72,7 @@ class Bootloader
 
         add_filters($this->hooks, $this, 5);
 
-        return $this;
+        return $app;
     }
 
     /**
