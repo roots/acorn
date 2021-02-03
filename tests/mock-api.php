@@ -203,6 +203,13 @@ if (! function_exists('get_template_directory')) {
     }
 }
 
+if (! function_exists('get_current_user_id')) {
+    function get_current_user_id()
+    {
+        return 1;
+    }
+}
+
 if (! class_exists('WP_Post')) {
     final class WP_Post
     {

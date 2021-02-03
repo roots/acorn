@@ -58,7 +58,7 @@ class Handler extends FoundationHandler
         try {
             return app(HandlerInterface::class);
         } catch (BindingResolutionException $e) {
-            return (new WhoopsHandler)->forDebug();
+            return (new WhoopsHandler())->forDebug();
         }
     }
 
