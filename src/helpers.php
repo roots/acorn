@@ -2,22 +2,35 @@
 
 namespace Roots;
 
+use Closure;
+use DateTimeZone;
+use Exception;
+use Illuminate\Broadcasting\PendingBroadcast;
+use Illuminate\Cache\CacheManager;
 use Illuminate\Contracts\Broadcasting\Factory as BroadcastFactory;
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Debug\ExceptionHandler;
-use Illuminate\Contracts\Validation\Factory as ValidationFactory;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\View\Factory as ViewFactory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Log\LogManager;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
+use Psr\Log\LoggerInterface;
 use Roots\Acorn\Application;
+use Roots\Acorn\Assets\Contracts\Asset;
+use Roots\Acorn\Bootloader;
+use Throwable;
 
 /**
  * Get the available container instance.
  *
  * @param  string|null  $abstract
  * @param  array  $parameters
- * @return mixed|\Roots\Acorn\Application
+ * @return mixed|Application
  *
  * @copyright Taylor Otwell
- * @link https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/helpers.php
+ * @link https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
  */
 function app($abstract = null, array $parameters = [])
 {
@@ -35,7 +48,7 @@ function app($abstract = null, array $parameters = [])
  * @return string
  *
  * @copyright Taylor Otwell
- * @link https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/helpers.php
+ * @link https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
  */
 function app_path($path = '')
 {
@@ -47,7 +60,7 @@ function app_path($path = '')
  *
  * @param  string $key
  * @param  string $manifest
- * @return \Roots\Acorn\Assets\Asset
+ * @return Asset
  */
 function asset($key, $manifest = null)
 {
@@ -61,7 +74,7 @@ function asset($key, $manifest = null)
  * @return string
  *
  * @copyright Taylor Otwell
- * @link https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/helpers.php
+ * @link https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
  */
 function base_path($path = '')
 {
@@ -76,7 +89,7 @@ function base_path($path = '')
  * @return string
  *
  * @copyright Taylor Otwell
- * @link https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/helpers.php
+ * @link https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
  */
 function bcrypt($value, $options = [])
 {
@@ -87,10 +100,10 @@ function bcrypt($value, $options = [])
  * Begin broadcasting an event.
  *
  * @param  mixed|null  $event
- * @return \Illuminate\Broadcasting\PendingBroadcast
+ * @return PendingBroadcast
  *
  * @copyright Taylor Otwell
- * @link https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/helpers.php
+ * @link https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
  */
 function broadcast($event = null)
 {
@@ -103,12 +116,12 @@ function broadcast($event = null)
  * If an array is passed, we'll assume you want to put to the cache.
  *
  * @param  dynamic  key|key,default|data,expiration|null
- * @return mixed|\Illuminate\Cache\CacheManager
+ * @return mixed|CacheManager
  *
- * @throws \Exception
+ * @throws Exception
  *
  * @copyright Taylor Otwell
- * @link https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/helpers.php
+ * @link https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
  */
 function cache()
 {
@@ -138,10 +151,10 @@ function cache()
  *
  * @param  array|string|null  $key
  * @param  mixed  $default
- * @return mixed|\Illuminate\Config\Repository
+ * @return mixed|Repository
  *
  * @copyright Taylor Otwell
- * @link https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/helpers.php
+ * @link https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
  */
 function config($key = null, $default = null)
 {
@@ -163,7 +176,7 @@ function config($key = null, $default = null)
  * @return string
  *
  * @copyright Taylor Otwell
- * @link https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/helpers.php
+ * @link https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
  */
 function config_path($path = '')
 {
@@ -177,7 +190,7 @@ function config_path($path = '')
  * @return string
  *
  * @copyright Taylor Otwell
- * @link https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/helpers.php
+ * @link https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
  */
 function database_path($path = '')
 {
@@ -192,7 +205,7 @@ function database_path($path = '')
  * @return mixed
  *
  * @copyright Taylor Otwell
- * @link https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/helpers.php
+ * @link https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
  */
 function decrypt($value, $unserialize = true)
 {
@@ -207,7 +220,7 @@ function decrypt($value, $unserialize = true)
  * @return string
  *
  * @copyright Taylor Otwell
- * @link https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/helpers.php
+ * @link https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
  */
 function encrypt($value, $serialize = true)
 {
@@ -222,7 +235,7 @@ function encrypt($value, $serialize = true)
  * @return void
  *
  * @copyright Taylor Otwell
- * @link https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/helpers.php
+ * @link https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
  */
 function info($message, $context = [])
 {
@@ -234,10 +247,10 @@ function info($message, $context = [])
  *
  * @param  string|null  $message
  * @param  array  $context
- * @return \Illuminate\Log\LogManager|null
+ * @return LogManager|null
  *
  * @copyright Taylor Otwell
- * @link https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/helpers.php
+ * @link https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
  */
 function logger($message = null, array $context = [])
 {
@@ -252,10 +265,10 @@ function logger($message = null, array $context = [])
  * Get a log driver instance.
  *
  * @param  string|null  $driver
- * @return \Illuminate\Log\LogManager|\Psr\Log\LoggerInterface
+ * @return LogManager|LoggerInterface
  *
  * @copyright Taylor Otwell
- * @link https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/helpers.php
+ * @link https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
  */
 function logs($driver = null)
 {
@@ -265,11 +278,11 @@ function logs($driver = null)
 /**
  * Create a new Carbon instance for the current time.
  *
- * @param  \DateTimeZone|string|null  $tz
- * @return \Illuminate\Support\Carbon
+ * @param  DateTimeZone|string|null  $tz
+ * @return Carbon
  *
  * @copyright Taylor Otwell
- * @link https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/helpers.php
+ * @link https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
  */
 function now($tz = null)
 {
@@ -283,7 +296,7 @@ function now($tz = null)
  * @return string
  *
  * @copyright Taylor Otwell
- * @link https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/helpers.php
+ * @link https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
  */
 function public_path($path = '')
 {
@@ -293,11 +306,11 @@ function public_path($path = '')
 /**
  * Report an exception.
  *
- * @param  \Throwable  $exception
+ * @param  Throwable  $exception
  * @return void
  *
  * @copyright Taylor Otwell
- * @link https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/helpers.php
+ * @link https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
  */
 function report(Throwable $exception)
 {
@@ -313,7 +326,7 @@ function report(Throwable $exception)
  * @return mixed
  *
  * @copyright Taylor Otwell
- * @link https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/helpers.php
+ * @link https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
  */
 function rescue(callable $callback, $rescue = null, $report = true)
 {
@@ -336,7 +349,7 @@ function rescue(callable $callback, $rescue = null, $report = true)
  * @return mixed
  *
  * @copyright Taylor Otwell
- * @link https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/helpers.php
+ * @link https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
  */
 function resolve($name, array $parameters = [])
 {
@@ -350,7 +363,7 @@ function resolve($name, array $parameters = [])
  * @return string
  *
  * @copyright Taylor Otwell
- * @link https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/helpers.php
+ * @link https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
  */
 function resource_path($path = '')
 {
@@ -364,7 +377,7 @@ function resource_path($path = '')
  * @return string
  *
  * @copyright Taylor Otwell
- * @link https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/helpers.php
+ * @link https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
  */
 function storage_path($path = '')
 {
@@ -374,11 +387,11 @@ function storage_path($path = '')
 /**
  * Create a new Carbon instance for the current date.
  *
- * @param  \DateTimeZone|string|null  $tz
- * @return \Illuminate\Support\Carbon
+ * @param  DateTimeZone|string|null  $tz
+ * @return Carbon
  *
  * @copyright Taylor Otwell
- * @link https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/helpers.php
+ * @link https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
  */
 function today($tz = null)
 {
@@ -389,12 +402,12 @@ function today($tz = null)
  * Get the evaluated view contents for the given view.
  *
  * @param  string|null  $view
- * @param  \Illuminate\Contracts\Support\Arrayable|array  $data
+ * @param  Arrayable|array  $data
  * @param  array  $mergeData
- * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
+ * @return View|ViewFactory
  *
  * @copyright Taylor Otwell
- * @link https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/helpers.php
+ * @link https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
  */
 function view($view = null, $data = [], $mergeData = [])
 {
@@ -419,7 +432,7 @@ function bootloader($callback = null)
     static $bootloader;
 
     if (! $bootloader) {
-        $bootloader = new \Roots\Acorn\Bootloader();
+        $bootloader = new Bootloader();
     }
 
     if (is_callable($callback)) {

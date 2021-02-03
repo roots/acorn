@@ -1,6 +1,8 @@
 <?php
 
 use function Roots\env;
+use function Roots\public_path;
+use function Roots\storage_path;
 
 return [
 
@@ -44,6 +46,7 @@ return [
     */
 
     'disks' => [
+
         'local' => [
             'driver' => 'local',
             'root' => WP_CONTENT_DIR,
@@ -58,6 +61,13 @@ return [
             'visibility' => 'public',
         ],
 
+        'theme' => [
+            'driver' => 'local',
+            'root' => get_theme_file_path(),
+            'url' => get_theme_file_uri(),
+            'visibility' => 'public',
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
@@ -65,6 +75,24 @@ return [
             'region' => env('AWS_DEFAULT_REGION'),
             'bucket' => env('AWS_BUCKET'),
             'url' => env('AWS_URL'),
+            'endpoint' => env('AWS_ENDPOINT'),
         ],
+
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Symbolic Links
+    |--------------------------------------------------------------------------
+    |
+    | Here you may configure the symbolic links that will be created when the
+    | `storage:link` wp-cli command is executed. The array keys should be
+    | the locations of the links and the values should be their targets.
+    |
+    */
+
+    'links' => [
+        // public_path('app/uploads') => storage_path('app/uploads'),
+    ],
+
 ];

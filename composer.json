@@ -1,7 +1,7 @@
 {
   "name": "roots/acorn",
   "license": "MIT",
-  "description": "Lazy-loaded framework for Roots WordPress projects.",
+  "description": "Framework for Roots WordPress projects built with Laravel components.",
   "homepage": "https://roots.io/acorn/",
   "authors": [
     {
@@ -23,7 +23,8 @@
   },
   "autoload": {
     "psr-4": {
-      "Roots\\": "src/"
+      "Roots\\": "src/Roots/",
+      "Illuminate\\": "src/Illuminate/"
     },
     "files": [
       "src/helpers.php"
@@ -35,51 +36,48 @@
     }
   },
   "require": {
-    "php": "^7.2.5",
+    "php": "^7.3|^8.0",
     "ext-json": "*",
-    "illuminate/cache": "^7.0",
-    "illuminate/config": "^7.0",
-    "illuminate/console": "^7.0",
-    "illuminate/container": "^7.0",
-    "illuminate/contracts": "^7.0",
-    "illuminate/events": "^7.0",
-    "illuminate/filesystem": "^7.0",
-    "illuminate/http": "^7.12",
-    "illuminate/log": "^7.0",
-    "illuminate/support": "^7.0",
-    "illuminate/view": "^7.0",
+    "ext-mbstring": "*",
+    "illuminate/cache": "^8.0",
+    "illuminate/config": "^8.0",
+    "illuminate/console": "^8.0",
+    "illuminate/container": "^8.0",
+    "illuminate/contracts": "^8.0",
+    "illuminate/events": "^8.0",
+    "illuminate/filesystem": "^8.0",
+    "illuminate/http": "^8.0",
+    "illuminate/log": "^8.0",
+    "illuminate/support": "^8.0",
+    "illuminate/view": "^8.0",
     "league/flysystem": "^1.0",
-    "ramsey/uuid": "^3.7|^4.0",
-    "roots/support": "dev-master",
-    "symfony/error-handler": "^5.0",
-    "symfony/var-dumper": "^5.0"
+    "ramsey/uuid": "^4.1",
+    "roots/support": "^1.0",
+    "symfony/error-handler": "^5.2",
+    "symfony/var-dumper": "^5.2",
+    "vlucas/phpdotenv": "^5.2"
   },
   "require-dev": {
-    "filp/whoops": "^2.7",
+    "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
+    "filp/whoops": "^2.9",
     "mikey179/vfsstream": "^1.6",
-    "phpunit/phpunit": "^8.5",
+    "phpcompatibility/php-compatibility": "^9.3",
+    "phpunit/phpunit": "^8.5.8|^9.3.3",
     "roave/security-advisories": "dev-master",
     "squizlabs/php_codesniffer": "^3.5"
   },
   "suggest": {
-    "filp/whoops": "Required for friendly error pages in development (^2.0)."
+    "filp/whoops": "Required for friendly error pages in development (^2.9)."
   },
   "config": {
-    "optimize-autoloader": true,
-    "preferred-install": "dist",
     "sort-packages": true
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
   "scripts": {
-    "lint": [
-      "phpcs --ignore=vendor,tests --extensions=php --standard=PSR12 ."
-    ],
-    "test": [
-      "phpunit"
-    ],
-    "coverage": [
-      "phpunit --coverage-html coverage"
-    ]
+    "lint": "phpcs",
+    "lint:fix": "phpcbf",
+    "test": "phpunit",
+    "coverage": "phpunit --coverage-html coverage"
   }
 }

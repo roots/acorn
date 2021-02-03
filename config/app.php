@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', get_bloginfo('name')),
+    'name' => env('APP_NAME', 'Acorn'),
 
     /*
     |--------------------------------------------------------------------------
@@ -24,7 +24,7 @@ return [
     |
     | This value determines the "environment" your application is currently
     | running in. This may determine how you prefer to configure various
-    | services your application utilizes. Set this in your ".env" file.
+    | services the application utilizes. Set this in your ".env" file.
     |
     */
 
@@ -55,19 +55,6 @@ return [
     */
 
     'timezone' => get_option('timezone_string', 'UTC'),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Preflight Checks
-    |--------------------------------------------------------------------------
-    |
-    | This value allows service providers to execute preflight tasks after
-    | booting. These tasks include creating directories, databases, and files,
-    | or doing any other checks to ensure the service is functional.
-    |
-    */
-
-    'preflight' => env('WP_ENV', 'production') !== 'production',
 
     /*
     |--------------------------------------------------------------------------
@@ -110,6 +97,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Encryption Key
+    |--------------------------------------------------------------------------
+    |
+    | This key is used by the Illuminate encrypter service and should be set
+    | to a random, 32 character string, otherwise these encrypted strings
+    | will not be safe. Please do this before deploying an application!
+    |
+    */
+
+    'key' => env('APP_KEY'),
+
+    'cipher' => 'AES-256-CBC',
+
+    /*
+    |--------------------------------------------------------------------------
     | Autoloaded Service Providers
     |--------------------------------------------------------------------------
     |
@@ -120,15 +122,15 @@ return [
     */
 
     'providers' => [
-        /**
-         * Package Service Providers
+        /*
+         * Package Service Providers...
          */
         // ExamplePackage\Providers\ExamplePackageServiceProvider::class,
 
-        /**
-         * Application Service Providers
+        /*
+         * Application Service Providers...
          */
-        // App\Providers\AppServiceProvider::class,
+        // App\Providers\ThemeServiceProvider::class,
     ],
 
     /*
@@ -180,4 +182,5 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
     ],
+
 ];
