@@ -1,35 +1,13 @@
 <?php
 
-namespace Roots\Acorn\Exceptions;
+namespace Illuminate\Foundation\Exceptions;
 
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Foundation\Exceptions\WhoopsHandler as FoundationWhoopsHandler;
 use Illuminate\Support\Arr;
 use Whoops\Handler\PrettyPageHandler;
 
-use function Roots\base_path;
-use function Roots\config;
-
-class WhoopsHandler extends FoundationWhoopsHandler
+class WhoopsHandler
 {
-    /**
-     * WordPress environment secrets.
-     *
-     * @var array
-     */
-    protected $secrets = [
-        'DB_PASSWORD',
-        'DATABASE_URL',
-        'AUTH_KEY',
-        'SECURE_AUTH_KEY',
-        'LOGGED_IN_KEY',
-        'NONCE_KEY',
-        'AUTH_SALT',
-        'SECURE_AUTH_SALT',
-        'LOGGED_IN_SALT',
-        'NONCE_SALT',
-    ];
-
     /**
      * Create a new Whoops handler for debug mode.
      *
@@ -44,6 +22,21 @@ class WhoopsHandler extends FoundationWhoopsHandler
                  ->registerBlacklist($handler)
                  ->registerEditor($handler);
         });
+    }
+
+    /**
+     * Register the application paths with the handler.
+     *
+     * @param  \Whoops\Handler\PrettyPageHandler  $handler
+     * @return $this
+     */
+    protected function registerApplicationPaths($handler)
+    {
+        $handler->setApplicationPaths(
+            array_flip($this->directoriesExceptVendor())
+        );
+
+        return $this;
     }
 
     /**
@@ -67,12 +60,7 @@ class WhoopsHandler extends FoundationWhoopsHandler
      */
     protected function registerBlacklist($handler)
     {
-        $blacklist = array_merge_recursive([
-            '_ENV' => $this->secrets,
-            '_SERVER' => $this->secrets
-        ], config('app.debug_blacklist', config('app.debug_hide', [])));
-
-        foreach ($blacklist as $key => $secrets) {
+        foreach (config('app.debug_blacklist', config('app.debug_hide', [])) as $key => $secrets) {
             foreach ($secrets as $secret) {
                 $handler->blacklist($key, $secret);
             }

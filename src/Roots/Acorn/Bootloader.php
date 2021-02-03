@@ -20,14 +20,14 @@ class Bootloader
      *
      * @var string
      */
-    protected $application_class;
+    protected $app;
 
     /**
      * WordPress hooks that will boot application
      *
      * @var string[]
      */
-    protected $boot_hooks;
+    protected $hooks;
 
     /**
      * Callbacks to be run when application boots
@@ -48,44 +48,49 @@ class Bootloader
      *
      * @var string
      */
-    protected $base_path;
+    protected $basePath;
 
     /**
      * Create a new bootloader instance
      *
-     * @param string|array $boot_hooks WordPress hooks to boot application
-     * @param string $application_class Application class
+     * @param  string[] $hooks WordPress hooks to boot application
+     * @param  string   $app Application class
+     * @return $this
      */
     public function __construct(
-        $boot_hooks = ['after_setup_theme', 'rest_api_init'],
-        string $application_class = Application::class
+        $hooks = ['after_setup_theme', 'rest_api_init'],
+        string $app = Application::class
     ) {
-        if (!in_array(ApplicationContract::class, class_implements($application_class, true) ?? [])) {
+        if (! in_array(ApplicationContract::class, class_implements($app, true) ?? [])) {
             throw new InvalidArgumentException(
                 sprintf('Second parameter must be class name of type [%s]', ApplicationContract::class)
             );
         }
 
-        $this->application_class = $application_class;
-        $this->boot_hooks = (array) $boot_hooks;
+        $this->app = $app;
+        $this->hooks = (array) $hooks;
 
-        add_filters($this->boot_hooks, $this, 5);
+        add_filters($this->hooks, $this, 5);
+
+        return $app;
     }
 
     /**
      * Enqueues callback to be loaded with application
      *
-     * @param callable $callback
-     * @return static;
+     * @param  callable $callback
+     * @return static
      */
     public function call(callable $callback): Bootloader
     {
         if (! $this->ready()) {
             $this->queue[] = $callback;
+
             return $this;
         }
 
         $this->app()->call($callback);
+
         return $this;
     }
 
@@ -100,7 +105,7 @@ class Bootloader
             return true;
         }
 
-        foreach ($this->boot_hooks as $hook) {
+        foreach ($this->hooks as $hook) {
             if (did_action($hook) || doing_action($hook)) {
                 return $this->ready = true;
             }
@@ -111,6 +116,8 @@ class Bootloader
 
     /**
      * Boot the Application
+     *
+     * @return void
      */
     public function __invoke()
     {
@@ -125,6 +132,7 @@ class Bootloader
         foreach ($this->queue as $callback) {
             $app->call($callback);
         }
+
         $this->queue = [];
     }
 
@@ -142,9 +150,9 @@ class Bootloader
         }
 
         $bootstrap = $this->bootstrap();
-        $basepath = $this->basePath();
+        $basePath = $this->basePath();
 
-        $app = new $this->application_class($basepath, $this->usePaths());
+        $app = new $this->app($basePath, $this->usePaths());
 
         $app->bootstrapWith($bootstrap);
 
@@ -158,28 +166,30 @@ class Bootloader
      */
     protected function basePath(): string
     {
-        if ($this->base_path) {
-            return $this->base_path;
+        if ($this->basePath) {
+            return $this->basePath;
         }
 
-        $basepath = dirname(locate_template('config') ?: __DIR__ . '/../');
+        $basePath = dirname(locate_template('config') ?: __DIR__ . '/../');
 
-        $basepath = defined('ACORN_BASEPATH') ? \ACORN_BASEPATH : env('ACORN_BASEPATH', $basepath);
+        $basePath = defined('ACORN_BASEPATH') ? \ACORN_BASEPATH : env('ACORN_BASEPATH', $basePath);
 
-        $basepath = apply_filters('acorn/paths.base', $basepath);
+        $basePath = apply_filters('acorn/paths.base', $basePath);
 
-        return $this->base_path = $basepath;
+        return $this->basePath = $basePath;
     }
 
     /**
      * Use paths that are configurable by the developer.
+     *
+     * @return array
      */
     protected function usePaths(): array
     {
-        $searchable_paths = ['app', 'config', 'storage', 'resources'];
+        $searchPaths = ['app', 'config', 'storage', 'resources'];
         $paths = [];
 
-        foreach ($searchable_paths as $path) {
+        foreach ($searchPaths as $path) {
             $paths[$path] = apply_filters("acorn/paths.{$path}", $this->findPath($path));
         }
 
@@ -188,12 +198,15 @@ class Bootloader
 
     /**
      * Find a path that is configurable by the developer.
+     *
+     * @param  string $path
+     * @return string
      */
     protected function findPath($path): string
     {
         $path = trim($path, '\\/');
 
-        $search_paths = [
+        $searchPaths = [
             $this->basePath() . DIRECTORY_SEPARATOR . $path,
             locate_template($path),
             get_stylesheet_directory() . DIRECTORY_SEPARATOR . $path,
@@ -201,7 +214,7 @@ class Bootloader
             dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . $path,
         ];
 
-        return collect($search_paths)
+        return collect($searchPaths)
             ->map(function ($path) {
                 return is_string($path) && is_dir($path) ? $path : null;
             })

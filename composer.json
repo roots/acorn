@@ -36,8 +36,9 @@
     }
   },
   "require": {
-    "php": "^7.2.5",
+    "php": "^7.3|^8.0",
     "ext-json": "*",
+    "ext-mbstring": "*",
     "illuminate/cache": "^8.0",
     "illuminate/config": "^8.0",
     "illuminate/console": "^8.0",
@@ -50,26 +51,25 @@
     "illuminate/support": "^8.0",
     "illuminate/view": "^8.0",
     "league/flysystem": "^1.0",
-    "ramsey/uuid": "^4.0",
-    "roots/support": "dev-master",
-    "symfony/error-handler": "^5.0",
-    "symfony/var-dumper": "^5.1"
+    "ramsey/uuid": "^4.1",
+    "roots/support": "^1.0",
+    "symfony/error-handler": "^5.2",
+    "symfony/var-dumper": "^5.2",
+    "vlucas/phpdotenv": "^5.2"
   },
   "require-dev": {
     "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
-    "filp/whoops": "^2.7",
+    "filp/whoops": "^2.9",
     "mikey179/vfsstream": "^1.6",
     "phpcompatibility/php-compatibility": "^9.3",
-    "phpunit/phpunit": "^8.4|^9.0",
+    "phpunit/phpunit": "^8.5.8|^9.3.3",
     "roave/security-advisories": "dev-master",
     "squizlabs/php_codesniffer": "^3.5"
   },
   "suggest": {
-    "filp/whoops": "Required for friendly error pages in development (^2.0)."
+    "filp/whoops": "Required for friendly error pages in development (^2.9)."
   },
   "config": {
-    "optimize-autoloader": true,
-    "preferred-install": "dist",
     "sort-packages": true
   },
   "minimum-stability": "dev",
