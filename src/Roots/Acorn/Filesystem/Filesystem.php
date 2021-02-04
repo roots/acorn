@@ -83,7 +83,7 @@ class Filesystem extends FilesystemBase
         $path = str_repeat('../', count($sourceDirs)) . implode('/', $targetDirs);
 
         return $path === '' || $path[0] === '/'
-            || ($colonPos = strpos($path, ':')) !== false && (($slashPos = strpos($path, '/') >= $colonPos)
+            || ($colonPos = strpos($path, ':')) !== false && ($colonPos < ($slashPos = strpos($path, '/'))
             || $slashPos === false)
             ? "./$path" : $path;
     }
