@@ -20,7 +20,9 @@ function temp($path = null)
 
         define('ABSPATH', $temp->path('wp'));
 
-        register_shutdown_function(fn() => $temp->delete());
+        register_shutdown_function(function () use ($temp) {
+            $temp->delete();
+        });
     }
 
     if ($path) {
