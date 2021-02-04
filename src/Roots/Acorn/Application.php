@@ -40,13 +40,6 @@ class Application extends FoundationApplication
     protected $configPath;
 
     /**
-     * The custom language files directory defined by the developer.
-     *
-     * @var string
-     */
-    protected $langPath;
-
-    /**
      * The custom public path defined by the developer.
      *
      * @var string
