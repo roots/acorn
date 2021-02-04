@@ -46,4 +46,4 @@ jobs:
         run: composer run-script lint
 
       - name: Execute the Composer test script
-        run: composer run-script lint
+        run: composer run-script test

@@ -261,7 +261,7 @@ class Application extends FoundationApplication
      */
     public function isDownForMaintenance()
     {
-        return is_file($this->storagePath() . '/framework/down') || is_file(ABSPATH . '/.maintenance');
+        return is_file($this->storagePath() . '/framework/down') || (defined('ABSPATH') && is_file(constant('ABSPATH') . '/.maintenance'));
     }
 
     /**
