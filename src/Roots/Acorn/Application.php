@@ -191,31 +191,6 @@ class Application extends FoundationApplication
     }
 
     /**
-     * Get the path to the language files.
-     *
-     * @return string
-     */
-    public function langPath()
-    {
-        return $this->langPath ?: $this->resourcePath('lang');
-    }
-
-    /**
-     * Set the path to the language files.
-     *
-     * @param  string  $path
-     * @return $this
-     */
-    public function useLangPath($path)
-    {
-        $this->langPath = $path;
-
-        $this->instance('path.lang', $path);
-
-        return $this;
-    }
-
-    /**
      * Get the path to the public / web directory.
      *
      * @return string
