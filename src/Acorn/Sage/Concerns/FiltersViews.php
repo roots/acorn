@@ -20,7 +20,7 @@ trait FiltersViews
             return $file;
         }
 
-        return view()->exists('partials.comments') ? view('partials.comments')->makeLoader() : '';
+        return view()->exists('partials.comments') ? view('partials.comments')->makeLoader() : $file;
     }
 
     /**
