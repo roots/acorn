@@ -32,7 +32,7 @@ class LazyLoader
      */
     public function registerProvider(string $provider, array $bindings)
     {
-        if (!in_array(ServiceProvider::class, class_parents($provider) ?? [])) {
+        if (! in_array(ServiceProvider::class, class_parents($provider) ?? [])) {
             throw new InvalidArgumentException(
                 sprintf('First parameter must be class name of type [%s]', ServiceProvider::class)
             );
