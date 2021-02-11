@@ -49,33 +49,12 @@ class PackageManifest extends FoundationPackageManifest
         $ignoreAll = in_array('*', $ignore = $this->packagesToIgnore());
 
         $this->write(collect($packages)->mapWithKeys(function ($package) {
-            return [$this->format($package['name']) => $package['extra']['acorn'] ?? $package['extra']['laravel'] ?? []];
+            return [$this->format($package['name']) => $package['extra']['acorn'] ?? []];
         })->each(function ($configuration) use (&$ignore) {
             $ignore = array_merge($ignore, $configuration['dont-discover'] ?? []);
         })->reject(function ($configuration, $package) use ($ignore, $ignoreAll) {
             return $ignoreAll || in_array($package, $ignore);
         })->filter()->all());
-    }
-
-    protected function buildPackages()
-    {
-        $packages = [];
-
-        if ($this->files->exists($path = $this->vendorPath . '/composer/installed.json')) {
-            $installed = json_decode($this->files->get($path), true);
-
-            $packages = $installed['packages'] ?? $installed;
-        }
-
-        $ignoreAll = in_array('*', $ignore = $this->packagesToIgnore());
-
-        return collect($packages)->mapWithKeys(function ($package) {
-            return [$this->format($package['name']) => $package['extra']['laravel'] ?? []];
-        })->each(function ($configuration) use (&$ignore) {
-            $ignore = array_merge($ignore, $configuration['dont-discover'] ?? []);
-        })->reject(function ($configuration, $package) use ($ignore, $ignoreAll) {
-            return $ignoreAll || in_array($package, $ignore);
-        })->filter()->all();
     }
 
     /**
@@ -100,7 +79,7 @@ class PackageManifest extends FoundationPackageManifest
         $ignore = [];
 
         foreach ($this->composerPaths as $path) {
-            if (!$this->files->exists($path)) {
+            if (! $this->files->exists($path)) {
                 continue;
             }
 

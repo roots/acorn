@@ -31,7 +31,7 @@ trait Arrayable
                 ));
             })
             ->filter(function ($method) {
-                return !Str::startsWith($method->name, ['__', 'cache']);
+                return ! Str::startsWith($method->name, ['__', 'cache']);
             })
             ->mapWithKeys(function ($method) {
                 $data = $this->{$method->name}();

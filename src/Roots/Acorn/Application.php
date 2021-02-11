@@ -113,11 +113,11 @@ class Application extends FoundationApplication
         foreach ($paths as $path_type => $path) {
             $path = rtrim($path, '\\/');
 
-            if (!isset($supported_paths[$path_type])) {
+            if (! isset($supported_paths[$path_type])) {
                 throw new Exception("The {$path_type} path type is not supported.");
             }
 
-            if (!is_dir($path) || !is_readable($path)) {
+            if (! is_dir($path) || ! is_readable($path)) {
                 throw new Exception("The {$path} directory must be present.");
             }
 
