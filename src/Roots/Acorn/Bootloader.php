@@ -76,6 +76,20 @@ class Bootloader
     }
 
     /**
+     * Register a service provider with the application.
+     *
+     * @param  \Illuminate\Support\ServiceProvider|string  $provider
+     * @param  bool  $force
+     * @return \Roots\Acorn\Bootloader
+     */
+    public function register($provider, $force = false): Bootloader
+    {
+        return $this->call(function ($app) use ($provider, $force) {
+            $app->register($provider, $force);
+        });
+    }
+
+    /**
      * Enqueues callback to be loaded with application
      *
      * @param  callable $callback
