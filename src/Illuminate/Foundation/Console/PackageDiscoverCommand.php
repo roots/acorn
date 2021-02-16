@@ -1,17 +1,18 @@
 <?php
 
-namespace Roots\Acorn\Console\Commands;
+namespace Illuminate\Foundation\Console;
 
+use Illuminate\Console\Command;
 use Illuminate\Foundation\PackageManifest;
 
 class PackageDiscoverCommand extends Command
 {
     /**
-     * The console command name.
+     * The console command signature.
      *
      * @var string
      */
-    protected $name = 'package:discover';
+    protected $signature = 'package:discover';
 
     /**
      * The console command description.
@@ -23,7 +24,7 @@ class PackageDiscoverCommand extends Command
     /**
      * Execute the console command.
      *
-     * @param  PackageManifest  $manifest
+     * @param  \Illuminate\Foundation\PackageManifest  $manifest
      * @return void
      */
     public function handle(PackageManifest $manifest)

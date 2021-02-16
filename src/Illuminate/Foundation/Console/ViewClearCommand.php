@@ -1,8 +1,10 @@
 <?php
 
-namespace Roots\Acorn\Console\Commands;
+namespace Illuminate\Foundation\Console;
 
+use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
+use RuntimeException;
 
 class ViewClearCommand extends Command
 {
@@ -18,43 +20,46 @@ class ViewClearCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Clears all compiled view files';
+    protected $description = 'Clear all compiled view files';
 
     /**
      * The filesystem instance.
      *
-     * @var Filesystem
+     * @var \Illuminate\Filesystem\Filesystem
      */
     protected $files;
 
     /**
-     * Create a new view clear command instance.
+     * Create a new config clear command instance.
      *
-     * @param  Filesystem  $files
+     * @param  \Illuminate\Filesystem\Filesystem  $files
      * @return void
      */
     public function __construct(Filesystem $files)
     {
         parent::__construct();
+
         $this->files = $files;
     }
 
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return void
+     *
+     * @throws \RuntimeException
      */
     public function handle()
     {
-        $path = $this->app['config']['view.compiled'];
+        $path = $this->laravel['config']['view.compiled'];
 
         if (! $path) {
-            $this->error('View path not found.');
+            throw new RuntimeException('View path not found.');
         }
 
-        $this->files->delete(
-            $this->files->glob("{$path}/*")
-        );
+        foreach ($this->files->glob("{$path}/*") as $view) {
+            $this->files->delete($view);
+        }
 
         $this->info('Compiled views cleared!');
     }

@@ -1,7 +1,9 @@
 <?php
 
-namespace Roots\Acorn\Console\Commands;
+namespace Illuminate\Foundation\Console;
 
+use Illuminate\Console\GeneratorCommand;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
 class ConsoleMakeCommand extends GeneratorCommand
@@ -18,7 +20,7 @@ class ConsoleMakeCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $description = 'Create a new console command';
+    protected $description = 'Create a new Artisan command';
 
     /**
      * The type of class being generated.
@@ -38,7 +40,7 @@ class ConsoleMakeCommand extends GeneratorCommand
     {
         $stub = parent::replaceClass($stub, $name);
 
-        return str_replace('dummy:command', $this->option('command'), $stub);
+        return str_replace(['dummy:command', '{{ command }}'], $this->option('command'), $stub);
     }
 
     /**
@@ -48,7 +50,11 @@ class ConsoleMakeCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__ . '/stubs/console.stub';
+        $relativePath = '/stubs/console.stub';
+
+        return file_exists($customPath = $this->laravel->basePath(trim($relativePath, '/')))
+            ? $customPath
+            : __DIR__.$relativePath;
     }
 
     /**
@@ -59,7 +65,19 @@ class ConsoleMakeCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\Console\Commands';
+        return $rootNamespace.'\Console\Commands';
+    }
+
+    /**
+     * Get the console command arguments.
+     *
+     * @return array
+     */
+    protected function getArguments()
+    {
+        return [
+            ['name', InputArgument::REQUIRED, 'The name of the command'],
+        ];
     }
 
     /**
@@ -70,8 +88,7 @@ class ConsoleMakeCommand extends GeneratorCommand
     protected function getOptions()
     {
         return [
-            ['force', null, InputOption::VALUE_NONE, 'Create the class even if the console command already exists'],
-            ['command', null, InputOption::VALUE_NONE, 'Optionally set the command syntax when creating the class'],
+            ['command', null, InputOption::VALUE_OPTIONAL, 'The terminal command that should be assigned', 'command:name'],
         ];
     }
 }
