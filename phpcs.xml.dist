@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<ruleset name="Acorn">
+    <description>PSR12 with PHP 7.2+ compatibility</description>
+    <arg name="extensions" value="php"/>
+    <arg name="colors"/>
+    <arg value="sp"/>
+
+    <!-- PHP compatibility takes precedent over PSR12 -->
+    <rule ref="PHPCompatibility"/>
+    <rule ref="PSR12">
+      <!-- Ignore all Illuminate files -->
+      <exclude-pattern>src/Illuminate/*</exclude-pattern>
+    </rule>
+
+    <!-- Support for PHP 7.3+ -->
+    <config name="testVersion" value="7.3-"/>
+
+    <file>acorn.php</file>
+    <file>src</file>
+
+    <!-- We should be cognizant of long lines, but handle it case-by-case -->
+    <rule ref="Generic.Files.LineLength.TooLong">
+        <severity>1</severity>
+    </rule>
+
+    <!-- I like to use snake_case for test names -->
+    <rule ref="PSR1.Methods.CamelCapsMethodName.NotCamelCaps">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
+</ruleset>

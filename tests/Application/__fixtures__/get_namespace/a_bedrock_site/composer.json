@@ -1,0 +1,7 @@
+{
+  "autoload": {
+    "psr-4": {
+      "Bedrock\\Sage\\": "a_sage_theme/app/"
+    }
+  }
+}
