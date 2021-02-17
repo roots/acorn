@@ -113,7 +113,7 @@ class SummaryCommand extends ListCommand
             $commands = $commands->toArray();
 
             usort($commands, function ($a, $b) {
-                return $a->getName() > $b->getName();
+                return $a->getName() > $b->getName() ? 1 : -1;
             });
 
             foreach ($commands as $command) {
