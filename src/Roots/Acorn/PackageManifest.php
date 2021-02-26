@@ -36,25 +36,30 @@ class PackageManifest extends FoundationPackageManifest
      */
     public function build()
     {
-        $packages = [];
+        $packages = array_reduce($this->composerPaths, function ($all, $path) {
+            $packages = [];
 
-        foreach ($this->composerPaths as $path) {
             if ($this->files->exists($path)) {
                 $installed = json_decode($this->files->get($path), true);
 
-                $packages = array_merge($packages, $installed['packages'] ?? $installed);
+                $packages = $installed['packages'] ?? $installed;
             }
-        }
 
-        $ignoreAll = in_array('*', $ignore = $this->packagesToIgnore());
+            $ignoreAll = in_array('*', $ignore = $this->packagesToIgnore());
 
-        $this->write(collect($packages)->mapWithKeys(function ($package) {
-            return [$this->format($package['name']) => $package['extra']['acorn'] ?? []];
-        })->each(function ($configuration) use (&$ignore) {
-            $ignore = array_merge($ignore, $configuration['dont-discover'] ?? []);
-        })->reject(function ($configuration, $package) use ($ignore, $ignoreAll) {
-            return $ignoreAll || in_array($package, $ignore);
-        })->filter()->all());
+            return collect($packages)->mapWithKeys(function ($package) use ($path) {
+                return [
+                    $this->format($package['name'], dirname($path, 2)) =>
+                        $package['extra']['acorn'] ?? $package['extra']['laravel'] ?? []
+                ];
+            })->each(function ($configuration) use (&$ignore) {
+                $ignore = array_merge($ignore, $configuration['dont-discover'] ?? []);
+            })->reject(function ($configuration, $package) use ($ignore, $ignoreAll) {
+                return $ignoreAll || in_array($package, $ignore);
+            })->filter()->merge($all)->all();
+        }, []);
+
+        $this->write($packages);
     }
 
     /**
@@ -66,7 +71,7 @@ class PackageManifest extends FoundationPackageManifest
      */
     protected function format($package, $vendorPath = null)
     {
-        return str_replace($this->vendorPath . '/', '', $package);
+        return str_replace($vendorPath . '/', '', $package);
     }
 
     /**
@@ -76,19 +81,18 @@ class PackageManifest extends FoundationPackageManifest
      */
     protected function packagesToIgnore()
     {
-        $ignore = [];
-
-        foreach ($this->composerPaths as $path) {
+        return array_reduce($this->composerPaths, function ($ignore, $path) {
             if (! $this->files->exists($path)) {
-                continue;
+                return $ignore;
             }
 
-            $ignore = array_merge($ignore, json_decode(
-                $this->files->get($path),
-                true
-            )['extra']['laravel']['dont-discover'] ?? []);
-        }
+            $package = json_decode($this->files->get($path), true);
 
-        return $ignore;
+            return array_merge(
+                $ignore,
+                $package['extra']['laravel']['dont-discover'] ?? [],
+                $package['extra']['acorn']['dont-discover'] ?? []
+            );
+        }, []);
     }
 }
