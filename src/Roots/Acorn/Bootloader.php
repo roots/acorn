@@ -19,7 +19,7 @@ class Bootloader
      *
      * @var string
      */
-    protected $app;
+    protected $appClassName;
 
     /**
      * WordPress hooks that will boot application
@@ -53,25 +53,22 @@ class Bootloader
      * Create a new bootloader instance
      *
      * @param  string[] $hooks WordPress hooks to boot application
-     * @param  string   $app Application class
-     * @return $this
+     * @param  string   $appClassName Application class
      */
     public function __construct(
         $hooks = ['after_setup_theme', 'rest_api_init'],
-        string $app = Application::class
+        string $appClassName = Application::class
     ) {
-        if (! in_array(ApplicationContract::class, class_implements($app, true) ?? [])) {
+        if (! in_array(ApplicationContract::class, class_implements($appClassName, true) ?? [])) {
             throw new InvalidArgumentException(
                 sprintf('Second parameter must be class name of type [%s]', ApplicationContract::class)
             );
         }
 
-        $this->app = $app;
+        $this->appClassName = $appClassName;
         $this->hooks = (array) $hooks;
 
         add_filters($this->hooks, $this, 5);
-
-        return $app;
     }
 
     /**
@@ -165,7 +162,7 @@ class Bootloader
         $bootstrap = $this->bootstrap();
         $basePath = $this->basePath();
 
-        $app = new $this->app($basePath, $this->usePaths());
+        $app = new $this->appClassName($basePath, $this->usePaths());
 
         $app->bootstrapWith($bootstrap);
 
