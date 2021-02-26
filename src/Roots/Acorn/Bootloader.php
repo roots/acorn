@@ -200,7 +200,7 @@ class Bootloader
      */
     protected function usePaths(): array
     {
-        $searchPaths = ['app', 'config', 'storage', 'resources'];
+        $searchPaths = ['app', 'config', 'storage', 'resources', 'bootstrap'];
         $paths = [];
 
         foreach ($searchPaths as $path) {
