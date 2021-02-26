@@ -30,6 +30,16 @@ class PackageManifest extends FoundationPackageManifest
     }
 
     /**
+     * Get the current package manifest.
+     *
+     * @return array
+     */
+    public function getManifest()
+    {
+        return parent::getManifest();
+    }
+
+    /**
      * Build the manifest and write it to disk.
      *
      * @return void

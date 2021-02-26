@@ -3,15 +3,18 @@
 namespace Roots\Acorn;
 
 use Exception;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Events\EventServiceProvider;
 use Illuminate\Foundation\Application as FoundationApplication;
 use Illuminate\Foundation\PackageManifest;
 use Illuminate\Foundation\ProviderRepository;
 use Illuminate\Log\LogServiceProvider;
 use Illuminate\Support\Collection;
+use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Roots\Acorn\Filesystem\Filesystem;
 use RuntimeException;
+use Throwable;
 
 /**
  * Application container
@@ -299,6 +302,67 @@ class Application extends FoundationApplication
         }
 
         return parent::make($abstract, $parameters);
+    }
+
+    /**
+     * Boot the given service provider.
+     *
+     * @param  \Illuminate\Support\ServiceProvider  $provider
+     * @return void
+     */
+    protected function bootProvider(ServiceProvider $provider)
+    {
+        try {
+            parent::bootProvider($provider);
+        } catch (Throwable $e) {
+            $this->skipProvider($provider, $e);
+        }
+    }
+
+    /**
+     * Skip booting service provider and log error.
+     *
+     * @param  \Illuminate\Support\ServiceProvider  $provider
+     * @param  Throwable $e
+     * @return void
+     */
+    protected function skipProvider(ServiceProvider $provider, Throwable $e)
+    {
+        $packages = $this->make(PackageManifest::class)->getManifest();
+
+        $message = [
+            BindingResolutionException::class => "Skipping provider [:package/provider:] because it requires a dependency that does not exist.",
+        ][get_class($e)] ?? "Skipping provider [:package/provider:] because it encountered an error.";
+
+        $providerName = get_class($provider);
+
+        $context = [
+            'package' => '',
+            'provider' => $providerName,
+            'error' => $e->getMessage()
+        ];
+
+        foreach ($packages as $package => $configuration) {
+            foreach ($configuration['providers'] ?? [] as $provider) {
+                if ($provider !== $providerName) {
+                    continue;
+                }
+
+                $context['package'] = $package;
+                break;
+            }
+        }
+
+        $this->make('log')->warning(
+            strtr($message, [
+                ':package/provider:' => empty($context['package']) ? $context['provider'] : $context['package'],
+                ':package:' => $context['package'] ?? '',
+                ':provider:' => $context['provider'],
+                ':error:' => $context['error']
+            ]),
+            $context
+        );
+        $this->make('log')->info("See https://roots.io/docs/acorn/troubleshooting");
     }
 
     /**
