@@ -234,7 +234,7 @@ class Bootloader
             })
             ->filter()
             ->unique()
-            ->get(0);
+            ->first();
     }
 
     /**
