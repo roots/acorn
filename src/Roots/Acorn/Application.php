@@ -331,8 +331,8 @@ class Application extends FoundationApplication
         $packages = $this->make(PackageManifest::class)->getManifest();
 
         $message = [
-            BindingResolutionException::class => "Skipping provider [:package/provider:] because it requires a dependency that does not exist.",
-        ][get_class($e)] ?? "Skipping provider [:package/provider:] because it encountered an error.";
+            BindingResolutionException::class => "Skipping provider [:provider:] because it requires a dependency that does not exist.",
+        ][get_class($e)] ?? "Skipping provider [:provider:] because it encountered an error.";
 
         $providerName = get_class($provider);
 
@@ -355,8 +355,7 @@ class Application extends FoundationApplication
 
         $this->make('log')->warning(
             strtr($message, [
-                ':package/provider:' => empty($context['package']) ? $context['provider'] : $context['package'],
-                ':package:' => $context['package'] ?? '',
+                ':package:' => $context['package'],
                 ':provider:' => $context['provider'],
                 ':error:' => $context['error']
             ]),
