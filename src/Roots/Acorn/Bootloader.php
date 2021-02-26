@@ -7,7 +7,6 @@ use InvalidArgumentException;
 use Roots\Acorn\Application;
 
 use function Roots\add_filters;
-use function Roots\env;
 use function apply_filters;
 use function did_action;
 use function doing_action;
@@ -186,7 +185,9 @@ class Bootloader
 
         $basePath = dirname(locate_template('config') ?: __DIR__ . '/../');
 
-        $basePath = defined('ACORN_BASEPATH') ? \ACORN_BASEPATH : env('ACORN_BASEPATH', $basePath);
+        if (defined('ACORN_BASEPATH')) {
+            $basePath = constant('ACORN_BASEPATH');
+        }
 
         $basePath = apply_filters('acorn/paths.base', $basePath);
 
