@@ -2,84 +2,30 @@
 
 namespace Roots\Acorn\Console\Commands;
 
-use Throwable;
-use LogicException;
-use Roots\Acorn\Filesystem\Filesystem;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Foundation\Console\ConfigCacheCommand as FoundationConfigCacheCommand;
+use Roots\Acorn\Bootloader;
 
-class ConfigCacheCommand extends Command
+class ConfigCacheCommand extends FoundationConfigCacheCommand
 {
     /**
-     * The console command name.
-     *
-     * @var string
-     */
-    protected $name = 'config:cache';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Create a cache file for faster configuration loading';
-
-    /**
-     * The filesystem instance.
-     *
-     * @var Filesystem
-     */
-    protected $files;
-
-    /**
-     * Create a new config cache command instance.
-     *
-     * @param  Filesystem  $files
-     * @return void
-     */
-    public function __construct(Filesystem $files)
-    {
-        parent::__construct();
-
-        $this->files = $files;
-    }
-
-    /**
-     * Execute the console command.
-     *
-     * @return void
-     *
-     * @throws LogicException
-     */
-    public function handle()
-    {
-        $this->call('config:clear');
-
-        $config = $this->getConfig();
-
-        $configPath = $this->app->getCachedConfigPath();
-
-        $this->files->put(
-            $configPath,
-            '<?php return ' . var_export($config, true) . ';' . PHP_EOL
-        );
-
-        try {
-            require $configPath;
-        } catch (Throwable $e) {
-            $this->files->delete($configPath);
-
-            throw new LogicException('Your configuration files are not serializable.', 0, $e);
-        }
-
-        $this->info('Configuration cached successfully!');
-    }
-
-    /**
-     * Return a copy of the application configuration.
+     * Boot a fresh copy of the application configuration.
      *
      * @return array
      */
-    protected function getConfig()
+    protected function getFreshConfiguration()
     {
-        return $this->app['config']->all();
+        $app = $this->getLaravel();
+
+        (new Bootloader(
+            ['acorn/fresh-config'],
+            get_class($this->getLaravel())
+        ))->call(function (Application $newApp) use (&$app) {
+            $app = $newApp;
+        });
+
+        do_action('acorn/fresh-config');
+
+        return $app->make('config')->all();
     }
 }

@@ -1,35 +1,37 @@
 <?php
 
-namespace Roots\Acorn\Console\Commands;
+namespace Illuminate\Foundation\Console;
 
-class PackageClearCommand extends Command
+use Illuminate\Console\Command;
+
+class ClearCompiledCommand extends Command
 {
-   /**
+    /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'package:clear';
+    protected $name = 'clear-compiled';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Remove compiled service and package files.';
+    protected $description = 'Remove the compiled class file';
 
-   /**
+    /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return void
      */
     public function handle()
     {
-        if (file_exists($servicesPath = $this->app->getCachedServicesPath())) {
+        if (is_file($servicesPath = $this->laravel->getCachedServicesPath())) {
             @unlink($servicesPath);
         }
 
-        if (file_exists($packagesPath = $this->app->getCachedPackagesPath())) {
+        if (is_file($packagesPath = $this->laravel->getCachedPackagesPath())) {
             @unlink($packagesPath);
         }
 

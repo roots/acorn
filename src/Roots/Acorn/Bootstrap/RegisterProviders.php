@@ -22,6 +22,12 @@ class RegisterProviders extends FoundationRegisterProviders
         parent::bootstrap($app);
     }
 
+    /**
+     * Register the package manifest.
+     *
+     * @param Illuminate\Contracts\Foundation\Application $app
+     * @return void
+     */
     protected function registerPackageManifest(Application $app)
     {
         $app->singleton(FoundationPackageManifest::class, function () use ($app) {

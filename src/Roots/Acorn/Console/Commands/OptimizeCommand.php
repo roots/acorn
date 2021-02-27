@@ -2,32 +2,22 @@
 
 namespace Roots\Acorn\Console\Commands;
 
-class OptimizeCommand extends Command
+use Illuminate\Foundation\Console\OptimizeCommand as FoundationOptimizeCommand;
+use Roots\Acorn\Console\Concerns\GracefullyCallsCommands;
+
+class OptimizeCommand extends FoundationOptimizeCommand
 {
-   /**
-     * The console command name.
-     *
-     * @var string
-     */
-    protected $name = 'optimize';
+    use GracefullyCallsCommands;
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Generate and cache framework files';
-
-   /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return void
      */
     public function handle()
     {
-        $this->call('config:cache');
-        $this->call('view:cache');
-        $this->call('package:discover');
+        $this->gracefulCall('config:cache');
+        $this->gracefulCall('route:cache');
 
         $this->info('Files cached successfully!');
     }

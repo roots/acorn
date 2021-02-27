@@ -1,12 +1,13 @@
 <?php
 
-namespace Roots\Acorn\Console\Commands;
+namespace Illuminate\Foundation\Console;
 
-use Roots\Acorn\Filesystem\Filesystem;
+use Illuminate\Console\Command;
+use Illuminate\Filesystem\Filesystem;
 
 class ConfigClearCommand extends Command
 {
-   /**
+    /**
      * The console command name.
      *
      * @var string
@@ -23,30 +24,31 @@ class ConfigClearCommand extends Command
     /**
      * The filesystem instance.
      *
-     * @var Filesystem
+     * @var \Illuminate\Filesystem\Filesystem
      */
     protected $files;
 
     /**
      * Create a new config clear command instance.
      *
-     * @param  Filesystem  $files
+     * @param  \Illuminate\Filesystem\Filesystem  $files
      * @return void
      */
     public function __construct(Filesystem $files)
     {
         parent::__construct();
+
         $this->files = $files;
     }
 
-   /**
+    /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return void
      */
     public function handle()
     {
-        $this->files->delete($this->app->getCachedConfigPath());
+        $this->files->delete($this->laravel->getCachedConfigPath());
 
         $this->info('Configuration cache cleared!');
     }

@@ -3,26 +3,27 @@
 namespace Roots\Acorn\Console;
 
 use ReflectionClass;
+use Illuminate\Console\Application as Console;
+use Illuminate\Foundation\Console\ClearCompiledCommand;
+use Illuminate\Foundation\Console\ComponentMakeCommand;
+use Illuminate\Foundation\Console\ConfigClearCommand;
+use Illuminate\Foundation\Console\ConsoleMakeCommand;
+use Illuminate\Foundation\Console\EnvironmentCommand;
+use Illuminate\Foundation\Console\Kernel as FoundationConsoleKernel;
+use Illuminate\Foundation\Console\PackageDiscoverCommand;
+use Illuminate\Foundation\Console\ProviderMakeCommand;
+use Illuminate\Foundation\Console\VendorPublishCommand;
+use Illuminate\Foundation\Console\ViewCacheCommand;
+use Illuminate\Foundation\Console\ViewClearCommand;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\Console\Application as Console;
-use Illuminate\Foundation\Console\Kernel as FoundationConsoleKernel;
 use Roots\Acorn\Application;
 use Roots\Acorn\Console\Commands\Command;
-use Roots\Acorn\Console\Commands\ComponentMakeCommand;
 use Roots\Acorn\Console\Commands\ComposerMakeCommand;
 use Roots\Acorn\Console\Commands\ConfigCacheCommand;
-use Roots\Acorn\Console\Commands\ConfigClearCommand;
-use Roots\Acorn\Console\Commands\ConsoleMakeCommand;
 use Roots\Acorn\Console\Commands\OptimizeClearCommand;
 use Roots\Acorn\Console\Commands\OptimizeCommand;
-use Roots\Acorn\Console\Commands\PackageClearCommand;
-use Roots\Acorn\Console\Commands\PackageDiscoverCommand;
-use Roots\Acorn\Console\Commands\ProviderMakeCommand;
 use Roots\Acorn\Console\Commands\SummaryCommand;
-use Roots\Acorn\Console\Commands\VendorPublishCommand;
-use Roots\Acorn\Console\Commands\ViewCacheCommand;
-use Roots\Acorn\Console\Commands\ViewClearCommand;
 use Symfony\Component\Finder\Finder;
 
 class Kernel extends FoundationConsoleKernel
@@ -40,14 +41,15 @@ class Kernel extends FoundationConsoleKernel
      * @var array
      */
     protected $commands = [
+        ClearCompiledCommand::class,
+        ComponentMakeCommand::class,
         ComposerMakeCommand::class,
         ConfigCacheCommand::class,
         ConfigClearCommand::class,
         ConsoleMakeCommand::class,
-        ComponentMakeCommand::class,
+        EnvironmentCommand::class,
         OptimizeClearCommand::class,
         OptimizeCommand::class,
-        PackageClearCommand::class,
         PackageDiscoverCommand::class,
         ProviderMakeCommand::class,
         SummaryCommand::class,

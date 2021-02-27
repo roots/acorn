@@ -1,28 +1,29 @@
 <?php
 
-namespace Roots\Acorn\Console\Commands;
+namespace Illuminate\Foundation\Console;
 
+use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
 class ViewCacheCommand extends Command
 {
-   /**
-     * The console command name.
+    /**
+     * The name and signature of the console command.
      *
      * @var string
      */
-    protected $name = 'view:cache';
+    protected $signature = 'view:cache';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Compile all of the application\'s Blade templates';
+    protected $description = "Compile all of the application's Blade templates";
 
-   /**
+    /**
      * Execute the console command.
      *
      * @return mixed
@@ -41,12 +42,12 @@ class ViewCacheCommand extends Command
     /**
      * Compile the given view files.
      *
-     * @param  Collection  $views
+     * @param  \Illuminate\Support\Collection  $views
      * @return void
      */
     protected function compileViews(Collection $views)
     {
-        $compiler = $this->app['view']->getEngineResolver()->resolve('blade')->getCompiler();
+        $compiler = $this->laravel['view']->getEngineResolver()->resolve('blade')->getCompiler();
 
         $views->map(function (SplFileInfo $file) use ($compiler) {
             $compiler->compile($file->getRealPath());
@@ -57,7 +58,7 @@ class ViewCacheCommand extends Command
      * Get the Blade files in the given path.
      *
      * @param  array  $paths
-     * @return Collection
+     * @return \Illuminate\Support\Collection
      */
     protected function bladeFilesIn(array $paths)
     {
@@ -73,11 +74,11 @@ class ViewCacheCommand extends Command
     /**
      * Get all of the possible view paths.
      *
-     * @return Collection
+     * @return \Illuminate\Support\Collection
      */
     protected function paths()
     {
-        $finder = $this->app['view.finder'];
+        $finder = $this->laravel['view']->getFinder();
 
         return collect($finder->getPaths())->merge(
             collect($finder->getHints())->flatten()

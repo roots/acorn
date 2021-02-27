@@ -1,7 +1,9 @@
 <?php
 
-namespace Roots\Acorn\Console\Commands;
+namespace Illuminate\Foundation\Console;
 
+use Illuminate\Console\GeneratorCommand;
+use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -52,7 +54,7 @@ class ComponentMakeCommand extends GeneratorCommand
     protected function writeView()
     {
         $path = $this->viewPath(
-            str_replace('.', '/', 'components.' . $this->getView()) . '.blade.php'
+            str_replace('.', '/', 'components.'.$this->getView()).'.blade.php'
         );
 
         if (! $this->files->isDirectory(dirname($path))) {
@@ -68,7 +70,7 @@ class ComponentMakeCommand extends GeneratorCommand
         file_put_contents(
             $path,
             '<div>
-  <!-- Hello World. -->
+    <!-- '.Inspiring::quote().' -->
 </div>'
         );
     }
@@ -84,14 +86,14 @@ class ComponentMakeCommand extends GeneratorCommand
         if ($this->option('inline')) {
             return str_replace(
                 'DummyView',
-                "<<<'blade'\n<div>\n  Hello World.\n</div>\nblade",
+                "<<<'blade'\n<div>\n    <!-- ".Inspiring::quote()." -->\n</div>\nblade",
                 parent::buildClass($name)
             );
         }
 
         return str_replace(
             'DummyView',
-            '$this->view(\'components.' . $this->getView() . '\')',
+            'view(\'components.'.$this->getView().'\')',
             parent::buildClass($name)
         );
     }
@@ -119,7 +121,7 @@ class ComponentMakeCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__ . '/stubs/component.stub';
+        return __DIR__.'/stubs/view-component.stub';
     }
 
     /**
@@ -130,7 +132,7 @@ class ComponentMakeCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\View\Components';
+        return $rootNamespace.'\View\Components';
     }
 
     /**
