@@ -4,8 +4,6 @@ namespace Roots\Acorn\Console\Commands;
 
 use Illuminate\Foundation\Console\ConfigCacheCommand as FoundationConfigCacheCommand;
 
-use function Roots\app;
-
 class ConfigCacheCommand extends FoundationConfigCacheCommand
 {
     /**
@@ -15,6 +13,6 @@ class ConfigCacheCommand extends FoundationConfigCacheCommand
      */
     protected function getFreshConfiguration()
     {
-        return app()->make('config')->all();
+        return $this->getLaravel()->make('config')->all();
     }
 }
