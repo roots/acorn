@@ -2,9 +2,7 @@
 
 namespace Roots\Acorn\Console\Commands;
 
-use Illuminate\Support\Str;
 use Illuminate\Console\GeneratorCommand as GeneratorCommandBase;
-use Illuminate\Contracts\Foundation\Application;
 
 abstract class GeneratorCommand extends GeneratorCommandBase
 {
