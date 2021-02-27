@@ -15,6 +15,13 @@ use function locate_template;
 class Bootloader
 {
     /**
+     * Application instance
+     *
+     * @var \Illuminate\Contracts\Foundation\Application
+     */
+    protected $app;
+
+    /**
      * Application to be instantiated at boot time
      *
      * @var string
@@ -131,16 +138,14 @@ class Bootloader
      */
     public function __invoke()
     {
-        static $app;
-
         if (! $this->ready()) {
             return;
         }
 
-        $app = $this->app();
+        $this->app = $this->app();
 
         foreach ($this->queue as $callback) {
-            $app->call($callback);
+            $this->app->call($callback);
         }
 
         $this->queue = [];
@@ -153,10 +158,8 @@ class Bootloader
      */
     protected function app(): ApplicationContract
     {
-        static $app;
-
-        if ($app) {
-            return $app;
+        if ($this->app) {
+            return $this->app;
         }
 
         $bootstrap = $this->bootstrap();
@@ -166,7 +169,7 @@ class Bootloader
 
         $app->bootstrapWith($bootstrap);
 
-        return $app;
+        return $this->app = $app;
     }
 
     /**
