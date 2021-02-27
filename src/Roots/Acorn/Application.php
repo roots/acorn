@@ -331,7 +331,7 @@ class Application extends FoundationApplication
         $packages = $this->make(PackageManifest::class)->getManifest();
 
         $message = [
-            BindingResolutionException::class => "Skipping provider [:provider:] because it requires a dependency that does not exist.",
+            BindingResolutionException::class => "Skipping provider [:provider:] because it requires a dependency that cannot be found.",
         ][get_class($e)] ?? "Skipping provider [:provider:] because it encountered an error.";
 
         $providerName = get_class($provider);
@@ -339,7 +339,8 @@ class Application extends FoundationApplication
         $context = [
             'package' => '',
             'provider' => $providerName,
-            'error' => $e->getMessage()
+            'error' => $e->getMessage(),
+            'help' => 'https://roots.io/docs/acorn/troubleshooting'
         ];
 
         foreach ($packages as $package => $configuration) {
@@ -361,7 +362,6 @@ class Application extends FoundationApplication
             ]),
             $context
         );
-        $this->make('log')->info("See https://roots.io/docs/acorn/troubleshooting");
     }
 
     /**
