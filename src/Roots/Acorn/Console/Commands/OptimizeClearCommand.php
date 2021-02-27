@@ -3,9 +3,12 @@
 namespace Roots\Acorn\Console\Commands;
 
 use Illuminate\Foundation\Console\OptimizeClearCommand as FoundationOptimizeClearCommand;
+use Roots\Acorn\Console\Concerns\GracefullyCallsCommands;
 
 class OptimizeClearCommand extends FoundationOptimizeClearCommand
 {
+    use GracefullyCallsCommands;
+
     /**
      * Execute the console command.
      *
@@ -13,11 +16,11 @@ class OptimizeClearCommand extends FoundationOptimizeClearCommand
      */
     public function handle()
     {
-        $this->call('view:clear');
-        $this->call('cache:clear');
-        // $this->call('route:clear');
-        $this->call('config:clear');
-        $this->call('clear-compiled');
+        $this->gracefulCall('view:clear');
+        $this->gracefulCall('cache:clear');
+        $this->gracefulCall('route:clear');
+        $this->gracefulCall('config:clear');
+        $this->gracefulCall('clear-compiled');
 
         $this->info('Caches cleared successfully!');
     }
