@@ -7,6 +7,21 @@ use Illuminate\Console\GeneratorCommand as GeneratorCommandBase;
 abstract class GeneratorCommand extends GeneratorCommandBase
 {
     /**
+     * The application implementation.
+     *
+     * @var Application
+     */
+    protected $app;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setLaravel($laravel)
+    {
+        parent::setLaravel($this->app = $laravel);
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function getNameInput()
