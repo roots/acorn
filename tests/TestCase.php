@@ -4,6 +4,8 @@ namespace Roots\Acorn\Tests;
 
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
+use function Brain\Monkey\tearDown;
+
 class TestCase extends MockeryTestCase
 {
     protected function fixture($path)
@@ -25,5 +27,11 @@ class TestCase extends MockeryTestCase
         ], '', get_class($this)), '\\/');
 
         return __DIR__ . DIRECTORY_SEPARATOR . $basepath . DIRECTORY_SEPARATOR . '__snapshots__';
+    }
+
+    protected function tearDown(): void
+    {
+        tearDown();
+        parent::tearDown();
     }
 }
