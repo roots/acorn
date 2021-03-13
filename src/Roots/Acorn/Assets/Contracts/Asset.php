@@ -32,7 +32,14 @@ interface Asset
     /**
      * Get the contents of the asset
      *
-     * @return string|false
+     * @return mixed
      */
     public function contents();
+
+    /**
+     * Get data URL of asset.
+     *
+     * @return string
+     */
+    public function dataUrl();
 }

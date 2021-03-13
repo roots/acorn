@@ -1,10 +1,10 @@
 <?php
 
-namespace Roots\Acorn\Assets;
+namespace Roots\Acorn\Assets\Concerns;
 
 use Illuminate\Support\Str;
 
-trait AssetsMixable
+trait Mixable
 {
     /**
      * Get the URI to a Mix hot module replacement server.
@@ -12,16 +12,16 @@ trait AssetsMixable
      * @link https://laravel-mix.com/docs/hot-module-replacement
      *
      * @param  string $path
-     * @return string
+     * @return string|null
      */
     protected function getMixHotUri(string $path): ?string
     {
-        if (file_exists($path . '/hot')) {
-            $url = rtrim(rtrim(file_get_contents($path . '/hot')), '/');
-
-            return Str::after($url, ':');
+        if (! file_exists($hot = "{$path}/hot")) {
+            return null;
         }
 
-        return null;
+        $url = rtrim(rtrim(file_get_contents($hot)), '/');
+
+        return Str::after($url, ':');
     }
 }

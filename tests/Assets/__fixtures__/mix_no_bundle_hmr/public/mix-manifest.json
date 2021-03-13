@@ -1,0 +1,9 @@
+{
+    "/scripts/app.js": "/scripts/app.js",
+    "/scripts/customizer.js": "/scripts/customizer.js",
+    "/scripts/editor.js": "/scripts/editor.js",
+    "/scripts/manifest.js": "/scripts/manifest.js",
+    "/styles/editor.css": "/styles/editor.css",
+    "/styles/app.css": "/styles/app.css",
+    "/scripts/vendor.js": "/scripts/vendor.js"
+}

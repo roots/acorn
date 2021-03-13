@@ -1,0 +1,1 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[3],{"127c8cf59f228bb01a21":function(c,o){(function(){c.exports=window.jQuery})()},"1cdf3ab34cc5add6fb62":function(c,o,n){(function(t){wp.customize("blogname",b=>{b.bind(f=>t(".brand").text(f))})}).call(this,n("127c8cf59f228bb01a21"))},2:function(c,o,n){c.exports=n("1cdf3ab34cc5add6fb62")}},[[2,5]]]);

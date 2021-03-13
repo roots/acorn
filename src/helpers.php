@@ -5,6 +5,7 @@ namespace Roots;
 use Closure;
 use DateTimeZone;
 use Exception;
+use Throwable;
 use Illuminate\Broadcasting\PendingBroadcast;
 use Illuminate\Cache\CacheManager;
 use Illuminate\Contracts\Broadcasting\Factory as BroadcastFactory;
@@ -19,8 +20,8 @@ use Illuminate\Support\Facades\Date;
 use Psr\Log\LoggerInterface;
 use Roots\Acorn\Application;
 use Roots\Acorn\Assets\Contracts\Asset;
+use Roots\Acorn\Assets\Contracts\Bundle;
 use Roots\Acorn\Bootloader;
-use Throwable;
 
 /**
  * Get the available container instance.
@@ -58,13 +59,12 @@ function app_path($path = '')
 /**
  * Get asset from manifest
  *
- * @param  string $key
- * @param  string $manifest
+ * @param  string $asset
  * @return Asset
  */
-function asset($key, $manifest = null)
+function asset(string $asset): Asset
 {
-    return app('assets')->manifest($manifest)->get($key);
+    return app('assets.manifest')->asset($asset);
 }
 
 /**
@@ -94,6 +94,17 @@ function base_path($path = '')
 function bcrypt($value, $options = [])
 {
     return app('hash')->driver('bcrypt')->make($value, $options);
+}
+
+/**
+ * Get bundle from manifest
+ *
+ * @param  string $bundle
+ * @return Bundle
+ */
+function bundle(string $bundle): Bundle
+{
+    return app('assets.manifest')->bundle($bundle);
 }
 
 /**
