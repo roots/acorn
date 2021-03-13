@@ -3,9 +3,9 @@
 namespace Roots\Acorn\Exceptions;
 
 use Exception;
+use Throwable;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Foundation\Exceptions\Handler as FoundationHandler;
-use Throwable;
 use Whoops\Handler\HandlerInterface;
 use Whoops\Run as Whoops;
 

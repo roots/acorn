@@ -1,6 +1,5 @@
 <?php
 
-use Roots\Acorn\Assets\Contracts\Bundle;
 use Roots\Acorn\Assets\Manager;
 use Roots\Acorn\Tests\TestCase;
 
