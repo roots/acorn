@@ -4,7 +4,7 @@ namespace Roots\Acorn\Assets\Concerns;
 
 trait Enqueuable
 {
-    protected static array $inlined = [];
+    protected static $inlined = [];
 
     abstract public function js(?callable $callable = null);
 

@@ -10,13 +10,13 @@ use Roots\Acorn\Assets\AssetFactory;
 
 class Manifest implements ManifestContract
 {
-    protected ?array $assets;
+    protected $assets;
 
-    protected ?array $bundles;
+    protected $bundles;
 
-    protected string $path;
+    protected $path;
 
-    protected string $uri;
+    protected $uri;
 
     public function __construct(string $path, string $uri, ?array $assets, ?array $bundles = null)
     {

@@ -9,13 +9,13 @@ class Bundle implements BundleContract
 {
     use Enqueuable;
 
-    protected string $id;
-    protected string $path;
-    protected string $uri;
-    protected ?string $runtime;
-    protected array $bundle;
+    protected $id;
+    protected $path;
+    protected $uri;
+    protected $runtime;
+    protected $bundle;
 
-    protected static array $runtimes = [];
+    protected static $runtimes = [];
 
     public function __construct(string $id, array $bundle, string $path, string $uri = '/')
     {
