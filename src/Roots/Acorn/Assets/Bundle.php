@@ -2,6 +2,7 @@
 
 namespace Roots\Acorn\Assets;
 
+use Illuminate\Support\Collection;
 use Roots\Acorn\Assets\Concerns\Enqueuable;
 use Roots\Acorn\Assets\Contracts\Bundle as BundleContract;
 
@@ -17,6 +18,14 @@ class Bundle implements BundleContract
 
     protected static $runtimes = [];
 
+    /**
+     * Create a new bundle.
+     *
+     * @param string $id
+     * @param array $bundle
+     * @param string $path
+     * @param string $uri
+     */
     public function __construct(string $id, array $bundle, string $path, string $uri = '/')
     {
         $this->id = $id;
@@ -29,6 +38,14 @@ class Bundle implements BundleContract
         $this->bundle = $bundle;
     }
 
+    /**
+     * Get CSS files in bundle.
+     *
+     * Optionally pass a function to execute on each CSS file.
+     *
+     * @param callable $callable
+     * @return Collection|$this
+     */
     public function css(?callable $callable = null)
     {
         if (! $callable) {
@@ -43,6 +60,14 @@ class Bundle implements BundleContract
         return $this;
     }
 
+    /**
+     * Get JS files in bundle.
+     *
+     * Optionally pass a function to execute on each JS file.
+     *
+     * @param callable $callable
+     * @return Collection|$this
+     */
     public function js(?callable $callable = null)
     {
         if (! $callable) {
@@ -58,19 +83,38 @@ class Bundle implements BundleContract
         return $this;
     }
 
+    /**
+     * Get depdencies.
+     *
+     * @return array
+     */
     public function dependencies()
     {
         return $this->bundle['dependencies'];
     }
 
+    /**
+     * Get bundle runtime.
+     *
+     * @return string|null
+     */
     public function runtime()
     {
         return $this->runtime;
     }
 
+    /**
+     * Get bundle runtime contents.
+     *
+     * @return string|null
+     */
     public function runtimeSource()
     {
-        if ($sauce = self::$runtimes[$runtime = $this->runtime()] ?? null) {
+        if (($runtime = $this->runtime()) === null) {
+            return null;
+        }
+
+        if ($sauce = self::$runtimes[$runtime] ?? null) {
             return $sauce;
         }
 
