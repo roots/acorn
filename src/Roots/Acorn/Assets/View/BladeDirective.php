@@ -1,8 +1,8 @@
 <?php
 
-namespace Roots\Acorn\Assets;
+namespace Roots\Acorn\Assets\View;
 
-class AssetDirective
+class BladeDirective
 {
     /**
      * Invoke the @asset directive.

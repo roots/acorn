@@ -3,8 +3,6 @@
 use Roots\Acorn\Filesystem\Filesystem;
 use Roots\Acorn\Tests\TestCase;
 
-use function Roots\Acorn\Tests\fixture;
-
 uses(TestCase::class);
 
 it('should normalize paths with multiple separators', function () {

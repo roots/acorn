@@ -1,0 +1,33 @@
+{
+  "app": {
+    "js": {
+      "runtime": "public/runtime.4476c5f869ee7584ba3c.js",
+      "app": "public/app.4476c5f869ee7584ba3c.js"
+    },
+    "css": {
+      "app": "public/app.2.4476c5f869ee7584ba3c.css"
+    },
+    "dependencies": ["jquery"]
+  },
+  "editor": {
+    "js": {
+      "runtime": "public/runtime.4476c5f869ee7584ba3c.js",
+      "editor": "public/editor.4476c5f869ee7584ba3c.js"
+    },
+    "css": {
+      "editor": "public/editor.4.4476c5f869ee7584ba3c.css"
+    },
+    "dependencies": [
+      "wp-dom-ready",
+      "wp-edit-post",
+      "wp-blocks"
+    ]
+  },
+  "customizer": {
+    "js": {
+      "runtime": "public/runtime.4476c5f869ee7584ba3c.js",
+      "customizer": "public/customizer.4476c5f869ee7584ba3c.js"
+    },
+    "dependencies": ["jquery"]
+  }
+}

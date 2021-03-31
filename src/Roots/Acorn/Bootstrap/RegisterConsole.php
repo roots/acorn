@@ -4,11 +4,9 @@ namespace Roots\Acorn\Bootstrap;
 
 use WP_CLI;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Roots\Acorn\Console\Kernel;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
-use TypeError;
 
 class RegisterConsole
 {

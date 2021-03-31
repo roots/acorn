@@ -1,0 +1,10 @@
+{
+  "runtime.js": "public/runtime.4476c5f869ee7584ba3c.js",
+  "vendor/harmony-module.js": "public/vendor/harmony-module.4476c5f869ee7584ba3c.js",
+  "app.css": "public/app.2.4476c5f869ee7584ba3c.css",
+  "app.js": "public/app.4476c5f869ee7584ba3c.js",
+  "customizer.js": "public/customizer.4476c5f869ee7584ba3c.js",
+  "editor.css": "public/editor.4.4476c5f869ee7584ba3c.css",
+  "editor.js": "public/editor.4476c5f869ee7584ba3c.js",
+  "wordpress.json": "public/wordpress.json"
+}
