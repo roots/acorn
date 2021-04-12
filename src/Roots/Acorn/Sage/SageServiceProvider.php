@@ -67,6 +67,8 @@ class SageServiceProvider extends ServiceProvider
             'single_template_hierarchy',
             'singular_template_hierarchy',
             'attachment_template_hierarchy',
+            'privacypolicy_template_hierarchy',
+            'embed_template_hierarchy',
         ], $sage->filter('template_hierarchy'), 10);
     }
 
