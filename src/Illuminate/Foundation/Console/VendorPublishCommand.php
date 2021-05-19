@@ -9,6 +9,7 @@ use Illuminate\Support\ServiceProvider;
 use League\Flysystem\Adapter\Local as LocalAdapter;
 use League\Flysystem\Filesystem as Flysystem;
 use League\Flysystem\MountManager;
+use function Roots\base_path;
 
 class VendorPublishCommand extends Command
 {
