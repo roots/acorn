@@ -21,8 +21,8 @@ class HandleExceptions extends FoundationHandleExceptionsBootstrapper
         $this->app = $app;
 
         if (
-            ! $this->app->runningInConsole() &&
-            is_readable(WP_CONTENT_DIR . '/fatal-error-handler.php')
+            ! $this->app->config->get('app.debug', WP_DEBUG) ||
+            (! $this->app->runningInConsole() && is_readable(WP_CONTENT_DIR . '/fatal-error-handler.php'))
         ) {
             return;
         }
