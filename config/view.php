@@ -79,6 +79,6 @@ return [
     */
 
     'directives' => [
-        'asset'  => Roots\Acorn\Assets\View\BladeDirective::class,
+        // 'foo'  => App\View\FooDirective::class,
     ],
 ];
