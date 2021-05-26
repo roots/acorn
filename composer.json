@@ -50,7 +50,7 @@
     "illuminate/log": "^8.0",
     "illuminate/support": "^8.0",
     "illuminate/view": "^8.0",
-    "league/flysystem": "^1.0",
+    "league/flysystem": "^2.1",
     "ramsey/uuid": "^4.1",
     "roots/support": "^1.0",
     "symfony/error-handler": "^5.2",
