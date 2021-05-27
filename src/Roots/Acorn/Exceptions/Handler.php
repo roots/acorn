@@ -25,7 +25,7 @@ class Handler extends FoundationHandler
     public function render($request, Throwable $e)
     {
         try {
-            return app()->environment('development') && class_exists(Whoops::class)
+            return app()->environment(['development', 'local']) && class_exists(Whoops::class)
                         ? $this->renderExceptionWithWhoops($e)
                         : $this->renderExceptionWithSymfony($e, app()->environment('development'));
         } catch (Exception $e) {
