@@ -23,7 +23,7 @@ class Handler extends FoundationHandler
      * @throws \Throwable
      */
     public function render($request, Throwable $e)
-    {
+    {        
         try {
             echo app()->environment('development') && class_exists(Whoops::class)
                         ? $this->renderExceptionWithWhoops($e)
@@ -31,21 +31,6 @@ class Handler extends FoundationHandler
         } catch (Exception $e) {
             echo $this->renderExceptionWithSymfony($e, app()->environment('development'));
         }
-    }
-
-    /**
-     * Render an exception to a string using "Whoops".
-     *
-     * @param  Throwable  $e
-     * @return string
-     */
-    protected function renderExceptionWithWhoops(Throwable $e)
-    {
-        return tap(new Whoops(), function ($whoops) {
-            $whoops->appendHandler($this->whoopsHandler());
-            $whoops->writeToOutput(false);
-            $whoops->allowQuit(false);
-        })->handleException($e);
     }
 
     /**
