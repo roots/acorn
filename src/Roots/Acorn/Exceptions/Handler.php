@@ -25,11 +25,11 @@ class Handler extends FoundationHandler
     public function render($request, Throwable $e)
     {
         try {
-            return app()->environment('development') && class_exists(Whoops::class)
+            echo app()->environment('development') && class_exists(Whoops::class)
                         ? $this->renderExceptionWithWhoops($e)
                         : $this->renderExceptionWithSymfony($e, app()->environment('development'));
         } catch (Exception $e) {
-            return $this->renderExceptionWithSymfony($e, app()->environment('development'));
+            echo $this->renderExceptionWithSymfony($e, app()->environment('development'));
         }
     }
 
@@ -43,7 +43,7 @@ class Handler extends FoundationHandler
     {
         return tap(new Whoops(), function ($whoops) {
             $whoops->appendHandler($this->whoopsHandler());
-
+            $whoops->writeToOutput(false);
             $whoops->allowQuit(false);
         })->handleException($e);
     }
