@@ -43,6 +43,7 @@ class HandleExceptions extends FoundationHandleExceptionsBootstrapper
      */
     protected function renderHttpResponse(Throwable $e)
     {
-        $this->getExceptionHandler()->render('', $e);
+        ob_clean();
+        $this->getExceptionHandler()->render('', $e)->send();
     }
 }

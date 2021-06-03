@@ -23,13 +23,24 @@ class Handler extends FoundationHandler
      * @throws \Throwable
      */
     public function render($request, Throwable $e)
-    {        
+    {
+        return $this->convertExceptionToResponse($e);
+    }
+
+    /**
+     * Get the response content for the given exception.
+     *
+     * @param  \Throwable  $e
+     * @return string
+     */
+    protected function renderExceptionContent(Throwable $e)
+    {
         try {
-            echo app()->environment('development') && class_exists(Whoops::class)
+            return app()->environment('development') && class_exists(Whoops::class)
                         ? $this->renderExceptionWithWhoops($e)
                         : $this->renderExceptionWithSymfony($e, app()->environment('development'));
         } catch (Exception $e) {
-            echo $this->renderExceptionWithSymfony($e, app()->environment('development'));
+            return $this->renderExceptionWithSymfony($e, app()->environment('development'));
         }
     }
 
