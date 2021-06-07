@@ -57,7 +57,7 @@ class TextAsset extends Asset
         }
 
         $percents = [];
-        foreach (preg_split('//u', $urlencode, null, PREG_SPLIT_NO_EMPTY) as $char) {
+        foreach (preg_split('//u', $urlencode, -1, PREG_SPLIT_NO_EMPTY) as $char) {
             $percents[$char] = rawurlencode($char);
         }
 
