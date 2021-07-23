@@ -4,7 +4,7 @@
 [![Build Status](https://img.shields.io/github/workflow/status/roots/acorn/Main?style=flat-square)](https://github.com/roots/acorn/actions/workflows/main.yml)
 [![Follow Roots](https://img.shields.io/twitter/follow/rootswp.svg?style=flat-square&color=1da1f2)](https://twitter.com/rootswp)
 
-Acorn is a lazy-loaded framework for building WordPress plugins.
+Acorn adds Laravel components to use in your WordPress plugins and themes.
 
 ## Contributing
 
