@@ -1,0 +1,7 @@
+{
+  "app.js": "app.js",
+  "editor.js": "editor.js",
+  "customizer.js": "customizer.js",
+  "bud.js": "bud.js",
+  "vendor-app~editor~customizer.js": "vendor-app~editor~customizer.js"
+}

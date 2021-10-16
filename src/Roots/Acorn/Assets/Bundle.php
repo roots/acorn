@@ -52,7 +52,7 @@ class Bundle implements BundleContract
             return collect($this->bundle['css']);
         }
 
-        collect($this->bundle['css'])
+        collect($this->bundle['css'] ?? [])
             ->each(function ($src, $handle) use ($callable) {
                 $callable("{$this->id}/{$handle}", "{$this->uri}/{$src}");
             });

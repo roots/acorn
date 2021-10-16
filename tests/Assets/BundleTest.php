@@ -44,6 +44,16 @@ it('can enqueue css', function () {
     $app->enqueueCss();
 });
 
+it('can silently fail to enqueue css', function () {
+    $stub = $this->stub('wp_enqueue_style');
+    $manifest = json_decode(file_get_contents($this->fixture('bud_single_runtime_dev/public/entrypoints.json')), JSON_OBJECT_AS_ARRAY);
+    $app = new Bundle('app', $manifest['app'], $this->fixture('bud_single_runtime_dev'), 'https://k.jo');
+
+    $app->enqueueCss();
+
+    $stub->shouldNotHaveBeenCalled();
+});
+
 it('can enqueue js', function () {
     $manifest = json_decode(file_get_contents($this->fixture('bud_single_runtime/public/entrypoints.json')), JSON_OBJECT_AS_ARRAY);
     $app = new Bundle('app', $manifest['app'], $this->fixture('bud_single_runtime'), 'https://k.jo');
