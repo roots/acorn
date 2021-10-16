@@ -1,0 +1,8 @@
+- editor/editor
+- 'https://k.jo/public/editor.4476c5f869ee7584ba3c.js'
+-
+    - wp-dom-ready
+    - wp-edit-post
+    - wp-blocks
+- null
+- true
