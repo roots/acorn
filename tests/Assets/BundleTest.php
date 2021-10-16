@@ -39,9 +39,7 @@ it('can enqueue css', function () {
     $manifest = json_decode(file_get_contents($this->fixture('bud_single_runtime/public/entrypoints.json')), JSON_OBJECT_AS_ARRAY);
     $app = new Bundle('app', $manifest['app'], $this->fixture('bud_single_runtime'), 'https://k.jo');
 
-    $this->stubs([
-        'wp_enqueue_style' => fn (...$args) => assertMatchesSnapshot($args),
-    ]);
+    $this->stub('wp_enqueue_style', fn (...$args) => assertMatchesSnapshot($args));
 
     $app->enqueueCss();
 });
@@ -50,14 +48,8 @@ it('can enqueue js', function () {
     $manifest = json_decode(file_get_contents($this->fixture('bud_single_runtime/public/entrypoints.json')), JSON_OBJECT_AS_ARRAY);
     $app = new Bundle('app', $manifest['app'], $this->fixture('bud_single_runtime'), 'https://k.jo');
 
-    $this->stubs([
-        'wp_enqueue_script' => fn (...$args) => assertMatchesSnapshot($args),
-    ]);
-
-    $this->stub('wp_add_inline_script')
-        ->shouldBeCalled()
-        ->zeroOrMoreTimes()
-        ->withAnyArgs();
+    $this->stub('wp_enqueue_script', fn (...$args) => assertMatchesSnapshot($args));
+    $this->stub('wp_add_inline_script')->shouldBeCalled();
 
     $app->enqueueJs();
 });
@@ -68,7 +60,7 @@ it('can inline a single runtime', function () {
 
     $this->stubs([
         'wp_add_inline_script' => fn (...$args) => assertMatchesSnapshot($args),
-        'wp_enqueue_script' => null,
+        'wp_enqueue_script',
     ]);
 
     $this->stub('wp_enqueue_script')
