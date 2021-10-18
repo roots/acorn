@@ -1,7 +1,7 @@
 <?php
 
 use Roots\Acorn\Filesystem\Filesystem;
-use Roots\Acorn\Tests\TestCase;
+use Roots\Acorn\Tests\Test\TestCase;
 
 uses(TestCase::class);
 

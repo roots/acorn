@@ -1,3 +1,5 @@
 <?php
 
-test('Bootstrap');
+use Roots\Acorn\Tests\Test\TestCase;
+
+uses(TestCase::class);

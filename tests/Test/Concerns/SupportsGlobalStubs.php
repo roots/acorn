@@ -1,35 +1,12 @@
 <?php
 
-namespace Roots\Acorn\Tests;
+namespace Roots\Acorn\Tests\Test\Concerns;
 
-use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Akamon\MockeryCallableMock\MockeryCallableMock;
 
-class TestCase extends MockeryTestCase
+trait SupportsGlobalStubs
 {
     public static $globals;
-
-    protected function fixture($path)
-    {
-        $basepath = trim(preg_replace([
-            '/' . class_basename($this) . '$/',
-            '/^P\\\Tests/',
-        ], '', get_class($this)), '\\/');
-
-        return __DIR__ . DIRECTORY_SEPARATOR . $basepath . DIRECTORY_SEPARATOR . '__fixtures__' . DIRECTORY_SEPARATOR . $path;
-    }
-
-    /* this does not work but maybe one day it will 🥺 */
-    protected function getSnapshotDirectory(): string
-    {
-        $basepath = trim(preg_replace([
-            '/' . class_basename($this) . '$/',
-            '/^P\\\Tests/',
-        ], '', get_class($this)), '\\/');
-
-        return __DIR__ . DIRECTORY_SEPARATOR . $basepath . DIRECTORY_SEPARATOR . '__snapshots__';
-    }
-
 
     /**
      * Create stubs and spies for global functions.
@@ -81,11 +58,5 @@ class TestCase extends MockeryTestCase
     protected function clearStubs(): void
     {
         self::$globals = [];
-    }
-
-    protected function setUp(): void
-    {
-        $this->clearStubs();
-        parent::setUp();
     }
 }

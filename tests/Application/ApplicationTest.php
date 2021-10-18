@@ -2,7 +2,7 @@
 
 use Roots\Acorn\Application;
 use Roots\Acorn\LazyLoader;
-use Roots\Acorn\Tests\TestCase;
+use Roots\Acorn\Tests\Test\TestCase;
 
 use function Roots\Acorn\Tests\temp;
 

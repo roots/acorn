@@ -1,11 +1,37 @@
 <?php
 
+use Roots\Acorn\Assets\Contracts\Manifest as ManifestContract;
 use Roots\Acorn\Assets\Manager;
-use Roots\Acorn\Tests\TestCase;
+use Roots\Acorn\Assets\Manifest;
+use Roots\Acorn\Tests\Test\TestCase;
 
 use function Spatie\Snapshots\assertMatchesSnapshot;
 
 uses(TestCase::class);
+
+it('creates a manifest', function () {
+    $assets = new Manager();
+
+    $manifest = $assets->manifest('theme', [
+        'path' => $this->fixture('bud_single_runtime'),
+        'url' => 'https://k.jo',
+        'assets' => $this->fixture('bud_single_runtime/public/manifest.json'),
+    ]);
+
+    expect($manifest)->toBeInstanceOf(ManifestContract::class);
+});
+
+it('registers a manifest', function () {
+    $assets = new Manager();
+
+    $assets->register('theme', new Manifest(
+        $this->fixture('bud_single_runtime'),
+        'https://k.jo',
+        [],
+    ));
+
+    expect($assets->manifest('theme'))->toBeInstanceOf(ManifestContract::class);
+});
 
 it('reads an assets manifest', function () {
     $assets = new Manager([

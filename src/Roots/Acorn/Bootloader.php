@@ -165,7 +165,9 @@ class Bootloader
         $bootstrap = $this->bootstrap();
         $basePath = $this->basePath();
 
-        $app = new $this->appClassName($basePath, $this->usePaths());
+        $app = $this->appClassName::getInstance();
+        $app->useBasePath($basePath);
+        $app->usePaths($this->usePaths());
 
         $app->bootstrapWith($bootstrap);
 
@@ -183,7 +185,7 @@ class Bootloader
             return $this->basePath;
         }
 
-        $basePath = dirname(locate_template('config') ?: __DIR__ . '/../');
+        $basePath = dirname(locate_template('config')) ?: dirname(__DIR__, 3);
 
         if (defined('ACORN_BASEPATH')) {
             $basePath = constant('ACORN_BASEPATH');
@@ -231,7 +233,7 @@ class Bootloader
 
         return collect($searchPaths)
             ->map(function ($path) {
-                return is_string($path) && is_dir($path) ? $path : null;
+                return (is_string($path) && is_dir($path)) ? $path : null;
             })
             ->filter()
             ->unique()

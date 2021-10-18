@@ -11,7 +11,13 @@ function plugin_entrypoint()
     return __DIR__ . '/../acorn.php';
 }
 
-function temp($path = null)
+/**
+ * Get a temporary directory
+ *
+ * @param string|null $path
+ * @return string|TemporaryDirectory
+ */
+function temp(?string $path = null)
 {
     static $temp;
 
@@ -25,7 +31,7 @@ function temp($path = null)
         });
     }
 
-    if ($path) {
+    if ($path !== null) {
         return $temp->path($path);
     }
 
