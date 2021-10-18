@@ -65,7 +65,7 @@ it('should not boot the application by default when invoked', function () {
 
     $bootloader = new Bootloader('hook', Application::class);
 
-    $application->shouldNotReceive('useBasePath', 'usePaths', 'bootstrapWith');
+    $application->shouldNotReceive('setBasePath', 'usePaths', 'bootstrapWith');
 
     $bootloader();
 });
@@ -78,7 +78,7 @@ it('should boot the application when invoked if ready', function () {
     $bootloader = new Bootloader('hook', Application::class);
     $this->stub('doing_action')->shouldBeCalled()->with('hook')->andReturn(true);
 
-    $application->shouldReceive('useBasePath', 'usePaths', 'bootstrapWith');
+    $application->shouldReceive('setBasePath', 'usePaths', 'bootstrapWith');
 
     $bootloader();
 });
@@ -93,7 +93,7 @@ it('should allow Bootstraps to be filtered', function () {
     $bootloader = new Bootloader('hook', Application::class);
     $this->stub('doing_action')->shouldBeCalled()->with('hook')->andReturn(true);
 
-    $application->shouldReceive('useBasePath', 'usePaths');
+    $application->shouldReceive('setBasePath', 'usePaths');
     $application->shouldReceive('bootstrapWith')->once()->with($bootstraps);
 
     $bootloader();
@@ -111,7 +111,7 @@ it('should use a fallback basepath', function () {
         ->andReturn(temp(''));
 
     $application->shouldReceive('usePaths', 'bootstrapWith');
-    $application->shouldReceive('useBasePath')
+    $application->shouldReceive('setBasePath')
         ->once()
         ->with(\Mockery::not(temp('')));
 
@@ -131,7 +131,7 @@ it('should locate the `config` folder in the theme to determine basepath', funct
         ->andReturn(temp('config'));
 
     $application->shouldReceive('usePaths', 'bootstrapWith');
-    $application->shouldReceive('useBasePath')->once()->with(temp(''));
+    $application->shouldReceive('setBasePath')->once()->with(temp(''));
 
     $bootloader();
 });
@@ -150,7 +150,7 @@ it('should locate other paths via filter', function () {
     $this->filter('acorn/paths.bootstrap', fn () => temp('bootstrap'));
     $this->filter('acorn/paths.public', fn () => temp('public'));
 
-    $application->shouldReceive('bootstrapWith', 'useBasePath');
+    $application->shouldReceive('bootstrapWith', 'setBasePath');
     $application->shouldReceive('usePaths')->once()->with([
         'app' => temp('app'),
         'config' => temp('config'),
@@ -175,7 +175,7 @@ it('should override basepath with constant', function () {
         ->andReturn(temp(''));
 
     $application->shouldReceive('usePaths', 'bootstrapWith');
-    $application->shouldReceive('useBasePath')
+    $application->shouldReceive('setBasePath')
         ->once()
         ->with(temp('acorn_basepath'));
 

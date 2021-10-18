@@ -166,7 +166,7 @@ class Bootloader
         $basePath = $this->basePath();
 
         $app = $this->appClassName::getInstance();
-        $app->useBasePath($basePath);
+        $app->setBasePath($basePath);
         $app->usePaths($this->usePaths());
 
         $app->bootstrapWith($bootstrap);
