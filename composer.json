@@ -82,6 +82,6 @@
     "lint": "phpcs",
     "lint:fix": "phpcbf",
     "test": "pest",
-    "coverage": "pest --coverage --coverage-html=coverage"
+    "coverage": "XDEBUG_MODE=coverage pest --coverage --coverage-html=coverage"
   }
 }
