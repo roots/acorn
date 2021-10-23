@@ -19,9 +19,6 @@
     <include>
       <directory suffix=".php">./src</directory>
     </include>
-    <exclude>
-      <directory suffix=".php">./src/Illuminate/*</directory>
-    </exclude>
   </coverage>
   <php>
     <env name="WP_ENV" value="testing"/>
