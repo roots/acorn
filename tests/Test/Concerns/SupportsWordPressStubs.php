@@ -38,7 +38,7 @@ trait SupportsWordPressStubs
         $this->filters = [];
     }
 
-    protected function apply($key, $initial, ...$args)
+    protected function apply($key, $initial = null, ...$args)
     {
         return array_reduce(
             $this->filters[$key] ?? [],
