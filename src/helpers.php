@@ -36,11 +36,7 @@ function bundle(string $bundle): Bundle
  */
 function bootloader($callback = null)
 {
-    static $bootloader;
-
-    if (! $bootloader) {
-        $bootloader = new Bootloader();
-    }
+    $bootloader = Bootloader::getInstance();
 
     if (is_callable($callback)) {
         $bootloader->call($callback);

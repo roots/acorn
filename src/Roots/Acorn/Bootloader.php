@@ -15,6 +15,13 @@ use function locate_template;
 class Bootloader
 {
     /**
+     * Bootloader instance
+     *
+     * @var static
+     */
+    protected static $instance;
+
+    /**
      * Application instance
      *
      * @var \Illuminate\Contracts\Foundation\Application
@@ -57,6 +64,26 @@ class Bootloader
     protected $basePath;
 
     /**
+     * Set the Bootloader instance
+     *
+     * @param Bootloader $bootloader
+     */
+    public static function setInstance(self $bootloader)
+    {
+        static::$instance = $bootloader;
+    }
+
+    /**
+     * Get the Bootloader instance
+     *
+     * @return static
+     */
+    public static function getInstance(): static
+    {
+        return static::$instance ??= new static();
+    }
+
+    /**
      * Create a new bootloader instance
      *
      * @param  string[] $hooks WordPress hooks to boot application
@@ -76,6 +103,10 @@ class Bootloader
         $this->hooks = (array) $hooks;
 
         add_filters($this->hooks, $this, 5);
+
+        if (! static::$instance) {
+            static::$instance = $this;
+        }
     }
 
     /**
