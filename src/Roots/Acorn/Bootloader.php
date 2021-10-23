@@ -118,7 +118,7 @@ class Bootloader
      */
     public function register($provider, $force = false): Bootloader
     {
-        return $this->call(function ($app) use ($provider, $force) {
+        return $this->call(function (ApplicationContract $app) use ($provider, $force) {
             $app->register($provider, $force);
         });
     }
@@ -137,7 +137,7 @@ class Bootloader
             return $this;
         }
 
-        $this->app()->call($callback);
+        $this->app()->call($callback, [$this->app()]);
 
         return $this;
     }
