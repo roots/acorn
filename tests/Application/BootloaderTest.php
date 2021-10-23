@@ -1,12 +1,15 @@
 <?php
 
+use Akamon\MockeryCallableMock\MockeryCallableMock;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Roots\Acorn\Application;
 use Roots\Acorn\Bootloader;
+use Roots\Acorn\ServiceProvider;
 use Roots\Acorn\Tests\Test\TestCase;
 
 use function Roots\Acorn\Tests\mock;
 use function Roots\Acorn\Tests\temp;
+use function Roots\bootloader;
 
 uses(TestCase::class);
 
@@ -150,7 +153,7 @@ it('should locate other paths via filter', function () {
     $this->filter('acorn/paths.bootstrap', fn () => temp('bootstrap'));
     $this->filter('acorn/paths.public', fn () => temp('public'));
 
-    $application->shouldReceive('bootstrapWith', 'setBasePath');
+    $application->shouldReceive('bootstrapWith', 'setBasePath')->once();
     $application->shouldReceive('usePaths')->once()->with([
         'app' => temp('app'),
         'config' => temp('config'),
@@ -180,4 +183,124 @@ it('should override basepath with constant', function () {
         ->with(temp('acorn_basepath'));
 
     $bootloader();
-})->skip(!defined('ACORN_BASEPATH'), "This test is skipped by default. `define('ACORN_BASEPATH')` to run it.");
+})->skip(!defined('ACORN_BASEPATH'), "This test is skipped by default. `define('ACORN_BASEPATH')` to run it.")->group('requires-isolation');
+
+it('should immediately execute a callback if ready', function () {
+    /** @var \Mockery\MockInterface|Application */
+    $application = mock(Application::class)->makePartial();
+    Application::setInstance($application);
+    $bootloader = new Bootloader('hook', Application::class);
+    $callback = new MockeryCallableMock();
+
+    $this->filter('acorn/ready', '__return_true');
+    $this->filter('acorn/bootstrap', '__return_empty_array');
+
+    $application->shouldReceive('setBasePath', 'usePaths', 'bootstrapWith')->once();
+
+    $bootloader();
+    $bootloader->call($callback);
+
+    $callback->shouldHaveBeenCalled()->once();
+});
+
+it('should defer execution of callback until ready', function () {
+    /** @var \Mockery\MockInterface|Application */
+    $application = mock(Application::class)->makePartial();
+    Application::setInstance($application);
+    $bootloader = new Bootloader('hook', Application::class);
+    $callback = new MockeryCallableMock();
+
+    $this->filter('acorn/bootstrap', '__return_empty_array');
+
+    $application->shouldReceive('setBasePath', 'usePaths', 'bootstrapWith')->once();
+
+    $bootloader->call($callback);
+    $this->filter('acorn/ready', '__return_true');
+
+    $application->shouldNotHaveBeenCalled();
+    $callback->shouldNotHaveBeenCalled();
+
+    $bootloader();
+
+    $callback->shouldHaveBeenCalled()->once();
+});
+
+it('should register a provider after boot', function () {
+    /** @var \Mockery\MockInterface|Application */
+    $application = mock(Application::class)->makePartial();
+    Application::setInstance($application);
+    $bootloader = new Bootloader('hook', Application::class);
+    $provider = mock(ServiceProvider::class);
+
+    $this->filter('acorn/bootstrap', '__return_empty_array');
+
+    $application->shouldReceive('setBasePath', 'usePaths', 'bootstrapWith', 'register')->once();
+    $application->shouldReceive('make')->withArgs([ApplicationContract::class])->andReturn($application);
+
+    $bootloader->register($provider);
+    $this->filter('acorn/ready', '__return_true');
+    $application->shouldNotHaveReceived('register');
+    $bootloader();
+});
+
+it('should boot using the helper', function () {
+    /** @var \Mockery\MockInterface|Application */
+    $application = mock(Application::class);
+    Application::setInstance($application);
+    $bootloader = new Bootloader('hook', Application::class);
+    Bootloader::setInstance($bootloader);
+
+    $this->filter('acorn/ready', '__return_true');
+    $this->filter('acorn/bootstrap', '__return_empty_array');
+
+    $application->shouldReceive('setBasePath', 'usePaths', 'bootstrapWith')->once();
+
+    bootloader();
+    $application->shouldNotHaveBeenCalled();
+
+    do_action('hook');
+});
+
+it('should not boot more than once when using the helper', function () {
+    /** @var \Mockery\MockInterface|Application */
+    $application = mock(Application::class);
+    Application::setInstance($application);
+    $bootloader = new Bootloader('hook', Application::class);
+    Bootloader::setInstance($bootloader);
+
+    $this->filter('acorn/ready', '__return_true');
+    $this->filter('acorn/bootstrap', '__return_empty_array');
+
+    $application->shouldReceive('setBasePath', 'usePaths', 'bootstrapWith')->once();
+
+    bootloader();
+    $application->shouldNotHaveBeenCalled();
+
+    bootloader();
+    do_action('hook');
+
+    bootloader();
+    do_action('hook');
+});
+
+it('should handle callback when passed to the helper', function () {
+    /** @var \Mockery\MockInterface|Application */
+    $application = mock(Application::class)->makePartial();
+    Application::setInstance($application);
+    $bootloader = new Bootloader('hook', Application::class);
+    Bootloader::setInstance($bootloader);
+    $callback = new MockeryCallableMock();
+
+    $this->filter('acorn/bootstrap', '__return_empty_array');
+
+    $application->shouldReceive('setBasePath', 'usePaths', 'bootstrapWith')->once();
+
+    bootloader($callback);
+    $application->shouldNotHaveBeenCalled();
+    $callback->shouldNotHaveBeenCalled();
+
+    $this->filter('acorn/ready', '__return_true');
+    do_action('hook');
+
+    $callback->shouldHaveBeenCalled()->once();
+});
