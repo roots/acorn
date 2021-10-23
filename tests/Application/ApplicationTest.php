@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Config\Repository as ConfigRepository;
 use Roots\Acorn\Application;
 use Roots\Acorn\LazyLoader;
 use Roots\Acorn\Tests\Test\TestCase;
@@ -139,4 +140,20 @@ it('allows the app namespace to changed arbitrarily', function () {
     $app->useNamespace('App');
 
     expect($app->getNamespace())->toBe('App\\');
+});
+
+it('makes a thing', function () {
+    $app = new Application();
+
+    $app->bind('config', fn () => new ConfigRepository());
+
+    expect($app->make('config'))->toBeInstanceOf(ConfigRepository::class);
+});
+
+it('lazy loads a thing', function () {
+    $app = new Application();
+
+    // `files` is lazy loaded by default
+    // i'm not explicitly calling $app['app.lazy'] and registering a provider because ... i'm lazy 😏
+    expect($app->make('files'))->toBeInstanceOf(Illuminate\Filesystem\Filesystem::class);
 });
