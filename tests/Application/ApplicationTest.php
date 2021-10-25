@@ -3,8 +3,10 @@
 use Illuminate\Config\Repository as ConfigRepository;
 use Roots\Acorn\Application;
 use Roots\Acorn\LazyLoader;
+use Roots\Acorn\Tests\Test\Stubs\BootableServiceProvider;
 use Roots\Acorn\Tests\Test\TestCase;
 
+use function Roots\Acorn\Tests\mock;
 use function Roots\Acorn\Tests\temp;
 
 uses(TestCase::class);
@@ -156,4 +158,47 @@ it('lazy loads a thing', function () {
     // `files` is lazy loaded by default
     // i'm not explicitly calling $app['app.lazy'] and registering a provider because ... i'm lazy 😏
     expect($app->make('files'))->toBeInstanceOf(Illuminate\Filesystem\Filesystem::class);
+});
+
+it('boots a provider', function () {
+    $provider = mock(BootableServiceProvider::class)->makePartial();
+    $app = new Application();
+
+    $provider->shouldReceive('register', 'boot')->once();
+
+    $app->register($provider);
+
+    $app->boot();
+});
+
+it('gracefully skips a provider that fails to boot', function () {
+    $logger = mock(\Illuminate\Log\LogServiceProvider::class);
+    $manifest = mock(\Illuminate\Foundation\PackageManifest::class);
+    $app = new Application();
+
+    $app->singleton('log', fn () => $logger);
+    $app->singleton(\Illuminate\Foundation\PackageManifest::class, fn () => $manifest);
+
+    // the core of this test is to make sure that when a class or function is called that
+    // does not exist, things don't blow up.
+    $provider = new class($app) extends BootableServiceProvider {
+        public function boot()
+        {
+            new \kjo();
+        }
+    };
+
+    $logger
+        ->shouldReceive('warning')
+        ->withArgs(fn ($message) => expect($message)->toContain('Skipping provider') || true)
+        ->once();
+
+    $manifest
+        ->shouldAllowMockingProtectedMethods()
+        ->shouldReceive('getManifest')
+        ->andReturn([['providers' => ['not_kjo', get_class($provider)]]]);
+
+    $app->register($provider);
+
+    $app->boot();
 });
