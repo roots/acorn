@@ -4,6 +4,7 @@ use Illuminate\Config\Repository as ConfigRepository;
 use Roots\Acorn\Application;
 use Roots\Acorn\LazyLoader;
 use Roots\Acorn\Tests\Test\Stubs\BootableServiceProvider;
+use Roots\Acorn\Tests\Test\Stubs\EmptyClass;
 use Roots\Acorn\Tests\Test\TestCase;
 
 use function Roots\Acorn\Tests\mock;
@@ -16,6 +17,20 @@ it('registers the lazy loader', function () {
 
     expect($app['app.lazy'])->toBeInstanceOf(LazyLoader::class);
 });
+
+it('lazy loads a thing', function () {
+    $app = new Application();
+
+    // `files` is lazy loaded by default
+    // i'm not explicitly calling $app['app.lazy'] and registering a provider because ... i'm lazy 😏
+    expect($app->make('files'))->toBeInstanceOf(Illuminate\Filesystem\Filesystem::class);
+});
+
+it('can only lazy load a service provider', function () {
+    $app = new Application();
+
+    $app['app.lazy']->registerProvider(EmptyClass::class, []);
+})->throws(InvalidArgumentException::class);
 
 it('instantiates with custom paths', function () {
     $app = new Application(null, [
@@ -150,14 +165,6 @@ it('makes a thing', function () {
     $app->bind('config', fn () => new ConfigRepository());
 
     expect($app->make('config'))->toBeInstanceOf(ConfigRepository::class);
-});
-
-it('lazy loads a thing', function () {
-    $app = new Application();
-
-    // `files` is lazy loaded by default
-    // i'm not explicitly calling $app['app.lazy'] and registering a provider because ... i'm lazy 😏
-    expect($app->make('files'))->toBeInstanceOf(Illuminate\Filesystem\Filesystem::class);
 });
 
 it('boots a provider', function () {
