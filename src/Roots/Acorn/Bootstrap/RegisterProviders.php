@@ -52,6 +52,9 @@ class RegisterProviders extends FoundationRegisterProviders
                 ->filter(function ($path) use ($files) {
                     return $files->exists($path);
                 })
+                ->map(function ($path) {
+                    return substr($path, 0, -strlen('/vendor/composer/installed.json'));
+                })
                 ->all();
 
             return new PackageManifest(
