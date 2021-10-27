@@ -80,7 +80,11 @@ class Bootloader
      */
     public static function getInstance(): static
     {
-        return static::$instance ??= new static();
+        if (static::$instance) {
+            return static::$instance;
+        }
+
+        return static::$instance = new static();
     }
 
     /**
