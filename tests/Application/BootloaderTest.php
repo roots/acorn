@@ -13,6 +13,10 @@ use function Roots\bootloader;
 
 uses(TestCase::class);
 
+it('should get a new instance', function () {
+    expect(Bootloader::getInstance())->toBeInstanceOf(Bootloader::class);
+});
+
 it('should add multiple WordPress hooks', function () {
     $this->stub('add_filter')
         ->shouldBeCalled()
