@@ -222,9 +222,11 @@ class Bootloader
 
         $basePath = dirname(locate_template('config')) ?: dirname(__DIR__, 3);
 
+        // @codeCoverageIgnoreStart
         if (defined('ACORN_BASEPATH')) {
             $basePath = constant('ACORN_BASEPATH');
         }
+        // @codeCoverageIgnoreEnd
 
         $basePath = apply_filters('acorn/paths.base', $basePath);
 
