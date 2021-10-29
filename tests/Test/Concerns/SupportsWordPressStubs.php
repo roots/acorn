@@ -25,7 +25,7 @@ trait SupportsWordPressStubs
             '__return_false' => fn () => false,
             '__return_zero' => fn () => 0,
             '__return_empty_array' => fn () => [],
-            '__return_empty_string' => fn () => [],
+            '__return_empty_string' => fn () => '',
             'locate_template' => fn ($path = null) => temp($path ?? 'locate_template'),
             'get_stylesheet_directory' => fn ($path = null) => temp($path ?? 'stylesheet_directory'),
             'get_template_directory' => fn ($path = null) => temp($path ?? 'template_directory'),
