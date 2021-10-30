@@ -2,14 +2,12 @@
 
 namespace Roots\Acorn\Exceptions;
 
-use Exception;
 use Throwable;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Foundation\Exceptions\Handler as FoundationHandler;
 use Whoops\Handler\HandlerInterface;
 use Whoops\Run as Whoops;
-
-use function Roots\app;
 
 class Handler extends FoundationHandler
 {
@@ -24,28 +22,13 @@ class Handler extends FoundationHandler
      */
     public function render($request, Throwable $e)
     {
-        try {
-            return app()->environment('development') && class_exists(Whoops::class)
-                        ? $this->renderExceptionWithWhoops($e)
-                        : $this->renderExceptionWithSymfony($e, app()->environment('development'));
-        } catch (Exception $e) {
-            return $this->renderExceptionWithSymfony($e, app()->environment('development'));
+        if ($e instanceof Responsable) {
+            return $e->toResponse($request);
         }
-    }
 
-    /**
-     * Render an exception to a string using "Whoops".
-     *
-     * @param  Throwable  $e
-     * @return string
-     */
-    protected function renderExceptionWithWhoops(Throwable $e)
-    {
-        return tap(new Whoops(), function ($whoops) {
-            $whoops->appendHandler($this->whoopsHandler());
+        $e = $this->prepareException($this->mapException($e));
 
-            $whoops->allowQuit(false);
-        })->handleException($e);
+        return $this->prepareResponse($request, $e);
     }
 
     /**

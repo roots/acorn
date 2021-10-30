@@ -58,17 +58,6 @@ class HandleExceptions extends FoundationHandleExceptionsBootstrapper
     }
 
     /**
-     * Render an exception as an HTTP response and send it.
-     *
-     * @param  \Throwable  $e
-     * @return void
-     */
-    protected function renderHttpResponse(Throwable $e)
-    {
-        $this->getExceptionHandler()->render('', $e);
-    }
-
-    /**
      * Determine whether application debugging is enabled.
      *
      * @return bool
