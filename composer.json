@@ -27,7 +27,7 @@
       "Illuminate\\": "src/Illuminate/"
     },
     "files": [
-      "src/helpers.php"
+      "src/Roots/helpers.php"
     ]
   },
   "autoload-dev": {
@@ -50,7 +50,6 @@
     "illuminate/log": "^8.0",
     "illuminate/support": "^8.0",
     "illuminate/view": "^8.0",
-    "laravel-zero/foundation": "^8.0",
     "league/flysystem": "^2.1",
     "ramsey/uuid": "^4.1",
     "roots/support": "^1.0",
