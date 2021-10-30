@@ -6,6 +6,8 @@ use Throwable;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Bootstrap\HandleExceptions as FoundationHandleExceptionsBootstrapper;
 
+use function apply_filters;
+
 class HandleExceptions extends FoundationHandleExceptionsBootstrapper
 {
     /**
@@ -30,6 +32,29 @@ class HandleExceptions extends FoundationHandleExceptionsBootstrapper
         );
 
         parent::bootstrap($app);
+    }
+
+    /**
+     * Report PHP deprecations, or convert PHP errors to ErrorException instances.
+     *
+     * @param  int  $level
+     * @param  string  $message
+     * @param  string  $file
+     * @param  int  $line
+     * @param  array  $context
+     * @return void
+     *
+     * @throws \ErrorException
+     */
+    public function handleError($level, $message, $file = '', $line = 0, $context = [])
+    {
+        try {
+            parent::handleError($level, $message, $file, $line, $context);
+        } catch (Throwable $e) {
+            if (apply_filters('acorn/throw_exception_error', true, $e)) {
+                throw $e;
+            }
+        }
     }
 
     /**
