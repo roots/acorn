@@ -62,7 +62,7 @@ it('escapes an error exception for non-deprecation error', function () {
     $logger->shouldReceive();
     $this->container->instance(LogManager::class, $logger);
 
-    add_filter('acorn/throw_exception_error', '__return_false');
+    add_filter('acorn/throw_error_exception', '__return_false');
 
     $this->handleExceptions->handleError(
         E_USER_WARNING,

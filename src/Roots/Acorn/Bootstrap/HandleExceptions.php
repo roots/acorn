@@ -51,7 +51,7 @@ class HandleExceptions extends FoundationHandleExceptionsBootstrapper
         try {
             parent::handleError($level, $message, $file, $line, $context);
         } catch (Throwable $e) {
-            if (apply_filters('acorn/throw_exception_error', true, $e)) {
+            if (apply_filters('acorn/throw_error_exception', true, $e)) {
                 throw $e;
             }
         }
