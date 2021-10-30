@@ -2,13 +2,12 @@
 
 namespace Roots\Acorn\Exceptions;
 
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Exceptions\WhoopsHandler as FoundationWhoopsHandler;
-use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Whoops\Handler\PrettyPageHandler;
-
-use function Roots\base_path;
-use function Roots\config;
+use WP;
+use WP_Post;
+use WP_Query;
 
 class WhoopsHandler extends FoundationWhoopsHandler
 {
@@ -41,36 +40,72 @@ class WhoopsHandler extends FoundationWhoopsHandler
             $handler->handleUnconditionally(true);
 
             $this->registerApplicationPaths($handler)
-                 ->registerBlacklist($handler)
-                 ->registerEditor($handler);
+                ->registerBlacklist($handler)
+                ->registerEditor($handler)
+                ->registerWordPressData($handler);
         });
     }
 
     /**
-     * Get the application paths except for the "vendor" directory.
+     * Registers WordPress context with the handler
      *
-     * @return array
+     * @param  \Whoops\Handler\PrettyPageHandler  $handler
+     * @return static
      */
-    protected function directoriesExceptVendor()
+    protected function registerWordPressData($handler)
     {
-        return Arr::except(
-            array_flip((new Filesystem())->directories(base_path())),
-            [base_path('vendor')]
-        );
+        $handler
+            ->addDataTableCallback('WordPress Data', function () {
+                global $wp;
+
+                if (!$wp instanceof WP) {
+                    return [];
+                }
+
+                return Collection::make(get_object_vars($wp))
+                    ->forget('private_query_vars')
+                    ->forget('public_query_vars')
+                    ->filter()
+                    ->all();
+            })
+            ->addDataTableCallback(sprintf('%s Data', WP_Query::class), function () {
+                global $wp_query;
+
+                if (!$wp_query instanceof WP_Query) {
+                    return [];
+                }
+
+                return Collection::make(get_object_vars($wp_query))
+                    ->forget('posts')
+                    ->forget('post')
+                    ->filter()
+                    ->all();
+            })
+            ->addDataTableCallback(sprintf('%s Data', WP_Post::class), function () {
+                $post = get_post();
+
+                if (!$post instanceof WP_Post) {
+                    return [];
+                }
+
+                return get_object_vars($post);
+            });
+
+        return $this;
     }
 
     /**
      * Register the blacklist with the handler.
      *
      * @param  \Whoops\Handler\PrettyPageHandler  $handler
-     * @return $this
+     * @return static
      */
     protected function registerBlacklist($handler)
     {
-        $blacklist = array_merge_recursive([
+        $blacklist = [
             '_ENV' => $this->secrets,
             '_SERVER' => $this->secrets
-        ], config('app.debug_blacklist', config('app.debug_hide', [])));
+        ];
 
         foreach ($blacklist as $key => $secrets) {
             foreach ($secrets as $secret) {
@@ -78,21 +113,6 @@ class WhoopsHandler extends FoundationWhoopsHandler
             }
         }
 
-        return $this;
-    }
-
-    /**
-     * Register the editor with the handler.
-     *
-     * @param  \Whoops\Handler\PrettyPageHandler  $handler
-     * @return $this
-     */
-    protected function registerEditor($handler)
-    {
-        if (config('app.editor', false)) {
-            $handler->setEditor(config('app.editor'));
-        }
-
-        return $this;
+        return parent::registerBlacklist($handler);
     }
 }

@@ -20,10 +20,7 @@ class HandleExceptions extends FoundationHandleExceptionsBootstrapper
 
         $this->app = $app;
 
-        if (
-            ! $this->app->config->get('app.debug', WP_DEBUG) ||
-            (! $this->app->runningInConsole() && is_readable(WP_CONTENT_DIR . '/fatal-error-handler.php'))
-        ) {
+        if (!$this->isDebug() || $this->hasHandler()) {
             return;
         }
 
@@ -44,5 +41,26 @@ class HandleExceptions extends FoundationHandleExceptionsBootstrapper
     protected function renderHttpResponse(Throwable $e)
     {
         $this->getExceptionHandler()->render('', $e);
+    }
+
+    /**
+     * Determine whether application debugging is enabled.
+     *
+     * @return bool
+     */
+    protected function isDebug()
+    {
+        return $this->app->config->get('app.debug', WP_DEBUG);
+    }
+
+    /**
+     * Determine whether a fatal error handler drop-in exists.
+     *
+     * @return bool
+     */
+    protected function hasHandler()
+    {
+        return !$this->app->runningInConsole()
+            && is_readable(WP_CONTENT_DIR . '/fatal-error-handler.php');
     }
 }
