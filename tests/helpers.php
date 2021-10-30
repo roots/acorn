@@ -24,8 +24,6 @@ function temp(?string $path = null)
     if (! $temp) {
         $temp = (new TemporaryDirectory())->create();
 
-        define('ABSPATH', $temp->path('wp'));
-
         register_shutdown_function(function () use ($temp) {
             $temp->delete();
         });
