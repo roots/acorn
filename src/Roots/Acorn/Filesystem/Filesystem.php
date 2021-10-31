@@ -2,10 +2,27 @@
 
 namespace Roots\Acorn\Filesystem;
 
+use Webmozart\Glob\Glob;
 use Illuminate\Filesystem\Filesystem as FilesystemBase;
 
 class Filesystem extends FilesystemBase
 {
+    /**
+     * Find path names matching a given pattern.
+     *
+     * @param  string  $pattern
+     * @param  int  $flags
+     * @return array
+     */
+    public function glob($pattern, $flags = 0)
+    {
+        if (class_exists(Glob::class)) {
+            return Glob::glob($pattern, $flags);
+        }
+
+        return glob($pattern, $flags);
+    }
+
     /**
      * Normalizes file path separators
      *

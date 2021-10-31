@@ -70,7 +70,8 @@
     "tmarsteel/mockery-callable-mock": "^2.1"
   },
   "suggest": {
-    "filp/whoops": "Required for friendly error pages in development (^2.9)."
+    "filp/whoops": "Required for friendly error pages in development (^2.9).",
+    "webmozart/glob": "Required for more advanced glob features (^4.4)"
   },
   "config": {
     "sort-packages": true
