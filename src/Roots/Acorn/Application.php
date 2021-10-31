@@ -70,6 +70,7 @@ class Application extends FoundationApplication
         }
 
         $this->registerLazyLoader();
+        $this->registerGlobalHelpers();
 
         parent::__construct($basePath);
     }
@@ -82,6 +83,16 @@ class Application extends FoundationApplication
     protected function registerLazyLoader()
     {
         $this->instances['app.lazy'] = new LazyLoader($this);
+    }
+
+    /**
+     * Load global helper functions.
+     *
+     * @return void
+     */
+    protected function registerGlobalHelpers()
+    {
+        require_once dirname(__DIR__, 2) . '/Illuminate/Foundation/helpers.php';
     }
 
     /**

@@ -2,10 +2,8 @@
 
 use Illuminate\Support\Collection;
 use Roots\Acorn\Assets\Bundle;
-use Roots\Acorn\Tests\TestCase;
+use Roots\Acorn\Tests\Test\TestCase;
 
-use function Brain\Monkey\Functions\expect as expectGlobal;
-use function Brain\Monkey\Functions\stubs;
 use function Spatie\Snapshots\assertMatchesJsonSnapshot;
 use function Spatie\Snapshots\assertMatchesSnapshot;
 
@@ -41,24 +39,27 @@ it('can enqueue css', function () {
     $manifest = json_decode(file_get_contents($this->fixture('bud_single_runtime/public/entrypoints.json')), JSON_OBJECT_AS_ARRAY);
     $app = new Bundle('app', $manifest['app'], $this->fixture('bud_single_runtime'), 'https://k.jo');
 
-    stubs([
-        'wp_enqueue_style' => fn (...$args) => assertMatchesSnapshot($args),
-    ]);
+    $this->stub('wp_enqueue_style', fn (...$args) => assertMatchesSnapshot($args));
 
     $app->enqueueCss();
+});
+
+it('can silently fail to enqueue css', function () {
+    $stub = $this->stub('wp_enqueue_style');
+    $manifest = json_decode(file_get_contents($this->fixture('bud_single_runtime_dev/public/entrypoints.json')), JSON_OBJECT_AS_ARRAY);
+    $app = new Bundle('app', $manifest['app'], $this->fixture('bud_single_runtime_dev'), 'https://k.jo');
+
+    $app->enqueueCss();
+
+    $stub->shouldNotHaveBeenCalled();
 });
 
 it('can enqueue js', function () {
     $manifest = json_decode(file_get_contents($this->fixture('bud_single_runtime/public/entrypoints.json')), JSON_OBJECT_AS_ARRAY);
     $app = new Bundle('app', $manifest['app'], $this->fixture('bud_single_runtime'), 'https://k.jo');
 
-    stubs([
-        'wp_enqueue_script' => fn (...$args) => assertMatchesSnapshot($args),
-    ]);
-
-    expectGlobal('wp_add_inline_script')
-        ->zeroOrMoreTimes()
-        ->withAnyArgs();
+    $this->stub('wp_enqueue_script', fn (...$args) => assertMatchesSnapshot($args));
+    $this->stub('wp_add_inline_script')->shouldBeCalled();
 
     $app->enqueueJs();
 });
@@ -67,11 +68,13 @@ it('can inline a single runtime', function () {
     $manifest = json_decode(file_get_contents($this->fixture('bud_single_runtime/public/entrypoints.json')), JSON_OBJECT_AS_ARRAY);
     $app = new Bundle('app', $manifest['app'], $this->fixture('bud_single_runtime'), 'https://k.jo');
 
-    stubs([
+    $this->stubs([
         'wp_add_inline_script' => fn (...$args) => assertMatchesSnapshot($args),
+        'wp_enqueue_script',
     ]);
 
-    expectGlobal('wp_enqueue_script')
+    $this->stub('wp_enqueue_script')
+        ->shouldBeCalled()
         ->zeroOrMoreTimes()
         ->withAnyArgs();
 
@@ -83,11 +86,13 @@ it('can inline multiple runtimes', function () {
     $app = new Bundle('app', $manifest['app'], $this->fixture('bud_multi_runtime'), 'https://k.jo');
     $editor = new Bundle('editor', $manifest['editor'], $this->fixture('bud_multi_runtime'), 'https://k.jo');
 
-    expectGlobal('wp_add_inline_script')
+    $this->stub('wp_add_inline_script')
+        ->shouldBeCalled()
         ->twice()
         ->withAnyArgs();
 
-    expectGlobal('wp_enqueue_script')
+    $this->stub('wp_enqueue_script')
+        ->shouldBeCalled()
         ->twice()
         ->withAnyArgs();
 
@@ -100,11 +105,13 @@ it('does not inline duplicate single runtimes', function () {
     $app = new Bundle('app', $manifest['app'], $this->fixture('bud_single_runtime'), 'https://k.jo');
     $editor = new Bundle('editor', $manifest['editor'], $this->fixture('bud_single_runtime'), 'https://k.jo');
 
-    expectGlobal('wp_add_inline_script')
+    $this->stub('wp_add_inline_script')
+        ->shouldBeCalled()
         ->once()
         ->withAnyArgs();
 
-    expectGlobal('wp_enqueue_script')
+    $this->stub('wp_enqueue_script')
+        ->shouldBeCalled()
         ->twice()
         ->withAnyArgs();
 

@@ -5,7 +5,7 @@ use Roots\Acorn\Assets\Asset\JsonAsset;
 use Roots\Acorn\Assets\Asset\PhpAsset;
 use Roots\Acorn\Assets\Asset\SvgAsset;
 use Roots\Acorn\Assets\Manifest;
-use Roots\Acorn\Tests\TestCase;
+use Roots\Acorn\Tests\Test\TestCase;
 
 use function Spatie\Snapshots\assertMatchesSnapshot;
 

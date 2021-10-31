@@ -1,0 +1,29 @@
+{
+  "app": {
+    "js": [
+      "bud.js",
+      "vendor-app~editor~customizer.js",
+      "app.js"
+    ],
+    "dependencies": []
+  },
+  "editor": {
+    "js": [
+      "bud.js",
+      "vendor-app~editor~customizer.js",
+      "editor.js"
+    ],
+    "dependencies": [
+      "wp-edit-post",
+      "wp-blocks"
+    ]
+  },
+  "customizer": {
+    "js": [
+      "bud.js",
+      "vendor-app~editor~customizer.js",
+      "customizer.js"
+    ],
+    "dependencies": ["jquery"]
+  }
+}

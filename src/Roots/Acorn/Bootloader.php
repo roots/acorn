@@ -15,6 +15,13 @@ use function locate_template;
 class Bootloader
 {
     /**
+     * Bootloader instance
+     *
+     * @var static
+     */
+    protected static $instance;
+
+    /**
      * Application instance
      *
      * @var \Illuminate\Contracts\Foundation\Application
@@ -57,6 +64,30 @@ class Bootloader
     protected $basePath;
 
     /**
+     * Set the Bootloader instance
+     *
+     * @param Bootloader $bootloader
+     */
+    public static function setInstance(self $bootloader)
+    {
+        static::$instance = $bootloader;
+    }
+
+    /**
+     * Get the Bootloader instance
+     *
+     * @return static
+     */
+    public static function getInstance(): static
+    {
+        if (static::$instance) {
+            return static::$instance;
+        }
+
+        return static::$instance = new static();
+    }
+
+    /**
      * Create a new bootloader instance
      *
      * @param  string[] $hooks WordPress hooks to boot application
@@ -76,6 +107,10 @@ class Bootloader
         $this->hooks = (array) $hooks;
 
         add_filters($this->hooks, $this, 5);
+
+        if (! static::$instance) {
+            static::$instance = $this;
+        }
     }
 
     /**
@@ -87,7 +122,7 @@ class Bootloader
      */
     public function register($provider, $force = false): Bootloader
     {
-        return $this->call(function ($app) use ($provider, $force) {
+        return $this->call(function (ApplicationContract $app) use ($provider, $force) {
             $app->register($provider, $force);
         });
     }
@@ -106,7 +141,7 @@ class Bootloader
             return $this;
         }
 
-        $this->app()->call($callback);
+        $this->app()->call($callback, [$this->app()]);
 
         return $this;
     }
@@ -165,7 +200,9 @@ class Bootloader
         $bootstrap = $this->bootstrap();
         $basePath = $this->basePath();
 
-        $app = new $this->appClassName($basePath, $this->usePaths());
+        $app = $this->appClassName::getInstance();
+        $app->setBasePath($basePath);
+        $app->usePaths($this->usePaths());
 
         $app->bootstrapWith($bootstrap);
 
@@ -183,11 +220,13 @@ class Bootloader
             return $this->basePath;
         }
 
-        $basePath = dirname(locate_template('config') ?: __DIR__ . '/../');
+        $basePath = dirname(locate_template('config')) ?: dirname(__DIR__, 3);
 
+        // @codeCoverageIgnoreStart
         if (defined('ACORN_BASEPATH')) {
             $basePath = constant('ACORN_BASEPATH');
         }
+        // @codeCoverageIgnoreEnd
 
         $basePath = apply_filters('acorn/paths.base', $basePath);
 
@@ -201,7 +240,7 @@ class Bootloader
      */
     protected function usePaths(): array
     {
-        $searchPaths = ['app', 'config', 'storage', 'resources', 'bootstrap'];
+        $searchPaths = ['app', 'config', 'storage', 'resources', 'bootstrap', 'public'];
         $paths = [];
 
         foreach ($searchPaths as $path) {
@@ -231,7 +270,7 @@ class Bootloader
 
         return collect($searchPaths)
             ->map(function ($path) {
-                return is_string($path) && is_dir($path) ? $path : null;
+                return (is_string($path) && is_dir($path)) ? $path : null;
             })
             ->filter()
             ->unique()

@@ -16,7 +16,7 @@
     <config name="testVersion" value="7.3-"/>
 
     <file>acorn.php</file>
-    <file>src</file>
+    <file>src/Roots</file>
 
     <!-- We should be cognizant of long lines, but handle it case-by-case -->
     <rule ref="Generic.Files.LineLength.TooLong">

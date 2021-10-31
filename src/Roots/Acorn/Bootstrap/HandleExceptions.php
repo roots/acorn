@@ -6,6 +6,8 @@ use Throwable;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Bootstrap\HandleExceptions as FoundationHandleExceptionsBootstrapper;
 
+use function apply_filters;
+
 class HandleExceptions extends FoundationHandleExceptionsBootstrapper
 {
     /**
@@ -20,10 +22,7 @@ class HandleExceptions extends FoundationHandleExceptionsBootstrapper
 
         $this->app = $app;
 
-        if (
-            ! $this->app->config->get('app.debug', WP_DEBUG) ||
-            (! $this->app->runningInConsole() && is_readable(WP_CONTENT_DIR . '/fatal-error-handler.php'))
-        ) {
+        if (!$this->isDebug() || $this->hasHandler()) {
             return;
         }
 
@@ -36,13 +35,46 @@ class HandleExceptions extends FoundationHandleExceptionsBootstrapper
     }
 
     /**
-     * Render an exception as an HTTP response and send it.
+     * Report PHP deprecations, or convert PHP errors to ErrorException instances.
      *
-     * @param  \Throwable  $e
+     * @param  int  $level
+     * @param  string  $message
+     * @param  string  $file
+     * @param  int  $line
+     * @param  array  $context
      * @return void
+     *
+     * @throws \ErrorException
      */
-    protected function renderHttpResponse(Throwable $e)
+    public function handleError($level, $message, $file = '', $line = 0, $context = [])
     {
-        $this->getExceptionHandler()->render('', $e);
+        try {
+            parent::handleError($level, $message, $file, $line, $context);
+        } catch (Throwable $e) {
+            if (apply_filters('acorn/throw_error_exception', true, $e)) {
+                throw $e;
+            }
+        }
+    }
+
+    /**
+     * Determine whether application debugging is enabled.
+     *
+     * @return bool
+     */
+    protected function isDebug()
+    {
+        return $this->app->config->get('app.debug', WP_DEBUG);
+    }
+
+    /**
+     * Determine whether a fatal error handler drop-in exists.
+     *
+     * @return bool
+     */
+    protected function hasHandler()
+    {
+        return !$this->app->runningInConsole()
+            && is_readable(WP_CONTENT_DIR . '/fatal-error-handler.php');
     }
 }

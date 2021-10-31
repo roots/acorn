@@ -35,7 +35,7 @@ class Manager
      *
      * @param Container $container
      */
-    public function __construct($config)
+    public function __construct($config = [])
     {
         $this->config = $config;
     }

@@ -11,21 +11,25 @@ function plugin_entrypoint()
     return __DIR__ . '/../acorn.php';
 }
 
-function temp($path = null)
+/**
+ * Get a temporary directory
+ *
+ * @param string|null $path
+ * @return string|TemporaryDirectory
+ */
+function temp(?string $path = null)
 {
     static $temp;
 
     if (! $temp) {
         $temp = (new TemporaryDirectory())->create();
 
-        define('ABSPATH', $temp->path('wp'));
-
         register_shutdown_function(function () use ($temp) {
             $temp->delete();
         });
     }
 
-    if ($path) {
+    if ($path !== null) {
         return $temp->path($path);
     }
 

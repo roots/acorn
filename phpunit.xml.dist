@@ -17,11 +17,8 @@
   </testsuites>
   <coverage processUncoveredFiles="true">
     <include>
-      <directory suffix=".php">./src</directory>
+      <directory suffix=".php">./src/Roots</directory>
     </include>
-    <exclude>
-      <directory suffix=".php">./src/Illuminate/*</directory>
-    </exclude>
   </coverage>
   <php>
     <env name="WP_ENV" value="testing"/>
