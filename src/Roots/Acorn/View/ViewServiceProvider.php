@@ -4,7 +4,6 @@ namespace Roots\Acorn\View;
 
 use ReflectionClass;
 use Illuminate\Contracts\View\Engine;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\View\Engines\CompilerEngine;
@@ -123,21 +122,6 @@ class ViewServiceProvider extends ViewServiceProviderBase
 
             return $loader;
         });
-    }
-
-    /**
-     * Preflight
-     *
-     * @param  Filesystem $files
-     * @return void
-     */
-    public function preflight(Filesystem $files)
-    {
-        $storageDir = $this->app['config']['view.compiled'];
-
-        if (! $files->exists($storageDir)) {
-            $files->makeDirectory($storageDir, 0755, true);
-        }
     }
 
     /**
