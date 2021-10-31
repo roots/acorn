@@ -45,15 +45,10 @@ class RegisterProviders extends FoundationRegisterProviders
                     get_template_directory(),
                     get_stylesheet_directory(),
                 ])
-                ->map(function ($path) {
-                    return "{$path}/vendor/composer/installed.json";
-                })
                 ->unique()
                 ->filter(function ($path) use ($files) {
-                    return $files->exists($path);
-                })
-                ->map(function ($path) {
-                    return substr($path, 0, -strlen('/vendor/composer/installed.json'));
+                    return $files->isFile("{$path}/vendor/composer/installed.json")
+                        && $files->isFile("{$path}/composer.json");
                 })
                 ->all();
 
