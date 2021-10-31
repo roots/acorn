@@ -37,13 +37,21 @@ class RegisterConsole
 
             $kernel->commands();
 
-            $status = $kernel->handle($input = new ArrayInput(array_merge($args, $assoc_args)), new ConsoleOutput());
+            $input = $args;
 
-            WP_CLI::add_hook('after_invoke:acorn', function () use ($kernel, $input, $status) {
-                $kernel->terminate($input, $status);
+            foreach ($assoc_args as $key => $value) {
+                $input["--{$key}"] = $value;
+            }
 
-                WP_CLI::halt($status);
-            });
+            if (in_array('help', $_SERVER['argv'])) {
+                array_unshift($input, 'help');
+            }
+
+            $status = $kernel->handle($input = new ArrayInput($input), new ConsoleOutput());
+
+            $kernel->terminate($input, $status);
+
+            WP_CLI::halt($status);
         });
     }
 }
