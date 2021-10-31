@@ -10,7 +10,6 @@ use Illuminate\View\Engines\CompilerEngine;
 use Illuminate\View\View;
 use Illuminate\View\ViewServiceProvider as ViewServiceProviderBase;
 use Roots\Acorn\View\Composers\Debugger;
-use Roots\Acorn\View\Directives\InjectionDirective;
 use Symfony\Component\Finder\Finder;
 
 class ViewServiceProvider extends ViewServiceProviderBase
@@ -133,7 +132,6 @@ class ViewServiceProvider extends ViewServiceProviderBase
     {
         $blade = $this->view()->getEngineResolver()->resolve('blade')->getCompiler();
         $directives = $this->app['config']['view.directives'];
-        $directives += ['inject' => InjectionDirective::class];
 
         foreach ($directives as $name => $handler) {
             if (! is_callable($handler)) {
