@@ -43,10 +43,6 @@ class RegisterConsole
                 $input["--{$key}"] = $value;
             }
 
-            if (in_array('help', $_SERVER['argv'])) {
-                array_unshift($input, 'help');
-            }
-
             $status = $kernel->handle($input = new ArrayInput($input), new ConsoleOutput());
 
             $kernel->terminate($input, $status);
