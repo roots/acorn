@@ -5,7 +5,7 @@ namespace Roots\Acorn\Bootstrap;
 use WP_CLI;
 use Illuminate\Contracts\Foundation\Application;
 use Roots\Acorn\Console\Kernel;
-use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 class RegisterConsole
@@ -31,32 +31,19 @@ class RegisterConsole
             return;
         }
 
-        WP_CLI::add_command('acorn', function () {
-            $args = array_slice($_SERVER['argv'], 1);
-
-            if (preg_match('/' . $this->getConfig()::ALIAS_REGEX . '/', $args[0])) {
-                $args = array_slice($args, 1);
-            }
-
+        WP_CLI::add_command('acorn', function ($args, $assoc_args) {
+            /** @var Kernel */
             $kernel = $this->app->make(Kernel::class);
 
             $kernel->commands();
 
-            $status = $kernel->handle($input = new ArgvInput($args), new ConsoleOutput());
+            $status = $kernel->handle($input = new ArrayInput(array_merge($args, $assoc_args)), new ConsoleOutput());
 
-            $kernel->terminate($input, $status);
+            WP_CLI::add_hook('after_invoke:acorn', function () use ($kernel, $input, $status) {
+                $kernel->terminate($input, $status);
 
-            exit($status);
+                WP_CLI::halt($status);
+            });
         });
-    }
-
-    /**
-     * Retrieve the WP CLI configuration.
-     *
-     * @return array
-     */
-    protected function getConfig()
-    {
-        return WP_CLI::get_configurator();
     }
 }
