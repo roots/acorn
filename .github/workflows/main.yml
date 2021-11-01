@@ -3,10 +3,11 @@ name: Main
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
+  workflow_dispatch:
 
 jobs:
   php:
@@ -15,7 +16,7 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     strategy:
       matrix:
-        php: ["7.3", "7.4", "8.0"]
+        php: ["8.0"]
 
     steps:
       - name: Checkout the project
