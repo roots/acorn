@@ -78,7 +78,7 @@ class Bootloader
      *
      * @return static
      */
-    public static function getInstance(): static
+    public static function getInstance()
     {
         if (static::$instance) {
             return static::$instance;
