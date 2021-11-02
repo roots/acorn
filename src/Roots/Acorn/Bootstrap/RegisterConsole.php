@@ -5,7 +5,7 @@ namespace Roots\Acorn\Bootstrap;
 use WP_CLI;
 use Illuminate\Contracts\Foundation\Application;
 use Roots\Acorn\Console\Kernel;
-use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 class RegisterConsole
@@ -37,13 +37,13 @@ class RegisterConsole
 
             $kernel->commands();
 
-            $input = $args;
+            $command = implode(' ', $args);
 
             foreach ($assoc_args as $key => $value) {
-                $input["--{$key}"] = $value;
+                $command .= "--{$key}='{$value}'";
             }
 
-            $status = $kernel->handle($input = new ArrayInput($input), new ConsoleOutput());
+            $status = $kernel->handle($input = new StringInput($command), new ConsoleOutput());
 
             $kernel->terminate($input, $status);
 
