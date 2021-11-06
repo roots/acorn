@@ -1,6 +1,6 @@
 {
   "name": "roots/acorn",
-  "type": "wordpress-muplugin",
+  "type": "library",
   "license": "MIT",
   "description": "Framework for Roots WordPress projects built with Laravel components.",
   "homepage": "https://roots.io/acorn/",
