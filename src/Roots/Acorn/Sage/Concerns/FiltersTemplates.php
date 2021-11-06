@@ -80,9 +80,11 @@ trait FiltersTemplates
         $templates = [];
 
         foreach (array_reverse($this->fileFinder->getPaths()) as $path) {
-            foreach (array_filter($this->files->allFiles($path), function ($file) {
-                return $file->getExtension() === 'php';
-            }) as $full_path) {
+            foreach (
+                array_filter($this->files->allFiles($path), function ($file) {
+                    return $file->getExtension() === 'php';
+                }) as $full_path
+            ) {
                 if (! preg_match('|Template Name:(.*)$|mi', file_get_contents($full_path), $header)) {
                     continue;
                 }
