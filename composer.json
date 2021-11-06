@@ -71,8 +71,7 @@
     "wp-cli/wp-cli": "^2.5"
   },
   "suggest": {
-    "filp/whoops": "Required for friendly error pages in development (^2.9).",
-    "webmozart/glob": "Required for more advanced glob features (^4.4)"
+    "filp/whoops": "Required for friendly error pages in development (^2.9)."
   },
   "config": {
     "sort-packages": true
