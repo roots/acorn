@@ -109,7 +109,7 @@ trait FiltersTemplates
             }
         }
 
-        wp_cache_update('acorn/post_templates', $templates, 'themes');
+        wp_cache_add('acorn/post_templates', $templates, 'themes');
 
         return $templates[$post_type] ?? [];
     }
