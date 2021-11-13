@@ -81,4 +81,16 @@ class HandleExceptions extends FoundationHandleExceptionsBootstrapper
         return !$this->app->runningInConsole()
             && is_readable(WP_CONTENT_DIR . '/fatal-error-handler.php');
     }
+
+    /**
+     * Render an exception as an HTTP response and send it.
+     *
+     * @param  \Throwable  $e
+     * @return void
+     */
+    protected function renderHttpResponse(Throwable $e)
+    {
+        ob_end_clean();
+        parent::renderHttpResponse($e);
+    }
 }
