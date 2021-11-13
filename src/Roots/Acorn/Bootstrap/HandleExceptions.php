@@ -31,7 +31,9 @@ class HandleExceptions extends FoundationHandleExceptionsBootstrapper
             \Roots\Acorn\Exceptions\Handler::class
         );
 
-        parent::bootstrap($app);
+        set_error_handler([$this, 'handleError']);
+        set_exception_handler([$this, 'handleException']);
+        register_shutdown_function([$this, 'handleShutdown']);
     }
 
     /**
