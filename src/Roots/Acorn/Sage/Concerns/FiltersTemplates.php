@@ -54,19 +54,37 @@ trait FiltersTemplates
      */
     public function filterThemeTemplates($_templates, $_theme, $_post, $post_type)
     {
+        return collect($_templates)
+            ->merge($this->getTemplates($post_type))
+            ->unique()
+            ->toArray();
+    }
+
+    /**
+     * We use the exact same technique as WordPress core for detecting template files.
+     *
+     * Caveat: we go infinite levels deep within the views folder.
+     *
+     * @see \WP_Theme::get_post_templates()
+     * @link https://github.com/WordPress/WordPress/blob/5.8.1/wp-includes/class-wp-theme.php#L1203-L1221
+     *
+     * @param string $post_type
+     * @return string[]
+     */
+    protected function getTemplates($post_type = '')
+    {
+        if ($templates = wp_cache_get('acorn/post_templates', 'themes')) {
+            return $templates[$post_type] ?? [];
+        }
+
         $templates = [];
 
-        // TODO: This should be cacheable, perhaps via `wp acorn` command
         foreach (array_reverse($this->fileFinder->getPaths()) as $path) {
-            /**
-             * We use the exact same technique as WordPress core for detecting template files.
-             *
-             * Caveat: we go infinite levels deep within the views folder.
-             *
-             * @see \WP_Theme::get_post_templates()
-             * @link https://github.com/WordPress/WordPress/blob/5.2.1/wp-includes/class-wp-theme.php#L1146-L1164
-             */
-            foreach ($this->files->glob("{$path}/**.php") as $full_path) {
+            foreach (
+                array_filter($this->files->allFiles($path), function ($file) {
+                    return $file->getExtension() === 'php';
+                }) as $full_path
+            ) {
                 if (! preg_match('|Template Name:(.*)$|mi', file_get_contents($full_path), $header)) {
                     continue;
                 }
@@ -91,10 +109,8 @@ trait FiltersTemplates
             }
         }
 
-        // NOTE: We collect $_templates, not $templates.
-        return collect($_templates)
-            ->merge($templates[$post_type] ?? [])
-            ->unique()
-            ->toArray();
+        wp_cache_add('acorn/post_templates', $templates, 'themes');
+
+        return $templates[$post_type] ?? [];
     }
 }

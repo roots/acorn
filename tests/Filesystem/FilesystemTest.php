@@ -3,25 +3,11 @@
 use Roots\Acorn\Filesystem\Filesystem;
 use Roots\Acorn\Tests\Test\TestCase;
 
-use function Roots\Acorn\Tests\mock;
-
 uses(TestCase::class);
 
 it('should support basic globs', function () {
     expect((new Filesystem())->glob($this->fixture('closest/*.txt')))
         ->toEqual([$this->fixture('closest/kjo.txt')]);
-});
-
-it('should support advanced glob features', function () {
-    $glob = mock('alias:' . Webmozart\Glob\Glob::class);
-    $glob
-        ->expects('glob')
-        ->once()
-        ->with('/**/', 0)
-        ->andReturn('/a/b/c/d/e');
-
-    expect((new Filesystem())->glob('/**/'))
-        ->toEqual('/a/b/c/d/e');
 });
 
 it('should normalize paths with multiple separators', function () {
