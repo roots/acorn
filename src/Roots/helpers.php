@@ -14,7 +14,7 @@ use Roots\Acorn\Bootloader;
  */
 function asset(string $asset): Asset
 {
-    return app('assets.manifest')->asset($asset);
+    return \app('assets.manifest')->asset($asset);
 }
 
 /**
@@ -25,7 +25,7 @@ function asset(string $asset): Asset
  */
 function bundle(string $bundle): Bundle
 {
-    return app('assets.manifest')->bundle($bundle);
+    return \app('assets.manifest')->bundle($bundle);
 }
 
 /**

@@ -2,35 +2,13 @@
 
 use Illuminate\Config\Repository as ConfigRepository;
 use Roots\Acorn\Application;
-use Roots\Acorn\LazyLoader;
 use Roots\Acorn\Tests\Test\Stubs\BootableServiceProvider;
-use Roots\Acorn\Tests\Test\Stubs\EmptyClass;
 use Roots\Acorn\Tests\Test\TestCase;
 
 use function Roots\Acorn\Tests\mock;
 use function Roots\Acorn\Tests\temp;
 
 uses(TestCase::class);
-
-it('registers the lazy loader', function () {
-    $app = new Application();
-
-    expect($app['app.lazy'])->toBeInstanceOf(LazyLoader::class);
-});
-
-it('lazy loads a thing', function () {
-    $app = new Application();
-
-    // `files` is lazy loaded by default
-    // i'm not explicitly calling $app['app.lazy'] and registering a provider because ... i'm lazy 😏
-    expect($app->make('files'))->toBeInstanceOf(Illuminate\Filesystem\Filesystem::class);
-});
-
-it('can only lazy load a service provider', function () {
-    $app = new Application();
-
-    $app['app.lazy']->registerProvider(EmptyClass::class, []);
-})->throws(InvalidArgumentException::class);
 
 it('instantiates with custom paths', function () {
     $app = new Application(null, [
@@ -180,7 +158,7 @@ it('boots a provider', function () {
 
 it('gracefully skips a provider that fails to boot', function () {
     $logger = mock(\Illuminate\Log\LogServiceProvider::class);
-    $manifest = mock(\Illuminate\Foundation\PackageManifest::class);
+    $manifest = mock(\Roots\Acorn\PackageManifest::class);
     $app = new Application();
 
     $app->singleton('log', fn () => $logger);
@@ -201,11 +179,32 @@ it('gracefully skips a provider that fails to boot', function () {
         ->once();
 
     $manifest
-        ->shouldAllowMockingProtectedMethods()
-        ->shouldReceive('getManifest')
-        ->andReturn([['providers' => ['not_kjo', get_class($provider)]]]);
+        ->shouldReceive('getPackage')
+        ->andReturn(get_class($provider));
 
     $app->register($provider);
+
+    $app->boot();
+});
+
+it('gracefully skips a provider that does not exist', function () {
+    $logger = mock(\Illuminate\Log\LogServiceProvider::class);
+    $manifest = mock(\Roots\Acorn\PackageManifest::class);
+    $app = new Application();
+
+    $app->singleton('log', fn () => $logger);
+    $app->singleton(\Illuminate\Foundation\PackageManifest::class, fn () => $manifest);
+
+    $logger
+        ->shouldReceive('warning')
+        ->withArgs(fn ($message) => expect($message)->toContain('Skipping provider') || true)
+        ->once();
+
+    $manifest
+        ->shouldReceive('getPackage')
+        ->andReturn(ThisProviderDoesNotExist::class);
+
+    $app->register(ThisProviderDoesNotExist::class);
 
     $app->boot();
 });

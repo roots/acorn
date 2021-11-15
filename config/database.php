@@ -2,9 +2,6 @@
 
 use Illuminate\Support\Str;
 
-use function Roots\env;
-use function Roots\database_path;
-
 return [
 
     /*
@@ -18,7 +15,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'mysql'),
+    'default' => env('DB_CONNECTION', 'wordpress'),
 
     /*
     |--------------------------------------------------------------------------
@@ -37,12 +34,31 @@ return [
     */
 
     'connections' => [
+
         'sqlite' => [
             'driver' => 'sqlite',
             'url' => env('DATABASE_URL'),
             'database' => env('DB_DATABASE', database_path('database.sqlite')),
             'prefix' => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
+        ],
+
+        'wordpress' => [
+            'driver'         => 'mysql',
+            'host'           => DB_HOST,
+            'database'       => DB_NAME,
+            'username'       => DB_USER,
+            'password'       => DB_PASSWORD,
+            'unix_socket'    => env('DB_SOCKET', ''),
+            'charset'        => DB_CHARSET,
+            'collation'      => DB_COLLATE,
+            'prefix'         => $table_prefix ?? $GLOBALS['wpdb']->prefix,
+            'prefix_indexes' => true,
+            'strict'         => true,
+            'engine'         => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
         ],
 
         'mysql' => [
@@ -92,6 +108,7 @@ return [
             'prefix' => '',
             'prefix_indexes' => true,
         ],
+
     ],
 
     /*
@@ -119,6 +136,7 @@ return [
     */
 
     'redis' => [
+
         'client' => env('REDIS_CLIENT', 'phpredis'),
 
         'options' => [
@@ -141,5 +159,7 @@ return [
             'port' => env('REDIS_PORT', '6379'),
             'database' => env('REDIS_CACHE_DB', '1'),
         ],
+
     ],
+
 ];

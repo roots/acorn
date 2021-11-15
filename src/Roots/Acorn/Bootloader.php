@@ -5,6 +5,7 @@ namespace Roots\Acorn;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use InvalidArgumentException;
 use Roots\Acorn\Application;
+use Roots\Acorn\Filesystem\Filesystem;
 
 use function Roots\add_filters;
 use function apply_filters;
@@ -240,12 +241,14 @@ class Bootloader
      */
     protected function usePaths(): array
     {
-        $searchPaths = ['app', 'config', 'storage', 'resources', 'bootstrap', 'public'];
+        $searchPaths = ['app', 'config', 'storage', 'resources', 'public'];
         $paths = [];
 
         foreach ($searchPaths as $path) {
             $paths[$path] = apply_filters("acorn/paths.{$path}", $this->findPath($path));
         }
+
+        $paths['bootstrap'] = apply_filters("acorn/paths.bootstrap", "{$paths['storage']}/framework");
 
         return $paths;
     }
@@ -265,7 +268,6 @@ class Bootloader
             locate_template($path),
             get_stylesheet_directory() . DIRECTORY_SEPARATOR . $path,
             get_template_directory() . DIRECTORY_SEPARATOR . $path,
-            dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . $path,
         ];
 
         return collect($searchPaths)
@@ -273,8 +275,31 @@ class Bootloader
                 return (is_string($path) && is_dir($path)) ? $path : null;
             })
             ->filter()
+            ->whenEmpty(function ($paths) use ($path) {
+                return $paths->add($this->fallbackPath($path));
+            })
             ->unique()
             ->first();
+    }
+
+    protected function fallbackPath($path): string
+    {
+        if ($path === 'storage') {
+            return $this->fallbackStoragePath();
+        }
+
+        return dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . $path;
+    }
+
+    protected function fallbackStoragePath()
+    {
+        if (! is_dir($path = WP_CONTENT_DIR . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'acorn')) {
+            $files = new Filesystem();
+            $files->makeDirectory($path, 0755, true);
+            $files->copyDirectory(dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . 'storage', $path);
+        }
+
+        return $path;
     }
 
     /**
