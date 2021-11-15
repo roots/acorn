@@ -91,7 +91,6 @@ class AcornServiceProvider extends ServiceProvider
     protected function publishConfigs()
     {
         foreach ($this->filterPublishableConfigs() as $config) {
-
             $this->publishes([
                 dirname(__DIR__, 4) . "/config/{$config}.php" => base_path('config') . "/{$config}.php"
             ], 'acorn:init');
