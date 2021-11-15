@@ -2,6 +2,8 @@
 
 namespace Roots\Acorn\Providers;
 
+use Illuminate\Foundation\Events\VendorTagPublished;
+use Roots\Acorn\Filesystem\Filesystem;
 use Roots\Acorn\ServiceProvider;
 
 class AcornServiceProvider extends ServiceProvider
@@ -133,6 +135,16 @@ class AcornServiceProvider extends ServiceProvider
     protected function publishStorage()
     {
         if ($this->app->storagePath() === WP_CONTENT_DIR . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'acorn') {
+            $this->app->make('events')->listen(function (VendorTagPublished $event) {
+                if ($event->tag !== 'acorn:init') {
+                    return;
+                }
+
+                $files = new Filesystem();
+
+                $files->deleteDirectory(WP_CONTENT_DIR . '/cache/acorn');
+            });
+
             $this->publishes([
                 dirname(__DIR__, 4) . "/storage" => base_path('storage')
             ], 'acorn:init');
