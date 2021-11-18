@@ -241,11 +241,16 @@ class Bootloader
      */
     protected function usePaths(): array
     {
-        $searchPaths = ['app', 'config', 'storage', 'resources', 'public'];
-        $paths = [];
+        $paths = apply_filters('acorn/paths', [
+            'app' => null,
+            'config' => null,
+            'storage' => null,
+            'resources' => null,
+            'public' => null,
+        ]);
 
-        foreach ($searchPaths as $path) {
-            $paths[$path] = apply_filters("acorn/paths.{$path}", $this->findPath($path));
+        foreach ($paths as $key => $path) {
+            $paths[$key] = apply_filters("acorn/paths.{$key}", $path ?: $this->findPath($key));
         }
 
         $paths['bootstrap'] = apply_filters("acorn/paths.bootstrap", "{$paths['storage']}/framework");
