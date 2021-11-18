@@ -291,6 +291,14 @@ class Bootloader
             return $this->fallbackStoragePath();
         }
 
+        if ($path === 'app') {
+            return $this->basePath() . DIRECTORY_SEPARATOR . 'app';
+        }
+
+        if ($path === 'public') {
+            return $this->basePath() . DIRECTORY_SEPARATOR . 'public';
+        }
+
         return dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . $path;
     }
 
