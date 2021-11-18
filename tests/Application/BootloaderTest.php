@@ -7,6 +7,7 @@ use Roots\Acorn\Bootloader;
 use Roots\Acorn\ServiceProvider;
 use Roots\Acorn\Tests\Test\TestCase;
 
+use function Roots\Acorn\Tests\acorn_root;
 use function Roots\Acorn\Tests\mock;
 use function Roots\Acorn\Tests\temp;
 use function Roots\bootloader;
@@ -113,7 +114,7 @@ it('should use a fallback basepath', function () {
     $bootloader = new Bootloader('hook', Application::class);
     $this->filter('acorn/ready', '__return_true');
     $this->filter('acorn/bootstrap', '__return_empty_array');
-    $this->stub('locate_template')
+    $this->stub('get_theme_file_path')
         ->should()
         ->andReturn(temp(''));
 
@@ -125,7 +126,7 @@ it('should use a fallback basepath', function () {
     $bootloader();
 });
 
-it('should locate the `config` folder in the theme to determine basepath', function () {
+it('should locate `composer.json` in the theme to determine basepath', function () {
     /** @var \Mockery\MockInterface|Application */
     $application = mock(Application::class);
     Application::setInstance($application);
@@ -133,9 +134,9 @@ it('should locate the `config` folder in the theme to determine basepath', funct
     $this->filter('acorn/ready', '__return_true');
     $this->filter('acorn/bootstrap', '__return_empty_array');
 
-    $this->stub('locate_template', fn ($path) => temp($path))
+    $this->stub('get_theme_file_path', fn ($path) => temp($path))
         ->should()
-        ->andReturn(temp('config'));
+        ->andReturn(temp('composer.json'));
 
     $application->shouldReceive('usePaths', 'bootstrapWith');
     $application->shouldReceive('setBasePath')->once()->with(temp(''));
@@ -143,7 +144,60 @@ it('should locate the `config` folder in the theme to determine basepath', funct
     $bootloader();
 });
 
-it('should locate other paths via filter', function () {
+it('should support zero-config paths', function () {
+    /** @var \Mockery\MockInterface|Application */
+    $application = mock(Application::class);
+    Application::setInstance($application);
+    $bootloader = new Bootloader('hook', Application::class);
+    $this->filter('acorn/ready', '__return_true');
+    $this->filter('acorn/bootstrap', '__return_empty_array');
+    $this->stub('get_theme_file_path')
+        ->should()
+        ->andReturn(temp('theme/composer.json'));
+
+    $application->shouldReceive('bootstrapWith', 'setBasePath')->once();
+    $application->shouldReceive('usePaths')->once()->with([
+        'app' => temp('theme') . '/app',
+        'config' => acorn_root('config'),
+        'storage' => temp('app/cache/acorn'),
+        'resources' => acorn_root('resources'),
+        'bootstrap' => temp('app/cache/acorn') . '/framework',
+        'public' => temp('theme') . '/public',
+    ]);
+
+    $bootloader();
+});
+
+
+it('should locate paths via filter', function () {
+    /** @var \Mockery\MockInterface|Application */
+    $application = mock(Application::class);
+    Application::setInstance($application);
+    $bootloader = new Bootloader('hook', Application::class);
+    $this->filter('acorn/ready', '__return_true');
+    $this->filter('acorn/bootstrap', '__return_empty_array');
+    $this->filter('acorn/paths', fn () => [
+        'app' => temp('app'),
+        'config' => temp('config'),
+        'storage' => temp('storage'),
+        'resources' => temp('resources'),
+        'public' => temp('public'),
+    ]);
+
+    $application->shouldReceive('bootstrapWith', 'setBasePath')->once();
+    $application->shouldReceive('usePaths')->once()->with([
+        'app' => temp('app'),
+        'config' => temp('config'),
+        'storage' => temp('storage'),
+        'resources' => temp('resources'),
+        'bootstrap' => temp('storage/framework'), // <- this is intentionally unavailable via acorn/paths
+        'public' => temp('public'),
+    ]);
+
+    $bootloader();
+});
+
+it('should locate specific paths via filter', function () {
     /** @var \Mockery\MockInterface|Application */
     $application = mock(Application::class);
     Application::setInstance($application);
