@@ -270,9 +270,7 @@ class Bootloader
 
         $searchPaths = [
             $this->basePath() . DIRECTORY_SEPARATOR . $path,
-            locate_template($path),
-            get_stylesheet_directory() . DIRECTORY_SEPARATOR . $path,
-            get_template_directory() . DIRECTORY_SEPARATOR . $path,
+            get_theme_file_path($path),
         ];
 
         return collect($searchPaths)
