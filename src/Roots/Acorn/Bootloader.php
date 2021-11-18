@@ -221,17 +221,17 @@ class Bootloader
             return $this->basePath;
         }
 
-        $basePath = dirname(locate_template('config')) ?: dirname(__DIR__, 3);
-
         // @codeCoverageIgnoreStart
         if (defined('ACORN_BASEPATH')) {
-            $basePath = constant('ACORN_BASEPATH');
+            return $this->basePath = rtrim(constant('ACORN_BASEPATH'), '/\\');
         }
         // @codeCoverageIgnoreEnd
 
+        $basePath = dirname(get_theme_file_path('composer.json')) ?: dirname(__DIR__, 3);
+
         $basePath = apply_filters('acorn/paths.base', $basePath);
 
-        return $this->basePath = $basePath;
+        return $this->basePath = rtrim($basePath, '/\\');
     }
 
     /**
