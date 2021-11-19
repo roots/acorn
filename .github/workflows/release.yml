@@ -23,8 +23,11 @@ jobs:
           coverage: xdebug
         env:
           COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Remove incompatible dependencies
+        run: composer remove pestphp/pest pestphp/pest-plugin-mock spatie/pest-plugin-snapshots --dev --no-interaction
+        if: matrix.php < 8
       - name: Install Composer dependencies
-        run: composer install --no-progress --prefer-dist --optimize-autoloader --no-suggest --no-dev
+        run: composer install --no-progress --prefer-dist --optimize-autoloader --no-dev --no-interaction
       - name: Cleanup unnecessary files
         run: rm -rf .git .github .editorconfig .gitattributes .gitignore composer.json composer.lock phpcs.xml.dist phpunit.xml.dist tests
       - name: Get the version
