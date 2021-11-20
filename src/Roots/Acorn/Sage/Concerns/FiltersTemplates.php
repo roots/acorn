@@ -14,7 +14,7 @@ trait FiltersTemplates
      */
     public function filterTemplateHierarchy($files)
     {
-        return $this->sageFinder->locate($files);
+        return $files + [$this->sageFinder->locate($files)];
     }
 
     /**
