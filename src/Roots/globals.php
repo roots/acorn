@@ -6,3 +6,10 @@ if (! function_exists('asset')) {
         Roots\asset($asset);
     }
 }
+
+if (! function_exists('view')) {
+    function view(string $asset)
+    {
+        Roots\view($asset);
+    }
+}
