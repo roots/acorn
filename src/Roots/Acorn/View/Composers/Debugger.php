@@ -28,7 +28,7 @@ class Debugger
         $name = $view->getName();
 
         if ($this->debugLevel === 'view') {
-            var_dump($name);
+            dump($name);
             return;
         }
 
@@ -41,10 +41,10 @@ class Debugger
         }, $view->getData());
 
         if ($this->debugLevel === 'data') {
-            var_dump($data);
+            dump($data);
             return;
         }
 
-        var_dump(['view' => $name, 'data' => $data]);
+        dump(['view' => $name, 'data' => $data]);
     }
 }
