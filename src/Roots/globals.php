@@ -3,13 +3,13 @@
 if (! function_exists('asset')) {
     function asset(string $asset)
     {
-        Roots\asset($asset);
+        return Roots\asset($asset);
     }
 }
 
 if (! function_exists('view')) {
-    function view(string $asset)
+    function view()
     {
-        Roots\view($asset);
+        return Roots\view(...func_get_args());
     }
 }
