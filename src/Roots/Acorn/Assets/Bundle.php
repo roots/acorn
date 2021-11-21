@@ -124,7 +124,7 @@ class Bundle implements BundleContract
         if (Arr::isAssoc($this->bundle['js'])) {
             $this->runtime = $this->bundle['js']['runtime'] ?? $this->bundle['js']["runtime~{$this->id}"] ?? null;
             unset($this->bundle['js']['runtime'], $this->bundle['js']["runtime~{$this->id}"]);
-        } elseif(isset($this->bundle['js'][0]) && strpos($this->bundle['js'][0], 'runtime') === 0) {
+        } elseif (isset($this->bundle['js'][0]) && strpos($this->bundle['js'][0], 'runtime') === 0) {
             $this->runtime = $this->bundle['js'][0];
             unset($this->bundle['js'][0]);
         }
