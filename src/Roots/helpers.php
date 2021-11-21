@@ -2,8 +2,8 @@
 
 namespace Roots;
 
+use Roots\Acorn\Assets\Bundle;
 use Roots\Acorn\Assets\Contracts\Asset;
-use Roots\Acorn\Assets\Contracts\Bundle;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Roots\Acorn\Bootloader;
 
