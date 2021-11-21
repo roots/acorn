@@ -69,20 +69,9 @@ class Application extends FoundationApplication
             $this->usePaths((array)$paths);
         }
 
-        $this->registerLazyLoader();
         $this->registerGlobalHelpers();
 
         parent::__construct($basePath);
-    }
-
-    /**
-     * Register the application lazy loader.
-     *
-     * @return void
-     */
-    protected function registerLazyLoader()
-    {
-        $this->instances['app.lazy'] = new LazyLoader($this);
     }
 
     /**
@@ -295,27 +284,6 @@ class Application extends FoundationApplication
     }
 
     /**
-     * Resolve the given type from the container.
-     *
-     * @param  string  $abstract
-     * @param  array  $parameters
-     * @return mixed
-     */
-    public function make($abstract, array $parameters = [])
-    {
-        $abstract = $this->getAlias($abstract);
-
-        if (
-            ! $this->bound($abstract) &&
-            $provider = $this->instances['app.lazy']->getProvider($abstract)
-        ) {
-            $this->register($provider);
-        }
-
-        return parent::make($abstract, $parameters);
-    }
-
-    /**
      * Boot the given service provider.
      *
      * @param  \Illuminate\Support\ServiceProvider  $provider
@@ -333,37 +301,24 @@ class Application extends FoundationApplication
     /**
      * Skip booting service provider and log error.
      *
-     * @param  \Illuminate\Support\ServiceProvider  $provider
+     * @param  \Illuminate\Support\ServiceProvider|string  $provider
      * @param  Throwable $e
      * @return void
      */
-    protected function skipProvider(ServiceProvider $provider, Throwable $e)
+    protected function skipProvider($provider, Throwable $e)
     {
-        $packages = $this->make(PackageManifest::class)->getManifest();
-
         $message = [
             BindingResolutionException::class => "Skipping provider [:provider:] because it requires a dependency that cannot be found.",
         ][get_class($e)] ?? "Skipping provider [:provider:] because it encountered an error.";
 
-        $providerName = get_class($provider);
+        $provider_name = is_object($provider) ? get_class($provider) : $provider;
 
         $context = [
-            'package' => '',
-            'provider' => $providerName,
+            'package' => $this->make(PackageManifest::class)->getPackage($provider_name),
+            'provider' => $provider_name,
             'error' => $e->getMessage(),
             'help' => 'https://roots.io/docs/acorn/troubleshooting'
         ];
-
-        foreach ($packages as $package => $configuration) {
-            foreach ($configuration['providers'] ?? [] as $provider) {
-                if ($provider !== $providerName) {
-                    continue;
-                }
-
-                $context['package'] = $package;
-                break;
-            }
-        }
 
         $this->make('log')->warning(
             strtr($message, [
@@ -391,6 +346,22 @@ class Application extends FoundationApplication
 
         (new ProviderRepository($this, new Filesystem(), $this->getCachedServicesPath()))
             ->load($providers->collapse()->toArray());
+    }
+
+    /**
+     * Register a service provider with the application.
+     *
+     * @param  \Illuminate\Support\ServiceProvider|string  $provider
+     * @param  bool  $force
+     * @return \Illuminate\Support\ServiceProvider
+     */
+    public function register($provider, $force = false)
+    {
+        try {
+            parent::register($provider, $force);
+        } catch (Throwable $e) {
+            $this->skipProvider($provider, $e);
+        }
     }
 
     /**

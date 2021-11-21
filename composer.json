@@ -27,7 +27,8 @@
       "Illuminate\\": "src/Illuminate/"
     },
     "files": [
-      "src/Roots/helpers.php"
+      "src/Roots/helpers.php",
+      "src/Roots/globals.php"
     ]
   },
   "autoload-dev": {

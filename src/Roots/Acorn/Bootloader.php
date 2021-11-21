@@ -5,6 +5,7 @@ namespace Roots\Acorn;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use InvalidArgumentException;
 use Roots\Acorn\Application;
+use Roots\Acorn\Filesystem\Filesystem;
 
 use function Roots\add_filters;
 use function apply_filters;
@@ -220,17 +221,17 @@ class Bootloader
             return $this->basePath;
         }
 
-        $basePath = dirname(locate_template('config')) ?: dirname(__DIR__, 3);
-
         // @codeCoverageIgnoreStart
         if (defined('ACORN_BASEPATH')) {
-            $basePath = constant('ACORN_BASEPATH');
+            return $this->basePath = rtrim(constant('ACORN_BASEPATH'), '/\\');
         }
         // @codeCoverageIgnoreEnd
 
+        $basePath = dirname(get_theme_file_path('composer.json')) ?: dirname(__DIR__, 3);
+
         $basePath = apply_filters('acorn/paths.base', $basePath);
 
-        return $this->basePath = $basePath;
+        return $this->basePath = rtrim($basePath, '/\\');
     }
 
     /**
@@ -240,12 +241,19 @@ class Bootloader
      */
     protected function usePaths(): array
     {
-        $searchPaths = ['app', 'config', 'storage', 'resources', 'bootstrap', 'public'];
-        $paths = [];
+        $paths = apply_filters('acorn/paths', [
+            'app' => null,
+            'config' => null,
+            'storage' => null,
+            'resources' => null,
+            'public' => null,
+        ]);
 
-        foreach ($searchPaths as $path) {
-            $paths[$path] = apply_filters("acorn/paths.{$path}", $this->findPath($path));
+        foreach ($paths as $key => $path) {
+            $paths[$key] = apply_filters("acorn/paths.{$key}", $path ?: $this->findPath($key));
         }
+
+        $paths['bootstrap'] = apply_filters("acorn/paths.bootstrap", "{$paths['storage']}/framework");
 
         return $paths;
     }
@@ -262,10 +270,7 @@ class Bootloader
 
         $searchPaths = [
             $this->basePath() . DIRECTORY_SEPARATOR . $path,
-            locate_template($path),
-            get_stylesheet_directory() . DIRECTORY_SEPARATOR . $path,
-            get_template_directory() . DIRECTORY_SEPARATOR . $path,
-            dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . $path,
+            get_theme_file_path($path),
         ];
 
         return collect($searchPaths)
@@ -273,8 +278,39 @@ class Bootloader
                 return (is_string($path) && is_dir($path)) ? $path : null;
             })
             ->filter()
+            ->whenEmpty(function ($paths) use ($path) {
+                return $paths->add($this->fallbackPath($path));
+            })
             ->unique()
             ->first();
+    }
+
+    protected function fallbackPath($path): string
+    {
+        if ($path === 'storage') {
+            return $this->fallbackStoragePath();
+        }
+
+        if ($path === 'app') {
+            return $this->basePath() . DIRECTORY_SEPARATOR . 'app';
+        }
+
+        if ($path === 'public') {
+            return $this->basePath() . DIRECTORY_SEPARATOR . 'public';
+        }
+
+        return dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . $path;
+    }
+
+    protected function fallbackStoragePath()
+    {
+        if (! is_dir($path = WP_CONTENT_DIR . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'acorn')) {
+            $files = new Filesystem();
+            $files->makeDirectory($path, 0755, true);
+            $files->copyDirectory(dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . 'storage', $path);
+        }
+
+        return $path;
     }
 
     /**

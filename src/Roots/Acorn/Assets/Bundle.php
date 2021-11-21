@@ -2,6 +2,7 @@
 
 namespace Roots\Acorn\Assets;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Roots\Acorn\Assets\Concerns\Enqueuable;
 use Roots\Acorn\Assets\Contracts\Bundle as BundleContract;
@@ -31,11 +32,8 @@ class Bundle implements BundleContract
         $this->id = $id;
         $this->path = $path;
         $this->uri = $uri;
-        $this->runtime = $bundle['js']['runtime'] ?? $bundle['js']["runtime~{$id}"] ?? null;
-
-        unset($bundle['js']['runtime'], $bundle['js']["runtime~{$id}"]);
-
         $this->bundle = $bundle;
+        $this->setRuntime();
     }
 
     /**
@@ -119,5 +117,16 @@ class Bundle implements BundleContract
         }
 
         return self::$runtimes[$runtime] = file_get_contents("{$this->path}/{$runtime}");
+    }
+
+    protected function setRuntime()
+    {
+        if (Arr::isAssoc($this->bundle['js'])) {
+            $this->runtime = $this->bundle['js']['runtime'] ?? $this->bundle['js']["runtime~{$this->id}"] ?? null;
+            unset($this->bundle['js']['runtime'], $this->bundle['js']["runtime~{$this->id}"]);
+        } elseif (isset($this->bundle['js'][0]) && strpos($this->bundle['js'][0], 'runtime') === 0) {
+            $this->runtime = $this->bundle['js'][0];
+            unset($this->bundle['js'][0]);
+        }
     }
 }

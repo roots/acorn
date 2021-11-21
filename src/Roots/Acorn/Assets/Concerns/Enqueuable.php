@@ -62,10 +62,11 @@ trait Enqueuable
     public function enqueueJs(bool $in_footer = true, array $dependencies = [])
     {
         $this->js(function ($handle, $src, $bundle_dependencies) use (&$dependencies, $in_footer) {
-            $this->inlineRuntime($handle);
             $this->mergeDependencies($dependencies, $bundle_dependencies);
 
             wp_enqueue_script($handle, $src, $dependencies, null, $in_footer);
+
+            $this->inlineRuntime();
 
             $this->mergeDependencies($dependencies, [$handle]);
         });
@@ -86,24 +87,68 @@ trait Enqueuable
     /**
      * Inline runtime.js in WordPress.
      *
-     * @param mixed $handle
-     * @return void
+     * @return $this
      */
-    public function inlineRuntime($handle)
+    public function inlineRuntime()
     {
         if (! $runtime = $this->runtime()) {
-            return;
+            return $this;
         }
 
         if (isset(self::$inlined[$runtime])) {
-            return;
+            return $this;
         }
 
         if ($contents = $this->runtimeSource()) {
-            wp_add_inline_script($handle, $contents, 'before');
+            $this->inline($contents, 'before');
         }
 
         self::$inlined[$runtime] = $contents;
+
+        return $this;
+    }
+
+    /**
+     * Add an inline script before or after the bundle loads
+     *
+     * @param string $contents
+     * @param string $position
+     * @return $this
+     */
+    public function inline($contents, $position = 'after')
+    {
+        if (! $handles = array_keys($this->bundle['js'] ?? [])) {
+            return $this;
+        }
+
+        $handle = "{$this->id}/" . (
+            $position === 'after'
+                ? array_pop($handles)
+                : array_shift($handles)
+        );
+
+        wp_add_inline_script($handle, $contents, $position);
+
+        return $this;
+    }
+
+    /**
+     * Add localization data to be used by the bundle
+     *
+     * @param string $name
+     * @param array $object
+     * @return $this
+     */
+    public function localize($name, $object)
+    {
+        if (! $handles = array_keys($this->bundle['js'] ?? [])) {
+            return $this;
+        }
+
+        $handle = "{$this->id}/{$handles[0]}";
+        wp_localize_script($handle, $name, $object);
+
+        return $this;
     }
 
     /**

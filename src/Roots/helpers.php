@@ -4,6 +4,7 @@ namespace Roots;
 
 use Roots\Acorn\Assets\Contracts\Asset;
 use Roots\Acorn\Assets\Contracts\Bundle;
+use Illuminate\Contracts\View\Factory as ViewFactory;
 use Roots\Acorn\Bootloader;
 
 /**
@@ -14,7 +15,7 @@ use Roots\Acorn\Bootloader;
  */
 function asset(string $asset): Asset
 {
-    return app('assets.manifest')->asset($asset);
+    return \app('assets.manifest')->asset($asset);
 }
 
 /**
@@ -25,7 +26,7 @@ function asset(string $asset): Asset
  */
 function bundle(string $bundle): Bundle
 {
-    return app('assets.manifest')->bundle($bundle);
+    return \app('assets.manifest')->bundle($bundle);
 }
 
 /**
@@ -42,6 +43,31 @@ function bootloader($callback = null)
         $bootloader->call($callback);
     }
 }
+
+/**
+ * Get the evaluated view contents for the given view or file.
+ *
+ * @param  string|null  $view
+ * @param  \Illuminate\Contracts\Support\Arrayable|array  $data
+ * @param  array  $mergeData
+ * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
+ *
+ * @copyright Taylor Otwell
+ * @link https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
+ */
+function view($view = null, $data = [], $mergeData = [])
+{
+    $factory = \app(ViewFactory::class);
+
+    if (func_num_args() === 0) {
+        return $factory;
+    }
+
+    return $factory->exists($view)
+        ? $factory->make($view, $data, $mergeData)
+        : $factory->file($view, $data, $mergeData);
+}
+
 
 /**
  * @deprecated
@@ -217,12 +243,4 @@ function storage_path(...$args)
 function today(...$args)
 {
     return \today(...$args);
-}
-
-/**
- * @deprecated
- */
-function view(...$args)
-{
-    return \view(...$args);
 }

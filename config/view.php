@@ -1,8 +1,5 @@
 <?php
 
-use function Roots\resource_path;
-use function Roots\storage_path;
-
 return [
 
     /*
@@ -32,7 +29,7 @@ return [
     |
     */
 
-    'compiled' => storage_path('framework/views'),
+    'compiled' => env('VIEW_COMPILED_PATH', storage_path('framework/views')),
 
     /*
     |--------------------------------------------------------------------------

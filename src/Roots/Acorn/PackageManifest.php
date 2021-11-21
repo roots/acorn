@@ -2,6 +2,8 @@
 
 namespace Roots\Acorn;
 
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Exception;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\PackageManifest as FoundationPackageManifest;
 
@@ -30,13 +32,26 @@ class PackageManifest extends FoundationPackageManifest
     }
 
     /**
-     * Get the current package manifest.
+     * Get a package name based on its provider
      *
-     * @return array
+     * @param string $provider_name
+     * @return string
+     * @throws FileNotFoundException
+     * @throws Exception
      */
-    public function getManifest()
+    public function getPackage($provider_name)
     {
-        return parent::getManifest();
+        foreach ($this->getManifest() as $package => $configuration) {
+            foreach ($configuration['providers'] ?? [] as $provider) {
+                if ($provider !== $provider_name) {
+                    continue;
+                }
+
+                return $package;
+            }
+        }
+
+        return '';
     }
 
     /**
@@ -56,6 +71,8 @@ class PackageManifest extends FoundationPackageManifest
 
                 $packages = $installed['packages'] ?? $installed;
             }
+
+            $packages[] = json_decode($this->files->get("${composerPath}/composer.json"), true);
 
             $ignoreAll = in_array('*', $ignore = $this->packagesToIgnore());
 
