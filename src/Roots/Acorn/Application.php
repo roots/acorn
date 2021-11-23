@@ -271,10 +271,10 @@ class Application extends FoundationApplication
 
         $aliases = [
             'app'             => self::class,
-            'assets.manifest' => \Acorn\Assets\Manifest::class,
-            'config'          => \Acorn\Config::class,
-            'files'           => \Acorn\Filesystem\Filesystem::class,
-            'view.finder'     => \Acorn\View\FileViewFinder::class,
+            'assets.manifest' => \Roots\Acorn\Assets\Manifest::class,
+            'config'          => \Roots\Acorn\Config::class,
+            'files'           => \Roots\Acorn\Filesystem\Filesystem::class,
+            'view.finder'     => \Roots\Acorn\View\FileViewFinder::class,
             \Illuminate\Foundation\PackageManifest::class => \Roots\Acorn\PackageManifest::class,
         ];
 
