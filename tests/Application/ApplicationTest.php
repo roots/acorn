@@ -213,9 +213,5 @@ it('uses custom aliases', function () {
     $app = new Application();
 
     expect($app->getAlias(\Roots\Acorn\Application::class))->toBe('app');
-    expect($app->getAlias(\Roots\Acorn\Assets\Manifest::class))->toBe('assets.manifest');
-    expect($app->getAlias(\Roots\Acorn\Config::class))->toBe('config');
-    expect($app->getAlias(\Roots\Acorn\Filesystem\Filesystem::class))->toBe('files');
-    expect($app->getAlias(\Roots\Acorn\View\FileViewFinder::class))->toBe('view.finder');
     expect($app->getAlias(\Roots\Acorn\PackageManifest::class))->toBe(\Illuminate\Foundation\PackageManifest::class);
 });

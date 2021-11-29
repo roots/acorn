@@ -269,18 +269,8 @@ class Application extends FoundationApplication
     {
         parent::registerCoreContainerAliases();
 
-        $aliases = [
-            'app'             => self::class,
-            'assets.manifest' => \Roots\Acorn\Assets\Manifest::class,
-            'config'          => \Roots\Acorn\Config::class,
-            'files'           => \Roots\Acorn\Filesystem\Filesystem::class,
-            'view.finder'     => \Roots\Acorn\View\FileViewFinder::class,
-            \Illuminate\Foundation\PackageManifest::class => \Roots\Acorn\PackageManifest::class,
-        ];
-
-        foreach ($aliases as $key => $alias) {
-            $this->alias($key, $alias);
-        }
+        $this->alias('app', self::class);
+        $this->alias(\Illuminate\Foundation\PackageManifest::class, \Roots\Acorn\PackageManifest::class);
     }
 
     /**

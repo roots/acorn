@@ -16,5 +16,7 @@ class FilesystemServiceProvider extends FilesystemServiceProviderBase
         $this->app->singleton('files', function () {
             return new Filesystem();
         });
+
+        $this->app->alias('files', \Roots\Acorn\Filesystem\Filesystem::class);
     }
 }

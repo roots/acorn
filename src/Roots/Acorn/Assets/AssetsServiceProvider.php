@@ -21,6 +21,8 @@ class AssetsServiceProvider extends ServiceProvider
         $this->app->singleton('assets.manifest', function ($app) {
             return $app['assets']->manifest($this->getDefaultManifest());
         });
+
+        $this->app->alias('assets.manifest', \Roots\Acorn\Assets\Manifest::class);
     }
 
     /**
