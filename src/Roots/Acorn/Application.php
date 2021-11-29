@@ -270,7 +270,6 @@ class Application extends FoundationApplication
         parent::registerCoreContainerAliases();
 
         $this->alias('app', self::class);
-        $this->alias('config', \Roots\Acorn\Config::class);
         $this->alias(\Illuminate\Foundation\PackageManifest::class, \Roots\Acorn\PackageManifest::class);
     }
 
