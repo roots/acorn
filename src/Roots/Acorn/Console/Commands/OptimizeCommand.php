@@ -16,8 +16,10 @@ class OptimizeCommand extends FoundationOptimizeCommand
      */
     public function handle()
     {
-        $this->gracefulCall('config:cache');
+        $this->gracefulCall('view:cache');
+        $this->gracefulCall('cache:cache');
         $this->gracefulCall('route:cache');
+        $this->gracefulCall('config:cache');
 
         $this->info('Files cached successfully!');
     }
