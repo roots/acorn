@@ -4,6 +4,7 @@ namespace Roots\Acorn\Console;
 
 use ReflectionClass;
 use Illuminate\Console\Application as Console;
+use Illuminate\Console\Commands\Command;
 use Illuminate\Foundation\Console\ClearCompiledCommand;
 use Illuminate\Foundation\Console\ComponentMakeCommand;
 use Illuminate\Foundation\Console\ConfigClearCommand;
@@ -18,7 +19,6 @@ use Illuminate\Foundation\Console\ViewClearCommand;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Roots\Acorn\Application;
-use Roots\Acorn\Console\Commands\Command;
 use Roots\Acorn\Console\Commands\ComposerMakeCommand;
 use Roots\Acorn\Console\Commands\ConfigCacheCommand;
 use Roots\Acorn\Console\Commands\OptimizeClearCommand;
