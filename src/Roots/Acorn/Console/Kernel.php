@@ -4,7 +4,7 @@ namespace Roots\Acorn\Console;
 
 use ReflectionClass;
 use Illuminate\Console\Application as Console;
-use Illuminate\Console\Commands\Command;
+use Illuminate\Console\Command;
 use Illuminate\Foundation\Console\ClearCompiledCommand;
 use Illuminate\Foundation\Console\ComponentMakeCommand;
 use Illuminate\Foundation\Console\ConfigClearCommand;
