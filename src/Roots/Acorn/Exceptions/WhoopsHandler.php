@@ -27,6 +27,7 @@ class WhoopsHandler extends FoundationWhoopsHandler
         'SECURE_AUTH_SALT',
         'LOGGED_IN_SALT',
         'NONCE_SALT',
+        'ACF_PRO_LICENSE',
     ];
 
     /**
