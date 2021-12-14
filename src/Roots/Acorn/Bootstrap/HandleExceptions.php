@@ -90,7 +90,10 @@ class HandleExceptions extends FoundationHandleExceptionsBootstrapper
      */
     protected function renderHttpResponse(Throwable $e)
     {
-        ob_end_clean();
+        if (ob_get_length()) {
+            ob_end_clean();
+        }
+
         parent::renderHttpResponse($e);
     }
 }
