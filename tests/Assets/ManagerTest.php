@@ -1,6 +1,7 @@
 <?php
 
 use Roots\Acorn\Assets\Contracts\Manifest as ManifestContract;
+use Roots\Acorn\Assets\Contracts\ManifestNotFoundException;
 use Roots\Acorn\Assets\Manager;
 use Roots\Acorn\Assets\Manifest;
 use Roots\Acorn\Tests\Test\TestCase;
@@ -33,6 +34,20 @@ it('registers a manifest', function () {
     expect($assets->manifest('theme'))->toBeInstanceOf(ManifestContract::class);
 });
 
+it('throws an error if an assets manifest does not exist', function () {
+    $assets = new Manager([
+        'manifests' => [
+            'theme' => [
+                'path' => $this->fixture('bud_single_runtime'),
+                'url' => 'https://k.jo',
+                'assets' => __DIR__ . '/does/not/exist/manifest.json',
+            ]
+        ]
+    ]);
+
+    $assets->manifest('theme')->asset('app.css')->uri();
+})->throws(ManifestNotFoundException::class);
+
 it('reads an assets manifest', function () {
     $assets = new Manager([
         'manifests' => [
@@ -47,6 +62,20 @@ it('reads an assets manifest', function () {
     assertMatchesSnapshot($assets->manifest('theme')->asset('app.css')->uri());
     assertMatchesSnapshot($assets->manifest('theme')->asset('app.js')->uri());
 });
+
+it('throws an error if a bundles manifest does not exist', function () {
+    $assets = new Manager([
+        'manifests' => [
+            'theme' => [
+                'path' => $this->fixture('bud_single_runtime'),
+                'url' => 'https://k.jo',
+                'bundles' => __DIR__ . '/does/not/exist/entrypoints.json',
+            ]
+        ]
+    ]);
+
+    $assets->manifest('theme')->bundle('app')->js()->toJson();
+})->throws(ManifestNotFoundException::class);
 
 it('reads a bundles manifest', function () {
     $assets = new Manager([

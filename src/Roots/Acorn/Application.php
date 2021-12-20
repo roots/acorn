@@ -120,7 +120,7 @@ class Application extends FoundationApplication
                 throw new Exception("The {$path_type} path type is not supported.");
             }
 
-            if (! is_dir($path) || ! is_readable($path)) {
+            if ($path_type !== 'public' && (! is_dir($path) || ! is_readable($path))) {
                 throw new Exception("The {$path} directory must be present.");
             }
 
