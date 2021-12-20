@@ -5,6 +5,7 @@ namespace Roots\Acorn\Assets;
 use InvalidArgumentException;
 use Roots\Acorn\Assets\Concerns\Mixable;
 use Roots\Acorn\Assets\Contracts\Manifest as ManifestContract;
+use Roots\Acorn\Assets\Contracts\ManifestNotFoundException;
 
 /**
  * Manage assets manifests
@@ -99,7 +100,11 @@ class Manager
      */
     protected function getJsonManifest(string $jsonManifest): array
     {
-        return file_exists($jsonManifest) ? json_decode(file_get_contents($jsonManifest), true) : [];
+        if (! file_exists($jsonManifest)) {
+            throw new ManifestNotFoundException("The manifest [{$jsonManifest}] cannot be found.");
+        }
+
+        return json_decode(file_get_contents($jsonManifest), true) ?? [];
     }
 
     /**
