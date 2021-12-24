@@ -7,106 +7,106 @@ use Illuminate\Support\Composer;
 class Console extends Composer
 {
     /**
+     * Execute acorn clear-compiled command.
+     *
+     * @return int
+     */
+    public function clearCompiled(): int
+    {
+        return $this->acorn('clear-compiled');
+    }
+
+    /**
      * Execute acorn config:cache command.
      *
-     * @return void
+     * @return int
      */
-    public function configCache()
+    public function configCache(): int
     {
-        $this->acorn('config:cache');
+        return $this->acorn('config:cache');
     }
 
     /**
      * Execute acorn config:clear command.
      *
-     * @return void
+     * @return int
      */
-    public function configClear()
+    public function configClear(): int
     {
-        $this->acorn('config:clear');
+        return $this->acorn('config:clear');
     }
 
     /**
      * Execute acorn optimize command.
      *
-     * @return void
+     * @return int
      */
-    public function optimize()
+    public function optimize(): int
     {
-        $this->acorn('optimize');
+        return $this->acorn('optimize');
     }
 
     /**
      * Execute acorn optimize:clear command.
      *
-     * @return void
+     * @return int
      */
-    public function optimizeClear()
+    public function optimizeClear(): int
     {
-        $this->acorn('optimize:clear');
-    }
-
-    /**
-     * Execute acorn package:clear command.
-     *
-     * @return void
-     */
-    public function packageClear()
-    {
-        $this->acorn('package:clear');
+        return $this->acorn('optimize:clear');
     }
 
     /**
      * Execute acorn package:discover command.
      *
-     * @return void
+     * @return int
      */
-    public function packageDiscover()
+    public function packageDiscover(): int
     {
-        $this->acorn('package:discover');
+        return $this->acorn('package:discover');
     }
 
     /**
      * Execute acorn vendor:public command.
      *
-     * @return void
+     * @return int
      */
-    public function vendorPublish()
+    public function vendorPublish(): int
     {
-        $this->acorn('vendor:publish');
+        return $this->acorn('vendor:publish');
     }
 
     /**
      * Execute acorn view:cache command.
      *
-     * @return void
+     * @return int
      */
-    public function viewCache()
+    public function viewCache(): int
     {
-        $this->acorn('view:cache');
+        return $this->acorn('view:cache');
     }
 
     /**
      * Execute acorn view:clear command.
      *
-     * @return void
+     * @return int
      */
-    public function viewClear()
+    public function viewClear(): int
     {
-        $this->acorn('view:clear');
+        return $this->acorn('view:clear');
     }
 
     /**
      * Execute acorn command.
      *
      * @param  array  $command
-     * @return void
+     * @return int
      */
-    public function acorn($command)
+    public function acorn($command): int
     {
         $command = array_merge($this->findWpCli(), ['acorn'], (array) $command);
 
-        $this->getProcess($command)->run();
+        return $this->getProcess($command)->run();
     }
 
     /**
