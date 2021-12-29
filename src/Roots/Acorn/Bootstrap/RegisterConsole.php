@@ -46,7 +46,7 @@ class RegisterConsole
                     $command .= "='{$value}'";
                 }
             }
-            
+
             $command = str_replace('\\', '\\\\', $command);
 
             $status = $kernel->handle($input = new StringInput($command), new ConsoleOutput());
