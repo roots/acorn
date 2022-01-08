@@ -101,7 +101,9 @@ class SummaryCommand extends ListCommand
     {
         $this->width = 0;
 
-        $namespaces = collect($this->getApplication()->all())->groupBy(function ($command) {
+        $namespaces = collect($this->getApplication()->all())->filter(function ($command) {
+            return ! $command->isHidden();
+        })->groupBy(function ($command) {
             $nameParts = explode(':', $name = $command->getName());
 
             $this->width = max($this->width, mb_strlen($name));
