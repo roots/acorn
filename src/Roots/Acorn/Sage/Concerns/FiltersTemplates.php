@@ -55,7 +55,7 @@ trait FiltersTemplates
     public function filterThemeTemplates($_templates, $_theme, $_post, $post_type)
     {
         return collect($_templates)
-            ->merge($this->getTemplates($post_type))
+            ->merge($this->getTemplates($post_type, $_theme->load_textdomain() ? $_theme->get('TextDomain') : ''))
             ->unique()
             ->toArray();
     }
@@ -69,9 +69,10 @@ trait FiltersTemplates
      * @link https://github.com/WordPress/WordPress/blob/5.8.1/wp-includes/class-wp-theme.php#L1203-L1221
      *
      * @param string $post_type
+     * @param string $text_domain
      * @return string[]
      */
-    protected function getTemplates($post_type = '')
+    protected function getTemplates($post_type = '', $text_domain = '')
     {
         if ($templates = wp_cache_get('acorn/post_templates', 'themes')) {
             return $templates[$post_type] ?? [];
@@ -105,6 +106,14 @@ trait FiltersTemplates
                     }
 
                     $templates[$type][$file] = _cleanup_header_comment($header[1]);
+                }
+            }
+        }
+
+        if ($text_domain) {
+            foreach ($templates as $type => $files) {
+                foreach ($files as $file => $name) {
+                    $templates[$type][$file] = translate($name, $text_domain);
                 }
             }
         }
