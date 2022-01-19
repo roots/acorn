@@ -52,7 +52,7 @@ class Bundle implements BundleContract
 
         collect($this->bundle['css'] ?? [])
             ->each(function ($src, $handle) use ($callable) {
-                $callable("{$this->id}/{$handle}", "{$this->uri}/{$src}");
+                $callable("{$this->id}/{$handle}", $this->getUrl($src));
             });
 
         return $this;
@@ -75,7 +75,7 @@ class Bundle implements BundleContract
         collect($this->bundle['js'])
             ->reject('runtime')
             ->each(function ($src, $handle) use ($callable) {
-                $callable("{$this->id}/{$handle}", "{$this->uri}/{$src}", $this->dependencies());
+                $callable("{$this->id}/{$handle}", $this->getUrl($src), $this->dependencies());
             });
 
         return $this;
@@ -117,6 +117,15 @@ class Bundle implements BundleContract
         }
 
         return self::$runtimes[$runtime] = file_get_contents("{$this->path}/{$runtime}");
+    }
+
+    protected function getUrl($path)
+    {
+        if (parse_url($path, PHP_URL_HOST)) {
+            return $path;
+        }
+
+        return "{$this->uri}/{$path}";
     }
 
     protected function setRuntime()
