@@ -325,8 +325,8 @@ class Bootloader
             \Roots\Acorn\Bootstrap\SageFeatures::class,
             \Roots\Acorn\Bootstrap\LoadConfiguration::class,
             \Roots\Acorn\Bootstrap\HandleExceptions::class,
-            \Roots\Acorn\Bootstrap\RegisterProviders::class,
             \Roots\Acorn\Bootstrap\RegisterFacades::class,
+            \Roots\Acorn\Bootstrap\RegisterProviders::class,
             \Illuminate\Foundation\Bootstrap\BootProviders::class,
             \Roots\Acorn\Bootstrap\RegisterConsole::class,
         ];
