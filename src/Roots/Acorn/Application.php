@@ -26,7 +26,7 @@ class Application extends FoundationApplication
      *
      * @var string
      */
-    public const VERSION = 'Acorn 2.x (Laravel ' . parent::VERSION .  ')';
+    public const VERSION = '2.0.0';
 
     /**
      * The custom bootstrap path defined by the developer.
@@ -407,5 +407,15 @@ class Application extends FoundationApplication
         $this->namespace = trim($namespace, '\\') . '\\';
 
         return $this;
+    }
+
+    /**
+     * Get the version number of the application.
+     *
+     * @return string
+     */
+    public function version()
+    {
+        return 'Acorn ' . static::VERSION . ' (Laravel ' . parent::VERSION .  ')';
     }
 }
