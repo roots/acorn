@@ -25,6 +25,26 @@ class Kernel extends FoundationConsoleKernel
         \Illuminate\Foundation\Bootstrap\BootProviders::class,
     ];
 
+    /**
+     * Create a new console kernel instance.
+     *
+     * @param  \Illuminate\Contracts\Foundation\Application  $app
+     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
+     * @return void
+     */
+    public function __construct(Application $app, Dispatcher $events)
+    {
+        if (! defined('ARTISAN_BINARY')) {
+            define('ARTISAN_BINARY', dirname(__DIR__, 4) . '/bin/acorn');
+        }
+
+        $this->app = $app;
+        $this->events = $events;
+
+        $this->app->booted(function () {
+            $this->defineConsoleSchedule();
+        });
+    }
 
     /**
      * Register the Closure based commands for the application.
