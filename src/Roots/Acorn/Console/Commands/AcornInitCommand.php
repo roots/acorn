@@ -152,5 +152,4 @@ class AcornInitCommand extends Command
 
         return $this->files->isDirectory("{$this->base_path}/{$path}");
     }
-
 }
