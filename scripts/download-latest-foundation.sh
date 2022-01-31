@@ -12,7 +12,7 @@ SCRIPTS_DIR="$(cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P)"
 TEMP_DIR="${SCRIPTS_DIR}/.temp"
 FOUNDATION_DIR="${SCRIPTS_DIR}/../src/Illuminate/Foundation/"
 
-LARAVEL_VERSION=$(curl --silent "https://api.github.com/repos/laravel/framework/tags" | jq -r '.[].name' | sort | tail -1)
+LARAVEL_VERSION="${1:-"$(curl --silent "https://api.github.com/repos/laravel/framework/tags" | jq -r '.[].name' | sort | tail -1)"}"
 
 ARCHIVE_FILE="${LARAVEL_VERSION}.tar.gz"
 
