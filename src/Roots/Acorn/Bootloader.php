@@ -133,8 +133,8 @@ class Bootloader
         $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
 
         $status = $kernel->handle(
-            $input = new \Symfony\Component\Console\Input\ArgvInput,
-            new \Symfony\Component\Console\Output\ConsoleOutput
+            $input = new \Symfony\Component\Console\Input\ArgvInput(),
+            new \Symfony\Component\Console\Output\ConsoleOutput()
         );
 
         $kernel->terminate($input, $status);
@@ -168,7 +168,7 @@ class Bootloader
 
             $status = $kernel->handle(
                 $input = new \Symfony\Component\Console\Input\StringInput($command),
-                new \Symfony\Component\Console\Output\ConsoleOutput
+                new \Symfony\Component\Console\Output\ConsoleOutput()
             );
 
             $kernel->terminate($input, $status);
@@ -203,13 +203,14 @@ class Bootloader
     protected function bootWordPress(ApplicationContract $app)
     {
         $app->make(\Illuminate\Contracts\Http\Kernel::class)
-            ->handle(\Illuminate\Http\Request::capture()
-        );
+            ->handle(\Illuminate\Http\Request::capture());
     }
 
     public function getApplication(): ApplicationContract
     {
-        $this->app ??= new Application($this->basePath(), $this->usePaths());
+        if (! $this->app) {
+            $this->app = new Application($this->basePath(), $this->usePaths());
+        }
 
         $this->app->singleton(
             \Illuminate\Contracts\Http\Kernel::class,
@@ -256,7 +257,7 @@ class Bootloader
             return $this->basePath = dirname($app_path);
         }
 
-        if ($vendor_path = (new Filesystem)->closest(dirname(__DIR__, 4), 'composer.json')) {
+        if ($vendor_path = (new Filesystem())->closest(dirname(__DIR__, 4), 'composer.json')) {
             return $this->basePath = dirname($vendor_path);
         }
 
@@ -273,7 +274,7 @@ class Bootloader
         $paths = [];
 
         foreach (['app', 'config', 'storage', 'resources', 'public'] as $path) {
-            $paths[$path] ??= $this->normalizeApplicationPath($path, null);
+            $paths[$path] = $this->normalizeApplicationPath($path, null);
         }
 
         $paths['bootstrap'] = $this->normalizeApplicationPath($path, "{$paths['storage']}/framework");

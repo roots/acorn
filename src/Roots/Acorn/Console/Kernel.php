@@ -6,8 +6,6 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Foundation\Console\Kernel as FoundationConsoleKernel;
 use Roots\Acorn\Application;
 
-
-
 class Kernel extends FoundationConsoleKernel
 {
     /**

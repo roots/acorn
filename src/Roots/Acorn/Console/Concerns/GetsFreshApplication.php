@@ -15,7 +15,7 @@ trait GetsFreshApplication
     {
         $bootloaderClass = get_class(Bootloader::getInstance());
 
-        return (new $bootloaderClass)->getApplication();
+        return (new $bootloaderClass())->getApplication();
     }
 
     /**
