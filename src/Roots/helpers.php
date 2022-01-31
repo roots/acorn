@@ -2,6 +2,7 @@
 
 namespace Roots;
 
+use Illuminate\Contracts\Foundation\Application;
 use Roots\Acorn\Assets\Bundle;
 use Roots\Acorn\Assets\Contracts\Asset;
 use Illuminate\Contracts\View\Factory as ViewFactory;
@@ -30,18 +31,14 @@ function bundle(string $bundle): Bundle
 }
 
 /**
- * Initialize the Acorn bootloader.
+ * Instantiate the bootloader.
  *
- * @param  callable|null $callback
- * @return void
+ * @param Application $app
+ * @return Bootloader
  */
-function bootloader($callback = null)
+function bootloader(?Application $app = null): Bootloader
 {
-    $bootloader = Bootloader::getInstance();
-
-    if (is_callable($callback)) {
-        $bootloader->call($callback);
-    }
+    return Bootloader::getInstance($app);
 }
 
 /**
