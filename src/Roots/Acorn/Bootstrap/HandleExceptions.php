@@ -26,11 +26,6 @@ class HandleExceptions extends FoundationHandleExceptionsBootstrapper
             return;
         }
 
-        $this->app->singleton(
-            \Illuminate\Contracts\Debug\ExceptionHandler::class,
-            \Roots\Acorn\Exceptions\Handler::class
-        );
-
         set_error_handler([$this, 'handleError']);
         set_exception_handler([$this, 'handleException']);
         register_shutdown_function([$this, 'handleShutdown']);

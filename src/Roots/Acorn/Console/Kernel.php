@@ -2,62 +2,29 @@
 
 namespace Roots\Acorn\Console;
 
-use Illuminate\Foundation\Console\ClearCompiledCommand;
-use Illuminate\Foundation\Console\ComponentMakeCommand;
-use Illuminate\Foundation\Console\ConfigClearCommand;
-use Illuminate\Foundation\Console\ConsoleMakeCommand;
-use Illuminate\Foundation\Console\EnvironmentCommand;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Foundation\Console\Kernel as FoundationConsoleKernel;
-use Illuminate\Foundation\Console\PackageDiscoverCommand;
-use Illuminate\Foundation\Console\ProviderMakeCommand;
-use Illuminate\Foundation\Console\VendorPublishCommand;
-use Illuminate\Foundation\Console\ViewCacheCommand;
-use Illuminate\Foundation\Console\ViewClearCommand;
 use Roots\Acorn\Application;
-use Roots\Acorn\Console\Commands\ComposerMakeCommand;
-use Roots\Acorn\Console\Commands\ConfigCacheCommand;
-use Roots\Acorn\Console\Commands\OptimizeClearCommand;
-use Roots\Acorn\Console\Commands\OptimizeCommand;
-use Roots\Acorn\Console\Commands\SummaryCommand;
+
+
 
 class Kernel extends FoundationConsoleKernel
 {
-    /**
-     * The application implementation.
-     *
-     * @var Application
-     */
-    protected $app;
-
-    /**
-     * The Console commands provided by the application.
-     *
-     * @var array
-     */
-    protected $commands = [
-        ClearCompiledCommand::class,
-        ComponentMakeCommand::class,
-        ComposerMakeCommand::class,
-        ConfigCacheCommand::class,
-        ConfigClearCommand::class,
-        ConsoleMakeCommand::class,
-        EnvironmentCommand::class,
-        OptimizeClearCommand::class,
-        OptimizeCommand::class,
-        PackageDiscoverCommand::class,
-        ProviderMakeCommand::class,
-        SummaryCommand::class,
-        VendorPublishCommand::class,
-        ViewCacheCommand::class,
-        ViewClearCommand::class,
-    ];
-
     /**
      * The bootstrap classes for the application.
      *
      * @var array
      */
-    protected $bootstrappers = [];
+    protected $bootstrappers = [
+        \Roots\Acorn\Bootstrap\SageFeatures::class,
+        \Roots\Acorn\Bootstrap\LoadConfiguration::class,
+        \Roots\Acorn\Bootstrap\HandleExceptions::class,
+        \Roots\Acorn\Bootstrap\RegisterFacades::class,
+        \Illuminate\Foundation\Bootstrap\SetRequestForConsole::class,
+        \Roots\Acorn\Bootstrap\RegisterProviders::class,
+        \Illuminate\Foundation\Bootstrap\BootProviders::class,
+    ];
+
 
     /**
      * Register the Closure based commands for the application.
