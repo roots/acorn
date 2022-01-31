@@ -18,6 +18,7 @@ class OptimizeCommand extends FoundationOptimizeCommand
     {
         $this->gracefulCall('config:cache');
         $this->gracefulCall('route:cache');
+        $this->gracefulCall('acorn:dump-bootloader');
 
         $this->info('Files cached successfully!');
     }
