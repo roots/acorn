@@ -121,10 +121,15 @@ class Bundle implements BundleContract
 
     protected function isBudRequest()
     {
-        if (!$path = realpath("{$this->path}/hmr.json")) return false;
-        if (!$header = request()->header('x-bud-dev-origin')) return false;
+        if (
+            !$path = realpath("{$this->path}/hmr.json") ||
+            !$header = request()->header('x-bud-dev-origin')
+        ) {
+            return false;
+        }
 
         $dev = json_decode(file_get_contents($path))->dev;
+
         return str_contains($header, $dev->hostname);
     }
 
@@ -134,7 +139,7 @@ class Bundle implements BundleContract
             return $path;
         }
 
-        if($this->isBudRequest()) {
+        if ($this->isBudRequest()) {
             return join([$this->uri, $path]);
         }
     }
