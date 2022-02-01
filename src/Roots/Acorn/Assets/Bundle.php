@@ -7,8 +7,6 @@ use Illuminate\Support\Collection;
 use Roots\Acorn\Assets\Concerns\Enqueuable;
 use Roots\Acorn\Assets\Contracts\Bundle as BundleContract;
 
-use function request;
-
 class Bundle implements BundleContract
 {
     use Enqueuable;
@@ -121,28 +119,10 @@ class Bundle implements BundleContract
         return self::$runtimes[$runtime] = file_get_contents("{$this->path}/{$runtime}");
     }
 
-    protected function isBudRequest()
-    {
-        !$path = realpath("{$this->path}/hmr.json");
-        !$header = request()->header('x-bud-dev-origin');
-
-        if (!$path || !$header) {
-            return false;
-        }
-
-        $dev = json_decode(file_get_contents($path))->dev;
-
-        return str_contains($header, $dev->hostname);
-    }
-
     protected function getUrl($path)
     {
         if (parse_url($path, PHP_URL_HOST)) {
             return $path;
-        }
-
-        if ($this->isBudRequest()) {
-            return join([$this->uri, $path]);
         }
 
         return "{$this->uri}/${path}";

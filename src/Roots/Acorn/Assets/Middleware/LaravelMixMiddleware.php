@@ -1,11 +1,26 @@
 <?php
 
-namespace Roots\Acorn\Assets\Concerns;
+namespace Roots\Acorn\Assets\Middleware;
 
 use Illuminate\Support\Str;
 
-trait Mixable
+class LaravelMixMiddleware
 {
+    /**
+     * Handle the manifest config.
+     *
+     * @param array $config
+     * @return array
+     */
+    public function handle($config)
+    {
+        if ($url = $this->getMixHotUri($config['path'])) {
+            $config['url'] = $url;
+        }
+
+        return $config;
+    }
+
     /**
      * Get the URI to a Mix hot module replacement server.
      *
