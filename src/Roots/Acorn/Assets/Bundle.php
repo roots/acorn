@@ -7,6 +7,8 @@ use Illuminate\Support\Collection;
 use Roots\Acorn\Assets\Concerns\Enqueuable;
 use Roots\Acorn\Assets\Contracts\Bundle as BundleContract;
 
+use function \request;
+
 class Bundle implements BundleContract
 {
     use Enqueuable;
@@ -121,10 +123,10 @@ class Bundle implements BundleContract
 
     protected function isBudRequest()
     {
-        if (
-            !$path = realpath("{$this->path}/hmr.json") ||
-            !$header = request()->header('x-bud-dev-origin')
-        ) {
+        !$path = realpath("{$this->path}/hmr.json");
+        !$header = request()->header('x-bud-dev-origin');
+
+        if (!$path || !$header) {
             return false;
         }
 
@@ -142,6 +144,8 @@ class Bundle implements BundleContract
         if ($this->isBudRequest()) {
             return join([$this->uri, $path]);
         }
+
+        return "{$this->uri}/${path}";
     }
 
     protected function setRuntime()
