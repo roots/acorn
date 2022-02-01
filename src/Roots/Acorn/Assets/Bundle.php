@@ -119,13 +119,24 @@ class Bundle implements BundleContract
         return self::$runtimes[$runtime] = file_get_contents("{$this->path}/{$runtime}");
     }
 
+    protected function isBudRequest()
+    {
+        if (!$path = realpath("{$this->path}/hmr.json")) return false;
+        if (!$header = request()->header('x-bud-dev-origin')) return false;
+
+        $dev = json_decode(file_get_contents($path))->dev;
+        return str_contains($header, $dev->hostname);
+    }
+
     protected function getUrl($path)
     {
         if (parse_url($path, PHP_URL_HOST)) {
             return $path;
         }
 
-        return "{$this->uri}/{$path}";
+        if($this->isBudRequest()) {
+            return join([$this->uri, $path]);
+        }
     }
 
     protected function setRuntime()
