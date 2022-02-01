@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 use Roots\Acorn\Assets\Concerns\Enqueuable;
 use Roots\Acorn\Assets\Contracts\Bundle as BundleContract;
 
-use function \request;
+use function request;
 
 class Bundle implements BundleContract
 {
