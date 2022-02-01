@@ -206,6 +206,11 @@ class Bootloader
             ->handle(\Illuminate\Http\Request::capture());
     }
 
+    /**
+     * Get Application instance.
+     *
+     * @return ApplicationContract
+     */
     public function getApplication(): ApplicationContract
     {
         if (! $this->app) {

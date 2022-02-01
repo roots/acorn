@@ -2,6 +2,7 @@
 
 namespace Roots\Acorn\Console\Concerns;
 
+use Illuminate\Contracts\Foundation\Application;
 use Roots\Acorn\Bootloader;
 
 trait GetsFreshApplication
@@ -14,8 +15,11 @@ trait GetsFreshApplication
     protected function getFreshApplication()
     {
         $bootloaderClass = get_class(Bootloader::getInstance());
+        $applicationClass = get_class($app = Bootloader::getInstance()->getApplication());
 
-        return (new $bootloaderClass())->getApplication();
+        return (new $bootloaderClass(new $applicationClass(
+            $app->basePath(), $this->getApplicationPaths($app)
+        )))->getApplication();
     }
 
     /**
@@ -25,6 +29,30 @@ trait GetsFreshApplication
      */
     protected function getFreshConfiguration()
     {
-        return $this->getFreshApplication()->make('config')->all();
+        $app = $this->getFreshApplication();
+
+        $app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+
+        return $app->make('config')->all();
+    }
+
+    /**
+     * Get all of the configured paths for the Application.
+     *
+     * @param Application $app
+     * @return array
+     */
+    protected function getApplicationPaths(Application $app)
+    {
+        return [
+            'app' => method_exists($app, 'path') ? $app->path() : $app->make('path'),
+            'lang' => method_exists($app, 'langPath') ? $app->langPath() : $app->make('path.lang'),
+            'config' => $app->configPath(),
+            'public' => method_exists($app, 'publicPath') ? $app->publicPath() : $app->make('path.public'),
+            'storage' => $app->storagePath(),
+            'database' => $app->databasePath(),
+            'resources' => $app->resourcePath(),
+            'bootstrap' => $app->bootstrapPath(),
+        ];
     }
 }
