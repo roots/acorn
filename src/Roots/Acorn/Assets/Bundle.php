@@ -125,7 +125,7 @@ class Bundle implements BundleContract
             return $path;
         }
 
-        return "{$this->uri}/${path}";
+        return "{$this->uri}/{$path}";
     }
 
     protected function setRuntime()
