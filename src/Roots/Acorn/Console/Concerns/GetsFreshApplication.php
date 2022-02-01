@@ -18,7 +18,8 @@ trait GetsFreshApplication
         $applicationClass = get_class($app = Bootloader::getInstance()->getApplication());
 
         return (new $bootloaderClass(new $applicationClass(
-            $app->basePath(), $this->getApplicationPaths($app)
+            $app->basePath(),
+            $this->getApplicationPaths($app)
         )))->getApplication();
     }
 
