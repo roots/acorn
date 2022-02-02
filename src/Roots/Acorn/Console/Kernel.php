@@ -2,12 +2,34 @@
 
 namespace Roots\Acorn\Console;
 
-use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Foundation\Console\Kernel as FoundationConsoleKernel;
-use Roots\Acorn\Application;
 
 class Kernel extends FoundationConsoleKernel
 {
+    /**
+     * The Console commands provided by the application.
+     *
+     * @var array
+     */
+    protected $commands = [
+        \Illuminate\Foundation\Console\ClearCompiledCommand::class,
+        \Illuminate\Foundation\Console\ComponentMakeCommand::class,
+        \Illuminate\Foundation\Console\ConfigClearCommand::class,
+        \Illuminate\Foundation\Console\ConsoleMakeCommand::class,
+        \Illuminate\Foundation\Console\EnvironmentCommand::class,
+        \Illuminate\Foundation\Console\PackageDiscoverCommand::class,
+        \Illuminate\Foundation\Console\ProviderMakeCommand::class,
+        \Illuminate\Foundation\Console\VendorPublishCommand::class,
+        \Illuminate\Foundation\Console\ViewCacheCommand::class,
+        \Illuminate\Foundation\Console\ViewClearCommand::class,
+        \Roots\Acorn\Console\Commands\ComposerMakeCommand::class,
+        \Roots\Acorn\Console\Commands\ConfigCacheCommand::class,
+        \Roots\Acorn\Console\Commands\OptimizeClearCommand::class,
+        \Roots\Acorn\Console\Commands\OptimizeCommand::class,
+        \Roots\Acorn\Console\Commands\SummaryCommand::class,
+        \Roots\Acorn\Console\Commands\VendorPublishCommand::class,
+    ];
+
     /**
      * The bootstrap classes for the application.
      *
@@ -22,7 +44,6 @@ class Kernel extends FoundationConsoleKernel
         \Roots\Acorn\Bootstrap\RegisterProviders::class,
         \Illuminate\Foundation\Bootstrap\BootProviders::class,
     ];
-
 
     /**
      * Register the Closure based commands for the application.
