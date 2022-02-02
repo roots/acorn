@@ -48,20 +48,27 @@ class AcornDumpBootloaderCommand extends Command
         $bootloaderClass = get_class(Bootloader::getInstance());
         $applicationClass = get_class(Bootloader::getInstance()->getApplication());
 
-        $app = (new $bootloaderClass)->getApplication();
+        $app = (new $bootloaderClass())->getApplication();
 
         $this->files->put($file, $this->eject($app, $bootloaderClass, $applicationClass), true);
     }
 
     protected function eject(Application $app, $bootloaderClass, $applicationClass)
     {
-        return '<?php '
-            . PHP_EOL
-            . $this->frontmatter($app)
-            . PHP_EOL
-            . "(new \\{$bootloaderClass}(new \\{$applicationClass}('{$app->basePath()}',"
-            . var_export($this->getApplicationPaths($app), true)
-            . ')))->boot();';
+        $use_paths = var_export($this->getApplicationPaths($app), true);
+
+        return <<<PHP_CODE
+        <?php
+
+        {$this->frontmatter($app)}
+
+        try {
+            (new \\{$bootloaderClass}(new \\{$applicationClass}('{$app->basePath()}', {$use_paths})))->boot();
+        } catch (\\Throwable \$e) {
+            \\Roots\\bootloader()->boot();
+            report(new \\Exception("Acorn recovered from a boot failure. Acorn failed to boot for an unknown reason. Please run `wp acorn acorn:dump-bootloader` or delete [" . __FILE__ . "].", 0, \$e));
+        }
+        PHP_CODE;
     }
 
     protected function frontmatter(Application $app)
