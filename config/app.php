@@ -41,7 +41,7 @@ return [
     |
     */
 
-    'debug' => (bool) WP_DEBUG_DISPLAY,
+    'debug' => WP_DEBUG && WP_DEBUG_DISPLAY,
 
     /*
     |--------------------------------------------------------------------------
