@@ -95,7 +95,9 @@ class Bootloader
      */
     public function boot($callback = null)
     {
-        define('LARAVEL_START', microtime(true));
+        if (! defined('LARAVEL_START')) {
+            define('LARAVEL_START', microtime(true));
+        }
 
         $app = $this->getApplication();
 
