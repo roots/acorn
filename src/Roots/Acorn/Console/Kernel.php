@@ -27,7 +27,6 @@ class Kernel extends FoundationConsoleKernel
         \Roots\Acorn\Console\Commands\OptimizeClearCommand::class,
         \Roots\Acorn\Console\Commands\OptimizeCommand::class,
         \Roots\Acorn\Console\Commands\SummaryCommand::class,
-        \Roots\Acorn\Console\Commands\VendorPublishCommand::class,
     ];
 
     /**
