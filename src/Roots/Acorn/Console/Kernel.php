@@ -10,15 +10,16 @@ use Illuminate\Foundation\Console\EnvironmentCommand;
 use Illuminate\Foundation\Console\Kernel as FoundationConsoleKernel;
 use Illuminate\Foundation\Console\PackageDiscoverCommand;
 use Illuminate\Foundation\Console\ProviderMakeCommand;
-use Illuminate\Foundation\Console\VendorPublishCommand;
 use Illuminate\Foundation\Console\ViewCacheCommand;
 use Illuminate\Foundation\Console\ViewClearCommand;
 use Roots\Acorn\Application;
+use Roots\Acorn\Console\Commands\AcornInitCommand;
 use Roots\Acorn\Console\Commands\ComposerMakeCommand;
 use Roots\Acorn\Console\Commands\ConfigCacheCommand;
 use Roots\Acorn\Console\Commands\OptimizeClearCommand;
 use Roots\Acorn\Console\Commands\OptimizeCommand;
 use Roots\Acorn\Console\Commands\SummaryCommand;
+use Roots\Acorn\Console\Commands\VendorPublishCommand;
 
 class Kernel extends FoundationConsoleKernel
 {
@@ -35,6 +36,7 @@ class Kernel extends FoundationConsoleKernel
      * @var array
      */
     protected $commands = [
+        AcornInitCommand::class,
         ClearCompiledCommand::class,
         ComponentMakeCommand::class,
         ComposerMakeCommand::class,
