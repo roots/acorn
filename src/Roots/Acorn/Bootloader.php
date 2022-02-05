@@ -52,6 +52,7 @@ class Bootloader
     /**
      * Get the Bootloader instance
      *
+     * @param \Illuminate\Contracts\Foundation\Application $app
      * @return static
      */
     public static function getInstance(?ApplicationContract $app = null)
@@ -350,7 +351,13 @@ class Bootloader
             ->first();
     }
 
-    protected function fallbackPath($path): string
+    /**
+     * Fallbacks for path types.
+     *
+     * @param string $path
+     * @return string
+     */
+    protected function fallbackPath(string $path): string
     {
         if ($path === 'storage') {
             return $this->fallbackStoragePath();
@@ -367,6 +374,11 @@ class Bootloader
         return dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . $path;
     }
 
+    /**
+     * Ensure that all of the storage directories exist.
+     *
+     * @return string
+     */
     protected function fallbackStoragePath()
     {
         $files = new Filesystem();
