@@ -2,9 +2,8 @@
 
 namespace Roots\Acorn\Providers;
 
-use Illuminate\Foundation\Events\VendorTagPublished;
+use Illuminate\Console\Events\CommandFinished;
 use Roots\Acorn\Filesystem\Filesystem;
-use Roots\Acorn\ServiceProvider;
 
 class AcornServiceProvider extends ServiceProvider
 {
@@ -56,6 +55,7 @@ class AcornServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->registerPublishables();
+            $this->registerPostInitEvent();
         }
     }
 
@@ -81,8 +81,6 @@ class AcornServiceProvider extends ServiceProvider
     protected function registerPublishables()
     {
         $this->publishConfigs();
-        $this->publishResources();
-        $this->publishStorage();
     }
 
     /**
@@ -95,61 +93,7 @@ class AcornServiceProvider extends ServiceProvider
         foreach ($this->filterPublishableConfigs() as $config) {
             $this->publishes([
                 dirname(__DIR__, 4) . "/config/{$config}.php" => base_path('config') . "/{$config}.php"
-            ], 'acorn:init');
-
-            if ($this->app->configPath() === dirname(__DIR__, 4) . DIRECTORY_SEPARATOR . 'config') {
-                continue;
-            }
-
-            $this->publishes([
-                dirname(__DIR__, 4) . "/config/{$config}.php" => config_path("{$config}.php")
-            ], "acorn:config:{$config}");
-
-            $this->publishes([
-                dirname(__DIR__, 4) . "/config/{$config}.php" => config_path("{$config}.php")
-            ], "acorn:config");
-        }
-    }
-
-    /**
-     * Publish application resources.
-     *
-     * @return void
-     */
-    protected function publishResources()
-    {
-        if ($this->app->resourcePath() === dirname(__DIR__, 4) . DIRECTORY_SEPARATOR . 'resources') {
-            $this->publishes([
-                dirname(__DIR__, 4) . "/resources" => base_path('resources')
-            ], 'acorn:init');
-
-            return;
-        }
-    }
-
-    /**
-     * Publish application storage.
-     *
-     * @return void
-     */
-    protected function publishStorage()
-    {
-        if ($this->app->storagePath() === WP_CONTENT_DIR . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'acorn') {
-            $this->app->make('events')->listen(function (VendorTagPublished $event) {
-                if ($event->tag !== 'acorn:init') {
-                    return;
-                }
-
-                $files = new Filesystem();
-
-                $files->deleteDirectory(WP_CONTENT_DIR . '/cache/acorn');
-            });
-
-            $this->publishes([
-                dirname(__DIR__, 4) . "/storage" => base_path('storage')
-            ], 'acorn:init');
-
-            return;
+            ], 'acorn');
         }
     }
 
@@ -165,5 +109,27 @@ class AcornServiceProvider extends ServiceProvider
         }, ARRAY_FILTER_USE_KEY);
 
         return array_unique(array_merge($this->configs, array_values($configs)));
+    }
+
+    /**
+     * Remove zeroconf storage directory after running acorn:init.
+     *
+     * @return void
+     */
+    protected function registerPostInitEvent()
+    {
+        $this->app->make('events')->listen(function (CommandFinished $event) {
+            if ($event->command !== 'acorn:init') {
+                return;
+            }
+
+            if (! is_dir(base_path('storage'))) {
+                return;
+            }
+
+            $files = new Filesystem();
+
+            $files->deleteDirectory(WP_CONTENT_DIR . '/cache/acorn');
+        });
     }
 }
