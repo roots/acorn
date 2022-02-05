@@ -304,11 +304,11 @@ class Bootloader
 
     protected function fallbackStoragePath()
     {
-        if (! is_dir($path = WP_CONTENT_DIR . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'acorn')) {
-            $files = new Filesystem();
-            $files->makeDirectory($path, 0755, true);
-            $files->copyDirectory(dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . 'storage', $path);
-        }
+        $files = new Filesystem();
+        $path = WP_CONTENT_DIR . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'acorn';
+        $files->ensureDirectoryExists($path . DIRECTORY_SEPARATOR . 'framework' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'data', 0755, true);
+        $files->ensureDirectoryExists($path . DIRECTORY_SEPARATOR . 'framework' . DIRECTORY_SEPARATOR . 'views', 0755, true);
+        $files->ensureDirectoryExists($path . DIRECTORY_SEPARATOR . 'logs', 0755, true);
 
         return $path;
     }
