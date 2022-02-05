@@ -3,6 +3,7 @@
 namespace Roots\Acorn\Providers;
 
 use Illuminate\Console\Events\CommandFinished;
+use Illuminate\Support\ServiceProvider;
 use Roots\Acorn\Filesystem\Filesystem;
 
 class AcornServiceProvider extends ServiceProvider
