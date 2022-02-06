@@ -14,7 +14,7 @@
   $composer = json_decode(file_get_contents($composer_path), true);
 
   define('WP_USE_THEMES', false);
-  require_once "{$root_path}/{$composer['extras']['wordpress-install-dir']}/wp-blog-header.php";
+  require_once "{$root_path}/{$composer['extra']['wordpress-install-dir']}/wp-blog-header.php";
 
   Roots\Acorn\Bootloader::getInstance()->boot();
 })();
