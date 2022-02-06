@@ -3,6 +3,7 @@
 namespace Roots\Acorn\Bootstrap;
 
 use Illuminate\Config\Repository;
+use Illuminate\Contracts\Config\Repository as RepositoryContract;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Bootstrap\LoadConfiguration as FoundationLoadConfiguration;
 
@@ -42,5 +43,27 @@ class LoadConfiguration extends FoundationLoadConfiguration
         $app->detectEnvironment(function () use ($config) {
             return $config->get('app.env', 'production');
         });
+    }
+
+    /**
+     * Load the configuration items from all of the files.
+     *
+     * Fallback to internal app config.
+     *
+     * @param  \Illuminate\Contracts\Foundation\Application  $app
+     * @param  \Illuminate\Contracts\Config\Repository  $repository
+     * @return void
+     */
+    protected function loadConfigurationFiles(Application $app, RepositoryContract $repository)
+    {
+        $files = $this->getConfigurationFiles($app);
+
+        if (! isset($files['app'])) {
+            $repository->set('app', require dirname(__DIR__, 4) . '/config/app.php');
+        }
+
+        foreach ($files as $key => $path) {
+            $repository->set($key, require $path);
+        }
     }
 }

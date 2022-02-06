@@ -27,7 +27,7 @@ class Application extends FoundationApplication
      *
      * @var string
      */
-    public const VERSION = 'Acorn 2.x (Laravel ' . parent::VERSION .  ')';
+    public const VERSION = '2.0.0';
 
     /**
      * The custom bootstrap path defined by the developer.
@@ -121,7 +121,7 @@ class Application extends FoundationApplication
                 throw new Exception("The {$path_type} path type is not supported.");
             }
 
-            if ($path_type !== 'public' && (! is_dir($path) || ! is_readable($path))) {
+            if (! in_array($path_type, ['public', 'lang']) && (! is_dir($path) || ! is_readable($path))) {
                 throw new Exception("The {$path} directory must be present.");
             }
 
@@ -408,5 +408,15 @@ class Application extends FoundationApplication
         $this->namespace = trim($namespace, '\\') . '\\';
 
         return $this;
+    }
+
+    /**
+     * Get the version number of the application.
+     *
+     * @return string
+     */
+    public function version()
+    {
+        return 'Acorn ' . static::VERSION . ' (Laravel ' . parent::VERSION .  ')';
     }
 }

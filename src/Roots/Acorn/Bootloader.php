@@ -52,6 +52,7 @@ class Bootloader
     /**
      * Get the Bootloader instance
      *
+     * @param \Illuminate\Contracts\Foundation\Application $app
      * @return static
      */
     public static function getInstance(?ApplicationContract $app = null)
@@ -95,7 +96,9 @@ class Bootloader
      */
     public function boot($callback = null)
     {
-        define('LARAVEL_START', microtime(true));
+        if (! defined('LARAVEL_START')) {
+            define('LARAVEL_START', microtime(true));
+        }
 
         $app = $this->getApplication();
 
@@ -133,8 +136,8 @@ class Bootloader
         $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
 
         $status = $kernel->handle(
-            $input = new \Symfony\Component\Console\Input\ArgvInput,
-            new \Symfony\Component\Console\Output\ConsoleOutput
+            $input = new \Symfony\Component\Console\Input\ArgvInput(),
+            new \Symfony\Component\Console\Output\ConsoleOutput()
         );
 
         $kernel->terminate($input, $status);
@@ -168,7 +171,7 @@ class Bootloader
 
             $status = $kernel->handle(
                 $input = new \Symfony\Component\Console\Input\StringInput($command),
-                new \Symfony\Component\Console\Output\ConsoleOutput
+                new \Symfony\Component\Console\Output\ConsoleOutput()
             );
 
             $kernel->terminate($input, $status);
@@ -203,13 +206,20 @@ class Bootloader
     protected function bootWordPress(ApplicationContract $app)
     {
         $app->make(\Illuminate\Contracts\Http\Kernel::class)
-            ->handle(\Illuminate\Http\Request::capture()
-        );
+            ->handle(\Illuminate\Http\Request::capture());
     }
 
+    /**
+     * Get Application instance.
+     *
+     * @param ApplicationContract $app
+     * @return void
+     */
     public function getApplication(): ApplicationContract
     {
-        $this->app ??= new Application($this->basePath(), $this->usePaths());
+        if (! $this->app) {
+            $this->app = new Application($this->basePath(), $this->usePaths());
+        }
 
         $this->app->singleton(
             \Illuminate\Contracts\Http\Kernel::class,
@@ -256,7 +266,7 @@ class Bootloader
             return $this->basePath = dirname($app_path);
         }
 
-        if ($vendor_path = (new Filesystem)->closest(dirname(__DIR__, 4), 'composer.json')) {
+        if ($vendor_path = (new Filesystem())->closest(dirname(__DIR__, 4), 'composer.json')) {
             return $this->basePath = dirname($vendor_path);
         }
 
@@ -273,7 +283,7 @@ class Bootloader
         $paths = [];
 
         foreach (['app', 'config', 'storage', 'resources', 'public'] as $path) {
-            $paths[$path] ??= $this->normalizeApplicationPath($path, null);
+            $paths[$path] = $this->normalizeApplicationPath($path, null);
         }
 
         $paths['bootstrap'] = $this->normalizeApplicationPath($path, "{$paths['storage']}/framework");
@@ -342,7 +352,13 @@ class Bootloader
             ->first();
     }
 
-    protected function fallbackPath($path): string
+    /**
+     * Fallbacks for path types.
+     *
+     * @param string $path
+     * @return string
+     */
+    protected function fallbackPath(string $path): string
     {
         if ($path === 'storage') {
             return $this->fallbackStoragePath();
@@ -359,6 +375,11 @@ class Bootloader
         return dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . $path;
     }
 
+    /**
+     * Ensure that all of the storage directories exist.
+     *
+     * @return string
+     */
     protected function fallbackStoragePath()
     {
         $files = new Filesystem();

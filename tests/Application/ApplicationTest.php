@@ -34,7 +34,7 @@ it('rejects invalid custom paths', function () {
 
     $app->usePaths([
         'app' => $this->fixture('use_paths/app'),
-        'lang' => __DIR__ . '/this/does/not/exist',
+        'bootstrap' => __DIR__ . '/this/does/not/exist',
     ]);
 })->throws(Exception::class);
 
@@ -44,6 +44,15 @@ it('allows invalid public path', function () {
     $app->usePaths([
         'app' => $this->fixture('use_paths/app'),
         'public' => __DIR__ . '/this/does/not/exist',
+    ]);
+})->not->throws(Exception::class);
+
+it('allows invalid lang path', function () {
+    $app = new Application();
+
+    $app->usePaths([
+        'app' => $this->fixture('use_paths/app'),
+        'lang' => __DIR__ . '/this/does/not/exist',
     ]);
 })->not->throws(Exception::class);
 
