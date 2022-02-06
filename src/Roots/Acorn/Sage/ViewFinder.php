@@ -29,11 +29,11 @@ class ViewFinder
      */
     protected $path;
 
-    public function __construct(FileViewFinder $finder, Filesystem $files, $path = STYLESHEETPATH)
+    public function __construct(FileViewFinder $finder, Filesystem $files, $path = '')
     {
         $this->finder = $finder;
         $this->files = $files;
-        $this->path = realpath($path) ?: $path;
+        $this->path = realpath($path) ?: get_theme_file_path();
     }
 
     /**

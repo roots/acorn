@@ -3,15 +3,11 @@
 namespace Roots\Acorn;
 
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
-use InvalidArgumentException;
-use Roots\Acorn\Application;
+use Illuminate\Support\Env;
+use Illuminate\Support\Str;
 use Roots\Acorn\Filesystem\Filesystem;
 
-use function Roots\add_filters;
-use function apply_filters;
-use function did_action;
-use function doing_action;
-use function locate_template;
+use function get_theme_file_path;
 
 class Bootloader
 {
@@ -30,34 +26,6 @@ class Bootloader
     protected $app;
 
     /**
-     * Application to be instantiated at boot time
-     *
-     * @var string
-     */
-    protected $appClassName;
-
-    /**
-     * WordPress hooks that will boot application
-     *
-     * @var string[]
-     */
-    protected $hooks;
-
-    /**
-     * Callbacks to be run when application boots
-     *
-     * @var callable[]
-     */
-    protected $queue = [];
-
-    /**
-     * Signals that application is ready to boot
-     *
-     * @var bool
-     */
-    protected $ready = false;
-
-    /**
      * Base path for the application
      *
      * @var string
@@ -65,11 +33,18 @@ class Bootloader
     protected $basePath;
 
     /**
+     * The prefixes of absolute cache paths for use during normalization.
+     *
+     * @var string[]
+     */
+    protected $absoluteApplicationPathPrefixes = ['/', '\\'];
+
+    /**
      * Set the Bootloader instance
      *
      * @param Bootloader $bootloader
      */
-    public static function setInstance(self $bootloader)
+    public static function setInstance(?self $bootloader)
     {
         static::$instance = $bootloader;
     }
@@ -77,37 +52,26 @@ class Bootloader
     /**
      * Get the Bootloader instance
      *
+     * @param \Illuminate\Contracts\Foundation\Application $app
      * @return static
      */
-    public static function getInstance()
+    public static function getInstance(?ApplicationContract $app = null)
     {
         if (static::$instance) {
             return static::$instance;
         }
 
-        return static::$instance = new static();
+        return static::$instance = new static($app);
     }
 
     /**
-     * Create a new bootloader instance
+     * Create a new bootloader instance.
      *
-     * @param  string[] $hooks WordPress hooks to boot application
-     * @param  string   $appClassName Application class
+     * @param \Illuminate\Contracts\Foundation\Application $app
      */
-    public function __construct(
-        $hooks = ['after_setup_theme', 'rest_api_init'],
-        string $appClassName = Application::class
-    ) {
-        if (! in_array(ApplicationContract::class, class_implements($appClassName, true) ?? [])) {
-            throw new InvalidArgumentException(
-                sprintf('Second parameter must be class name of type [%s]', ApplicationContract::class)
-            );
-        }
-
-        $this->appClassName = $appClassName;
-        $this->hooks = (array) $hooks;
-
-        add_filters($this->hooks, $this, 5);
+    public function __construct(?ApplicationContract $app = null)
+    {
+        $this->app = $app;
 
         if (! static::$instance) {
             static::$instance = $this;
@@ -115,99 +79,163 @@ class Bootloader
     }
 
     /**
-     * Register a service provider with the application.
-     *
-     * @param  \Illuminate\Support\ServiceProvider|string  $provider
-     * @param  bool  $force
-     * @return \Roots\Acorn\Bootloader
-     */
-    public function register($provider, $force = false): Bootloader
-    {
-        return $this->call(function (ApplicationContract $app) use ($provider, $force) {
-            $app->register($provider, $force);
-        });
-    }
-
-    /**
-     * Enqueues callback to be loaded with application
-     *
-     * @param  callable $callback
-     * @return static
-     */
-    public function call(callable $callback): Bootloader
-    {
-        if (! $this->ready()) {
-            $this->queue[] = $callback;
-
-            return $this;
-        }
-
-        $this->app()->call($callback, [$this->app()]);
-
-        return $this;
-    }
-
-    /**
-     * Determines whether the application is ready to boot
-     *
-     * @return bool
-     */
-    public function ready(): bool
-    {
-        if ($this->ready) {
-            return true;
-        }
-
-        foreach ($this->hooks as $hook) {
-            if (did_action($hook) || doing_action($hook)) {
-                return $this->ready = true;
-            }
-        }
-
-        return $this->ready = !! apply_filters('acorn/ready', false);
-    }
-
-    /**
-     * Boot the Application
+     * Boot the Application.
      *
      * @return void
      */
     public function __invoke()
     {
-        if (! $this->ready()) {
-            return;
-        }
-
-        $this->app = $this->app();
-
-        foreach ($this->queue as $callback) {
-            $this->app->call($callback);
-        }
-
-        $this->queue = [];
+        $this->boot();
     }
 
     /**
-     * Get application instance
+     * Boot the Application.
+     *
+     * @param callable $callback
+     * @return void
+     */
+    public function boot($callback = null)
+    {
+        if (! defined('LARAVEL_START')) {
+            define('LARAVEL_START', microtime(true));
+        }
+
+        $app = $this->getApplication();
+
+        if ($callback) {
+            return $callback($app);
+        }
+
+        if ($app->hasBeenBootstrapped()) {
+            return;
+        }
+
+        if ($app->runningInConsole()) {
+            return class_exists('WP_CLI') ? $this->bootWpCli($app) : $this->bootConsole($app);
+        }
+
+        if (Env::get('ACORN_ENABLE_EXPIRIMENTAL_ROUTER')) {
+            $app->singleton(
+                \Illuminate\Contracts\Http\Kernel::class,
+                \Roots\Acorn\Http\Kernel::class
+            );
+            return $this->bootHttp($app);
+        }
+
+        return $this->bootWordPress($app);
+    }
+
+    /**
+     * Boot the Application for console.
+     *
+     * @param ApplicationContract $app
+     * @return void
+     */
+    protected function bootConsole(ApplicationContract $app)
+    {
+        $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
+
+        $status = $kernel->handle(
+            $input = new \Symfony\Component\Console\Input\ArgvInput(),
+            new \Symfony\Component\Console\Output\ConsoleOutput()
+        );
+
+        $kernel->terminate($input, $status);
+        exit($status);
+    }
+
+    /**
+     * Boot the Application for wp-cli.
+     *
+     * @param ApplicationContract $app
+     * @return void
+     */
+    protected function bootWpCli(ApplicationContract $app)
+    {
+        \WP_CLI::add_command('acorn', function ($args, $assoc_args) use ($app) {
+            $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
+
+            $kernel->commands();
+
+            $command = implode(' ', $args);
+
+            foreach ($assoc_args as $key => $value) {
+                $command .= " --{$key}";
+
+                if ($value !== true) {
+                    $command .= "='{$value}'";
+                }
+            }
+
+            $command = str_replace('\\', '\\\\', $command);
+
+            $status = $kernel->handle(
+                $input = new \Symfony\Component\Console\Input\StringInput($command),
+                new \Symfony\Component\Console\Output\ConsoleOutput()
+            );
+
+            $kernel->terminate($input, $status);
+
+            \WP_CLI::halt($status);
+        });
+    }
+
+    /**
+     * Boot the Application for HTTP requests.
+     *
+     * @param ApplicationContract $app
+     * @return void
+     */
+    protected function bootHttp(ApplicationContract $app)
+    {
+        $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
+
+        $response = tap($kernel->handle(
+            $request = \Illuminate\Http\Request::capture()
+        ))->send();
+
+        $kernel->terminate($request, $response);
+    }
+
+    /**
+     * Boot the Application for WordPress requests.
+     *
+     * @param ApplicationContract $app
+     * @return void
+     */
+    protected function bootWordPress(ApplicationContract $app)
+    {
+        $app->make(\Illuminate\Contracts\Http\Kernel::class)
+            ->handle(\Illuminate\Http\Request::capture());
+    }
+
+    /**
+     * Get Application instance.
      *
      * @return ApplicationContract
      */
-    protected function app(): ApplicationContract
+    public function getApplication(): ApplicationContract
     {
-        if ($this->app) {
-            return $this->app;
+        if (! $this->app) {
+            $this->app = new Application($this->basePath(), $this->usePaths());
         }
 
-        $bootstrap = $this->bootstrap();
-        $basePath = $this->basePath();
+        $this->app->singleton(
+            \Illuminate\Contracts\Http\Kernel::class,
+            \Roots\Acorn\Kernel::class
+        );
 
-        $app = $this->appClassName::getInstance();
-        $app->setBasePath($basePath);
-        $app->usePaths($this->usePaths());
+        $this->app->singleton(
+            \Illuminate\Contracts\Console\Kernel::class,
+            \Roots\Acorn\Console\Kernel::class
+        );
 
-        $app->bootstrapWith($bootstrap);
+        $this->app->singleton(
+            \Illuminate\Contracts\Debug\ExceptionHandler::class,
+            \Roots\Acorn\Exceptions\Handler::class
+        );
 
-        return $this->app = $app;
+        return $this->app;
     }
 
     /**
@@ -221,17 +249,27 @@ class Bootloader
             return $this->basePath;
         }
 
-        // @codeCoverageIgnoreStart
-        if (defined('ACORN_BASEPATH')) {
-            return $this->basePath = rtrim(constant('ACORN_BASEPATH'), '/\\');
+        if (isset($_ENV['APP_BASE_PATH'])) {
+            return $this->basePath = $_ENV['APP_BASE_PATH'];
         }
-        // @codeCoverageIgnoreEnd
 
-        $basePath = dirname(get_theme_file_path('composer.json')) ?: dirname(__DIR__, 3);
+        if (defined('ACORN_BASEPATH')) {
+            return $this->basePath = constant('ACORN_BASEPATH');
+        }
 
-        $basePath = apply_filters('acorn/paths.base', $basePath);
+        if (is_file($composer_path = get_theme_file_path('composer.json'))) {
+            return $this->basePath = dirname($composer_path);
+        }
 
-        return $this->basePath = rtrim($basePath, '/\\');
+        if (is_dir($app_path = get_theme_file_path('app'))) {
+            return $this->basePath = dirname($app_path);
+        }
+
+        if ($vendor_path = (new Filesystem())->closest(dirname(__DIR__, 4), 'composer.json')) {
+            return $this->basePath = dirname($vendor_path);
+        }
+
+        return $this->basePath = dirname(__DIR__, 3);
     }
 
     /**
@@ -241,21 +279,49 @@ class Bootloader
      */
     protected function usePaths(): array
     {
-        $paths = apply_filters('acorn/paths', [
-            'app' => null,
-            'config' => null,
-            'storage' => null,
-            'resources' => null,
-            'public' => null,
-        ]);
+        $paths = [];
 
-        foreach ($paths as $key => $path) {
-            $paths[$key] = apply_filters("acorn/paths.{$key}", $path ?: $this->findPath($key));
+        foreach (['app', 'config', 'storage', 'resources', 'public'] as $path) {
+            $paths[$path] = $this->normalizeApplicationPath($path, null);
         }
 
-        $paths['bootstrap'] = apply_filters("acorn/paths.bootstrap", "{$paths['storage']}/framework");
+        $paths['bootstrap'] = $this->normalizeApplicationPath($path, "{$paths['storage']}/framework");
 
         return $paths;
+    }
+
+    /**
+     * Normalize a relative or absolute path to an application directory.
+     *
+     * @param  string  $path
+     * @param  string|null  $default
+     * @return string
+     */
+    protected function normalizeApplicationPath($path, $default = null)
+    {
+        $key = strtoupper($path);
+
+        if (is_null($env = Env::get("ACORN_{$key}_PATH"))) {
+            return $default
+                ?? (defined("ACORN_{$key}_PATH") ? constant("ACORN_{$key}_PATH") : $this->findPath($path));
+        }
+
+        return Str::startsWith($env, $this->absoluteApplicationPathPrefixes)
+                ? $env
+                : $this->basePath($env);
+    }
+
+    /**
+     * Add new prefix to list of absolute path prefixes.
+     *
+     * @param  string  $prefix
+     * @return $this
+     */
+    public function addAbsoluteApplicationPathPrefix($prefix)
+    {
+        $this->absoluteApplicationPathPrefixes[] = $prefix;
+
+        return $this;
     }
 
     /**
@@ -285,7 +351,13 @@ class Bootloader
             ->first();
     }
 
-    protected function fallbackPath($path): string
+    /**
+     * Fallbacks for path types.
+     *
+     * @param string $path
+     * @return string
+     */
+    protected function fallbackPath(string $path): string
     {
         if ($path === 'storage') {
             return $this->fallbackStoragePath();
@@ -302,6 +374,11 @@ class Bootloader
         return dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . $path;
     }
 
+    /**
+     * Ensure that all of the storage directories exist.
+     *
+     * @return string
+     */
     protected function fallbackStoragePath()
     {
         $files = new Filesystem();
@@ -311,26 +388,5 @@ class Bootloader
         $files->ensureDirectoryExists($path . DIRECTORY_SEPARATOR . 'logs', 0755, true);
 
         return $path;
-    }
-
-    /**
-     * Get the list of application bootstraps
-     *
-     * @return string[]
-     */
-    protected function bootstrap(): array
-    {
-        $bootstrap = [
-            \Roots\Acorn\Bootstrap\CaptureRequest::class,
-            \Roots\Acorn\Bootstrap\SageFeatures::class,
-            \Roots\Acorn\Bootstrap\LoadConfiguration::class,
-            \Roots\Acorn\Bootstrap\HandleExceptions::class,
-            \Roots\Acorn\Bootstrap\RegisterFacades::class,
-            \Roots\Acorn\Bootstrap\RegisterProviders::class,
-            \Illuminate\Foundation\Bootstrap\BootProviders::class,
-            \Roots\Acorn\Bootstrap\RegisterConsole::class,
-        ];
-
-        return apply_filters('acorn/bootstrap', $bootstrap);
     }
 }
