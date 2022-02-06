@@ -348,7 +348,8 @@ class Application extends FoundationApplication
 
         report($e);
 
-        return is_object($provider) ? $provider : new class ($this) extends ServiceProvider {};
+        return is_object($provider) ? $provider : new class ($this) extends ServiceProvider {
+        };
     }
 
     /**
