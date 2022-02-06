@@ -40,8 +40,6 @@ class RegisterProviders extends FoundationRegisterProviders
                 })
                 ->merge([
                     $app->basePath(),
-                    STYLESHEETPATH,
-                    TEMPLATEPATH,
                     get_template_directory(),
                     get_stylesheet_directory(),
                 ])

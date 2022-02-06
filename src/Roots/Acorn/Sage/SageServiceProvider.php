@@ -2,9 +2,9 @@
 
 namespace Roots\Acorn\Sage;
 
+use Illuminate\Support\ServiceProvider;
 use Roots\Acorn\Sage\Sage;
 use Roots\Acorn\Sage\ViewFinder;
-use Roots\Acorn\ServiceProvider;
 
 use function Roots\add_filters;
 
@@ -28,10 +28,8 @@ class SageServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if ($this->app->bound('view')) {
-            $this->bindCompatFilters();
-            $this->bindViewFilters();
-        }
+        $this->bindCompatFilters();
+        $this->bindViewFilters();
     }
 
     /**

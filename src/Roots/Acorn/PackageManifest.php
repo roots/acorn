@@ -76,9 +76,9 @@ class PackageManifest extends FoundationPackageManifest
 
             $ignoreAll = in_array('*', $ignore = $this->packagesToIgnore());
 
-            return collect($packages)->mapWithKeys(function ($package) use ($path) {
+            return collect($packages)->mapWithKeys(function ($package) use ($path, $composerPath) {
                 return [
-                    $this->format($package['name'], dirname($path, 2)) =>
+                    $this->format($package['name'] ?? basename($composerPath), dirname($path, 2)) =>
                         $package['extra']['acorn'] ?? $package['extra']['laravel'] ?? []
                 ];
             })->each(function ($configuration) use (&$ignore) {

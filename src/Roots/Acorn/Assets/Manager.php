@@ -3,9 +3,10 @@
 namespace Roots\Acorn\Assets;
 
 use InvalidArgumentException;
-use Roots\Acorn\Assets\Concerns\Mixable;
 use Roots\Acorn\Assets\Contracts\Manifest as ManifestContract;
 use Roots\Acorn\Assets\Contracts\ManifestNotFoundException;
+use Roots\Acorn\Assets\Middleware\LaravelMixMiddleware;
+use Roots\Acorn\Assets\Middleware\RootsBudMiddleware;
 
 /**
  * Manage assets manifests
@@ -15,8 +16,6 @@ use Roots\Acorn\Assets\Contracts\ManifestNotFoundException;
  */
 class Manager
 {
-    use Mixable;
-
     /**
      * Resolved manifests
      *
@@ -30,6 +29,16 @@ class Manager
      * @var array
      */
     protected $config;
+
+    /**
+     * Manifest middleware.
+     *
+     * @var string[]
+     */
+    protected $middleware = [
+        RootsBudMiddleware::class,
+        LaravelMixMiddleware::class,
+    ];
 
     /**
      * Initialize the AssetManager instance.
@@ -85,11 +94,31 @@ class Manager
             return new $config['handler']($config);
         }
 
-        $url = $this->getMixHotUri($path = $config['path']) ?? $config['url'];
+        $config = $this->pipeline($config);
+
+        $path = $config['path'];
+        $url = $config['url'];
         $assets = isset($config['assets']) ? $this->getJsonManifest($config['assets']) : [];
         $bundles = isset($config['bundles']) ? $this->getJsonManifest($config['bundles']) : [];
 
         return new Manifest($path, $url, $assets, $bundles);
+    }
+
+    /**
+     * Manifest config pipeline.
+     *
+     * @param array $config
+     * @return array
+     */
+    protected function pipeline(array $config): array
+    {
+        return array_reduce($this->middleware, function (array $config, $middleware): array {
+            if (is_string($middleware) && class_exists($middleware)) {
+                $middleware = new $middleware();
+            }
+
+            return is_callable($middleware) ? $middleware($config) : $middleware->handle($config);
+        }, $config);
     }
 
     /**

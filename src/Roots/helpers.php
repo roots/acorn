@@ -38,7 +38,20 @@ function bundle(string $bundle): Bundle
  */
 function bootloader(?Application $app = null): Bootloader
 {
-    return Bootloader::getInstance($app);
+    $bootloader = Bootloader::getInstance($app);
+
+    \Roots\add_actions(['after_setup_theme', 'rest_api_init'], function () use ($bootloader) {
+        if (! $bootloader->getApplication()->hasBeenBootstrapped()) {
+            \Roots\wp_die(
+                'Acorn failed to boot. Run <code>\\Roots\\bootloader()->boot()</code>.<br><br>If you\'re using Sage, you need to <a href="https://github.com/roots/sage/blob/258d1f9675043108f7ecff0d4ed5586413a414e9/functions.php#L32">update <strong>sage/functions.php:32</strong></a>',
+                '<code>\\Roots\\bootloader()</code> was called incorrectly.',
+                'Acorn &rsaquo; Boot Error',
+                'This message will be removed with the next beta release of Acorn.'
+            );
+        }
+    }, 6);
+
+    return $bootloader;
 }
 
 /**
