@@ -19,14 +19,15 @@ class Kernel extends FoundationConsoleKernel
         \Illuminate\Foundation\Console\EnvironmentCommand::class,
         \Illuminate\Foundation\Console\PackageDiscoverCommand::class,
         \Illuminate\Foundation\Console\ProviderMakeCommand::class,
-        \Illuminate\Foundation\Console\VendorPublishCommand::class,
         \Illuminate\Foundation\Console\ViewCacheCommand::class,
         \Illuminate\Foundation\Console\ViewClearCommand::class,
+        \Roots\Acorn\Console\Commands\AcornInitCommand::class,
         \Roots\Acorn\Console\Commands\ComposerMakeCommand::class,
         \Roots\Acorn\Console\Commands\ConfigCacheCommand::class,
         \Roots\Acorn\Console\Commands\OptimizeClearCommand::class,
         \Roots\Acorn\Console\Commands\OptimizeCommand::class,
         \Roots\Acorn\Console\Commands\SummaryCommand::class,
+        \Roots\Acorn\Console\VendorPublishCommand::class,
     ];
 
     /**
