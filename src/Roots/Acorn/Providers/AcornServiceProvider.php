@@ -3,10 +3,10 @@
 namespace Roots\Acorn\Providers;
 
 use Illuminate\Console\Events\CommandFinished;
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Foundation\Providers\FoundationServiceProvider;
 use Roots\Acorn\Filesystem\Filesystem;
 
-class AcornServiceProvider extends ServiceProvider
+class AcornServiceProvider extends FoundationServiceProvider
 {
     /**
      * Core configs.
@@ -44,6 +44,8 @@ class AcornServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        parent::register();
+
         $this->registerConfigs();
     }
 
@@ -54,6 +56,8 @@ class AcornServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        parent::boot();
+
         if ($this->app->runningInConsole()) {
             $this->registerPublishables();
             $this->registerPostInitEvent();
