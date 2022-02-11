@@ -60,7 +60,7 @@ To install Acorn in a Bedrock environment, navigate to your Bedrock directory an
 $ composer require roots/acorn
 ```
 
-We recommend adding Acorn's `postAutoloadDump` function to Composer's `post-autoload-dump` event:
+We recommend adding Acorn's `postAutoloadDump` function to Composer's `post-autoload-dump` event in `composer.json`:
 
 ```json
 "post-autoload-dump": [
