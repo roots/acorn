@@ -54,10 +54,18 @@ See the full [installation](https://docs.roots.io/acorn/2.x/installation/) docs 
 
 ## Installation
 
-To install Acorn in a Bedrock environment, navigate to your Bedrock root directory and run the following command:
+To install Acorn in a Bedrock environment, navigate to your Bedrock directory and run the following command:
 
 ```sh
 $ composer require roots/acorn
+```
+
+We recommend adding Acorn's `postAutoloadDump` function to Composer's `post-autoload-dump` event:
+
+```json
+"post-autoload-dump": [
+  "Roots\\Acorn\\ComposerScripts::postAutoloadDump"
+]
 ```
 
 ## Sponsors
