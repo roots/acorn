@@ -107,18 +107,3 @@ it('reads a mix manifest', function () {
     assertMatchesSnapshot($assets->manifest('theme')->asset('styles/app.css')->uri());
     assertMatchesSnapshot($assets->manifest('theme')->asset('scripts/app.js')->uri());
 });
-
-it('reads a mix hot manifest', function () {
-    $assets = new Manager([
-        'manifests' => [
-            'theme' => [
-                'path' => $this->fixture('mix_no_bundle_hmr/public'),
-                'url' => 'https://k.jo/public',
-                'assets' => $this->fixture('mix_no_bundle_hmr/public/mix-manifest.json'),
-            ]
-        ]
-    ]);
-
-    assertMatchesSnapshot($assets->manifest('theme')->asset('styles/app.css')->uri());
-    assertMatchesSnapshot($assets->manifest('theme')->asset('scripts/app.js')->uri());
-});
