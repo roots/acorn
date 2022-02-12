@@ -43,11 +43,11 @@ class RootsBudMiddleware
             return null;
         }
 
-        if (strstr($header, $dev->hostname) === false) {
+        if (! $origin = strstr($header, "{$dev->protocol}//{$dev->hostname}:{$dev->port}")) {
             return null;
         }
 
-        return Str::after($dev->href, ':');
+        return $origin;
     }
 
     /**
