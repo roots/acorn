@@ -7,6 +7,18 @@ use Illuminate\Support\Str;
 class RootsBudMiddleware
 {
     /**
+     * Dev server URI
+     *
+     * @var string
+     */
+    protected $dev_origin;
+
+    public function __construct(?string $dev_origin = null)
+    {
+        $this->dev_origin = $dev_origin;
+    }
+
+    /**
      * Handle the manifest config.
      *
      * @param array $config
@@ -35,7 +47,7 @@ class RootsBudMiddleware
             return null;
         }
 
-        if (! $header = $this->getHeader()) {
+        if (! $dev_origin_header = $this->getDevOriginHeader()) {
             return null;
         }
 
@@ -43,11 +55,11 @@ class RootsBudMiddleware
             return null;
         }
 
-        if (strstr($header, $dev->hostname) === false) {
+        if (strstr($dev_origin_header, $dev->hostname) === false) {
             return null;
         }
 
-        return Str::after($dev->href, ':');
+        return Str::after(rtrim($dev->href, '/'), ':');
     }
 
     /**
@@ -55,9 +67,10 @@ class RootsBudMiddleware
      *
      * @return string|null|false
      */
-    protected function getHeader()
+    protected function getDevOriginHeader()
     {
-        return filter_input(INPUT_ENV, 'HTTP_X_BUD_DEV_ORIGIN', FILTER_SANITIZE_URL)
+        return $this->dev_origin
+            ?: filter_input(INPUT_ENV, 'HTTP_X_BUD_DEV_ORIGIN', FILTER_SANITIZE_URL)
             ?: filter_input(INPUT_SERVER, 'HTTP_X_BUD_DEV_ORIGIN', FILTER_SANITIZE_URL);
     }
 }
