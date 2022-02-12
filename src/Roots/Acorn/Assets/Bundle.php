@@ -125,7 +125,10 @@ class Bundle implements BundleContract
             return $path;
         }
 
-        return join('/', [$this->uri, ltrim($path, '/')]);
+        $path = ltrim($path, '/');
+        $uri = rtrim($this->uri, '/');
+
+        return "{$uri}/{$path}";
     }
 
     protected function setRuntime()
