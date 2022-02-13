@@ -213,7 +213,7 @@ class Bootloader
      * Get Application instance.
      *
      * @param ApplicationContract $app
-     * @return void
+     * @return \Illuminate\Contracts\Foundation\Application
      */
     public function getApplication(): ApplicationContract
     {
