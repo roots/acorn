@@ -12,22 +12,32 @@ use Roots\Acorn\Bootloader;
  * Get asset from manifest
  *
  * @param  string $asset
+ * @param  string $manifest
  * @return Asset
  */
-function asset(string $asset): Asset
+function asset(string $asset, ?string $manifest = null): Asset
 {
-    return \app('assets.manifest')->asset($asset);
+    if (! $manifest) {
+        return \app('assets.manifest')->asset($asset);
+    }
+
+    return \app('assets')->manifest($manifest)->asset($asset);
 }
 
 /**
  * Get bundle from manifest
  *
  * @param  string $bundle
+ * @param  string $manifest
  * @return Bundle
  */
-function bundle(string $bundle): Bundle
+function bundle(string $bundle, ?string $manifest = null): Bundle
 {
-    return \app('assets.manifest')->bundle($bundle);
+    if (! $manifest) {
+        return \app('assets.manifest')->bundle($bundle);
+    }
+
+    return \app('assets')->manifest($manifest)->bundle($bundle);
 }
 
 /**
