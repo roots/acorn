@@ -29,33 +29,6 @@ it('rejects invalid custom path types', function () {
     ]);
 })->throws(Exception::class);
 
-it('rejects invalid custom paths', function () {
-    $app = new Application();
-
-    $app->usePaths([
-        'app' => $this->fixture('use_paths/app'),
-        'bootstrap' => __DIR__ . '/this/does/not/exist',
-    ]);
-})->throws(Exception::class);
-
-it('allows invalid public path', function () {
-    $app = new Application();
-
-    $app->usePaths([
-        'app' => $this->fixture('use_paths/app'),
-        'public' => __DIR__ . '/this/does/not/exist',
-    ]);
-})->not->throws(Exception::class);
-
-it('allows invalid lang path', function () {
-    $app = new Application();
-
-    $app->usePaths([
-        'app' => $this->fixture('use_paths/app'),
-        'lang' => __DIR__ . '/this/does/not/exist',
-    ]);
-})->not->throws(Exception::class);
-
 it('accepts an array of custom paths', function () {
     $app = new Application(temp('base_path'));
 
@@ -175,11 +148,11 @@ it('boots a provider', function () {
 });
 
 it('gracefully skips a provider that fails to boot', function () {
-    $logger = mock(\Illuminate\Log\LogServiceProvider::class);
+    $handler = mock(\Illuminate\Contracts\Debug\ExceptionHandler::class);
     $manifest = mock(\Roots\Acorn\PackageManifest::class);
     $app = new Application();
 
-    $app->singleton('log', fn () => $logger);
+    $app->singleton(\Illuminate\Contracts\Debug\ExceptionHandler::class, fn () => $handler);
     $app->singleton(\Illuminate\Foundation\PackageManifest::class, fn () => $manifest);
 
     // the core of this test is to make sure that when a class or function is called that
@@ -191,9 +164,9 @@ it('gracefully skips a provider that fails to boot', function () {
         }
     };
 
-    $logger
-        ->shouldReceive('warning')
-        ->withArgs(fn ($message) => expect($message)->toContain('Skipping provider') || true)
+    $handler
+        ->shouldReceive('report')
+        ->withArgs(fn (\Roots\Acorn\Exceptions\SkipProviderException $e) => expect($e->getMessage())->toContain('Skipping provider') || true)
         ->once();
 
     $manifest
@@ -206,16 +179,16 @@ it('gracefully skips a provider that fails to boot', function () {
 });
 
 it('gracefully skips a provider that does not exist', function () {
-    $logger = mock(\Illuminate\Log\LogServiceProvider::class);
+    $handler = mock(\Illuminate\Contracts\Debug\ExceptionHandler::class);
     $manifest = mock(\Roots\Acorn\PackageManifest::class);
     $app = new Application();
 
-    $app->singleton('log', fn () => $logger);
+    $app->singleton(\Illuminate\Contracts\Debug\ExceptionHandler::class, fn () => $handler);
     $app->singleton(\Illuminate\Foundation\PackageManifest::class, fn () => $manifest);
 
-    $logger
-        ->shouldReceive('warning')
-        ->withArgs(fn ($message) => expect($message)->toContain('Skipping provider') || true)
+    $handler
+        ->shouldReceive('report')
+        ->withArgs(fn (\Roots\Acorn\Exceptions\SkipProviderException $e) => expect($e->getMessage())->toContain('Skipping provider') || true)
         ->once();
 
     $manifest

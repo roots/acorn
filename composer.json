@@ -17,6 +17,9 @@
     "wordpress",
     "sage"
   ],
+  "bin": [
+    "bin/acorn"
+  ],
   "support": {
     "issues": "https://github.com/roots/acorn/issues",
     "forum": "https://discourse.roots.io/"

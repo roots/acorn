@@ -29,7 +29,7 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-progress --prefer-dist --optimize-autoloader --no-dev --no-interaction
       - name: Cleanup unnecessary files
-        run: rm -rf .git .github .editorconfig .gitattributes .gitignore composer.json composer.lock phpcs.xml.dist phpunit.xml.dist tests
+        run: rm -rf .git .github .editorconfig .gitattributes .gitignore composer.json composer.lock phpcs.xml.dist phpunit.xml.dist tests bin
       - name: Get the version
         id: get_version
         run: echo ::set-output name=version::${GITHUB_REF/refs\/tags\//}
