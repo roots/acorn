@@ -46,6 +46,11 @@ class AcornDumpBootloaderCommand extends Command
 
     public function handle()
     {
+        if (strstr(__DIR__, WP_CONTENT_DIR) !== false) {
+            $this->info("Cannot dump bootloader when Acorn is loaded via a theme or plugin.");
+            return;
+        }
+
         $plugin = $this->argument('plugin');
 
         if (! is_writable(dirname($plugin))) {
