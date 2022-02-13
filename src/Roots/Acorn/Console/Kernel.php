@@ -24,6 +24,7 @@ class Kernel extends FoundationConsoleKernel
         \Illuminate\Foundation\Console\ViewCacheCommand::class,
         \Illuminate\Foundation\Console\ViewClearCommand::class,
         \Roots\Acorn\Console\Commands\AcornInitCommand::class,
+        \Roots\Acorn\Console\Commands\AcornDumpBootloaderCommand::class,
         \Roots\Acorn\Console\Commands\ComposerMakeCommand::class,
         \Roots\Acorn\Console\Commands\ConfigCacheCommand::class,
         \Roots\Acorn\Console\Commands\OptimizeClearCommand::class,
