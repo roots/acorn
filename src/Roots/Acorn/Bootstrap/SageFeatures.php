@@ -6,13 +6,15 @@ use Illuminate\Contracts\Foundation\Application;
 
 use function Roots\wp_die;
 
+/**
+ * @deprecated
+ */
 class SageFeatures
 {
     /**
      * Bootstrap the given application.
      *
      * @param  \Roots\Acorn\Application  $app
-     * @deprecated
      * @return void
      */
     public function bootstrap(Application $app)
