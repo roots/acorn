@@ -33,9 +33,11 @@ class Kernel extends FoundationConsoleKernel
     ];
 
     /**
-     * The bootstrap classes for the application.
+     * Create a new console kernel instance.
      *
-     * @var array
+     * @param  \Illuminate\Contracts\Foundation\Application  $app
+     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
+     * @return void
      */
     protected $bootstrappers = [
         \Roots\Acorn\Bootstrap\SageFeatures::class,

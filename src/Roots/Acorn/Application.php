@@ -12,6 +12,7 @@ use Illuminate\Log\LogServiceProvider;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Roots\Acorn\Exceptions\SkipProviderException;
 use Roots\Acorn\Filesystem\Filesystem;
 use RuntimeException;
 use Throwable;
@@ -285,38 +286,6 @@ class Application extends FoundationApplication
     }
 
     /**
-     * Skip booting service provider and log error.
-     *
-     * @param  \Illuminate\Support\ServiceProvider|string  $provider
-     * @param  Throwable $e
-     * @return void
-     */
-    protected function skipProvider($provider, Throwable $e)
-    {
-        $message = [
-            BindingResolutionException::class => "Skipping provider [:provider:] because it requires a dependency that cannot be found.",
-        ][get_class($e)] ?? "Skipping provider [:provider:] because it encountered an error.";
-
-        $provider_name = is_object($provider) ? get_class($provider) : $provider;
-
-        $context = [
-            'package' => $this->make(PackageManifest::class)->getPackage($provider_name),
-            'provider' => $provider_name,
-            'error' => $e->getMessage(),
-            'help' => 'https://roots.io/docs/acorn/troubleshooting'
-        ];
-
-        $this->make('log')->warning(
-            strtr($message, [
-                ':package:' => $context['package'],
-                ':provider:' => $context['provider'],
-                ':error:' => $context['error']
-            ]),
-            $context
-        );
-    }
-
-    /**
      * Register all of the configured providers.
      *
      * @return void
@@ -324,6 +293,7 @@ class Application extends FoundationApplication
     public function registerConfiguredProviders()
     {
         $providers = Collection::make($this->config['app.providers'])
+            ->filter('class_exists')
             ->partition(function ($provider) {
                 return Str::startsWith($provider, ['Illuminate\\', 'Roots\\']);
             });
@@ -344,10 +314,42 @@ class Application extends FoundationApplication
     public function register($provider, $force = false)
     {
         try {
-            parent::register($provider, $force);
+            if (is_string($provider) && ! class_exists($provider)) {
+                throw new SkipProviderException("Skipping provider [{$provider}] because it does not exist.");
+            }
+            return parent::register($provider, $force);
         } catch (Throwable $e) {
-            $this->skipProvider($provider, $e);
+            return $this->skipProvider($provider, $e);
         }
+    }
+
+    /**
+     * Skip booting service provider and log error.
+     *
+     * @param  \Illuminate\Support\ServiceProvider|string  $provider
+     * @param  Throwable $e
+     * @return \Illuminate\Support\ServiceProvider
+     */
+    protected function skipProvider($provider, Throwable $e): ServiceProvider
+    {
+        $provider_name = is_object($provider) ? get_class($provider) : $provider;
+
+        if (! $e instanceof SkipProviderException) {
+            $message = [
+                BindingResolutionException::class => "Skipping provider [{$provider_name}] because it requires a dependency that cannot be found.",
+            ][$error = get_class($e)] ?? "Skipping provider [{$provider_name}] because it encountered an error [{$error}].";
+
+            $e = new SkipProviderException($message, 0, $e);
+        }
+
+        if (method_exists($packages = $this->make(PackageManifest::class), 'getPackage')) {
+            $e->setPackage($packages->getPackage($provider_name));
+        }
+
+        report($e);
+
+        return is_object($provider) ? $provider : new class ($this) extends ServiceProvider {
+        };
     }
 
     /**

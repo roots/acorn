@@ -44,6 +44,8 @@ class AcornServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        parent::register();
+
         $this->registerConfigs();
     }
 
@@ -54,6 +56,8 @@ class AcornServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        parent::boot();
+
         if ($this->app->runningInConsole()) {
             $this->registerPublishables();
             $this->registerPostInitEvent();
