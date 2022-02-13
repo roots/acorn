@@ -3,10 +3,10 @@
 namespace Roots\Acorn\Providers;
 
 use Illuminate\Console\Events\CommandFinished;
-use Illuminate\Foundation\Providers\FoundationServiceProvider;
+use Illuminate\Support\ServiceProvider;
 use Roots\Acorn\Filesystem\Filesystem;
 
-class AcornServiceProvider extends FoundationServiceProvider
+class AcornServiceProvider extends ServiceProvider
 {
     /**
      * Core configs.
