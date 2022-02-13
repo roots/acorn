@@ -97,8 +97,8 @@ class AcornServiceProvider extends ServiceProvider
     {
         foreach ($this->filterPublishableConfigs() as $config) {
             $this->publishes([
-                dirname(__DIR__, 4) . "/config/{$config}.php" => base_path('config') . "/{$config}.php"
-            ], 'acorn');
+                dirname(__DIR__, 4) . "/config/{$config}.php" => config_path("{$config}.php")
+            ], ['acorn', 'acorn-configs']);
         }
     }
 
