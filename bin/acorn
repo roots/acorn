@@ -2,19 +2,19 @@
 <?php
 
 (static function () {
-  if (! is_file($autoload_path = dirname(__DIR__, 4) . '/vendor/autoload.php')) {
-    $autoload_path = dirname(__DIR__) . '/vendor/autoload.php';
-  }
-  require_once $autoload_path;
+    if (! is_file($autoload_path = dirname(__DIR__, 4) . '/vendor/autoload.php')) {
+        $autoload_path = dirname(__DIR__) . '/vendor/autoload.php';
+    }
+    require_once $autoload_path;
 
-  $composer_path = (new Roots\Acorn\Filesystem\Filesystem)->closest(dirname($autoload_path, 2), 'composer.json');
+    $composer_path = (new Roots\Acorn\Filesystem\Filesystem)->closest(dirname($autoload_path, 2), 'composer.json');
 
-  $root_path = dirname($composer_path);
+    $root_path = dirname($composer_path);
 
-  $composer = json_decode(file_get_contents($composer_path), true);
+    $composer = json_decode(file_get_contents($composer_path), true);
 
-  define('WP_USE_THEMES', false);
-  require_once "{$root_path}/{$composer['extra']['wordpress-install-dir']}/wp-blog-header.php";
+    define('WP_USE_THEMES', false);
+    require_once "{$root_path}/{$composer['extra']['wordpress-install-dir']}/wp-blog-header.php";
 
-  Roots\Acorn\Bootloader::getInstance()->boot();
+    Roots\Acorn\Bootloader::getInstance()->boot();
 })();
