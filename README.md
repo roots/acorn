@@ -8,6 +8,10 @@
   <a href="LICENSE.md">
     <img alt="MIT License" src="https://img.shields.io/github/license/roots/acorn?color=%23525ddc&style=flat-square" />
   </a>
+  
+  <a href="https://laravel.com/docs/8.x">
+    <img alt="Laravel v8" src="https://img.shields.io/static/v1?label=laravel&message=v8&logo=Laravel&style=flat-square&color=f9322c" />
+  </a>
 
   <a href="https://github.com/roots/trellis/acorn">
     <img alt="Release" src="https://img.shields.io/github/release/roots/acorn.svg?style=flat-square" />
