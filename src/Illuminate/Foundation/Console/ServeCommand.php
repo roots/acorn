@@ -18,6 +18,15 @@ class ServeCommand extends Command
     protected $name = 'serve';
 
     /**
+     * The name of the console command.
+     *
+     * This name is used to identify the command during lazy loading.
+     *
+     * @var string|null
+     */
+    protected static $defaultName = 'serve';
+
+    /**
      * The console command description.
      *
      * @var string
@@ -40,8 +49,6 @@ class ServeCommand extends Command
      */
     public function handle()
     {
-        chdir(public_path());
-
         $this->line("<info>Starting Laravel development server:</info> http://{$this->host()}:{$this->port()}");
 
         $environmentFile = $this->option('env')
@@ -95,7 +102,7 @@ class ServeCommand extends Command
      */
     protected function startProcess($hasEnvironment)
     {
-        $process = new Process($this->serverCommand(), null, collect($_ENV)->mapWithKeys(function ($value, $key) use ($hasEnvironment) {
+        $process = new Process($this->serverCommand(), public_path(), collect($_ENV)->mapWithKeys(function ($value, $key) use ($hasEnvironment) {
             if ($this->option('no-reload') || ! $hasEnvironment) {
                 return [$key => $value];
             }
@@ -104,8 +111,11 @@ class ServeCommand extends Command
                 'APP_ENV',
                 'LARAVEL_SAIL',
                 'PHP_CLI_SERVER_WORKERS',
+                'PHP_IDE_CONFIG',
+                'SYSTEMROOT',
                 'XDEBUG_CONFIG',
                 'XDEBUG_MODE',
+                'XDEBUG_SESSION',
             ]) ? [$key => $value] : [$key => false];
         })->all());
 
@@ -123,11 +133,15 @@ class ServeCommand extends Command
      */
     protected function serverCommand()
     {
+        $server = file_exists(base_path('server.php'))
+            ? base_path('server.php')
+            : __DIR__.'/../resources/server.php';
+
         return [
             (new PhpExecutableFinder)->find(false),
             '-S',
             $this->host().':'.$this->port(),
-            base_path('server.php'),
+            $server,
         ];
     }
 

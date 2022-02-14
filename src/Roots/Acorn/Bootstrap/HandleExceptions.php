@@ -20,7 +20,7 @@ class HandleExceptions extends FoundationHandleExceptionsBootstrapper
     {
         self::$reservedMemory = str_repeat('x', 10240);
 
-        $this->app = $app;
+        static::$app = $app;
 
         if (!$this->isDebug() || $this->hasHandler()) {
             return;
@@ -63,7 +63,7 @@ class HandleExceptions extends FoundationHandleExceptionsBootstrapper
      */
     protected function isDebug()
     {
-        return $this->app->config->get('app.debug', WP_DEBUG);
+        return static::$app->config->get('app.debug', WP_DEBUG);
     }
 
     /**
@@ -73,7 +73,7 @@ class HandleExceptions extends FoundationHandleExceptionsBootstrapper
      */
     protected function hasHandler()
     {
-        return !$this->app->runningInConsole()
+        return !static::$app->runningInConsole()
             && is_readable(WP_CONTENT_DIR . '/fatal-error-handler.php');
     }
 
