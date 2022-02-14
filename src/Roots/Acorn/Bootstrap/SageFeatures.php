@@ -4,6 +4,9 @@ namespace Roots\Acorn\Bootstrap;
 
 use Illuminate\Contracts\Foundation\Application;
 
+/**
+ * @deprecated
+ */
 class SageFeatures
 {
     /**
