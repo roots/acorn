@@ -1,8 +1,8 @@
 <?php
 
-namespace Roots\Acorn\Exceptions;
+namespace Roots\Acorn\Exceptions\Whoops;
 
-use Illuminate\Foundation\Exceptions\WhoopsHandler as FoundationWhoopsHandler;
+use Illuminate\Foundation\Exceptions\Whoops\WhoopsHandler as FoundationWhoopsHandler;
 use Illuminate\Support\Collection;
 use Whoops\Handler\PrettyPageHandler;
 use WP;
