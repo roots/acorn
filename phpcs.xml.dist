@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ruleset name="Acorn">
-    <description>PSR12 with PHP 7.2+ compatibility</description>
+    <description>PSR12 with PHP 8.0+ compatibility</description>
     <arg name="extensions" value="php"/>
     <arg name="colors"/>
     <arg value="sp"/>
@@ -12,8 +12,8 @@
       <exclude-pattern>src/Illuminate/*</exclude-pattern>
     </rule>
 
-    <!-- Support for PHP 7.3+ -->
-    <config name="testVersion" value="7.3-"/>
+    <!-- Support for PHP 8.0+ -->
+    <config name="testVersion" value="8.0-"/>
 
     <file>acorn.php</file>
     <file>src/Roots</file>

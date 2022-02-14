@@ -7,10 +7,3 @@ updates:
     time: "08:00"
     timezone: US/Central
   open-pull-requests-limit: 10
-  ignore:
-  - dependency-name: spatie/temporary-directory
-    versions:
-    - 2.0.0
-  - dependency-name: league/flysystem
-    versions:
-    - 2.0.0
