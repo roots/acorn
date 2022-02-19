@@ -63,6 +63,28 @@ it('reads an assets manifest', function () {
     assertMatchesSnapshot($assets->manifest('theme')->asset('app.js')->uri());
 });
 
+it('reads multiple manifests', function () {
+    $assets = new Manager([
+        'manifests' => [
+            'app' => [
+                'path' => $this->fixture('bud_single_runtime/public/app'),
+                'url' => 'https://k.jo/app',
+                'assets' => $this->fixture('bud_multi_compiler/public/app/manifest.json'),
+                'bundles' => $this->fixture('bud_multi_compiler/public/app/entrypoints.json'),
+            ],
+            'editor' => [
+                'path' => $this->fixture('bud_single_runtime/public/editor'),
+                'url' => 'https://k.jo/editor',
+                'assets' => $this->fixture('bud_multi_compiler/public/editor/manifest.json'),
+                'bundles' => $this->fixture('bud_multi_compiler/public/editor/entrypoints.json'),
+            ],
+        ]
+    ]);
+
+    assertMatchesSnapshot($assets->manifest('app')->asset('app.js')->uri());
+    assertMatchesSnapshot($assets->manifest('editor')->asset('editor.js')->uri());
+});
+
 it('throws an error if a bundles manifest does not exist', function () {
     $assets = new Manager([
         'manifests' => [

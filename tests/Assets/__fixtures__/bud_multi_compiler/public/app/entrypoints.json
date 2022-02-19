@@ -1,0 +1,12 @@
+{
+  "app": {
+    "js": {
+      "runtime": "public/runtime.9876543210.js",
+      "app": "public/app.9876543210.js"
+    },
+    "css": {
+      "app": "public/app.2.9876543210.css"
+    },
+    "dependencies": ["jquery"]
+  }
+}

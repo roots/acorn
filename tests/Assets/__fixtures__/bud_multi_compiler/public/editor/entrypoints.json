@@ -1,0 +1,16 @@
+{
+  "editor": {
+    "js": {
+      "runtime": "public/runtime.1234578910.js",
+      "editor": "public/editor.12345678910.js"
+    },
+    "css": {
+      "editor": "public/editor.4.12345678910.css"
+    },
+    "dependencies": [
+      "wp-dom-ready",
+      "wp-edit-post",
+      "wp-blocks"
+    ]
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "runtime.js": "public/runtime.12345678910.js",
+  "vendor/editor.js": "public/vendor/editor.12345678910.js",
+  "editor.css": "public/editor.4.12345678910.css",
+  "editor.js": "public/editor.12345678910.js"
+}
