@@ -54,16 +54,13 @@ class SummaryCommand extends ListCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->output = $output;
-        $this->input = $input;
-
-        if ($this->input->getOption('format') === $this->format && ! $this->input->getOption('raw')) {
-            $this->title()->usage()->commands();
+        if ($input->getOption('format') === $this->format && ! $input->getOption('raw')) {
+            $this->title($output)->usage($output)->commands($output);
 
             return 0;
         }
 
-        return parent::execute($this->input, $this->output);
+        return parent::execute($input, $output);
     }
 
     /**
@@ -71,9 +68,9 @@ class SummaryCommand extends ListCommand
      *
      * @return $this
      */
-    protected function title()
+    protected function title(OutputInterface $output)
     {
-        $this->output->write(
+        $output->write(
             "\n  <fg=blue;options=bold>{$this->getApplication()->getVersion()}</>\n\n"
         );
 
@@ -85,9 +82,9 @@ class SummaryCommand extends ListCommand
      *
      * @return $this;
      */
-    protected function usage()
+    protected function usage(OutputInterface $output)
     {
-        $this->output->write("  <fg=blue;options=bold>USAGE:</> {$this->binary} <command> [options] [arguments]\n");
+        $output->write("  <fg=blue;options=bold>USAGE:</> {$this->binary} <command> [options] [arguments]\n");
 
         return $this;
     }
@@ -97,7 +94,7 @@ class SummaryCommand extends ListCommand
      *
      * @return $this
      */
-    protected function commands()
+    protected function commands(OutputInterface $output)
     {
         $this->width = 0;
 
@@ -109,8 +106,8 @@ class SummaryCommand extends ListCommand
             $this->width = max($this->width, mb_strlen($name));
 
             return isset($nameParts[1]) ? $nameParts[0] : '';
-        })->sortKeys()->each(function ($commands) {
-            $this->output->write("\n");
+        })->sortKeys()->each(function ($commands) use ($output) {
+            $output->write("\n");
 
             $commands = $commands->toArray();
 
@@ -119,7 +116,7 @@ class SummaryCommand extends ListCommand
             });
 
             foreach ($commands as $command) {
-                $this->output->write(sprintf(
+                $output->write(sprintf(
                     "  <fg=blue>%s</>%s%s\n",
                     $command->getName(),
                     str_repeat(' ', $this->width - mb_strlen($command->getName()) + 1),
