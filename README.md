@@ -8,6 +8,10 @@
   <a href="LICENSE.md">
     <img alt="MIT License" src="https://img.shields.io/github/license/roots/acorn?color=%23525ddc&style=flat-square" />
   </a>
+  
+  <a href="https://laravel.com/docs/9.x">
+    <img alt="Laravel v9" src="https://img.shields.io/static/v1?label=laravel&message=v9&logo=Laravel&style=flat-square&color=f9322c" />
+  </a>
 
   <a href="https://github.com/roots/trellis/acorn">
     <img alt="Release" src="https://img.shields.io/github/release/roots/acorn.svg?style=flat-square" />
@@ -54,10 +58,19 @@ See the full [installation](https://docs.roots.io/acorn/2.x/installation/) docs 
 
 ## Installation
 
+**The `main` branch currently tracks Acorn v3 which is in active development. Looking for Acorn v2 or the latest Acorn v3 beta release? [See releases](https://github.com/roots/acorn/releases).**
+
+
 To install Acorn in a Bedrock environment, navigate to your Bedrock directory and run the following command:
 
 ```sh
-$ composer require roots/acorn v2.0.0-beta.9.1
+$ composer require roots/acorn
+```
+
+To install the latest development version of Acorn, add `dev-main` to the end of the command:
+
+```sh
+$ composer require roots/acorn dev-main
 ```
 
 We recommend adding Acorn's `postAutoloadDump` function to Composer's `post-autoload-dump` event in `composer.json`:
