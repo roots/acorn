@@ -52,6 +52,8 @@ However, the amount of effort needed to maintain and develop new features and pr
 
 Acorn is a way to use Laravel components inside of WordPress.
 
+![Acorn CLI output](https://cdn.roots.io/app/uploads/wp-cli-acorn-v2.png)
+
 ## Requirements
 
 See the full [installation](https://docs.roots.io/acorn/2.x/installation/) docs for requirements.
