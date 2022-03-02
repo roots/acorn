@@ -21,10 +21,6 @@ class RegisterFacades
 
         Facade::setFacadeApplication($app);
 
-        if (! $app->config->get('app.globals', false)) {
-            return;
-        }
-
         AliasLoader::getInstance(array_merge(
             $app->make('config')->get('app.aliases', []),
             $app->make(PackageManifest::class)->aliases()
