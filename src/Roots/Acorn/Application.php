@@ -293,7 +293,9 @@ class Application extends FoundationApplication
     public function registerConfiguredProviders()
     {
         $providers = Collection::make($this->config['app.providers'])
-            ->filter('class_exists')
+            ->filter(function ($provider) {
+                return class_exists($provider);
+            })
             ->partition(function ($provider) {
                 return Str::startsWith($provider, ['Illuminate\\', 'Roots\\']);
             });
