@@ -326,7 +326,7 @@ class Bootloader
             \Roots\Acorn\Bootstrap\LoadConfiguration::class,
             \Roots\Acorn\Bootstrap\HandleExceptions::class,
             \Roots\Acorn\Bootstrap\RegisterFacades::class,
-            \Roots\Acorn\Bootstrap\RegisterProviders::class,
+            \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
             \Illuminate\Foundation\Bootstrap\BootProviders::class,
             \Roots\Acorn\Bootstrap\RegisterConsole::class,
         ];
