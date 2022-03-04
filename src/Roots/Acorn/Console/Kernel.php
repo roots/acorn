@@ -45,7 +45,7 @@ class Kernel extends FoundationConsoleKernel
         \Roots\Acorn\Bootstrap\HandleExceptions::class,
         \Roots\Acorn\Bootstrap\RegisterFacades::class,
         \Illuminate\Foundation\Bootstrap\SetRequestForConsole::class,
-        \Roots\Acorn\Bootstrap\RegisterProviders::class,
+        \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
         \Illuminate\Foundation\Bootstrap\BootProviders::class,
     ];
 

@@ -6,12 +6,13 @@ use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Events\EventServiceProvider;
 use Illuminate\Foundation\Application as FoundationApplication;
-use Illuminate\Foundation\PackageManifest;
+use Illuminate\Foundation\PackageManifest as FoundationPackageManifest;
 use Illuminate\Foundation\ProviderRepository;
 use Illuminate\Log\LogServiceProvider;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Roots\Acorn\PackageManifest;
 use Roots\Acorn\Exceptions\SkipProviderException;
 use Roots\Acorn\Filesystem\Filesystem;
 use RuntimeException;
@@ -236,6 +237,50 @@ class Application extends FoundationApplication
     }
 
     /**
+     * Register the basic bindings into the container.
+     *
+     * @return void
+     */
+    protected function registerBaseBindings()
+    {
+        parent::registerBaseBindings();
+        $this->registerPackageManifest();
+    }
+
+    protected function registerPackageManifest()
+    {
+        $this->singleton(FoundationPackageManifest::class, function () {
+            $files = new Filesystem();
+
+            $composer_paths = collect(get_option('active_plugins'))
+                ->map(function ($plugin) {
+                    return WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . dirname($plugin);
+                })
+                ->merge([
+                    $this->basePath(),
+                    get_template_directory(),
+                    get_stylesheet_directory(),
+                ])
+                ->map(function ($path) use ($files) {
+                    return rtrim($files->normalizePath($path), '/');
+                })
+                ->unique()
+                ->filter(function ($path) use ($files) {
+                    return $files->isFile("{$path}/vendor/composer/installed.json")
+                        && $files->isFile("{$path}/composer.json");
+                })
+                ->all();
+
+            return new PackageManifest(
+                $files,
+                $composer_paths,
+                $this->getCachedPackagesPath()
+            );
+        });
+        $this->alias(FoundationPackageManifest::class, PackageManifest::class);
+    }
+
+    /**
      * Register all of the base service providers.
      *
      * @return void
@@ -267,7 +312,6 @@ class Application extends FoundationApplication
         parent::registerCoreContainerAliases();
 
         $this->alias('app', self::class);
-        $this->alias(\Illuminate\Foundation\PackageManifest::class, \Roots\Acorn\PackageManifest::class);
     }
 
     /**
