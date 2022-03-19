@@ -4,8 +4,12 @@ namespace Roots\Acorn\Assets\Middleware;
 
 use Illuminate\Support\Str;
 
+use function add_filter;
+
 class RootsBudMiddleware
 {
+    protected static $rest_api_hooked = false;
+
     /**
      * Dev server URI
      *
@@ -51,6 +55,8 @@ class RootsBudMiddleware
             return null;
         }
 
+        self::filterRestApi();
+
         if (! $dev = optional(json_decode(file_get_contents($path)))->dev) {
             return null;
         }
@@ -72,5 +78,24 @@ class RootsBudMiddleware
         return $this->dev_origin
             ?: filter_input(INPUT_ENV, 'HTTP_X_BUD_DEV_ORIGIN', FILTER_SANITIZE_URL)
             ?: filter_input(INPUT_SERVER, 'HTTP_X_BUD_DEV_ORIGIN', FILTER_SANITIZE_URL);
+    }
+
+    /**
+     * Add header for WordPress REST API requests.
+     *
+     * @return void
+     */
+    public static function filterRestApi()
+    {
+        if (self::$rest_api_hooked || ! function_exists('add_filter')) {
+            return;
+        }
+
+        self::$rest_api_hooked = true;
+
+        add_filter('rest_pre_serve_request', function ($value) {
+            header('Access-Control-Allow-Headers: X-WP-Nonce, Content-Type, X-HTTP-Method-Override');
+            return $value;
+        });
     }
 }
