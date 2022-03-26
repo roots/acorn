@@ -15,16 +15,21 @@ class ConfigCacheCommand extends FoundationConfigCacheCommand
      */
     protected function getFreshConfiguration()
     {
-        $app = $this->getLaravel();
+        add_filter('acorn/ready', '__return_true');
 
-        (new Bootloader(
-            ['acorn/fresh-config'],
-            get_class($this->getLaravel())
-        ))->call(function (Application $newApp) use (&$app) {
+        /** @var \Illuminate\Contracts\Foundation\Application */
+        $app = null;
+
+        $appClass = get_class($this->getLaravel());
+        $appClass::setInstance(null);
+
+        $bootloader = new Bootloader([], $appClass);
+
+        $bootloader();
+
+        $bootloader->call(function (Application $newApp) use (&$app) {
             $app = $newApp;
         });
-
-        do_action('acorn/fresh-config');
 
         return $app->make('config')->all();
     }
