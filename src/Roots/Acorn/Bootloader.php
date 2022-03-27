@@ -111,6 +111,7 @@ class Bootloader
         }
 
         if ($app->runningInConsole()) {
+            $this->enableHttpsInConsole();
             return class_exists('WP_CLI') ? $this->bootWpCli($app) : $this->bootConsole($app);
         }
 
@@ -123,6 +124,20 @@ class Bootloader
         }
 
         return $this->bootWordPress($app);
+    }
+
+    /**
+     * Enable $_SERVER[HTTPS] in a console environment.
+     *
+     * @return void
+     */
+    protected function enableHttpsInConsole()
+    {
+        $enable = apply_filters('acorn/enable_https_in_console', parse_url(get_option('home'), PHP_URL_SCHEME) === 'https');
+
+        if ($enable) {
+            $_SERVER['HTTPS'] = 'on';
+        }
     }
 
     /**
