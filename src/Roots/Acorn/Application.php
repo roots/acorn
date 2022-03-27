@@ -28,7 +28,7 @@ class Application extends FoundationApplication
      *
      * @var string
      */
-    public const VERSION = '2.0.4';
+    public const VERSION = '2.0.5';
 
     /**
      * The custom bootstrap path defined by the developer.
