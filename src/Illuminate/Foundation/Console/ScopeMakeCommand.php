@@ -2,20 +2,16 @@
 
 namespace Illuminate\Foundation\Console;
 
-use Illuminate\Console\Concerns\CreatesMatchingTest;
 use Illuminate\Console\GeneratorCommand;
-use Symfony\Component\Console\Input\InputOption;
 
-class JobMakeCommand extends GeneratorCommand
+class ScopeMakeCommand extends GeneratorCommand
 {
-    use CreatesMatchingTest;
-
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'make:job';
+    protected $name = 'make:scope';
 
     /**
      * The name of the console command.
@@ -24,21 +20,21 @@ class JobMakeCommand extends GeneratorCommand
      *
      * @var string|null
      */
-    protected static $defaultName = 'make:job';
+    protected static $defaultName = 'make:scope';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a new job class';
+    protected $description = 'Create a new scope class';
 
     /**
      * The type of class being generated.
      *
      * @var string
      */
-    protected $type = 'Job';
+    protected $type = 'Scope';
 
     /**
      * Get the stub file for the generator.
@@ -47,9 +43,7 @@ class JobMakeCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return $this->option('sync')
-                        ? $this->resolveStubPath('/stubs/job.stub')
-                        : $this->resolveStubPath('/stubs/job.queued.stub');
+        return $this->resolveStubPath('/stubs/scope.stub');
     }
 
     /**
@@ -61,8 +55,8 @@ class JobMakeCommand extends GeneratorCommand
     protected function resolveStubPath($stub)
     {
         return file_exists($customPath = $this->laravel->basePath(trim($stub, '/')))
-                        ? $customPath
-                        : __DIR__.$stub;
+            ? $customPath
+            : __DIR__.$stub;
     }
 
     /**
@@ -73,18 +67,6 @@ class JobMakeCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace.'\Jobs';
-    }
-
-    /**
-     * Get the console command options.
-     *
-     * @return array
-     */
-    protected function getOptions()
-    {
-        return [
-            ['sync', null, InputOption::VALUE_NONE, 'Indicates that job should be synchronous'],
-        ];
+        return is_dir(app_path('Models')) ? $rootNamespace.'\\Models\\Scopes' : $rootNamespace.'\Scopes';
     }
 }

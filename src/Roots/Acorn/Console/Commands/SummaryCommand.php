@@ -52,7 +52,7 @@ class SummaryCommand extends ListCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($input->getOption('format') === $this->format && ! $input->getOption('raw')) {
             $this->title($output)->usage($output)->commands($output);

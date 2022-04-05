@@ -251,6 +251,14 @@ class Bootloader
             \Roots\Acorn\Exceptions\Handler::class
         );
 
+        if (class_exists(\Whoops\Run::class)) {
+            $this->app->bind(
+                \Illuminate\Contracts\Foundation\ExceptionRenderer::class,
+                fn (\Illuminate\Contracts\Foundation\Application $app) =>
+                    $app->make(\Roots\Acorn\Exceptions\Whoops\WhoopsExceptionRenderer::class)
+            );
+        }
+
         return $this->app;
     }
 

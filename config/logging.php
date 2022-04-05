@@ -56,13 +56,13 @@ return [
 
         'single' => [
             'driver' => 'single',
-            'path' => storage_path('logs/acorn.log'),
+            'path' => storage_path('logs/application.log'),
             'level' => env('LOG_LEVEL', 'debug'),
         ],
 
         'daily' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/acorn.log'),
+            'path' => storage_path('logs/application.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => 14,
         ],
@@ -70,7 +70,7 @@ return [
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),
-            'username' => 'Acorn Log',
+            'username' => 'Application Log',
             'emoji' => ':boom:',
             'level' => env('LOG_LEVEL', 'critical'),
         ],
@@ -78,10 +78,11 @@ return [
         'papertrail' => [
             'driver' => 'monolog',
             'level' => env('LOG_LEVEL', 'debug'),
-            'handler' => SyslogUdpHandler::class,
+            'handler' => env('LOG_PAPERTRAIL_HANDLER', SyslogUdpHandler::class),
             'handler_with' => [
                 'host' => env('PAPERTRAIL_URL'),
                 'port' => env('PAPERTRAIL_PORT'),
+                'connectionString' => 'tls://'.env('PAPERTRAIL_URL').':'.env('PAPERTRAIL_PORT'),
             ],
         ],
 
@@ -111,7 +112,7 @@ return [
         ],
 
         'emergency' => [
-            'path' => storage_path('logs/acorn.log'),
+            'path' => storage_path('logs/application.log'),
         ],
     ],
 
