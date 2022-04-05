@@ -20,6 +20,8 @@ class EventCacheCommand extends Command
      * This name is used to identify the command during lazy loading.
      *
      * @var string|null
+     *
+     * @deprecated
      */
     protected static $defaultName = 'event:cache';
 
@@ -44,7 +46,7 @@ class EventCacheCommand extends Command
             '<?php return '.var_export($this->getEvents(), true).';'
         );
 
-        $this->info('Events cached successfully!');
+        $this->info('Events cached successfully.');
     }
 
     /**
