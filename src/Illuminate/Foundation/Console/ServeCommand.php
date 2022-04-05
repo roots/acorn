@@ -23,6 +23,8 @@ class ServeCommand extends Command
      * This name is used to identify the command during lazy loading.
      *
      * @var string|null
+     *
+     * @deprecated
      */
     protected static $defaultName = 'serve';
 
@@ -191,7 +193,7 @@ class ServeCommand extends Command
     }
 
     /**
-     * Check if the command has reached its max amount of port tries.
+     * Check if the command has reached its maximum number of port tries.
      *
      * @return bool
      */
