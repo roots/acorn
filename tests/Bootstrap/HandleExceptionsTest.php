@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Config\Repository as Config;
-use Illuminate\Container\Container;
 use Illuminate\Log\LogManager;
+use Roots\Acorn\Application;
 use Roots\Acorn\Bootstrap\HandleExceptions;
 use Roots\Acorn\Tests\Test\TestCase;
 
@@ -11,12 +11,14 @@ use function Roots\Acorn\Tests\mock;
 uses(TestCase::class);
 
 beforeEach(function () {
-    $this->container = Container::setInstance(new Container);
+    $this->container = Application::setInstance(new Application());
     $this->config = new Config();
 
     $this->config->set('app.debug', true);
 
     $this->container->singleton('config', fn () => $this->config);
+
+    $this->container->bootstrapWith([]);
 
     $this->handleExceptions = new HandleExceptions();
 
