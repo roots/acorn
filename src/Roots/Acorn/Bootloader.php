@@ -57,11 +57,7 @@ class Bootloader
      */
     public static function getInstance(?ApplicationContract $app = null)
     {
-        if (static::$instance) {
-            return static::$instance;
-        }
-
-        return static::$instance = new static($app);
+        return static::$instance ??= new static($app);
     }
 
     /**
@@ -73,9 +69,7 @@ class Bootloader
     {
         $this->app = $app;
 
-        if (! static::$instance) {
-            static::$instance = $this;
-        }
+        static::$instance ??= $this;
     }
 
     /**
@@ -232,9 +226,7 @@ class Bootloader
      */
     public function getApplication(): ApplicationContract
     {
-        if (! $this->app) {
-            $this->app = new Application($this->basePath(), $this->usePaths());
-        }
+        $this->app ??= new Application($this->basePath(), $this->usePaths());
 
         $this->app->singleton(
             \Illuminate\Contracts\Http\Kernel::class,
@@ -273,27 +265,19 @@ class Bootloader
             return $this->basePath;
         }
 
-        if (isset($_ENV['APP_BASE_PATH'])) {
-            return $this->basePath = $_ENV['APP_BASE_PATH'];
-        }
+        return $this->basePath = match (true) {
+            isset($_ENV['APP_BASE_PATH']) => $_ENV['APP_BASE_PATH'],
 
-        if (defined('ACORN_BASEPATH')) {
-            return $this->basePath = constant('ACORN_BASEPATH');
-        }
+            defined('ACORN_BASEPATH') => constant('ACORN_BASEPATH'),
 
-        if (is_file($composer_path = get_theme_file_path('composer.json'))) {
-            return $this->basePath = dirname($composer_path);
-        }
+            is_file($composer_path = get_theme_file_path('composer.json')) => dirname($composer_path),
 
-        if (is_dir($app_path = get_theme_file_path('app'))) {
-            return $this->basePath = dirname($app_path);
-        }
+            is_dir($app_path = get_theme_file_path('app')) => dirname($app_path),
 
-        if ($vendor_path = (new Filesystem())->closest(dirname(__DIR__, 4), 'composer.json')) {
-            return $this->basePath = dirname($vendor_path);
-        }
+            $vendor_path = (new Filesystem())->closest(dirname(__DIR__, 4), 'composer.json') => dirname($vendor_path),
 
-        return $this->basePath = dirname(__DIR__, 3);
+            default => dirname(__DIR__, 3)
+        };
     }
 
     /**
@@ -383,19 +367,12 @@ class Bootloader
      */
     protected function fallbackPath(string $path): string
     {
-        if ($path === 'storage') {
-            return $this->fallbackStoragePath();
-        }
-
-        if ($path === 'app') {
-            return $this->basePath() . DIRECTORY_SEPARATOR . 'app';
-        }
-
-        if ($path === 'public') {
-            return $this->basePath() . DIRECTORY_SEPARATOR . 'public';
-        }
-
-        return dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . $path;
+        return match ($path) {
+            'storage' => $this->fallbackStoragePath(),
+            'app' => $this->basePath() . DIRECTORY_SEPARATOR . 'app',
+            'public' => $this->basePath() . DIRECTORY_SEPARATOR . 'public',
+            default => dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . $path,
+        };
     }
 
     /**

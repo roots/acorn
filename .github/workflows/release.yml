@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-versions: ['7.3', '7.4', '8.0']
+        php-versions: ['8.0', '8.1']
 
     steps:
       - name: Checkout
@@ -23,9 +23,6 @@ jobs:
           coverage: xdebug
         env:
           COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Remove incompatible dependencies
-        run: composer remove pestphp/pest pestphp/pest-plugin-mock spatie/pest-plugin-snapshots --dev --no-interaction
-        if: matrix.php < 8
       - name: Install Composer dependencies
         run: composer install --no-progress --prefer-dist --optimize-autoloader --no-dev --no-interaction
       - name: Cleanup unnecessary files
