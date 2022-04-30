@@ -27,6 +27,13 @@ trait FiltersTemplates
      */
     public function filterTemplateInclude($file)
     {
+        // @README if we are not pointing to a blade template
+        // we should just return it as-is. This will allow Sage to be used
+        // as a child theme of a non sage theme
+        if (!preg_match('/\.blade\.php$/', $file)) {
+            return $file;
+        }
+
         $view = $this->fileFinder
             ->getPossibleViewNameFromPath($file = realpath($file));
 
@@ -40,7 +47,7 @@ trait FiltersTemplates
         $this->app['sage.view'] = $this->view->exists($view) ? $view : $file;
         $this->app['sage.data'] = $data;
 
-        return get_template_directory() . '/index.php';
+        return get_stylesheet_directory() . '/index.php';
     }
 
     /**
