@@ -18,7 +18,7 @@ class HandleExceptions extends FoundationHandleExceptionsBootstrapper
      */
     public function bootstrap(Application $app)
     {
-        self::$reservedMemory = str_repeat('x', 10240);
+        self::$reservedMemory = str_repeat('x', 32768);
 
         static::$app = $app;
 
