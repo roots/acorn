@@ -44,6 +44,16 @@ it('can enqueue css', function () {
     $app->enqueueCss();
 });
 
+it('can dequeue css', function () {
+    $manifest = json_decode(file_get_contents($this->fixture('bud_single_runtime/public/entrypoints.json')), JSON_OBJECT_AS_ARRAY);
+    $app = new Bundle('app', $manifest['app'], $this->fixture('bud_single_runtime'), 'https://k.jo');
+
+    $this->stub('wp_enqueue_style')->shouldBeCalled();
+    $this->stub('wp_dequeue_style', fn (...$args) => assertMatchesSnapshot($args));
+
+    $app->enqueueCss()->dequeueCss();
+});
+
 it('can silently fail to enqueue css', function () {
     $stub = $this->stub('wp_enqueue_style');
     $manifest = json_decode(file_get_contents($this->fixture('bud_single_runtime_dev/public/entrypoints.json')), JSON_OBJECT_AS_ARRAY);
@@ -62,6 +72,18 @@ it('can enqueue js', function () {
     $this->stub('wp_add_inline_script')->shouldBeCalled();
 
     $app->enqueueJs();
+});
+
+it('can dequeue js', function () {
+    $manifest = json_decode(file_get_contents($this->fixture('bud_single_runtime/public/entrypoints.json')), JSON_OBJECT_AS_ARRAY);
+    $app = new Bundle('app', $manifest['app'], $this->fixture('bud_single_runtime'), 'https://k.jo');
+
+    $this->stub('wp_enqueue_script')->shouldBeCalled();
+    $this->stub('wp_add_inline_script')->shouldBeCalled();
+
+    $this->stub('wp_dequeue_script', fn (...$args) => assertMatchesSnapshot($args));
+
+    $app->enqueueJs()->dequeueJs();
 });
 
 it('can inline a single runtime', function () {
@@ -117,4 +139,20 @@ it('does not inline duplicate single runtimes', function () {
 
     $app->enqueueJs();
     $editor->enqueueJs();
+});
+
+it('can conditionally get assets', function () {
+    $manifest = json_decode(file_get_contents($this->fixture('bud_single_runtime/public/entrypoints.json')), JSON_OBJECT_AS_ARRAY);
+    $app = new Bundle('app', $manifest['app'], $this->fixture('bud_single_runtime'), 'https://k.jo');
+
+    assertMatchesJsonSnapshot($app->js()->toJson());
+
+    expect($app->when(false)->js()->toArray())->toBeEmpty();
+    expect($app->when(true)->js()->toArray())->not()->toBeEmpty();
+
+    expect($app->when(fn () => false)->js()->toArray())->toBeEmpty();
+    expect($app->when(fn () => true)->js()->toArray())->not()->toBeEmpty();
+
+    expect($app->when('min', 0, 1)->js()->toArray())->toBeEmpty();
+    expect($app->when('max', 0, 1)->js()->toArray())->not()->toBeEmpty();
 });
