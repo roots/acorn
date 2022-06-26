@@ -70,11 +70,13 @@ class Bundle implements BundleContract
      */
     public function js(?callable $callable = null)
     {
+        $scripts = array_merge($this->bundle['js'], $this->bundle['mjs']);
+
         if (! $callable) {
-            return collect($this->bundle['js']);
+            return collect($scripts);
         }
 
-        collect($this->bundle['js'])
+        collect($scripts)
             ->reject('runtime')
             ->each(function ($src, $handle) use ($callable) {
                 $callable("{$this->id}/{$handle}", $this->getUrl($src), $this->dependencies());
