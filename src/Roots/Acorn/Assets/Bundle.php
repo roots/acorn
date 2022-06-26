@@ -32,7 +32,7 @@ class Bundle implements BundleContract
         $this->id = $id;
         $this->path = $path;
         $this->uri = $uri;
-        $this->bundle = $bundle;
+        $this->bundle = $bundle + ['js' => [], 'mjs' => [], 'css' => []];
         $this->setRuntime();
     }
 
@@ -46,11 +46,13 @@ class Bundle implements BundleContract
      */
     public function css(?callable $callable = null)
     {
+        $styles = $this->bundle['css'];
+
         if (! $callable) {
-            return collect($this->bundle['css']);
+            return collect($styles);
         }
 
-        collect($this->bundle['css'] ?? [])
+        collect($styles)
             ->each(function ($src, $handle) use ($callable) {
                 $callable("{$this->id}/{$handle}", $this->getUrl($src));
             });
@@ -68,11 +70,13 @@ class Bundle implements BundleContract
      */
     public function js(?callable $callable = null)
     {
+        $scripts = array_merge($this->bundle['js'], $this->bundle['mjs']);
+
         if (! $callable) {
-            return collect($this->bundle['js']);
+            return collect($scripts);
         }
 
-        collect($this->bundle['js'])
+        collect($scripts)
             ->reject('runtime')
             ->each(function ($src, $handle) use ($callable) {
                 $callable("{$this->id}/{$handle}", $this->getUrl($src), $this->dependencies());
