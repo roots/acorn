@@ -4,12 +4,14 @@ namespace Roots\Acorn\Assets;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Roots\Acorn\Assets\Concerns\Conditional;
 use Roots\Acorn\Assets\Concerns\Enqueuable;
 use Roots\Acorn\Assets\Contracts\Bundle as BundleContract;
 
 class Bundle implements BundleContract
 {
     use Enqueuable;
+    use Conditional;
 
     protected $id;
     protected $path;
@@ -46,7 +48,7 @@ class Bundle implements BundleContract
      */
     public function css(?callable $callable = null)
     {
-        $styles = $this->bundle['css'];
+        $styles = $this->conditional ? $this->bundle['css'] : [];
 
         if (! $callable) {
             return collect($styles);
@@ -70,7 +72,7 @@ class Bundle implements BundleContract
      */
     public function js(?callable $callable = null)
     {
-        $scripts = array_merge($this->bundle['js'], $this->bundle['mjs']);
+        $scripts = $this->conditional ? array_merge($this->bundle['js'], $this->bundle['mjs']) : [];
 
         if (! $callable) {
             return collect($scripts);
