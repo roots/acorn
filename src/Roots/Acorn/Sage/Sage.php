@@ -15,6 +15,7 @@ class Sage
     use Concerns\FiltersTemplates;
     use Concerns\FiltersThePost;
     use Concerns\FiltersViews;
+    use Concerns\FiltersEnqueues;
 
     /**
      * The application implementation.

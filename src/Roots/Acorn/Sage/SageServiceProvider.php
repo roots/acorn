@@ -47,6 +47,7 @@ class SageServiceProvider extends ServiceProvider
         add_action('the_post', $sage->filter('the_post'), 10);
         add_filter('template_include', $sage->filter('template_include'), 100);
         add_filter('theme_templates', $sage->filter('theme_templates'), 100, 4);
+        add_filter('script_loader_tag', $sage->filter('script_loader_tag'), 100, 3);
 
         add_filters([
             'index_template_hierarchy',
