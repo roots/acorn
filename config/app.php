@@ -147,7 +147,7 @@ return [
         // Illuminate\Cookie\CookieServiceProvider::class,
         // Illuminate\Database\DatabaseServiceProvider::class,
         // Illuminate\Encryption\EncryptionServiceProvider::class,
-        Illuminate\Filesystem\FilesystemServiceProvider::class,
+        // Illuminate\Filesystem\FilesystemServiceProvider::class,
         // Illuminate\Foundation\Providers\FoundationServiceProvider::class,
         // Illuminate\Hashing\HashServiceProvider::class,
         // Illuminate\Mail\MailServiceProvider::class,
@@ -160,8 +160,10 @@ return [
         // Illuminate\Session\SessionServiceProvider::class,
         // Illuminate\Translation\TranslationServiceProvider::class,
         // Illuminate\Validation\ValidationServiceProvider::class,
-        Illuminate\View\ViewServiceProvider::class,
+        Roots\Acorn\Assets\AssetsServiceProvider::class,
+        Roots\Acorn\Filesystem\FilesystemServiceProvider::class,
         Roots\Acorn\Providers\AcornServiceProvider::class,
+        Roots\Acorn\View\ViewServiceProvider::class,
 
         /*
          * Package Service Providers...
