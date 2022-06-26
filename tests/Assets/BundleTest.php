@@ -118,3 +118,19 @@ it('does not inline duplicate single runtimes', function () {
     $app->enqueueJs();
     $editor->enqueueJs();
 });
+
+it('can conditionally get assets', function () {
+    $manifest = json_decode(file_get_contents($this->fixture('bud_single_runtime/public/entrypoints.json')), JSON_OBJECT_AS_ARRAY);
+    $app = new Bundle('app', $manifest['app'], $this->fixture('bud_single_runtime'), 'https://k.jo');
+
+    assertMatchesJsonSnapshot($app->js()->toJson());
+
+    expect($app->when(false)->js()->toArray())->toBeEmpty();
+    expect($app->when(true)->js()->toArray())->not()->toBeEmpty();
+
+    expect($app->when(fn () => false)->js()->toArray())->toBeEmpty();
+    expect($app->when(fn () => true)->js()->toArray())->not()->toBeEmpty();
+
+    expect($app->when('min', 0, 1)->js()->toArray())->toBeEmpty();
+    expect($app->when('max', 0, 1)->js()->toArray())->not()->toBeEmpty();
+});
