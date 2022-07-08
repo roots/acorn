@@ -4,6 +4,7 @@ namespace Roots\Acorn\Assets\Asset;
 
 use SplFileInfo;
 use Roots\Acorn\Assets\Contracts\Asset as AssetContract;
+use Roots\Acorn\Filesystem\Filesystem;
 
 class Asset implements AssetContract
 {
@@ -80,6 +81,19 @@ class Asset implements AssetContract
         }
 
         return file_get_contents($this->path());
+    }
+
+    /**
+     * Get the relative path to the asset.
+     *
+     * @param string $base_path Base path to use for relative path.
+     * @return string
+     */
+    public function relativePath(string $base_path): string
+    {
+        $base_path = rtrim($base_path, '/\\') . '/';
+
+        return (new Filesystem())->getRelativePath($base_path, $this->path());
     }
 
     /**
