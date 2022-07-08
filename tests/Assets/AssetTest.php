@@ -73,3 +73,7 @@ it('can require_once a php asset', function () {
 it('can fail to load a php asset', function () {
     (new PhpAsset(temp('does/not/exist.php'), 'https://kjo.kjo/'))->load();
 })->throws(FileNotFoundException::class);
+
+it('can get a relative path', function () {
+    assertMatchesSnapshot($this->assets->asset('apray.ext')->relativePath($this->fixture('asset_types')));
+});
