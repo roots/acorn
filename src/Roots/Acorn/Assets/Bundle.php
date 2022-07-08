@@ -67,12 +67,12 @@ class Bundle implements BundleContract
      *
      * Optionally pass a function to execute on each JS file.
      *
-     * @param callable $callable
+     * @param  callable $callable
      * @return Collection|$this
      */
     public function js(?callable $callable = null)
     {
-        $scripts = $this->conditional ? array_merge($this->bundle['js'], $this->bundle['mjs']) : [];
+        $scripts = $this->conditional ? ($this->bundle['js'] + $this->bundle['mjs']) : [];
 
         if (! $callable) {
             return collect($scripts);
@@ -88,7 +88,7 @@ class Bundle implements BundleContract
     }
 
     /**
-     * Get depdencies.
+     * Get the bundle dependencies.
      *
      * @return array
      */
@@ -98,7 +98,7 @@ class Bundle implements BundleContract
     }
 
     /**
-     * Get bundle runtime.
+     * Get the bundle runtime.
      *
      * @return string|null
      */
@@ -125,6 +125,12 @@ class Bundle implements BundleContract
         return self::$runtimes[$runtime] = file_get_contents("{$this->path}/{$runtime}");
     }
 
+    /**
+     * Get the bundle URL.
+     *
+     * @param  mixed $path
+     * @return mixed
+     */
     protected function getUrl($path)
     {
         if (parse_url($path, PHP_URL_HOST)) {
@@ -137,6 +143,11 @@ class Bundle implements BundleContract
         return "{$uri}/{$path}";
     }
 
+    /**
+     * Set the bundle runtime.
+     *
+     * @return void
+     */
     protected function setRuntime()
     {
         if (Arr::isAssoc($this->bundle['js'])) {
