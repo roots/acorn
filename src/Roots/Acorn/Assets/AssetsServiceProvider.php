@@ -2,8 +2,8 @@
 
 namespace Roots\Acorn\Assets;
 
+use Illuminate\Support\ServiceProvider;
 use Roots\Acorn\Assets\View\BladeDirective;
-use Roots\Acorn\ServiceProvider;
 
 class AssetsServiceProvider extends ServiceProvider
 {
