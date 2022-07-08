@@ -122,7 +122,6 @@ class Application extends FoundationApplication
                 throw new Exception("The {$path_type} path type is not supported.");
             }
 
-
             $this->{$supported_paths[$path_type]} = $path;
         }
 
@@ -259,8 +258,7 @@ class Application extends FoundationApplication
                 })
                 ->merge([
                     $this->basePath(),
-                    STYLESHEETPATH,
-                    TEMPLATEPATH,
+                    dirname(WP_CONTENT_DIR, 2),
                     get_template_directory(),
                     get_stylesheet_directory(),
                 ])
@@ -280,6 +278,7 @@ class Application extends FoundationApplication
                 $this->getCachedPackagesPath()
             );
         });
+
         $this->alias(FoundationPackageManifest::class, PackageManifest::class);
     }
 
