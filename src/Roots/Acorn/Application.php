@@ -258,6 +258,7 @@ class Application extends FoundationApplication
                 })
                 ->merge([
                     $this->basePath(),
+                    dirname(WP_CONTENT_DIR, 2),
                     get_template_directory(),
                     get_stylesheet_directory(),
                 ])
@@ -277,6 +278,7 @@ class Application extends FoundationApplication
                 $this->getCachedPackagesPath()
             );
         });
+
         $this->alias(FoundationPackageManifest::class, PackageManifest::class);
     }
 
