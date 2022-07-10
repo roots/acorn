@@ -155,7 +155,9 @@ trait Enqueuable
      */
     public function inline($contents, $position = 'after')
     {
-        if (! $handles = array_keys($this->bundle['js'] ?? [])) {
+        $bundle = array_merge($this->bundle['js'], $this->bundle['mjs']) ?? [];
+
+        if (! $handles = array_keys($bundle)) {
             return $this;
         }
 
