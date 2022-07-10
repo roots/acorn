@@ -129,7 +129,7 @@ class Bundle implements BundleContract
      * Get the bundle URL.
      *
      * @param  mixed $path
-     * @return mixed
+     * @return string
      */
     protected function getUrl($path)
     {
