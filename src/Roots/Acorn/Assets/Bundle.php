@@ -72,7 +72,7 @@ class Bundle implements BundleContract
      */
     public function js(?callable $callable = null)
     {
-        $scripts = $this->conditional ? ($this->bundle['js'] + $this->bundle['mjs']) : [];
+        $scripts = $this->conditional ? array_merge($this->bundle['js'], $this->bundle['mjs']) : [];
 
         if (! $callable) {
             return collect($scripts);
