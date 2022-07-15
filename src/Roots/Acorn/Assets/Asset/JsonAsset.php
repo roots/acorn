@@ -2,7 +2,6 @@
 
 namespace Roots\Acorn\Assets\Asset;
 
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 
@@ -30,7 +29,6 @@ class JsonAsset extends TextAsset implements Jsonable, Arrayable
      * @param int $options
      * @param int $depth
      * @return array|null
-     * @throws FileNotFoundException
      */
     public function decode($options = 0, $depth = 512)
     {
