@@ -9,22 +9,77 @@ class PhpAsset extends Asset
     /**
      * Get the returned value of the asset
      *
+     * @deprecated since 2.1.2. Use require(), requireOnce(), include() or includeOnce() instead.
+     *
+     * @param  bool $require
+     * @param  bool $once
      * @return mixed
      */
     public function load($require = false, $once = false)
     {
-        if (! $this->exists()) {
-            throw new FileNotFoundException("Asset [{$this->path()}] not found.");
-        }
-
         if ($require) {
             return $once
-                ? require_once $this->path()
-                : require $this->path();
+                ? $this->requireOnce()
+                : $this->require();
         }
 
         return $once
-            ? include_once $this->path()
-            : include $this->path();
+            ? $this->includeOnce()
+            : $this->include();
+    }
+
+    /**
+     * Get the returned value of the asset
+     *
+     * @return mixed
+     */
+    public function requireOnce()
+    {
+        $this->assertExists();
+        return require_once $this->path();
+    }
+
+    /**
+     * Get the returned value of the asset
+     *
+     * @return mixed
+     */
+    public function require()
+    {
+        $this->assertExists();
+        return require $this->path();
+    }
+
+    /**
+     * Get the returned value of the asset
+     *
+     * @return mixed
+     */
+    public function includeOnce()
+    {
+        $this->assertExists();
+        return include_once $this->path();
+    }
+
+    /**
+     * Get the returned value of the asset
+     *
+     * @return mixed
+     */
+    public function include()
+    {
+        $this->assertExists();
+        return include $this->path();
+    }
+
+    /**
+     * Assert that the asset exists.
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
+    protected function assertExists()
+    {
+        if (! $this->exists()) {
+            throw new FileNotFoundException("Asset [{$this->path()}] not found.");
+        }
     }
 }

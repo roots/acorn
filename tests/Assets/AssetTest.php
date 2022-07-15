@@ -55,23 +55,30 @@ it('can re-encode json', function () {
 });
 
 it('can include a php asset', function () {
-    assertMatchesSnapshot($this->assets->asset('bnif.php')->load());
+    assertMatchesSnapshot($this->assets->asset('bnif.php')->include());
 });
 
 it('can include_once a php asset', function () {
-    assertMatchesSnapshot($this->assets->asset('bnif.php')->load(false, true));
+    assertMatchesSnapshot($this->assets->asset('bnif.php')->includeOnce());
 });
 
 it('can require a php asset', function () {
-    assertMatchesSnapshot($this->assets->asset('bnif.php')->load(true));
+    assertMatchesSnapshot($this->assets->asset('bnif.php')->require());
 });
 
 it('can require_once a php asset', function () {
+    assertMatchesSnapshot($this->assets->asset('bnif.php')->requireOnce());
+});
+
+it('can load a php asset', function () {
+    assertMatchesSnapshot($this->assets->asset('bnif.php')->load(false, false));
+    assertMatchesSnapshot($this->assets->asset('bnif.php')->load(false, true));
+    assertMatchesSnapshot($this->assets->asset('bnif.php')->load(true, false));
     assertMatchesSnapshot($this->assets->asset('bnif.php')->load(true, true));
 });
 
-it('can fail to load a php asset', function () {
-    (new PhpAsset(temp('does/not/exist.php'), 'https://kjo.kjo/'))->load();
+it('can fail to include a php asset', function () {
+    (new PhpAsset(temp('does/not/exist.php'), 'https://kjo.kjo/'))->include();
 })->throws(FileNotFoundException::class);
 
 it('can get a relative path', function () {
