@@ -9,28 +9,6 @@ class PhpAsset extends Asset
     /**
      * Get the returned value of the asset
      *
-     * @deprecated since 2.1.2. Use require(), requireOnce(), include() or includeOnce() instead.
-     *
-     * @param  bool $require
-     * @param  bool $once
-     * @return mixed
-     */
-    public function load($require = false, $once = false)
-    {
-        if ($require) {
-            return $once
-                ? $this->requireOnce()
-                : $this->require();
-        }
-
-        return $once
-            ? $this->includeOnce()
-            : $this->include();
-    }
-
-    /**
-     * Get the returned value of the asset
-     *
      * @return mixed
      */
     public function requireOnce()

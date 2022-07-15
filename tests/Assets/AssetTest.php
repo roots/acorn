@@ -70,13 +70,6 @@ it('can require_once a php asset', function () {
     assertMatchesSnapshot($this->assets->asset('bnif.php')->requireOnce());
 });
 
-it('can load a php asset', function () {
-    assertMatchesSnapshot($this->assets->asset('bnif.php')->load(false, false));
-    assertMatchesSnapshot($this->assets->asset('bnif.php')->load(false, true));
-    assertMatchesSnapshot($this->assets->asset('bnif.php')->load(true, false));
-    assertMatchesSnapshot($this->assets->asset('bnif.php')->load(true, true));
-});
-
 it('can fail to include a php asset', function () {
     (new PhpAsset(temp('does/not/exist.php'), 'https://kjo.kjo/'))->include();
 })->throws(FileNotFoundException::class);
