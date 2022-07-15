@@ -265,15 +265,15 @@ class Handler implements ExceptionHandlerContract
             $this->levels, fn ($level, $type) => $e instanceof $type, LogLevel::ERROR
         );
 
-        $logger->log(
-            $level,
-            $e->getMessage(),
-            array_merge(
-                $this->exceptionContext($e),
-                $this->context(),
-                ['exception' => $e]
-            )
+        $context = array_merge(
+            $this->exceptionContext($e),
+            $this->context(),
+            ['exception' => $e]
         );
+
+        method_exists($logger, $level)
+            ? $logger->{$level}($e->getMessage(), $context)
+            : $logger->log($level, $e->getMessage(), $context);
     }
 
     /**
@@ -375,7 +375,8 @@ class Handler implements ExceptionHandlerContract
         return match (true) {
             $e instanceof BackedEnumCaseNotFoundException => new NotFoundHttpException($e->getMessage(), $e),
             $e instanceof ModelNotFoundException => new NotFoundHttpException($e->getMessage(), $e),
-            $e instanceof AuthorizationException => new AccessDeniedHttpException($e->getMessage(), $e),
+            $e instanceof AuthorizationException && $e->hasStatus() => new HttpException($e->status(), $e->getMessage(), $e),
+            $e instanceof AuthorizationException && ! $e->hasStatus() => new AccessDeniedHttpException($e->getMessage(), $e),
             $e instanceof TokenMismatchException => new HttpException(419, $e->getMessage(), $e),
             $e instanceof SuspiciousOperationException => new NotFoundHttpException('Bad hostname provided.', $e),
             $e instanceof RecordsNotFoundException => new NotFoundHttpException('Not found.', $e),
