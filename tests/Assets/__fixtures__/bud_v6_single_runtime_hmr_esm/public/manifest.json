@@ -1,0 +1,6 @@
+{
+  "app.mjs": "js/app.mjs",
+  "editor.mjs": "js/editor.mjs",
+  "app.mjs.map": "js/app.mjs.map",
+  "editor.mjs.map": "js/editor.mjs.map"
+}
