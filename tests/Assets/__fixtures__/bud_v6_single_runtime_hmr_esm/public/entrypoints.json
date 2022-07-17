@@ -1,0 +1,16 @@
+{
+  "app": {
+    "mjs": [
+      "js/app.mjs"
+    ],
+    "dependencies": []
+  },
+  "editor": {
+    "mjs": [
+      "js/editor.mjs"
+    ],
+    "dependencies": [
+      "wp-blocks"
+    ]
+  }
+}
