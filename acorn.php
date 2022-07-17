@@ -4,7 +4,7 @@
  * Plugin Name:   Acorn
  * Plugin URI:    https://roots.io/acorn
  * Description:   Lazy-loaded framework for WordPress themes and plugins
- * Version:       2.1.1
+ * Version:       2.1.2
  * Author:        Roots
  * Author URI:    https://roots.io
  * License:       MIT
