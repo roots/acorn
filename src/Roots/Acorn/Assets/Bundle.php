@@ -156,6 +156,15 @@ class Bundle implements BundleContract
         } elseif (isset($this->bundle['js'][0]) && strpos($this->bundle['js'][0], 'runtime') === 0) {
             $this->runtime = $this->bundle['js'][0];
             unset($this->bundle['js'][0]);
+        } elseif (isset($this->bundle['js'][0]) && strpos($this->bundle['js'][0], 'js/runtime') === 0) {
+            $this->runtime = $this->bundle['js'][0];
+            unset($this->bundle['js'][0]);
+        } elseif (isset($this->bundle['mjs'][0]) && strpos($this->bundle['mjs'][0], 'runtime') === 0) {
+            $this->runtime = $this->bundle['mjs'][0];
+            unset($this->bundle['mjs'][0]);
+        } elseif (isset($this->bundle['mjs'][0]) && strpos($this->bundle['mjs'][0], 'js/runtime') === 0) {
+            $this->runtime = $this->bundle['mjs'][0];
+            unset($this->bundle['mjs'][0]);
         }
     }
 }

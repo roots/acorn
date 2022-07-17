@@ -155,9 +155,7 @@ trait Enqueuable
      */
     public function inline($contents, $position = 'after')
     {
-        $bundle = array_merge($this->bundle['js'], $this->bundle['mjs']) ?? [];
-
-        if (! $handles = array_keys($bundle)) {
+        if (! $handles = array_keys($this->js()->keys()->toArray())) {
             return $this;
         }
 
@@ -181,7 +179,7 @@ trait Enqueuable
      */
     public function localize($name, $object)
     {
-        if (! $handles = array_keys($this->bundle['js'] ?? [])) {
+        if (! $handles = $this->js()->keys()->toArray()) {
             return $this;
         }
 
