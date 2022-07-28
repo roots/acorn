@@ -267,8 +267,8 @@ class Application extends FoundationApplication
                 })
                 ->unique()
                 ->filter(function ($path) use ($files) {
-                    return $files->isFile("{$path}/vendor/composer/installed.json")
-                        && $files->isFile("{$path}/composer.json");
+                    return @$files->isFile("{$path}/vendor/composer/installed.json")
+                        && @$files->isFile("{$path}/composer.json");
                 })
                 ->all();
 
