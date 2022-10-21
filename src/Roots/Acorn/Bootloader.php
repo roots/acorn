@@ -199,11 +199,17 @@ class Bootloader
     {
         $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
 
-        $response = tap($kernel->handle(
-            $request = \Illuminate\Http\Request::capture()
-        ))->send();
+        $response = $kernel->handle($request = \Illuminate\Http\Request::capture());
 
-        $kernel->terminate($request, $response);
+        if ($response->getStatusCode() === 404) {
+            return;
+        }
+
+        add_action('parse_request', function () use ($kernel, $response, $request) {
+            $body = $response->send();
+
+            $kernel->terminate($request, $body);
+        });
     }
 
     /**
