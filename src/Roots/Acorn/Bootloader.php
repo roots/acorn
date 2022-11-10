@@ -198,14 +198,25 @@ class Bootloader
     protected function bootHttp(ApplicationContract $app)
     {
         $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
+        $request = \Illuminate\Http\Request::capture();
 
-        $response = $kernel->handle($request = \Illuminate\Http\Request::capture());
+        $kernel->bootstrap($request);
 
-        if ($response->getStatusCode() === 404) {
+        try {
+            if (! $app->make('router')->getRoutes()->match($request)) {
+                return;
+            }
+        } catch (\Exception $e) {
             return;
         }
 
-        add_action('parse_request', function () use ($kernel, $response, $request) {
+        add_action('parse_request', function () use ($kernel, $request) {
+            $response = $kernel->handle($request);
+
+            if ($response->status() >= 400) {
+                return;
+            }
+
             $body = $response->send();
 
             $kernel->terminate($request, $body);
