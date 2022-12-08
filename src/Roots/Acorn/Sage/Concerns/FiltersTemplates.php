@@ -27,6 +27,11 @@ trait FiltersTemplates
      */
     public function filterTemplateInclude($file)
     {
+
+        if(@file_exists($file)) {
+            return $file;
+        }
+        
         $view = $this->fileFinder
             ->getPossibleViewNameFromPath($file = realpath($file));
 
