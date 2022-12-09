@@ -211,9 +211,10 @@ class Bootloader
         }
 
         add_action('parse_request', function () use ($kernel, $request) {
+            /** @var \Illuminate\Http\Response */
             $response = $kernel->handle($request);
 
-            if ($response->status() >= 400) {
+            if (! $response->isServerError() && $response->status() >= 400) {
                 return;
             }
 
