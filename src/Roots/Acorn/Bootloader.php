@@ -210,6 +210,12 @@ class Bootloader
             return;
         }
 
+        add_filter('do_parse_request', function ($do_parse, \WP $wp, $extra_query_vars) {
+            $do_parse = apply_filters('acorn/boot/do_parse_request', $do_parse, $wp, $extra_query_vars);
+
+            return $do_parse;
+        }, 100, 3);
+
         add_action('parse_request', function () use ($kernel, $request) {
             /** @var \Illuminate\Http\Response */
             $response = $kernel->handle($request);
