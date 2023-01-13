@@ -49,6 +49,13 @@ class Vite implements Htmlable
     protected $buildDirectory = 'build';
 
     /**
+     * The name of the manifest file.
+     *
+     * @var string
+     */
+    protected $manifestFilename = 'manifest.json';
+
+    /**
      * The script tag attributes resolvers.
      *
      * @var array
@@ -86,7 +93,7 @@ class Vite implements Htmlable
     /**
      * Get the preloaded assets.
      *
-     * @var array
+     * @return array
      */
     public function preloadedAssets()
     {
@@ -136,6 +143,19 @@ class Vite implements Htmlable
     public function withEntryPoints($entryPoints)
     {
         $this->entryPoints = $entryPoints;
+
+        return $this;
+    }
+
+    /**
+     * Set the filename for the manifest file.
+     *
+     * @param  string  $filename
+     * @return $this
+     */
+    public function useManifestFilename($filename)
+    {
+        $this->manifestFilename = $filename;
 
         return $this;
     }
@@ -213,7 +233,7 @@ class Vite implements Htmlable
     /**
      * Use the given callback to resolve attributes for preload tags.
      *
-     * @param  (callable(string, string, ?array, ?array): array)|array  $attributes
+     * @param  (callable(string, string, ?array, ?array): (array|false))|array|false  $attributes
      * @return $this
      */
     public function usePreloadTagAttributes($attributes)
@@ -318,9 +338,10 @@ class Vite implements Htmlable
             }
         }
 
-        [$stylesheets, $scripts] = $tags->partition(fn ($tag) => str_starts_with($tag, '<link'));
+        [$stylesheets, $scripts] = $tags->unique()->partition(fn ($tag) => str_starts_with($tag, '<link'));
 
-        $preloads = $preloads->sortByDesc(fn ($args) => $this->isCssPath($args[1]))
+        $preloads = $preloads->unique()
+            ->sortByDesc(fn ($args) => $this->isCssPath($args[1]))
             ->map(fn ($args) => $this->makePreloadTagForChunk(...$args));
 
         return new HtmlString($preloads->join('').$stylesheets->join('').$scripts->join(''));
@@ -331,8 +352,8 @@ class Vite implements Htmlable
      *
      * @param  string  $src
      * @param  string  $url
-     * @param  ?array  $chunk
-     * @param  ?array  $manifest
+     * @param  array|null  $chunk
+     * @param  array|null  $manifest
      * @return string
      */
     protected function makeTagForChunk($src, $url, $chunk, $manifest)
@@ -366,11 +387,15 @@ class Vite implements Htmlable
      * @param  string  $url
      * @param  array  $chunk
      * @param  array  $manifest
-     * @return string|null
+     * @return string
      */
     protected function makePreloadTagForChunk($src, $url, $chunk, $manifest)
     {
         $attributes = $this->resolvePreloadTagAttributes($src, $url, $chunk, $manifest);
+
+        if ($attributes === false) {
+            return '';
+        }
 
         $this->preloadedAssets[$url] = $this->parseAttributes(
             Collection::make($attributes)->forget('href')->all()
@@ -384,8 +409,8 @@ class Vite implements Htmlable
      *
      * @param  string  $src
      * @param  string  $url
-     * @param  ?array  $chunk
-     * @param  ?array  $manifest
+     * @param  array|null  $chunk
+     * @param  array|null  $manifest
      * @return array
      */
     protected function resolveScriptTagAttributes($src, $url, $chunk, $manifest)
@@ -406,8 +431,8 @@ class Vite implements Htmlable
      *
      * @param  string  $src
      * @param  string  $url
-     * @param  ?array  $chunk
-     * @param  ?array  $manifest
+     * @param  array|null  $chunk
+     * @param  array|null  $manifest
      * @return array
      */
     protected function resolveStylesheetTagAttributes($src, $url, $chunk, $manifest)
@@ -430,7 +455,7 @@ class Vite implements Htmlable
      * @param  string  $url
      * @param  array  $chunk
      * @param  array  $manifest
-     * @return array
+     * @return array|false
      */
     protected function resolvePreloadTagAttributes($src, $url, $chunk, $manifest)
     {
@@ -452,7 +477,11 @@ class Vite implements Htmlable
             : $attributes;
 
         foreach ($this->preloadTagAttributesResolvers as $resolver) {
-            $attributes = array_merge($attributes, $resolver($src, $url, $chunk, $manifest));
+            if (false === ($resolvedAttributes = $resolver($src, $url, $chunk, $manifest))) {
+                return false;
+            }
+
+            $attributes = array_merge($attributes, $resolvedAttributes);
         }
 
         return $attributes;
@@ -669,12 +698,13 @@ class Vite implements Htmlable
      */
     protected function manifestPath($buildDirectory)
     {
-        return public_path($buildDirectory.'/manifest.json');
+        return public_path($buildDirectory.'/'.$this->manifestFilename);
     }
 
     /**
      * Get a unique hash representing the current manifest, or null if there is no manifest.
      *
+     * @param  string|null  $buildDirectory
      * @return string|null
      */
     public function manifestHash($buildDirectory = null)
@@ -715,7 +745,7 @@ class Vite implements Htmlable
      *
      * @return bool
      */
-    protected function isRunningHot()
+    public function isRunningHot()
     {
         return is_file($this->hotFile());
     }
