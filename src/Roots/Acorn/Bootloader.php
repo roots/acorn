@@ -198,12 +198,38 @@ class Bootloader
     protected function bootHttp(ApplicationContract $app)
     {
         $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
+        $request = \Illuminate\Http\Request::capture();
 
-        $response = tap($kernel->handle(
-            $request = \Illuminate\Http\Request::capture()
-        ))->send();
+        $kernel->bootstrap($request);
 
-        $kernel->terminate($request, $response);
+        try {
+            if (! $app->make('router')->getRoutes()->match($request)) {
+                return;
+            }
+        } catch (\Exception $e) {
+            return;
+        }
+
+        add_filter(
+            'do_parse_request',
+            fn ($do_parse, \WP $wp, $extra_query_vars) =>
+            apply_filters('acorn/router/do_parse_request', $do_parse, $wp, $extra_query_vars),
+            100,
+            3
+        );
+
+        add_action('parse_request', function () use ($kernel, $request) {
+            /** @var \Illuminate\Http\Response */
+            $response = $kernel->handle($request);
+
+            if (! $response->isServerError() && $response->status() >= 400) {
+                return;
+            }
+
+            $body = $response->send();
+
+            $kernel->terminate($request, $body);
+        });
     }
 
     /**
@@ -386,6 +412,7 @@ class Bootloader
         $path = WP_CONTENT_DIR . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'acorn';
         $files->ensureDirectoryExists($path . DIRECTORY_SEPARATOR . 'framework' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'data', 0755, true);
         $files->ensureDirectoryExists($path . DIRECTORY_SEPARATOR . 'framework' . DIRECTORY_SEPARATOR . 'views', 0755, true);
+        $files->ensureDirectoryExists($path . DIRECTORY_SEPARATOR . 'framework' . DIRECTORY_SEPARATOR . 'sessions', 0755, true);
         $files->ensureDirectoryExists($path . DIRECTORY_SEPARATOR . 'logs', 0755, true);
 
         return $path;
