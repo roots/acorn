@@ -210,9 +210,13 @@ class Bootloader
             return;
         }
 
-        add_filter('do_parse_request', fn ($do_parse, \WP $wp, $extra_query_vars) =>
+        add_filter(
+            'do_parse_request',
+            fn ($do_parse, \WP $wp, $extra_query_vars) =>
             apply_filters('acorn/router/do_parse_request', $do_parse, $wp, $extra_query_vars),
-        100, 3);
+            100,
+            3
+        );
 
         add_action('parse_request', function () use ($kernel, $request) {
             /** @var \Illuminate\Http\Response */
