@@ -6,6 +6,8 @@ use Closure;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Console\View\Components\BulletList;
+use Illuminate\Console\View\Components\Error;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Debug\ExceptionHandler as ExceptionHandlerContract;
 use Illuminate\Contracts\Foundation\ExceptionRenderer;
@@ -30,6 +32,7 @@ use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Symfony\Component\Console\Application as ConsoleApplication;
+use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\ErrorHandler\ErrorRenderer\HtmlErrorRenderer;
 use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
 use Symfony\Component\HttpFoundation\RedirectResponse as SymfonyRedirectResponse;
@@ -265,11 +268,7 @@ class Handler implements ExceptionHandlerContract
             $this->levels, fn ($level, $type) => $e instanceof $type, LogLevel::ERROR
         );
 
-        $context = array_merge(
-            $this->exceptionContext($e),
-            $this->context(),
-            ['exception' => $e]
-        );
+        $context = $this->buildExceptionContext($e);
 
         method_exists($logger, $level)
             ? $logger->{$level}($e->getMessage(), $context)
@@ -298,6 +297,21 @@ class Handler implements ExceptionHandlerContract
         $dontReport = array_merge($this->dontReport, $this->internalDontReport);
 
         return ! is_null(Arr::first($dontReport, fn ($type) => $e instanceof $type));
+    }
+
+    /**
+     * Create the context array for logging the given exception.
+     *
+     * @param  \Throwable  $e
+     * @return array
+     */
+    protected function buildExceptionContext(Throwable $e)
+    {
+        return array_merge(
+            $this->exceptionContext($e),
+            $this->context(),
+            ['exception' => $e]
+        );
     }
 
     /**
@@ -375,7 +389,9 @@ class Handler implements ExceptionHandlerContract
         return match (true) {
             $e instanceof BackedEnumCaseNotFoundException => new NotFoundHttpException($e->getMessage(), $e),
             $e instanceof ModelNotFoundException => new NotFoundHttpException($e->getMessage(), $e),
-            $e instanceof AuthorizationException && $e->hasStatus() => new HttpException($e->status(), $e->getMessage(), $e),
+            $e instanceof AuthorizationException && $e->hasStatus() => new HttpException(
+                $e->status(), $e->response()?->message() ?: (Response::$statusTexts[$e->status()] ?? 'Whoops, looks like something went wrong.'), $e
+            ),
             $e instanceof AuthorizationException && ! $e->hasStatus() => new AccessDeniedHttpException($e->getMessage(), $e),
             $e instanceof TokenMismatchException => new HttpException(419, $e->getMessage(), $e),
             $e instanceof SuspiciousOperationException => new NotFoundHttpException('Bad hostname provided.', $e),
@@ -527,16 +543,16 @@ class Handler implements ExceptionHandlerContract
     protected function prepareResponse($request, Throwable $e)
     {
         if (! $this->isHttpException($e) && config('app.debug')) {
-            return $this->toIlluminateResponse($this->convertExceptionToResponse($e), $e);
+            return $this->toIlluminateResponse($this->convertExceptionToResponse($e), $e)->prepare($request);
         }
 
         if (! $this->isHttpException($e)) {
-            $e = new HttpException(500, $e->getMessage());
+            $e = new HttpException(500, $e->getMessage(), $e);
         }
 
         return $this->toIlluminateResponse(
             $this->renderHttpException($e), $e
-        );
+        )->prepare($request);
     }
 
     /**
@@ -718,6 +734,23 @@ class Handler implements ExceptionHandlerContract
      */
     public function renderForConsole($output, Throwable $e)
     {
+        if ($e instanceof CommandNotFoundException) {
+            $message = str($e->getMessage())->explode('.')->first();
+
+            if (! empty($alternatives = $e->getAlternatives())) {
+                $message .= '. Did you mean one of these?';
+
+                with(new Error($output))->render($message);
+                with(new BulletList($output))->render($e->getAlternatives());
+
+                $output->writeln('');
+            } else {
+                with(new Error($output))->render($message);
+            }
+
+            return;
+        }
+
         (new ConsoleApplication)->renderThrowable($e, $output);
     }
 
