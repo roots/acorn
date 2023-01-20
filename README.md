@@ -13,7 +13,7 @@
     <img alt="Laravel v9" src="https://img.shields.io/static/v1?label=laravel&message=v9&logo=Laravel&style=flat-square&color=f9322c" />
   </a>
 
-  <a href="https://github.com/roots/trellis/acorn">
+  <a href="https://packagist.org/packages/roots/acorn">
     <img alt="Release" src="https://img.shields.io/github/release/roots/acorn.svg?style=flat-square" />
   </a>
 
