@@ -4,6 +4,7 @@ namespace Roots\Acorn;
 
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Illuminate\Support\Env;
+use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Str;
 use Roots\Acorn\Filesystem\Filesystem;
 
@@ -204,9 +205,11 @@ class Bootloader
 
         try {
             if (! $app->make('router')->getRoutes()->match($request)) {
-                return;
+                throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException();
             }
         } catch (\Exception $e) {
+            $app->instance('request', $request);
+            Facade::clearResolvedInstance('request');
             return;
         }
 
