@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://roots.io/acorn/">
-    <img alt="Trellis" src="https://cdn.roots.io/app/uploads/logo-acorn.svg" height="100">
+    <img alt="Acorn" src="https://cdn.roots.io/app/uploads/logo-acorn.svg" height="100">
   </a>
 </p>
 
@@ -31,7 +31,7 @@
 </p>
 
 <p align="center">
-  <a href="https://roots.io/"><strong><code>Website</code></strong></a> &nbsp;&nbsp; <a href="https://docs.roots.io/acorn/2.x/installation/"><strong><code>Documentation</code></strong></a> &nbsp;&nbsp; <a href="https://github.com/roots/acorn/releases"><strong><code>Releases</code></strong></a> &nbsp;&nbsp; <a href="https://discourse.roots.io/"><strong><code>Support</code></strong></a>
+  <a href="https://roots.io/"><strong><code>Website</code></strong></a> &nbsp;&nbsp; <a href="https://roots.io/acorn/docs/installation/"><strong><code>Documentation</code></strong></a> &nbsp;&nbsp; <a href="https://github.com/roots/acorn/releases"><strong><code>Releases</code></strong></a> &nbsp;&nbsp; <a href="https://discourse.roots.io/"><strong><code>Support</code></strong></a>
 </p>
 
 ## Sponsors
@@ -54,14 +54,11 @@ Acorn is a way to use Laravel components inside of WordPress.
 
 ## Requirements
 
-See the full [installation](https://docs.roots.io/acorn/2.x/installation/) docs for requirements.
+See the full [installation](https://roots.io/acorn/docs/installation/) docs for requirements.
 
 ## Installation
 
-**The `main` branch currently tracks Acorn v3 which is in active development. Looking for Acorn v2 or the latest Acorn v3 beta release? [See releases](https://github.com/roots/acorn/releases).**
-
-
-To install Acorn in a Bedrock environment, navigate to your Bedrock directory and run the following command:
+Navigate to your Bedrock directory (recommended), or your Sage-bsaed theme directory, and run the following command:
 
 ```sh
 $ composer require roots/acorn
@@ -89,4 +86,4 @@ Keep track of development and community news.
 - Participate on the [Roots Discourse](https://discourse.roots.io/)
 - Follow [@rootswp on Twitter](https://twitter.com/rootswp)
 - Read and subscribe to the [Roots Blog](https://roots.io/blog/)
-- Subscribe to the [Roots Newsletter](https://roots.io/subscribe/)
+- Subscribe to the [Roots Newsletter](https://roots.io/newsletter/)
