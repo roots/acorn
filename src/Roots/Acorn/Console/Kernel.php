@@ -14,6 +14,8 @@ class Kernel extends FoundationConsoleKernel
      * @var array
      */
     protected $commands = [
+        \Illuminate\Cache\Console\ClearCommand::class,
+        \Illuminate\Cache\Console\ForgetCommand::class,
         \Illuminate\Foundation\Console\ClearCompiledCommand::class,
         \Illuminate\Foundation\Console\ComponentMakeCommand::class,
         \Illuminate\Foundation\Console\ConfigClearCommand::class,
