@@ -15,7 +15,6 @@
     <!-- Support for PHP 8.0+ -->
     <config name="testVersion" value="8.0-"/>
 
-    <file>acorn.php</file>
     <file>src/Roots</file>
 
     <!-- We should be cognizant of long lines, but handle it case-by-case -->
