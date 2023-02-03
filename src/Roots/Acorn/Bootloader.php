@@ -202,6 +202,9 @@ class Bootloader
         $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
         $request = \Illuminate\Http\Request::capture();
 
+        $app->instance('request', $request);
+        Facade::clearResolvedInstance('request');
+
         $kernel->bootstrap($request);
 
         try {
@@ -209,8 +212,6 @@ class Bootloader
                 throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException();
             }
         } catch (\Exception $e) {
-            $app->instance('request', $request);
-            Facade::clearResolvedInstance('request');
             return;
         }
 
