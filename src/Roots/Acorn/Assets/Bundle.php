@@ -94,7 +94,7 @@ class Bundle implements BundleContract
      */
     public function dependencies()
     {
-        return $this->bundle['dependencies'];
+        return $this->bundle['dependencies'] ?? [];
     }
 
     /**
