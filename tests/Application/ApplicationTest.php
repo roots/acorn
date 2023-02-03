@@ -152,6 +152,8 @@ it('gracefully skips a provider that fails to boot', function () {
     $manifest = mock(\Roots\Acorn\PackageManifest::class);
     $app = new Application();
 
+    $app['env'] = 'not-local-dev';
+
     $app->singleton(\Illuminate\Contracts\Debug\ExceptionHandler::class, fn () => $handler);
     $app->singleton(\Illuminate\Foundation\PackageManifest::class, fn () => $manifest);
 
@@ -182,6 +184,8 @@ it('gracefully skips a provider that does not exist', function () {
     $handler = mock(\Illuminate\Contracts\Debug\ExceptionHandler::class);
     $manifest = mock(\Roots\Acorn\PackageManifest::class);
     $app = new Application();
+
+    $app['env'] = 'not-local-dev';
 
     $app->singleton(\Illuminate\Contracts\Debug\ExceptionHandler::class, fn () => $handler);
     $app->singleton(\Illuminate\Foundation\PackageManifest::class, fn () => $manifest);
