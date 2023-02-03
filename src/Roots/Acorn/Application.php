@@ -384,7 +384,7 @@ class Application extends FoundationApplication
 
         report($e);
 
-        if ($this->environment('develop', 'testing', 'local')) {
+        if ($this->environment('development', 'testing', 'local')) {
             throw $e;
         }
 
