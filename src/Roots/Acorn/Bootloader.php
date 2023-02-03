@@ -162,9 +162,10 @@ class Bootloader
      */
     protected function bootWpCli(ApplicationContract $app)
     {
-        \WP_CLI::add_command('acorn', function ($args, $assoc_args) use ($app) {
-            $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
+        $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
+        $kernel->bootstrap();
 
+        \WP_CLI::add_command('acorn', function ($args, $assoc_args) use ($kernel) {
             $kernel->commands();
 
             $command = implode(' ', $args);
