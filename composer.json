@@ -63,7 +63,7 @@
     "vlucas/phpdotenv": "^5.4.1"
   },
   "require-dev": {
-    "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.0.0",
     "filp/whoops": "^2.9",
     "pestphp/pest": "^1.0",
     "pestphp/pest-plugin-mock": "^1.0",
