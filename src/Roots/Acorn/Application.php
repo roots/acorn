@@ -384,6 +384,10 @@ class Application extends FoundationApplication
 
         report($e);
 
+        if ($this->environment('develop', 'testing', 'local')) {
+            throw $e;
+        }
+
         return is_object($provider) ? $provider : new class ($this) extends ServiceProvider {
         };
     }
