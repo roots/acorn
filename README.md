@@ -58,7 +58,7 @@ See the full [installation](https://roots.io/acorn/docs/installation/) docs for 
 
 ## Installation
 
-Navigate to your Bedrock directory (recommended), or your Sage-bsaed theme directory, and run the following command:
+Navigate to your Bedrock directory (recommended), or your Sage-based theme directory, and run the following command:
 
 ```sh
 $ composer require roots/acorn
