@@ -188,6 +188,26 @@ trait Enqueuable
 
         return $this;
     }
+    
+    /**
+     * Add script translations to be used by the bundle
+     *
+     * @param string $domain
+     * @param string $path
+     * @return $this
+     */
+    public function translate($domain, $path)
+    {
+        if (! $handles = $this->js()->keys()->toArray()) {
+            return $this;
+        }
+
+        foreach ($handles as $handle) {
+            wp_set_script_translations("{$this->id}/{$handle}", $domain, $path);
+        }
+
+        return $this;
+    }
 
     /**
      * Merge two or more arrays.
