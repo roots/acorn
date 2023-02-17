@@ -26,6 +26,7 @@ class Kernel extends FoundationConsoleKernel
         \Illuminate\Foundation\Console\RouteListCommand::class,
         \Illuminate\Foundation\Console\ViewCacheCommand::class,
         \Illuminate\Foundation\Console\ViewClearCommand::class,
+        \Illuminate\Routing\Console\ControllerMakeCommand::class,
         \Roots\Acorn\Console\Commands\AcornInitCommand::class,
         \Roots\Acorn\Console\Commands\ComposerMakeCommand::class,
         \Roots\Acorn\Console\Commands\ConfigCacheCommand::class,
