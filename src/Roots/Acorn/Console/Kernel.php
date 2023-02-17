@@ -23,6 +23,7 @@ class Kernel extends FoundationConsoleKernel
         \Illuminate\Foundation\Console\EnvironmentCommand::class,
         \Illuminate\Foundation\Console\PackageDiscoverCommand::class,
         \Illuminate\Foundation\Console\ProviderMakeCommand::class,
+        \Illuminate\Foundation\Console\RouteListCommand::class,
         \Illuminate\Foundation\Console\ViewCacheCommand::class,
         \Illuminate\Foundation\Console\ViewClearCommand::class,
         \Roots\Acorn\Console\Commands\AcornInitCommand::class,
