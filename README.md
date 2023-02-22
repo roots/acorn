@@ -50,7 +50,47 @@ However, the amount of effort needed to maintain and develop new features and pr
 
 Acorn is a way to use Laravel components inside of WordPress.
 
-![Acorn CLI output](https://cdn.roots.io/app/uploads/wp-cli-acorn-v2.png)
+<details>
+  <summary><b>Supported components</b></summary>
+&nbsp;
+
+| Component                | Support |
+| ------------------------ | ------- |
+| illuminate/auth          | ❌ |
+| illuminate/broadcasting  | ❌ |
+| illuminate/bus           | ❌ |
+| illuminate/cache         | ✅ |
+| illuminate/collections   | ❌ |
+| illuminate/conditionable | ❌ |
+| illuminate/config        | ✅ |
+| illuminate/console       | ✅ |
+| illuminate/container     | ✅ |
+| illuminate/contracts     | ✅ |
+| illuminate/contracts     | ❌ |
+| illuminate/cookie        | ❌ |
+| illuminate/database      | 🚧 |
+| illuminate/encryption    | ❌ |
+| illuminate/events        | ✅ |
+| illuminate/filesystem    | ✅ |
+| illuminate/hashing       | ❌ |
+| illuminate/http          | ✅ |
+| illuminate/log           | ✅ |
+| illuminate/macroable     | ❌ |
+| illuminate/mail          | ❌ |
+| illuminate/notifications | ❌ |
+| illuminate/pagination    | ❌ |
+| illuminate/pipeline      | ❌ |
+| illuminate/queue         | ❌ |
+| illuminate/redis         | ❌ |
+| illuminate/routing       | ✅ |
+| illuminate/session       | ❌ |
+| illuminate/support       | ✅ |
+| illuminate/testing       | ❌ |
+| illuminate/translation   | ❌ |
+| illuminate/validation    | ❌ |
+| illuminate/view          | ✅ |
+  
+</details>
 
 ## Requirements
 
