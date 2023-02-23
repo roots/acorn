@@ -78,7 +78,7 @@ Acorn is a way to use Laravel components inside of WordPress.
 | illuminate/macroable     | ❌ | |
 | illuminate/mail          | ❌ | |
 | illuminate/notifications | ❌ | |
-| illuminate/pagination    | ❌ | [Available via Log1x/navi](https://github.com/Log1x/pagi)
+| illuminate/pagination    | ❌ | [Available via Log1x/pagi](https://github.com/Log1x/pagi)
 | illuminate/pipeline      | ❌ | |
 | illuminate/queue         | ❌ | |
 | illuminate/redis         | ❌ | |
