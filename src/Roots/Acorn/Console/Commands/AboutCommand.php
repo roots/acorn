@@ -31,11 +31,11 @@ class AboutCommand extends BaseCommand
             'Application Name' => $this->laravel->get('config')->get('app.name'),
             'PHP' => $this->formatVersion(PHP_VERSION),
             'Xdebug' => $this->formatVersion(phpversion('xdebug')),
-            'Composer' => $this->formatVersion($this->composer->getVersion() ?? '<fg=yellow;options=bold>-</>'),
+            'Composer' => $this->formatVersion($this->composer->getVersion()),
             'Acorn' => $this->formatVersion(Application::VERSION),
             'Laravel' => $this->formatVersion(FoundationApplication::VERSION),
             'WordPress' => $this->formatVersion(get_bloginfo('version')),
-            'WP-CLI' => $this->formatVersion(defined('WP_CLI_VERSION') ? WP_CLI_VERSION : '<fg=yellow;options=bold>-</>'),
+            'WP-CLI' => $this->formatVersion(defined('WP_CLI_VERSION') ? WP_CLI_VERSION : null),
             'Environment' => $this->laravel->environment(),
             'Debug Mode' => $this->laravel->get('config')->get('app.debug') ? '<fg=yellow;options=bold>ENABLED</>' : 'OFF',
             'Maintenance Mode' => $this->laravel->isDownForMaintenance() ? '<fg=yellow;options=bold>ENABLED</>' : 'OFF',
@@ -52,6 +52,6 @@ class AboutCommand extends BaseCommand
 
     protected function formatVersion($version)
     {
-        return 'v' . ltrim($version, 'vV');
+        return $version ? ('v' . ltrim($version, 'vV')) : '<fg=yellow;options=bold>-</>';
     }
 }
