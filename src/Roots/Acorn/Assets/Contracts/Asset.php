@@ -35,7 +35,7 @@ interface Asset
      * @return mixed
      */
     public function contents();
-    
+
     /**
      * Get the relative path to the asset.
      *
