@@ -188,7 +188,7 @@ trait Enqueuable
 
         return $this;
     }
-    
+
     /**
      * Add script translations to be used by the bundle
      *
