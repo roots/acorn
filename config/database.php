@@ -52,7 +52,7 @@ return [
             'unix_socket'    => env('DB_SOCKET', ''),
             'charset'        => DB_CHARSET,
             'collation'      => $GLOBALS['wpdb']->collate,
-            'prefix'         => $table_prefix ?? $GLOBALS['wpdb']->prefix,
+            'prefix'         => $GLOBALS['wpdb']->prefix,
             'prefix_indexes' => true,
             'strict'         => true,
             'engine'         => null,
