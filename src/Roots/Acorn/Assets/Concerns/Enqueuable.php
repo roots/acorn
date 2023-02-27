@@ -198,13 +198,9 @@ trait Enqueuable
      */
     public function translate($domain, $path)
     {
-        if (! $handles = $this->js()->keys()->toArray()) {
-            return $this;
-        }
-
-        foreach ($handles as $handle) {
+        $this->js()->keys()->each(function ($handle) use ($domain, $path) {
             wp_set_script_translations("{$this->id}/{$handle}", $domain, $path);
-        }
+        });
 
         return $this;
     }
