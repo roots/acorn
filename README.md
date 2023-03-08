@@ -5,50 +5,40 @@
 </p>
 
 <p align="center">
-  <a href="LICENSE.md">
-    <img alt="MIT License" src="https://img.shields.io/github/license/roots/acorn?color=%23525ddc&style=flat-square" />
+  <a href="https://packagist.org/packages/roots/acorn">
+    <img alt="Packagist Downloads" src="https://img.shields.io/packagist/dt/roots/acorn?label=downloads&colorB=2b3072&colorA=525ddc&style=flat-square">
   </a>
-  
+
   <a href="https://laravel.com/docs/9.x">
     <img alt="Laravel v9" src="https://img.shields.io/static/v1?label=laravel&message=v9&logo=Laravel&style=flat-square&color=f9322c" />
   </a>
 
-  <a href="https://packagist.org/packages/roots/acorn">
-    <img alt="Release" src="https://img.shields.io/github/release/roots/acorn.svg?style=flat-square" />
-  </a>
-
-  <a href="https://github.com/roots/acorn/actions">
-    <img alt="Build Status" src="https://img.shields.io/github/actions/workflow/status/roots/acorn/main.yml?branch=main&style=flat-square" />
+  <a href="https://github.com/roots/acorn/actions/workflows/main.yml">
+    <img alt="Build Status" src="https://img.shields.io/github/actions/workflow/status/roots/acorn/main.yml?branch=main&logo=github&label=CI&style=flat-square">
   </a>
 
   <a href="https://twitter.com/rootswp">
-    <img alt="Follow Roots" src="https://img.shields.io/twitter/follow/rootswp.svg?style=flat-square&color=1da1f2" />
+    <img alt="Follow Roots" src="https://img.shields.io/badge/follow%20@rootswp-1da1f2?logo=twitter&logoColor=ffffff&message=&style=flat-square">
   </a>
 </p>
 
-<p align="center">
-  <strong>Laravel components for WordPress plugins and themes</strong>
-</p>
+<p align="center">Laravel components for WordPress plugins and themes</p>
 
 <p align="center">
-  <a href="https://roots.io/"><strong><code>Website</code></strong></a> &nbsp;&nbsp; <a href="https://roots.io/acorn/docs/installation/"><strong><code>Documentation</code></strong></a> &nbsp;&nbsp; <a href="https://github.com/roots/acorn/releases"><strong><code>Releases</code></strong></a> &nbsp;&nbsp; <a href="https://discourse.roots.io/"><strong><code>Support</code></strong></a>
+  <a href="https://roots.io/acorn/">Website</a> &nbsp;&nbsp; <a href="https://roots.io/acorn/docs/installation/">Documentation</a> &nbsp;&nbsp; <a href="https://github.com/roots/acorn/releases">Releases</a> &nbsp;&nbsp; <a href="https://discourse.roots.io/">Community</a>
 </p>
 
 ## Sponsors
 
-**Acorn** is an open source project and completely free to use.
-
-However, the amount of effort needed to maintain and develop new features and products within the Roots ecosystem is not sustainable without proper financial backing. If you have the capability, please consider [sponsoring Roots](https://github.com/sponsors/roots).
-
-<p align="center"><a href="https://github.com/sponsors/roots"><img height="32" src="https://img.shields.io/badge/sponsor%20roots-525ddc?logo=github&logoColor=ffffff&message=" alt="Sponsor Roots"></a></p>
+Acorn is an open source project and completely free to use. If you've benefited from our projects and would like to support our future endeavors, please consider [sponsoring Roots](https://github.com/sponsors/roots).
 
 <div align="center">
-<a href="https://k-m.com/"><img src="https://cdn.roots.io/app/uploads/km-digital.svg" alt="KM Digital" width="148" height="111"></a> <a href="https://carrot.com/"><img src="https://cdn.roots.io/app/uploads/carrot.svg" alt="Carrot" width="148" height="111"></a> <a href="https://wordpress.com/"><img src="https://cdn.roots.io/app/uploads/wordpress.svg" alt="WordPress.com" width="148" height="111"></a> <a href="https://pantheon.io/"><img src="https://cdn.roots.io/app/uploads/pantheon.svg" alt="Pantheon" width="148" height="111"></a> <a href="https://worksitesafety.ca/careers/"><img src="https://cdn.roots.io/app/uploads/worksite-safety.svg" alt="Worksite Safety" width="148" height="111"></a> <a href="https://www.copiadigital.com/"><img src="https://cdn.roots.io/app/uploads/copia-digital.svg" alt="Copia Digital" width="148" height="111"></a> 
+<a href="https://k-m.com/"><img src="https://cdn.roots.io/app/uploads/km-digital.svg" alt="KM Digital" width="120" height="90"></a> <a href="https://carrot.com/"><img src="https://cdn.roots.io/app/uploads/carrot.svg" alt="Carrot" width="120" height="90"></a> <a href="https://wordpress.com/"><img src="https://cdn.roots.io/app/uploads/wordpress.svg" alt="WordPress.com" width="120" height="90"></a> <a href="https://pantheon.io/"><img src="https://cdn.roots.io/app/uploads/pantheon.svg" alt="Pantheon" width="120" height="90"></a> <a href="https://worksitesafety.ca/careers/"><img src="https://cdn.roots.io/app/uploads/worksite-safety.svg" alt="Worksite Safety" width="120" height="90"></a> <a href="https://www.copiadigital.com/"><img src="https://cdn.roots.io/app/uploads/copia-digital.svg" alt="Copia Digital" width="120" height="90"></a> 
 </div>
 
 ## Overview
 
-Acorn is a way to use Laravel components inside of WordPress.
+Acorn is a framework for integrating Laravel within WordPress.
 
 ### Supported components
 
@@ -97,38 +87,15 @@ Acorn is a way to use Laravel components inside of WordPress.
   
 </details>
 
-## Requirements
+## Getting Started
 
-See the full [installation](https://roots.io/acorn/docs/installation/) docs for requirements.
+See the [Acorn installation documentation](https://roots.io/acorn/docs/installation/).
 
-## Installation
-
-Navigate to your Bedrock directory (recommended), or your Sage-based theme directory, and run the following command:
-
-```sh
-$ composer require roots/acorn
-```
-
-To install the latest development version of Acorn, add `dev-main` to the end of the command:
-
-```sh
-$ composer require roots/acorn dev-main
-```
-
-We recommend adding Acorn's `postAutoloadDump` function to Composer's `post-autoload-dump` event in `composer.json`:
-
-```json
-"post-autoload-dump": [
-  "Roots\\Acorn\\ComposerScripts::postAutoloadDump"
-]
-```
-
-## Community
-
-Keep track of development and community news.
+## Stay Connected
 
 - Join us on Discord by [sponsoring us on GitHub](https://github.com/sponsors/roots)
-- Participate on the [Roots Discourse](https://discourse.roots.io/)
+- Participate on [Roots Discourse](https://discourse.roots.io/)
 - Follow [@rootswp on Twitter](https://twitter.com/rootswp)
-- Read and subscribe to the [Roots Blog](https://roots.io/blog/)
+- Read the [Roots Blog](https://roots.io/blog/)
 - Subscribe to the [Roots Newsletter](https://roots.io/newsletter/)
+
