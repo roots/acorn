@@ -50,7 +50,7 @@ class Sage
      *
      * @var Filesystem
      */
-    private Filesystem $files;
+    protected Filesystem $files;
 
     /**
      * Creates a new Sage instance.
