@@ -46,6 +46,13 @@ class Sage
     protected $view;
 
     /**
+     * The Filesystem instance.
+     *
+     * @var Filesystem
+     */
+    protected Filesystem $files;
+
+    /**
      * Creates a new Sage instance.
      *
      * @param Filesystem        $files
