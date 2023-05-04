@@ -43,7 +43,7 @@ class Sage
      *
      * @var ViewFactory
      */
-    protected          $view;
+    protected $view;
 
     /**
      * The Filesystem instance.
