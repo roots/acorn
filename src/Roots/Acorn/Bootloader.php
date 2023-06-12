@@ -285,7 +285,6 @@ class Bootloader
         return $this->app;
     }
 
-
     /**
      * Get the application basepath
      *
