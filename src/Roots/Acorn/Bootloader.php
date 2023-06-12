@@ -261,12 +261,12 @@ class Bootloader
 
         $this->app->singleton(
             \Illuminate\Contracts\Http\Kernel::class,
-            \Roots\Acorn\Kernel::class
+            $this->app->config->get('kernels.http', \Roots\Acorn\Kernel::class)
         );
 
         $this->app->singleton(
             \Illuminate\Contracts\Console\Kernel::class,
-            \Roots\Acorn\Console\Kernel::class
+            $this->app->config->get('kernels.console', \Roots\Acorn\Console\Kernel::class)
         );
 
         $this->app->singleton(
@@ -284,6 +284,7 @@ class Bootloader
 
         return $this->app;
     }
+
 
     /**
      * Get the application basepath
