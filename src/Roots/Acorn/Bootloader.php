@@ -111,10 +111,6 @@ class Bootloader
         }
 
         if (Env::get('ACORN_ENABLE_EXPIRIMENTAL_ROUTER')) {
-            $app->singleton(
-                \Illuminate\Contracts\Http\Kernel::class,
-                \Roots\Acorn\Http\Kernel::class
-            );
             return $this->bootHttp($app);
         }
 
@@ -261,12 +257,14 @@ class Bootloader
 
         $this->app->singleton(
             \Illuminate\Contracts\Http\Kernel::class,
-            $this->app->config->get('kernels.http', \Roots\Acorn\Kernel::class)
+            Env::get('ACORN_ENABLE_EXPIRIMENTAL_ROUTER')
+                ? \Roots\Acorn\Http\Kernel::class
+                : \Roots\Acorn\Kernel::class
         );
 
         $this->app->singleton(
             \Illuminate\Contracts\Console\Kernel::class,
-            $this->app->config->get('kernels.console', \Roots\Acorn\Console\Kernel::class)
+            \Roots\Acorn\Console\Kernel::class
         );
 
         $this->app->singleton(
