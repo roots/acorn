@@ -11,6 +11,7 @@ trait Dispatchable
     /**
      * Dispatch the job with the given arguments.
      *
+     * @param  mixed  ...$arguments
      * @return \Illuminate\Foundation\Bus\PendingDispatch
      */
     public static function dispatch(...$arguments)
@@ -67,6 +68,7 @@ trait Dispatchable
      *
      * Queueable jobs will be dispatched to the "sync" queue.
      *
+     * @param  mixed  ...$arguments
      * @return mixed
      */
     public static function dispatchSync(...$arguments)
@@ -89,11 +91,12 @@ trait Dispatchable
     /**
      * Dispatch a command to its appropriate handler after the current process.
      *
+     * @param  mixed  ...$arguments
      * @return mixed
      */
     public static function dispatchAfterResponse(...$arguments)
     {
-        return app(Dispatcher::class)->dispatchAfterResponse(new static(...$arguments));
+        return self::dispatch(...$arguments)->afterResponse();
     }
 
     /**
