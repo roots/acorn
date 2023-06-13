@@ -48,6 +48,7 @@
     "illuminate/console": "^9.47",
     "illuminate/container": "^9.47",
     "illuminate/contracts": "^9.47",
+    "illuminate/database": "^9.47",
     "illuminate/events": "^9.47",
     "illuminate/filesystem": "^9.47",
     "illuminate/http": "^9.47",
