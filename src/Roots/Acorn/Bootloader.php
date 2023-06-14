@@ -277,9 +277,6 @@ class Bootloader
             \Illuminate\Contracts\Console\Kernel::class => \Roots\Acorn\Console\Kernel::class,
             \Illuminate\Contracts\Debug\ExceptionHandler::class => \Roots\Acorn\Exceptions\Handler::class,
         ])
-        ->map(fn($concrete, $abstract) => class_exists(str_replace('Roots\\Acorn', "$namespace", $concrete))
-            ? str_replace('Roots\\Acorn', "$namespace", $concrete)
-            : $concrete)
         ->map(fn($concrete, $abstract) => apply_filters(
             "acorn/container/"
             . Str::of($abstract)->replaceFirst('Illuminate\\Contracts', '')->replace('\\', ' ')->slug(),
