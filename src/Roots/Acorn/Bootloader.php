@@ -266,8 +266,6 @@ class Bootloader
     {
         $this->app ??= new Application($this->basePath(), $this->usePaths());
 
-        $namespace = $this->app->getNamespace();
-
         $httpKernel = Env::get('ACORN_ENABLE_EXPIRIMENTAL_ROUTER')
             ? \Roots\Acorn\Http\Kernel::class
             : \Roots\Acorn\Kernel::class;
