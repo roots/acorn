@@ -266,21 +266,34 @@ class Bootloader
     {
         $this->app ??= new Application($this->basePath(), $this->usePaths());
 
+        $namespace = $this->app->getNamespace();
+
         $httpKernel = Env::get('ACORN_ENABLE_EXPIRIMENTAL_ROUTER')
             ? \Roots\Acorn\Http\Kernel::class
             : \Roots\Acorn\Kernel::class;
 
-        collect(apply_filters('acorn/early/singletons', [
+        collect([
             \Illuminate\Contracts\Http\Kernel::class => $httpKernel,
             \Illuminate\Contracts\Console\Kernel::class => \Roots\Acorn\Console\Kernel::class,
             \Illuminate\Contracts\Debug\ExceptionHandler::class => \Roots\Acorn\Exceptions\Handler::class,
-        ]))
+        ])
+        ->map(fn($concrete, $abstract) => class_exists(str_replace('\\Roots\\Acorn', "\\$namespace", $concrete))
+            ? str_replace('\\Roots\\Acorn', "\\$namespace", $concrete)
+            : $concrete)
+        ->map(fn($concrete, $abstract) => apply_filters(
+            "acorn/container/"
+            . Str::of($abstract)->replaceFirst('Illuminate\\Contracts', '')->replace('\\', ' ')->slug(),
+            $concrete,
+            $abstract
+        ))
         ->each(fn($concrete, $abstract) => $this->app->singleton($abstract, $concrete));
 
-        collect(apply_filters('acorn/early/bindings', class_exists(\Whoops\Run::class)
-            ? [\Illuminate\Contracts\Foundation\ExceptionRenderer::class => \Roots\Acorn\Exceptions\Whoops\WhoopsExceptionRenderer::class]
-            : []))
-        ->each(fn($concrete, $abstract) => $this->app->bind($abstract, $concrete));
+        if (class_exists(\Whoops\Run::class)) {
+            $this->app->bind(
+                \Illuminate\Contracts\Foundation\ExceptionRenderer::class,
+                \Roots\Acorn\Exceptions\Whoops\WhoopsExceptionRenderer::class
+            );
+        }
 
         return $this->app;
     }
