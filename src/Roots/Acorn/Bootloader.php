@@ -288,7 +288,8 @@ class Bootloader
         if (class_exists(\Whoops\Run::class)) {
             $this->app->bind(
                 \Illuminate\Contracts\Foundation\ExceptionRenderer::class,
-                \Roots\Acorn\Exceptions\Whoops\WhoopsExceptionRenderer::class
+                fn (\Illuminate\Contracts\Foundation\Application $app) =>
+                    $app->make(\Roots\Acorn\Exceptions\Whoops\WhoopsExceptionRenderer::class)
             );
         }
 
