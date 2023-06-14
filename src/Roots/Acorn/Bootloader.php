@@ -199,15 +199,15 @@ class Bootloader
         $request = \Illuminate\Http\Request::capture();
         $time = time();
 
-        // Create a default route for wordpress actions to go through
-        $app->make('router')->get('{any?}', function () use ($time) {
-            return response()->json(['message' => "wordpress_request_$time" ]);
-        })->where('any', '.*');
-
         $app->instance('request', $request);
         Facade::clearResolvedInstance('request');
 
         $kernel->bootstrap($request);
+
+        // Create a default route for wordpress actions to go through
+        $app->make('router')->get('{any?}', function () use ($time) {
+            return response()->json(['message' => "wordpress_request_$time" ]);
+        })->where('any', '.*');
 
         add_filter(
             'do_parse_request',
