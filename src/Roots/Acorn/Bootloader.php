@@ -218,15 +218,13 @@ class Bootloader
         );
 
         add_action('parse_request', function () use ($time, $kernel, $request) {
-            /** @var \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\BinaryFileResponse */
+            /** @var \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\Response */
             $response = $kernel->handle($request);
 
             if (in_array(true, [
-                $response instanceof \Illuminate\Http\Response
-                && ! $response->isServerError() && $response->status() >= 400,
-                $response instanceof \Symfony\Component\HttpFoundation\BinaryFileResponse
-                && ! $response->isServerError() && $response->getStatusCode() >= 400,
-            ])) {
+                $response instanceof \Illuminate\Http\Response && $response->status() >= 400,
+                $response instanceof \Symfony\Component\HttpFoundation\Response && $response->getStatusCode() >= 400,
+            ]) && ! $response->isServerError()) {
                 return;
             }
 
