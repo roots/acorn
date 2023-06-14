@@ -218,13 +218,16 @@ class Bootloader
         );
 
         add_action('parse_request', function () use ($time, $kernel, $request) {
-            /** @var \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\Response */
+            /**
+             * @var \Symfony\Component\HttpFoundation\Response $response
+             * @see \Illuminate\Contracts\Routing\ResponseFactory
+             */
             $response = $kernel->handle($request);
 
-            if (in_array(true, [
-                $response instanceof \Illuminate\Http\Response && $response->status() >= 400,
-                $response instanceof \Symfony\Component\HttpFoundation\Response && $response->getStatusCode() >= 400,
-            ]) && ! $response->isServerError()) {
+            if ($response instanceof \Symfony\Component\HttpFoundation\Response
+                && ! $response->isServerError()
+                && $response->getStatusCode() >= 400
+            ) {
                 return;
             }
 
