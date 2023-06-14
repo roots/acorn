@@ -197,19 +197,17 @@ class Bootloader
     {
         $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
         $request = \Illuminate\Http\Request::capture();
+        $time = time();
+
+        // Create a default route for wordpress actions to go through
+        $app->make('router')->get('{any?}', function () use ($time) {
+            return response()->json(['message' => "wordpress_request_$time" ]);
+        })->where('any', '.*');
 
         $app->instance('request', $request);
         Facade::clearResolvedInstance('request');
 
         $kernel->bootstrap($request);
-
-        try {
-            if (! $app->make('router')->getRoutes()->match($request)) {
-                throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException();
-            }
-        } catch (\Exception $e) {
-            return;
-        }
 
         add_filter(
             'do_parse_request',
@@ -219,17 +217,29 @@ class Bootloader
             3
         );
 
-        add_action('parse_request', function () use ($kernel, $request) {
-            /** @var \Illuminate\Http\Response */
+        add_action('parse_request', function () use ($time, $kernel, $request) {
+            /** @var \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\BinaryFileResponse */
             $response = $kernel->handle($request);
 
-            if (! $response->isServerError() && $response->status() >= 400) {
+            if (in_array(true, [
+                $response instanceof \Illuminate\Http\Response
+                && ! $response->isServerError() && $response->status() >= 400,
+                $response instanceof \Symfony\Component\HttpFoundation\BinaryFileResponse
+                && ! $response->isServerError() && $response->getStatusCode() >= 400,
+            ])) {
                 return;
             }
 
-            $body = $response->send();
+            if (in_array(false, [
+                $response instanceof \Illuminate\Http\JsonResponse,
+                is_string($response->getContent()),
+                $data = json_decode($response->getContent()),
+                isset($data->message) && $data->message == "wordpress_request_$time",
+            ])) {
+                $body = $response->send();
 
-            $kernel->terminate($request, $body);
+                $kernel->terminate($request, $body);
+            }
         });
     }
 
@@ -255,30 +265,21 @@ class Bootloader
     {
         $this->app ??= new Application($this->basePath(), $this->usePaths());
 
-        $this->app->singleton(
-            \Illuminate\Contracts\Http\Kernel::class,
-            Env::get('ACORN_ENABLE_EXPIRIMENTAL_ROUTER')
-                ? \Roots\Acorn\Http\Kernel::class
-                : \Roots\Acorn\Kernel::class
-        );
+        $httpKernel = Env::get('ACORN_ENABLE_EXPIRIMENTAL_ROUTER')
+            ? \Roots\Acorn\Http\Kernel::class
+            : \Roots\Acorn\Kernel::class;
 
-        $this->app->singleton(
-            \Illuminate\Contracts\Console\Kernel::class,
-            \Roots\Acorn\Console\Kernel::class
-        );
+        collect(apply_filters('acorn/early/singletons', [
+            \Illuminate\Contracts\Http\Kernel::class => $httpKernel,
+            \Illuminate\Contracts\Console\Kernel::class => \Roots\Acorn\Console\Kernel::class,
+            \Illuminate\Contracts\Debug\ExceptionHandler::class => \Roots\Acorn\Exceptions\Handler::class,
+        ]))
+        ->each(fn($concrete, $abstract) => $this->app->singleton($abstract, $concrete));
 
-        $this->app->singleton(
-            \Illuminate\Contracts\Debug\ExceptionHandler::class,
-            \Roots\Acorn\Exceptions\Handler::class
-        );
-
-        if (class_exists(\Whoops\Run::class)) {
-            $this->app->bind(
-                \Illuminate\Contracts\Foundation\ExceptionRenderer::class,
-                fn (\Illuminate\Contracts\Foundation\Application $app) =>
-                    $app->make(\Roots\Acorn\Exceptions\Whoops\WhoopsExceptionRenderer::class)
-            );
-        }
+        collect(apply_filters('acorn/early/bindings', class_exists(\Whoops\Run::class)
+            ? [\Illuminate\Contracts\Foundation\ExceptionRenderer::class => \Roots\Acorn\Exceptions\Whoops\WhoopsExceptionRenderer::class]
+            : []))
+        ->each(fn($concrete, $abstract) => $this->app->bind($abstract, $concrete));
 
         return $this->app;
     }
