@@ -16,6 +16,9 @@ class Kernel extends FoundationConsoleKernel
     protected $commands = [
         \Illuminate\Cache\Console\ClearCommand::class,
         \Illuminate\Cache\Console\ForgetCommand::class,
+        \Illuminate\Database\Console\DbCommand::class,
+        \Illuminate\Database\Console\Seeds\SeedCommand::class,
+        \Illuminate\Database\Console\WipeCommand::class,
         \Illuminate\Foundation\Console\ClearCompiledCommand::class,
         \Illuminate\Foundation\Console\ComponentMakeCommand::class,
         \Illuminate\Foundation\Console\ConfigClearCommand::class,

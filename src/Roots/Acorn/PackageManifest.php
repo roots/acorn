@@ -64,7 +64,7 @@ class PackageManifest extends FoundationPackageManifest
         $packages = array_reduce($this->composerPaths, function ($all, $composerPath) {
             $packages = [];
 
-            $path = "${composerPath}/vendor/composer/installed.json";
+            $path = "{$composerPath}/vendor/composer/installed.json";
 
             if ($this->files->exists($path)) {
                 $installed = json_decode($this->files->get($path), true);
@@ -72,7 +72,7 @@ class PackageManifest extends FoundationPackageManifest
                 $packages = $installed['packages'] ?? $installed;
             }
 
-            $packages[] = json_decode($this->files->get("${composerPath}/composer.json"), true);
+            $packages[] = json_decode($this->files->get("{$composerPath}/composer.json"), true);
 
             $ignoreAll = in_array('*', $ignore = $this->packagesToIgnore());
 
@@ -111,7 +111,7 @@ class PackageManifest extends FoundationPackageManifest
     protected function packagesToIgnore()
     {
         return array_reduce($this->composerPaths, function ($ignore, $composerPath) {
-            $path = "${composerPath}/composer.json";
+            $path = "{$composerPath}/composer.json";
 
             if (! $this->files->exists($path)) {
                 return $ignore;
