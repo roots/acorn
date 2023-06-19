@@ -204,18 +204,19 @@ class Bootloader
 
         $kernel->bootstrap($request);
 
+        add_filter('do_parse_request', function ($do_parse, \WP $wp, $extra_query_vars) use ($kernel, $request) {
+            // check to see if route matches current routes
+            if ($kernel->getRouter()->getRoutes()->match($request)) {
+                return apply_filters('acorn/router/do_parse_request', $do_parse, $wp, $extra_query_vars);
+            }
+
+            return $do_parse;
+        }, 100, 3);
+
         // Create a default route for wordpress actions to go through
         $app->make('router')->get('{any?}', function () use ($time) {
             return response()->json(['message' => "wordpress_request_$time" ]);
         })->where('any', '.*');
-
-        add_filter('do_parse_request', function ($do_parse, \WP $wp, $extra_query_vars) use ($time) {
-            if (isset($wp->query_vars['any']) && $wp->query_vars['any'] === "wordpress_request_$time") {
-                return $do_parse;
-            }
-
-            return apply_filters('acorn/router/do_parse_request', $do_parse, $wp, $extra_query_vars);
-        }, 100, 3);
 
         add_action('parse_request', function () use ($time, $kernel, $request) {
             /**
