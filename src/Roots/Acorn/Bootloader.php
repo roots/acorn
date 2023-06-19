@@ -204,12 +204,12 @@ class Bootloader
 
         $kernel->bootstrap($request);
 
-        add_filter('do_parse_request', function ($do_parse, \WP $wp, $extra_query_vars) use ($kernel, $request) {
-            if ($kernel->getRouter()->getRoutes()->match($request)) {
-                return apply_filters('acorn/router/do_parse_request', $do_parse, $wp, $extra_query_vars);
+        add_filter('do_parse_request', function ($do_parse, \WP $wp, $extra_query_vars) use ($app) {
+            if (! $app->make('router')->getRoutes()->match($request)) {
+                return $do_parse;
             }
 
-            return $do_parse;
+            return apply_filters('acorn/router/do_parse_request', $do_parse, $wp, $extra_query_vars);
         }, 100, 3);
 
         // Create a default route for wordpress actions to go through
