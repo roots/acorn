@@ -212,7 +212,7 @@ class Bootloader
             return apply_filters('acorn/router/do_parse_request', $do_parse, $wp, $extra_query_vars);
         }, 100, 3);
 
-        // Create a default route for wordpress actions to go through
+        // Create a default route for wordpress routes to use
         $app->make('router')->get('{any?}', function () use ($time) {
             return response()->json(['message' => "wordpress_request_$time" ]);
         })->where('any', '.*');
