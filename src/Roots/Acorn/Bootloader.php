@@ -213,9 +213,9 @@ class Bootloader
         }, 100, 3);
 
         // Create a default route for wordpress routes to use
-        $app->make('router')->get('{any?}', function () use ($time) {
-            return response()->json(['message' => "wordpress_request_$time" ]);
-        })->where('any', '.*');
+        $app->make('router')
+            ->get('{any?}', fn () => response()->json(['message' => "wordpress_request_$time" ]))
+            ->where('any', '.*');
 
         add_action('parse_request', function () use ($time, $kernel, $request) {
             /**
