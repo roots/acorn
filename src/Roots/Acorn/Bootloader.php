@@ -204,7 +204,7 @@ class Bootloader
 
         $kernel->bootstrap($request);
 
-        add_filter('do_parse_request', function ($do_parse, \WP $wp, $extra_query_vars) use ($app) {
+        add_filter('do_parse_request', function ($do_parse, \WP $wp, $extra_query_vars) use ($app, $request) {
             if (! $app->make('router')->getRoutes()->match($request)) {
                 return $do_parse;
             }
