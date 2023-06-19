@@ -205,7 +205,6 @@ class Bootloader
         $kernel->bootstrap($request);
 
         add_filter('do_parse_request', function ($do_parse, \WP $wp, $extra_query_vars) use ($kernel, $request) {
-            // check to see if route matches current routes
             if ($kernel->getRouter()->getRoutes()->match($request)) {
                 return apply_filters('acorn/router/do_parse_request', $do_parse, $wp, $extra_query_vars);
             }
