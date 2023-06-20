@@ -3,8 +3,6 @@
 namespace Roots\Acorn;
 
 use Illuminate\Foundation\ComposerScripts as FoundationComposerScripts;
-use Roots\Acorn\Console\Console;
-use Roots\Acorn\Filesystem\Filesystem;
 
 class ComposerScripts extends FoundationComposerScripts
 {
@@ -15,9 +13,18 @@ class ComposerScripts extends FoundationComposerScripts
      */
     protected static function clearCompiled()
     {
-        $console = new Console(new Filesystem(), getcwd());
+        $laravel = new \Roots\Acorn\Application(getcwd(), ['bootstrap' => getcwd() .'/storage/framework']);
+        
+        if (is_file($configPath = $laravel->getCachedConfigPath())) {
+            @unlink($configPath);
+        }
 
-        $console->configClear();
-        $console->clearCompiled();
+        if (is_file($servicesPath = $laravel->getCachedServicesPath())) {
+            @unlink($servicesPath);
+        }
+
+        if (is_file($packagesPath = $laravel->getCachedPackagesPath())) {
+            @unlink($packagesPath);
+        }
     }
 }
