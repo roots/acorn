@@ -62,7 +62,6 @@ fi
 
 cd /roots/app
 
-rm wp-cli.yml
 # Install Composer dependencies
 composer -d /roots/app install --no-progress --optimize-autoloader --prefer-dist --no-interaction
 
