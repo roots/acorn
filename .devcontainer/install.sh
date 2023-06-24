@@ -48,10 +48,10 @@ fi
 
 # use `public` instead of `web` for the document root
 if [ -d "web" ]; then
-  mv web public \
-    && sed -i 's/web/public/g' wp-cli.yml \
-    && sed -i 's/web\/wp/public\/wp/g' composer.json \
-    && sed -i 's/web\/app/public\/app/g' composer.json
+  mv web public
+  sed -i 's/web\/wp/public\/wp/g' composer.json
+  sed -i 's/web\/app/public\/app/g' composer.json
+  [ -f 'wp-cli.yml' ] && sed -i 's/web/public/g' wp-cli.yml || true
 
   if [ -f 'config/application.php' ]; then
     sed -i 's/\/web/\/public/g' config/application.php
