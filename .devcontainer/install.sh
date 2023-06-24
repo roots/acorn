@@ -76,7 +76,7 @@ else
   cat /roots/app/composer.json | jq ".repositories += [{ type: \"path\", url: \"${WORKSPACE_FOLDER}\" }]" > /roots/app/composer.tmp \
   && rm /roots/app/composer.json \
   && mv /roots/app/composer.tmp /roots/app/composer.json \
-  && composer require -d /roots/app $(cat "${WORKSPACE_FOLDER}/composer.json" | jq '.name' | tr -d '"')
+  && composer require -d /roots/app $(cat "${WORKSPACE_FOLDER}/composer.json" | jq '.name' | tr -d '"') --no-interaction
 fi
 
 composer remove -d /roots/app wpackagist-theme/twentytwentythree
