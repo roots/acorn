@@ -110,7 +110,7 @@ class Bootloader
             return class_exists('WP_CLI') ? $this->bootWpCli($app) : $this->bootConsole($app);
         }
 
-        if (Env::get('ACORN_ENABLE_EXPIRIMENTAL_ROUTER')) {
+        if (Application::isExperimentalRouterEnabled()) {
             $app->singleton(
                 \Illuminate\Contracts\Http\Kernel::class,
                 \Roots\Acorn\Http\Kernel::class
