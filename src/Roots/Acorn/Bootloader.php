@@ -171,6 +171,11 @@ class Bootloader
             $command = implode(' ', $args);
 
             foreach ($assoc_args as $key => $value) {
+                if ($key === 'interaction' && $value === false) {
+                    $command .= ' --no-interaction';
+                    continue;
+                }
+
                 $command .= " --{$key}";
 
                 if ($value !== true) {
