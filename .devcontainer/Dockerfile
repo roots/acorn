@@ -54,5 +54,6 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
     && curl -O https://raw.githubusercontent.com/wp-cli/wp-cli/master/utils/wp-completion.bash \
     && mv wp-completion.bash /etc/bash_completion.d/wp-completion.bash
 
-USER vscode
+ENV APPLICATION_PATH=/roots/app
 
+USER vscode
