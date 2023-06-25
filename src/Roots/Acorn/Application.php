@@ -27,35 +27,14 @@ class Application extends FoundationApplication
      *
      * @var string
      */
-    public const VERSION = '3.x-dev';
-
-    /**
-     * The custom bootstrap path defined by the developer.
-     *
-     * @var string
-     */
-    protected $bootstrapPath;
-
-    /**
-     * The custom config path defined by the developer.
-     *
-     * @var string
-     */
-    protected $configPath;
-
-    /**
-     * The custom public path defined by the developer.
-     *
-     * @var string
-     */
-    protected $publicPath;
+    public const VERSION = '4.x-dev';
 
     /**
      * The custom resources path defined by the developer.
      *
      * @var string
      */
-    protected $resourcesPath;
+    protected $resourcePath;
 
     /**
      * Create a new Illuminate application instance.
@@ -66,6 +45,9 @@ class Application extends FoundationApplication
      */
     public function __construct($basePath = null, $paths = null)
     {
+        if ($basePath) {
+            $this->basePath = rtrim($basePath, '\/');
+        }
         if ($paths) {
             $this->usePaths((array)$paths);
         }
@@ -110,7 +92,7 @@ class Application extends FoundationApplication
             'public' => 'publicPath',
             'storage' => 'storagePath',
             'database' => 'databasePath',
-            'resources' => 'resourcesPath',
+            'resources' => 'resourcePath',
             'bootstrap' => 'bootstrapPath',
         ];
 
@@ -130,6 +112,18 @@ class Application extends FoundationApplication
     }
 
     /**
+     * Bind all of the application paths in the container.
+     *
+     * @return void
+     */
+    protected function bindPathsInContainer()
+    {
+        $bootstrapPath = $this->bootstrapPath();
+        parent::bindPathsInContainer();
+        $this->instance('path.bootstrap', $bootstrapPath);
+    }
+
+    /**
      * Get the path to the bootstrap directory.
      *
      * @param  string  $path Optionally, a path to append to the bootstrap path
@@ -137,75 +131,7 @@ class Application extends FoundationApplication
      */
     public function bootstrapPath($path = '')
     {
-        return ($this->bootstrapPath ?: $this->basePath . DIRECTORY_SEPARATOR . 'bootstrap')
-            . ($path ? DIRECTORY_SEPARATOR . $path : $path);
-    }
-
-    /**
-     * Set the bootstrap directory.
-     *
-     * @param  string  $path
-     * @return $this
-     */
-    public function useBootstrapPath($path)
-    {
-        $this->bootstrapPath = $path;
-
-        $this->instance('path.bootstrap', $path);
-
-        return $this;
-    }
-
-    /**
-     * Get the path to the application configuration files.
-     *
-     * @param  string  $path Optionally, a path to append to the config path
-     * @return string
-     */
-    public function configPath($path = '')
-    {
-        return ($this->configPath ?: $this->basePath . DIRECTORY_SEPARATOR . 'config')
-            . ($path ? DIRECTORY_SEPARATOR . $path : $path);
-    }
-
-    /**
-     * Set the config directory.
-     *
-     * @param  string  $path
-     * @return $this
-     */
-    public function useConfigPath($path)
-    {
-        $this->configPath = $path;
-
-        $this->instance('path.config', $path);
-
-        return $this;
-    }
-
-    /**
-     * Get the path to the public / web directory.
-     *
-     * @return string
-     */
-    public function publicPath()
-    {
-        return $this->publicPath ?: $this->basePath . DIRECTORY_SEPARATOR . 'public';
-    }
-
-    /**
-     * Set the public directory.
-     *
-     * @param  string  $path
-     * @return $this
-     */
-    public function usePublicPath($path)
-    {
-        $this->publicPath = $path;
-
-        $this->instance('path.public', $path);
-
-        return $this;
+        return $this->joinPaths($this->bootstrapPath ?: $this->storagePath('framework'));
     }
 
     /**
@@ -216,8 +142,7 @@ class Application extends FoundationApplication
      */
     public function resourcePath($path = '')
     {
-        return ($this->resourcesPath ?: $this->basePath . DIRECTORY_SEPARATOR . 'resources')
-            . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+        return $this->joinPaths($this->resourcePath ?: $this->basePath('resources'), $path);
     }
 
     /**
@@ -228,7 +153,7 @@ class Application extends FoundationApplication
      */
     public function useResourcePath($path)
     {
-        $this->resourcesPath = $path;
+        $this->resourcePath = $path;
 
         $this->instance('path.resources', $path);
 
