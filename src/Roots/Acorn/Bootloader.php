@@ -217,31 +217,45 @@ class Bootloader
             ->get('{any?}', fn () => response()->json(['message' => "wordpress_request_$time" ]))
             ->where('any', '.*');
 
-        add_action('parse_request', function () use ($time, $kernel, $request) {
-            /**
-             * @var \Symfony\Component\HttpFoundation\Response $response
-             * @see \Illuminate\Contracts\Routing\ResponseFactory
-             */
-            $response = $kernel->handle($request);
+        add_action('parse_request', fn () => $this->handleLaravelRequest($time, $kernel, $request));
+    }
 
-            if ($response instanceof \Symfony\Component\HttpFoundation\Response
-                && ! $response->isServerError()
-                && $response->getStatusCode() >= 400
-            ) {
-                return;
-            }
+    /**
+     * Handle the Request with Laravel's Router
+     *
+     * @param string $time
+     * @param \Illuminate\Contracts\Http\Kernel $kernel
+     * @param \Illuminate\Http\Request $request
+     * @return void
+     */
+    protected function handleLaravelRequest(
+        string $time,
+        \Illuminate\Contracts\Http\Kernel $kernel,
+        \Illuminate\Http\Request $request
+    ) {
+        /**
+         * @var \Symfony\Component\HttpFoundation\Response $response
+         * @see \Illuminate\Contracts\Routing\ResponseFactory
+         */
+        $response = $kernel->handle($request);
 
-            if (in_array(false, [
-                $response instanceof \Illuminate\Http\JsonResponse,
-                is_string($response->getContent()),
-                $data = json_decode($response->getContent()),
-                isset($data->message) && $data->message == "wordpress_request_$time",
-            ])) {
-                $body = $response->send();
+        if ($response instanceof \Symfony\Component\HttpFoundation\Response
+            && ! $response->isServerError()
+            && $response->getStatusCode() >= 400
+        ) {
+            return;
+        }
 
-                $kernel->terminate($request, $body);
-            }
-        });
+        if (in_array(false, [
+            $response instanceof \Illuminate\Http\JsonResponse,
+            is_string($response->getContent()),
+            $data = json_decode($response->getContent()),
+            isset($data->message) && $data->message == "wordpress_request_$time",
+        ])) {
+            $body = $response->send();
+
+            $kernel->terminate($request, $body);
+        }
     }
 
     /**
@@ -270,18 +284,20 @@ class Bootloader
             ? \Roots\Acorn\Http\Kernel::class
             : \Roots\Acorn\Kernel::class;
 
-        collect([
-            \Illuminate\Contracts\Http\Kernel::class => $httpKernel,
-            \Illuminate\Contracts\Console\Kernel::class => \Roots\Acorn\Console\Kernel::class,
-            \Illuminate\Contracts\Debug\ExceptionHandler::class => \Roots\Acorn\Exceptions\Handler::class,
-        ])
-        ->map(fn($concrete, $abstract) => apply_filters(
-            "acorn/container/"
-            . Str::of($abstract)->replaceFirst('Illuminate\\Contracts', '')->replace('\\', ' ')->slug(),
-            $concrete,
-            $abstract
-        ))
-        ->each(fn($concrete, $abstract) => $this->app->singleton($abstract, $concrete));
+        $this->app->singleton(
+            \Illuminate\Contracts\Http\Kernel::class,
+            apply_filters('acorn/container/http-kernel', $httpKernel)
+        );
+
+        $this->app->singleton(
+            \Illuminate\Contracts\Console\Kernel::class,
+            apply_filters('acorn/container/console-kernel', \Roots\Acorn\Console\Kernel::class)
+        );
+
+        $this->app->singleton(
+            \Illuminate\Contracts\Debug\ExceptionHandler::class,
+            apply_filters('acorn/container/exception-handler', \Roots\Acorn\Console\Kernel::class)
+        );
 
         if (class_exists(\Whoops\Run::class)) {
             $this->app->bind(
