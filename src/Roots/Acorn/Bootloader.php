@@ -301,7 +301,7 @@ class Bootloader
 
         $this->app->singleton(
             \Illuminate\Contracts\Debug\ExceptionHandler::class,
-            apply_filters('acorn/container/exception-handler', \Roots\Acorn\Console\Kernel::class)
+            apply_filters('acorn/container/exception-handler', \Roots\Acorn\Exceptions\Handler::class)
         );
 
         if (class_exists(\Whoops\Run::class)) {
