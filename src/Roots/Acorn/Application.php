@@ -4,12 +4,11 @@ namespace Roots\Acorn;
 
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Events\EventServiceProvider;
 use Illuminate\Foundation\Application as FoundationApplication;
 use Illuminate\Foundation\PackageManifest as FoundationPackageManifest;
 use Illuminate\Foundation\ProviderRepository;
-use Illuminate\Log\LogServiceProvider;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Env;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Roots\Acorn\PackageManifest;
@@ -455,5 +454,11 @@ class Application extends FoundationApplication
     public function version()
     {
         return 'Acorn ' . static::VERSION . ' (Laravel ' . parent::VERSION .  ')';
+    }
+
+    public static function isExperimentalRouterEnabled()
+    {
+        return Env::get('ACORN_ENABLE_EXPERIMENTAL_ROUTER', false)
+            || Env::get('ACORN_ENABLE_EXPIRIMENTAL_ROUTER', false);
     }
 }

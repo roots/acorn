@@ -1,0 +1,45 @@
+{
+  "name": "Acorn Development",
+  "dockerComposeFile": ["docker-compose.yml"],
+  "service": "acorn.test",
+  "workspaceFolder": "/roots",
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": "true",
+      "username": "vscode",
+      "userUid": "1000",
+      "userGid": "1000",
+      "upgradePackages": "true"
+    },
+    "ghcr.io/devcontainers/features/sshd:1": {},
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest"
+    }
+  },
+  "initializeCommand": "[ ! -f '.devcontainer/.env' ] && cp '.devcontainer/config/app/.env.example' '.devcontainer/.env' || true",
+  "onCreateCommand": "sudo chmod +x ./${localWorkspaceFolderBasename}/.devcontainer/install.sh && ./${localWorkspaceFolderBasename}/.devcontainer/install.sh",
+  "postCreateCommand": "sudo chmod +x ./${localWorkspaceFolderBasename}/.devcontainer/setup.sh && ./${localWorkspaceFolderBasename}/.devcontainer/setup.sh",
+  "forwardPorts": [],
+  "containerEnv": {
+    "APP_SERVICE": "acorn.test",
+    "WORKSPACE_FOLDER": "${containerWorkspaceFolder}/${localWorkspaceFolderBasename}"
+  },
+  "runServices": [
+    "cache",
+    "database",
+    "mail",
+    "web"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "mikestead.dotenv",
+        "amiralizadeh9480.laravel-extra-intellisense",
+        "ryannaddy.laravel-artisan",
+        "onecentlin.laravel5-snippets",
+        "onecentlin.laravel-blade"
+      ],
+      "settings": {}
+    }
+  }
+}
