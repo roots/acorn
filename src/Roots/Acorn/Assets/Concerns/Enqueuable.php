@@ -198,8 +198,8 @@ trait Enqueuable
      */
     public function translate($domain = null, $path = null)
     {
-        $domain = $domain ?? wp_get_theme()->get('TextDomain');
-        $path = $path ?? lang_path();
+        $domain ??= wp_get_theme()->get('TextDomain');
+        $path ??= lang_path();
 
         $this->js()->keys()->each(function ($handle) use ($domain, $path) {
             wp_set_script_translations("{$this->id}/{$handle}", $domain, $path);
