@@ -44,7 +44,7 @@ trait FiltersTemplates
     }
 
     /**
-     * Add Blade compatability for theme templates.
+     * Add Blade compatibility for theme templates.
      *
      * NOTE: Internally, WordPress interchangeably uses "page templates" "post templates" and "theme templates"
      *
