@@ -459,6 +459,6 @@ class Application extends FoundationApplication
     public static function isExperimentalRouterEnabled()
     {
         return Env::get('ACORN_ENABLE_EXPERIMENTAL_ROUTER', false)
-            || Env::get('ACORN_ENABLE_EXPERIMENTAL_ROUTER', false);
+            || Env::get('ACORN_ENABLE_EXPIRIMENTAL_ROUTER', false);
     }
 }
