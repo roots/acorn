@@ -44,7 +44,7 @@ it('does not throw an exception for deprecation notices', function () {
         '/acorn/path/to/file.php',
         17
     );
-});
+})->expectNotToPerformAssertions();
 
 it('handles a warning', function () {
     $logger = mock(LogManager::class);

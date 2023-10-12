@@ -110,7 +110,7 @@ class Bootloader
             return class_exists('WP_CLI') ? $this->bootWpCli($app) : $this->bootConsole($app);
         }
 
-        if (Env::get('ACORN_ENABLE_EXPIRIMENTAL_ROUTER')) {
+        if (Application::isExperimentalRouterEnabled()) {
             $app->singleton(
                 \Illuminate\Contracts\Http\Kernel::class,
                 \Roots\Acorn\Http\Kernel::class
@@ -171,6 +171,11 @@ class Bootloader
             $command = implode(' ', $args);
 
             foreach ($assoc_args as $key => $value) {
+                if ($key === 'interaction' && $value === false) {
+                    $command .= ' --no-interaction';
+                    continue;
+                }
+
                 $command .= " --{$key}";
 
                 if ($value !== true) {
@@ -234,6 +239,8 @@ class Bootloader
             $body = $response->send();
 
             $kernel->terminate($request, $body);
+
+            exit;
         });
     }
 
