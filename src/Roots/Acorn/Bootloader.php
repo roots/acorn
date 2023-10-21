@@ -244,19 +244,22 @@ class Bootloader
          */
         $response = $kernel->handle($request);
 
-        if ($response instanceof \Symfony\Component\HttpFoundation\Response
+        if (
+            $response instanceof \Symfony\Component\HttpFoundation\Response
             && ! $response->isServerError()
             && $response->getStatusCode() >= 400
         ) {
             return;
         }
 
-        if (in_array(false, [
+        if (
+            in_array(false, [
             $response instanceof \Illuminate\Http\JsonResponse,
             is_string($response->getContent()),
             $data = json_decode($response->getContent()),
             isset($data->message) && $data->message == "wordpress_request_$time",
-        ])) {
+            ])
+        ) {
             $body = $response->send();
 
             $kernel->terminate($request, $body);
