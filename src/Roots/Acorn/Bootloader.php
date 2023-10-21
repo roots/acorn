@@ -260,6 +260,8 @@ class Bootloader
             $body = $response->send();
 
             $kernel->terminate($request, $body);
+
+            exit;
         }
     }
 
