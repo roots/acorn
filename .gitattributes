@@ -3,4 +3,4 @@
 /.gitattributes export-ignore
 /scripts export-ignore
 /src/Illuminate/Foundation/** linguist-vendored
-/tests/Assets/__fixtures__/** linguist-detectable=false
+/tests/Assets/__fixtures__/** -linguist-detectable
