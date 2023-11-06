@@ -14,7 +14,14 @@ trait FiltersTemplates
      */
     public function filterTemplateHierarchy($files)
     {
-        return $this->sageFinder->locate($files);
+        $hierarchy = $this->sageFinder->locate($files);
+
+        // Extract all entries, which point to an official FSE path (e.g. templates/...)
+        $fse_paths = array_filter($hierarchy, fn ($file) => strpos($file, 'templates/') === 0 || str_contains($file, 'templates/'));
+        $hierarchy = array_diff($hierarchy, $fse_paths);
+
+        // (Re-)Build hierarchy with original $files and FSE paths on top.
+        return array_merge($files, $fse_paths, $hierarchy);
     }
 
     /**
@@ -27,6 +34,14 @@ trait FiltersTemplates
      */
     public function filterTemplateInclude($file)
     {
+        // Prevent duplication of markup
+        // @ https://github.com/roots/acorn/pull/141#issuecomment-1343162742
+        if (@file_exists($file)
+            && !str_contains($file, '.blade.php')
+        ) {
+            return $file;
+        }
+
         $view = $this->fileFinder
             ->getPossibleViewNameFromPath($file = realpath($file));
 
