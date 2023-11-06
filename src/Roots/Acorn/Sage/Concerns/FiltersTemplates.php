@@ -17,7 +17,7 @@ trait FiltersTemplates
         $hierarchy = $this->sageFinder->locate($files);
 
         // Extract all entries, which point to an official FSE path (e.g. templates/...)
-        $fse_paths = array_filter($hierarchy, fn ($file) => strpos($file, 'templates/') === 0 || str_contains($file, 'templates/'));
+        $fse_paths = array_filter($hierarchy, static fn ($file) => str_starts_with($file, 'templates/') || str_contains($file, 'templates/'));
         $hierarchy = array_diff($hierarchy, $fse_paths);
 
         // (Re-)Build hierarchy with original $files and FSE paths on top.
