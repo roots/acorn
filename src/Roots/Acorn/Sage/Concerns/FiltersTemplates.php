@@ -18,7 +18,7 @@ trait FiltersTemplates
 
         // If the theme does not support FSE, return the original hierarchy.
         if ( ! function_exists( 'wp_is_block_theme' )
-            || \wp_is_block_theme()
+            || ! \wp_is_block_theme()
         ) {
             return $hierarchy;
         }
