@@ -20,8 +20,18 @@ trait FiltersTemplates
         $fse_paths = array_filter($hierarchy, static fn ($file) => str_starts_with($file, 'templates/') || str_contains($file, 'templates/'));
         $hierarchy = array_diff($hierarchy, $fse_paths);
 
-        // (Re-)Build hierarchy with original $files and FSE paths on top.
-        return array_merge($files, $fse_paths, $hierarchy);
+        // Extract all entries, which point to a custom blade template (e.g. template-foo.blade.php)
+        $custom_template = get_page_template_slug();
+        $custom_template_paths = [];
+        if ($custom_template) {
+            $custom_template_paths = array_filter($hierarchy,
+                static fn ($file) => str_contains($file, $custom_template)
+            );
+            $hierarchy = array_diff($hierarchy, $custom_template_paths);
+        }
+
+        // (Re-)Build hierarchy
+        return array_merge($custom_template_paths, $files, $fse_paths, $hierarchy);
     }
 
     /**
