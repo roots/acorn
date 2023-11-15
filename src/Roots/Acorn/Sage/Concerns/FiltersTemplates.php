@@ -12,12 +12,20 @@ trait FiltersTemplates
      * @param  array  $files
      * @return string[] List of possible views
      */
-    public function filterTemplateHierarchy($files)
+    public function filterTemplateHierarchy($files): array
     {
         $hierarchy = $this->sageFinder->locate($files);
 
+        // If the theme does not support FSE, return the original hierarchy.
+        if ( ! function_exists( 'wp_is_block_theme' )
+            || \wp_is_block_theme()
+        ) {
+            return $hierarchy;
+        }
+
         // Extract all entries, which point to an official FSE path (e.g. templates/...)
-        $fse_paths = array_filter($hierarchy, static fn ($file) => str_starts_with($file, 'templates/') || str_contains($file, 'templates/'));
+        $fse_paths = array_filter($hierarchy,
+            static fn ($file) => str_starts_with($file, 'templates/') || str_contains($file, 'templates/'));
         $hierarchy = array_diff($hierarchy, $fse_paths);
 
         // Extract all entries, which point to a custom blade template (e.g. template-foo.blade.php)
@@ -30,7 +38,7 @@ trait FiltersTemplates
             $hierarchy = array_diff($hierarchy, $custom_template_paths);
         }
 
-        // (Re-)Build hierarchy
+        // Rebuild hierarchy with original $files and FSE paths on top.
         return array_merge($custom_template_paths, $files, $fse_paths, $hierarchy);
     }
 
