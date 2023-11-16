@@ -33,17 +33,17 @@ class PackageManifest extends FoundationPackageManifest
     /**
      * Get a package name based on its provider
      *
-     * @param  string  $provider_name
+     * @param  string  $providerName
      * @return string
      *
      * @throws FileNotFoundException
      * @throws Exception
      */
-    public function getPackage($provider_name)
+    public function getPackage($providerName)
     {
         foreach ($this->getManifest() as $package => $configuration) {
             foreach ($configuration['providers'] ?? [] as $provider) {
-                if ($provider !== $provider_name) {
+                if ($provider !== $providerName) {
                     continue;
                 }
 
@@ -76,15 +76,16 @@ class PackageManifest extends FoundationPackageManifest
 
             $ignoreAll = in_array('*', $ignore = $this->packagesToIgnore());
 
-            return collect($packages)->mapWithKeys(function ($package) use ($path, $composerPath) {
-                return [
-                    $this->format($package['name'] ?? basename($composerPath), dirname($path, 2)) => $package['extra']['acorn'] ?? $package['extra']['laravel'] ?? [],
-                ];
-            })->each(function ($configuration) use (&$ignore) {
-                $ignore = array_merge($ignore, $configuration['dont-discover'] ?? []);
-            })->reject(function ($configuration, $package) use ($ignore, $ignoreAll) {
-                return $ignoreAll || in_array($package, $ignore);
-            })->filter()->merge($all)->all();
+            return collect($packages)->mapWithKeys(fn ($package) => [
+                $this->format($package['name'] ?? basename($composerPath), dirname($path, 2)) => $package['extra']['acorn'] ?? $package['extra']['laravel'] ?? [],
+            ])
+                ->each(function ($configuration) use (&$ignore) {
+                    $ignore = array_merge($ignore, $configuration['dont-discover'] ?? []);
+                })
+                ->reject(fn ($configuration, $package) => $ignoreAll || in_array($package, $ignore))
+                ->filter()
+                ->merge($all)
+                ->all();
         }, []);
 
         $this->write($packages);

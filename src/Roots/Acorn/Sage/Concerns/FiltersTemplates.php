@@ -33,9 +33,11 @@ trait FiltersTemplates
         $view = trim($view, '\\/.');
 
         /** Gather data to be passed to view */
-        $data = array_reduce(get_body_class(), function ($data, $class) use ($view, $file) {
-            return apply_filters("sage/template/{$class}/data", $data, $view, $file);
-        }, []);
+        $data = array_reduce(
+            get_body_class(),
+            fn ($data, $class) => apply_filters("sage/template/{$class}/data", $data, $view, $file),
+            []
+        );
 
         $this->app['sage.view'] = $this->view->exists($view) ? $view : $file;
         $this->app['sage.data'] = $data;
@@ -82,9 +84,7 @@ trait FiltersTemplates
 
         foreach (array_reverse($this->fileFinder->getPaths()) as $path) {
             foreach (
-                array_filter($this->files->allFiles($path), function ($file) {
-                    return $file->getExtension() === 'php';
-                }) as $full_path
+                array_filter($this->files->allFiles($path), fn ($file) => $file->getExtension() === 'php') as $full_path
             ) {
                 if (! preg_match('|Template Name:(.*)$|mi', file_get_contents($full_path), $header)) {
                     continue;

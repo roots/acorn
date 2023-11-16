@@ -27,7 +27,6 @@ class FileViewFinder extends FileViewFinderBase
      */
     public function getPossibleViewNameFromPath($file)
     {
-        $namespace = null;
         $view = $this->normalizePath($file);
         $paths = $this->normalizePath($this->paths);
         $hints = array_map([$this, 'normalizePath'], $this->hints);
@@ -36,15 +35,20 @@ class FileViewFinder extends FileViewFinderBase
         $view = str_replace($paths, '', $view);
 
         foreach ($hints as $hintNamespace => $hintPaths) {
-            $test = str_replace($hintPaths, '', $view);
-            if ($view !== $test) {
-                $namespace = $hintNamespace;
-                $view = $test;
-                break;
+            $maybeView = str_replace($hintPaths, '', $view);
+
+            if ($view === $maybeView) {
+                continue;
             }
+
+            $namespace = $hintNamespace;
+            $view = $maybeView;
+
+            break;
         }
 
         $view = ltrim($view, '/\\');
+        $namespace = $namespace ?? null;
 
         if ($namespace) {
             $view = "{$namespace}::$view";
