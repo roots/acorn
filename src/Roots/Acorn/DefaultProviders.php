@@ -11,7 +11,7 @@ class DefaultProviders extends DefaultProvidersBase
      *
      * @var array
      */
-    protected $acornProviders =[
+    protected $acornProviders = [
         \Roots\Acorn\Assets\AssetsServiceProvider::class,
         \Roots\Acorn\Filesystem\FilesystemServiceProvider::class,
         \Roots\Acorn\Providers\AcornServiceProvider::class,

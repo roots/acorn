@@ -13,6 +13,6 @@ abstract class ServiceProvider extends ServiceProviderBase
      */
     public static function defaultProviders()
     {
-        return new DefaultProviders;
+        return new DefaultProviders();
     }
 }
