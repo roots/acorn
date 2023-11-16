@@ -4,7 +4,7 @@ namespace Roots\Acorn;
 
 use Illuminate\Support\ServiceProvider as ServiceProviderBase;
 
-abstract class ServiceProvider extends ServiceProviderBase
+final class ServiceProvider extends ServiceProviderBase
 {
     /**
      * Get the default providers for a Acorn application.
