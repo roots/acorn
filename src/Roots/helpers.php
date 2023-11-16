@@ -99,6 +99,18 @@ function view($view = null, $data = [], $mergeData = [])
         : $factory->file($view, $data, $mergeData);
 }
 
+/**
+ * Check if the current theme supports FSE.
+ *
+ * @return bool
+ */
+function use_fse(): bool
+{
+    return \function_exists('wp_is_block_theme')
+           && \wp_is_block_theme()
+           && \current_theme_supports('block-templates');
+}
+
 
 /**
  * @deprecated
