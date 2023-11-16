@@ -47,7 +47,6 @@ class Kernel extends FoundationConsoleKernel
      * @var string[]
      */
     protected $bootstrappers = [
-        \Roots\Acorn\Bootstrap\SageFeatures::class,
         \Roots\Acorn\Bootstrap\LoadConfiguration::class,
         \Roots\Acorn\Bootstrap\HandleExceptions::class,
         \Roots\Acorn\Bootstrap\RegisterFacades::class,
