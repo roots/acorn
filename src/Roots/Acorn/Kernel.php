@@ -4,6 +4,7 @@ namespace Roots\Acorn;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Http\Kernel as KernelContract;
+use Illuminate\Support\Facades\Facade;
 
 class Kernel implements KernelContract
 {
@@ -20,7 +21,6 @@ class Kernel implements KernelContract
      * @var string[]
      */
     protected $bootstrappers = [
-        \Roots\Acorn\Bootstrap\SageFeatures::class,
         \Roots\Acorn\Bootstrap\LoadConfiguration::class,
         \Roots\Acorn\Bootstrap\HandleExceptions::class,
         \Roots\Acorn\Bootstrap\RegisterFacades::class,

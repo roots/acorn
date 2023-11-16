@@ -82,9 +82,8 @@ class Sage
      */
     public function filter($filter)
     {
-        if (method_exists($this, $filter)) {
-            return [$this, $filter];
-        }
-        return [$this, 'filter' . Str::studly($filter)];
+        return method_exists($this, $filter) ?
+            [$this, $filter] :
+            [$this, 'filter' . Str::studly($filter)];
     }
 }

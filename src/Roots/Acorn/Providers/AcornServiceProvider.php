@@ -20,7 +20,7 @@ class AcornServiceProvider extends ServiceProvider
      *
      * @var string[]
      */
-    protected $provider_configs = [
+    protected $providerConfigs = [
         \Fruitcake\Cors\CorsServiceProvider::class => 'cors',
         \Illuminate\Auth\AuthServiceProvider::class => 'auth',
         \Illuminate\Broadcasting\BroadcastServiceProvider::class => 'broadcasting',
@@ -67,7 +67,7 @@ class AcornServiceProvider extends ServiceProvider
      */
     protected function registerConfigs()
     {
-        $configs = array_merge($this->configs, array_values($this->provider_configs));
+        $configs = array_merge($this->configs, array_values($this->providerConfigs));
 
         foreach ($configs as $config) {
             $this->mergeConfigFrom(dirname(__DIR__, 4) . "/config/{$config}.php", $config);
@@ -105,7 +105,7 @@ class AcornServiceProvider extends ServiceProvider
      */
     protected function filterPublishableConfigs()
     {
-        $configs = array_filter($this->provider_configs, function ($provider) {
+        $configs = array_filter($this->providerConfigs, function ($provider) {
             return class_exists($provider) && $this->app->getProviders($provider);
         }, ARRAY_FILTER_USE_KEY);
 
