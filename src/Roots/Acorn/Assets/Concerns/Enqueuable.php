@@ -59,7 +59,7 @@ trait Enqueuable
      * @param array $dependencies
      * @return $this
      */
-    public function enqueueJs(bool|array $args = [], array $dependencies = [])
+    public function enqueueJs(bool|array $args = true, array $dependencies = [])
     {
         $this->js(function ($handle, $src, $bundle_dependencies) use (&$dependencies, $args) {
             $this->mergeDependencies($dependencies, $bundle_dependencies);
