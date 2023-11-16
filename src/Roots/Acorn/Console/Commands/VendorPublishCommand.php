@@ -28,8 +28,8 @@ class VendorPublishCommand extends FoundationVendorPublishCommand
     /**
      * Call acorn:init if item cannot be published.
      *
-     * @param string $from
-     * @param string $to
+     * @param  string  $from
+     * @param  string  $to
      */
     protected function callAcornInit($from, $to)
     {
@@ -39,8 +39,8 @@ class VendorPublishCommand extends FoundationVendorPublishCommand
 
         $this->info("Cannot publish [{$from}] until Acorn is initialized.");
 
-        if (! $this->confirm("Would you like to initialize Acorn right now?", true)) {
-            throw new \Exception("Please run wp acorn acorn:init");
+        if (! $this->confirm('Would you like to initialize Acorn right now?', true)) {
+            throw new \Exception('Please run wp acorn acorn:init');
         }
 
         $this->call('acorn:init', ['--base' => $this->getLaravel()->basePath()]);

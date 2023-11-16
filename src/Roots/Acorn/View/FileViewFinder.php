@@ -9,24 +9,24 @@ class FileViewFinder extends FileViewFinderBase
     /**
      * Get possible relative locations of view files
      *
-     * @param  string   $path Absolute or relative path to possible view file
+     * @param  string  $path Absolute or relative path to possible view file
      * @return string[]
      */
     public function getPossibleViewFilesFromPath($path)
     {
         $path = $this->getPossibleViewNameFromPath($path);
+
         return $this->getPossibleViewFiles($path);
     }
 
     /**
      * Get possible view name based on path
      *
-     * @param  string $path Absolute or relative path to possible view file
+     * @param  string  $path Absolute or relative path to possible view file
      * @return string
      */
     public function getPossibleViewNameFromPath($file)
     {
-        $namespace = null;
         $view = $this->normalizePath($file);
         $paths = $this->normalizePath($this->paths);
         $hints = array_map([$this, 'normalizePath'], $this->hints);
@@ -35,15 +35,20 @@ class FileViewFinder extends FileViewFinderBase
         $view = str_replace($paths, '', $view);
 
         foreach ($hints as $hintNamespace => $hintPaths) {
-            $test = str_replace($hintPaths, '', $view);
-            if ($view !== $test) {
-                $namespace = $hintNamespace;
-                $view = $test;
-                break;
+            $maybeView = str_replace($hintPaths, '', $view);
+
+            if ($view === $maybeView) {
+                continue;
             }
+
+            $namespace = $hintNamespace;
+            $view = $maybeView;
+
+            break;
         }
 
         $view = ltrim($view, '/\\');
+        $namespace = $namespace ?? null;
 
         if ($namespace) {
             $view = "{$namespace}::$view";
@@ -55,7 +60,7 @@ class FileViewFinder extends FileViewFinderBase
     /**
      * Remove recognized extensions from path
      *
-     * @param  string $file relative path to view file
+     * @param  string  $file relative path to view file
      * @return string view name
      */
     protected function stripExtensions($path)
@@ -68,8 +73,8 @@ class FileViewFinder extends FileViewFinderBase
     /**
      * Normalize paths
      *
-     * @param  string|string[] $path
-     * @param  string          $separator
+     * @param  string|string[]  $path
+     * @param  string  $separator
      * @return string|string[]
      */
     protected function normalizePath($path, $separator = '/')

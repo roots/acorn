@@ -30,7 +30,7 @@ class SummaryCommand extends ListCommand
      */
     protected $format = 'txt';
 
-   /**
+    /**
      * The command name width.
      *
      * @var int
@@ -39,8 +39,6 @@ class SummaryCommand extends ListCommand
 
     /**
      * Create a new Summary command instance.
-     *
-     * @param Container $app
      */
     public function __construct(Container $app)
     {
@@ -98,32 +96,30 @@ class SummaryCommand extends ListCommand
     {
         $this->width = 0;
 
-        $namespaces = collect($this->getApplication()->all())->filter(function ($command) {
-            return ! $command->isHidden();
-        })->groupBy(function ($command) {
-            $nameParts = explode(':', $name = $command->getName());
+        $namespaces = collect($this->getApplication()->all())
+            ->filter(fn ($command) => ! $command->isHidden())
+            ->groupBy(function ($command) {
+                $nameParts = explode(':', $name = $command->getName());
 
-            $this->width = max($this->width, mb_strlen($name));
+                $this->width = max($this->width, mb_strlen($name));
 
-            return isset($nameParts[1]) ? $nameParts[0] : '';
-        })->sortKeys()->each(function ($commands) use ($output) {
-            $output->write("\n");
+                return isset($nameParts[1]) ? $nameParts[0] : '';
+            })->sortKeys()->each(function ($commands) use ($output) {
+                $output->write("\n");
 
-            $commands = $commands->toArray();
+                $commands = $commands->toArray();
 
-            usort($commands, function ($a, $b) {
-                return $a->getName() > $b->getName() ? 1 : -1;
+                usort($commands, fn ($a, $b) => $a->getName() > $b->getName() ? 1 : -1);
+
+                foreach ($commands as $command) {
+                    $output->write(sprintf(
+                        "  <fg=blue>%s</>%s%s\n",
+                        $command->getName(),
+                        str_repeat(' ', $this->width - mb_strlen($command->getName()) + 1),
+                        $command->getDescription()
+                    ));
+                }
             });
-
-            foreach ($commands as $command) {
-                $output->write(sprintf(
-                    "  <fg=blue>%s</>%s%s\n",
-                    $command->getName(),
-                    str_repeat(' ', $this->width - mb_strlen($command->getName()) + 1),
-                    $command->getDescription()
-                ));
-            }
-        });
 
         return $this;
     }

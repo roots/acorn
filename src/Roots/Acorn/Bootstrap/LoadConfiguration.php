@@ -12,7 +12,6 @@ class LoadConfiguration extends FoundationLoadConfiguration
     /**
      * Bootstrap the given application.
      *
-     * @param  Application  $app
      * @return void
      */
     public function bootstrap(Application $app)
@@ -50,8 +49,6 @@ class LoadConfiguration extends FoundationLoadConfiguration
      *
      * Fallback to internal app config.
      *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @param  \Illuminate\Contracts\Config\Repository  $repository
      * @return void
      */
     protected function loadConfigurationFiles(Application $app, RepositoryContract $repository)
@@ -59,7 +56,7 @@ class LoadConfiguration extends FoundationLoadConfiguration
         $files = $this->getConfigurationFiles($app);
 
         if (! isset($files['app'])) {
-            $repository->set('app', require dirname(__DIR__, 4) . '/config/app.php');
+            $repository->set('app', require dirname(__DIR__, 4).'/config/app.php');
         }
 
         foreach ($files as $key => $path) {

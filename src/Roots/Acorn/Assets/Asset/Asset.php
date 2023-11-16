@@ -2,9 +2,9 @@
 
 namespace Roots\Acorn\Assets\Asset;
 
-use SplFileInfo;
 use Roots\Acorn\Assets\Contracts\Asset as AssetContract;
 use Roots\Acorn\Filesystem\Filesystem;
+use SplFileInfo;
 
 class Asset implements AssetContract
 {
@@ -46,8 +46,8 @@ class Asset implements AssetContract
     /**
      * Get asset from manifest
      *
-     * @param  string $path Local path
-     * @param  string $uri Remote URI
+     * @param  string  $path Local path
+     * @param  string  $uri Remote URI
      */
     public function __construct(string $path, string $uri)
     {
@@ -86,12 +86,11 @@ class Asset implements AssetContract
     /**
      * Get the relative path to the asset.
      *
-     * @param string $base_path Base path to use for relative path.
-     * @return string
+     * @param  string  $base_path Base path to use for relative path.
      */
     public function relativePath(string $base_path): string
     {
-        $base_path = rtrim($base_path, '/\\') . '/';
+        $base_path = rtrim($base_path, '/\\').'/';
 
         return (new Filesystem())->getRelativePath($base_path, $this->path());
     }
@@ -113,10 +112,9 @@ class Asset implements AssetContract
     /**
      * Get data URL of asset.
      *
-     * @param string $mediatype MIME content type
-     * @return string
+     * @param  string  $mediatype MIME content type
      */
-    public function dataUrl(?string $mediatype = null): string
+    public function dataUrl(string $mediatype = null): string
     {
         if ($this->dataUrl) {
             return $this->dataUrl;
@@ -132,10 +130,9 @@ class Asset implements AssetContract
     /**
      * Get data URL of asset.
      *
-     * @param string $mediatype MIME content type
-     * @return string
+     * @param  string  $mediatype MIME content type
      */
-    public function dataUri(?string $mediatype = null): string
+    public function dataUri(string $mediatype = null): string
     {
         return $this->dataUrl($mediatype);
     }

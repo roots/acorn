@@ -24,17 +24,17 @@ trait Arrayable
     public function toArray()
     {
         return collect((new ReflectionClass(static::class))->getMethods(ReflectionMethod::IS_PUBLIC))
-            ->filter(function ($method) {
-                return ! in_array($method->name, array_merge(
+            ->filter(fn ($method) => ! in_array(
+                $method->name,
+                array_merge(
                     $this->ignore,
                     ['compose', 'toArray', 'with', 'views', 'override']
-                ));
-            })
-            ->filter(function ($method) {
-                return ! Str::startsWith($method->name, ['__', 'cache']);
-            })
+                )
+            ))
+            ->filter(fn ($method) => ! Str::startsWith($method->name, ['__', 'cache']))
             ->mapWithKeys(function ($method) {
                 $data = $this->{$method->name}();
+
                 return [Str::snake($method->name) => is_array($data) ? new Fluent($data) : $data];
             })
             ->all();

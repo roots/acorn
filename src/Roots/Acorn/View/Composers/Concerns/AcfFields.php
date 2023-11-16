@@ -10,7 +10,7 @@ trait AcfFields
     /**
      * ACF data to be passed to the view before rendering.
      *
-     * @param  int $post_id
+     * @param  int  $post_id
      * @return array
      */
     protected function fields($post_id = null)
@@ -19,6 +19,7 @@ trait AcfFields
             ->mapWithKeys(function ($value, $key) {
                 $value = is_array($value) ? new Fluent($value) : $value;
                 $method = Str::camel($key);
+
                 return [$key => method_exists($this, $method) ? $this->{$method}($value) : $value];
             })->all();
     }

@@ -47,7 +47,6 @@ class Kernel extends FoundationConsoleKernel
      * @var string[]
      */
     protected $bootstrappers = [
-        \Roots\Acorn\Bootstrap\SageFeatures::class,
         \Roots\Acorn\Bootstrap\LoadConfiguration::class,
         \Roots\Acorn\Bootstrap\HandleExceptions::class,
         \Roots\Acorn\Bootstrap\RegisterFacades::class,
@@ -59,14 +58,12 @@ class Kernel extends FoundationConsoleKernel
     /**
      * Create a new console kernel instance.
      *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
      * @return void
      */
     public function __construct(Application $app, Dispatcher $events)
     {
         if (! defined('ARTISAN_BINARY')) {
-            define('ARTISAN_BINARY', dirname(__DIR__, 4) . '/bin/acorn');
+            define('ARTISAN_BINARY', dirname(__DIR__, 4).'/bin/acorn');
         }
 
         $this->app = $app;

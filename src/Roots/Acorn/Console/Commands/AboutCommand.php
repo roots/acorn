@@ -5,8 +5,8 @@ namespace Roots\Acorn\Console\Commands;
 use Illuminate\Foundation\Application as FoundationApplication;
 use Illuminate\Foundation\Console\AboutCommand as BaseCommand;
 use Illuminate\Support\Str;
-use Roots\Acorn\Application;
 use ReflectionFunction;
+use Roots\Acorn\Application;
 
 class AboutCommand extends BaseCommand
 {
@@ -52,6 +52,6 @@ class AboutCommand extends BaseCommand
 
     protected function formatVersion($version)
     {
-        return $version ? ('v' . ltrim($version, 'vV')) : '<fg=yellow;options=bold>-</>';
+        return $version ? ('v'.ltrim($version, 'vV')) : '<fg=yellow;options=bold>-</>';
     }
 }

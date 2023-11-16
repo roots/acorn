@@ -9,7 +9,6 @@ use function Roots\Acorn\Tests\mock;
 
 uses(TestCase::class);
 
-
 beforeAll(function () {
     if (! defined('WP_DEBUG')) {
         define('WP_DEBUG', true);

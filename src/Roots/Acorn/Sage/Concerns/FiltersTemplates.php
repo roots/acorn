@@ -9,7 +9,7 @@ trait FiltersTemplates
      *
      * Filter: {type}_template_hierarchy
      *
-     * @param  array $files
+     * @param  array  $files
      * @return string[] List of possible views
      */
     public function filterTemplateHierarchy($files)
@@ -33,14 +33,16 @@ trait FiltersTemplates
         $view = trim($view, '\\/.');
 
         /** Gather data to be passed to view */
-        $data = array_reduce(get_body_class(), function ($data, $class) use ($view, $file) {
-            return apply_filters("sage/template/{$class}/data", $data, $view, $file);
-        }, []);
+        $data = array_reduce(
+            get_body_class(),
+            fn ($data, $class) => apply_filters("sage/template/{$class}/data", $data, $view, $file),
+            []
+        );
 
         $this->app['sage.view'] = $this->view->exists($view) ? $view : $file;
         $this->app['sage.data'] = $data;
 
-        return get_template_directory() . '/index.php';
+        return get_template_directory().'/index.php';
     }
 
     /**
@@ -68,8 +70,8 @@ trait FiltersTemplates
      * @see \WP_Theme::get_post_templates()
      * @link https://github.com/WordPress/WordPress/blob/5.8.1/wp-includes/class-wp-theme.php#L1203-L1221
      *
-     * @param string $post_type
-     * @param string $text_domain
+     * @param  string  $post_type
+     * @param  string  $text_domain
      * @return string[]
      */
     protected function getTemplates($post_type = '', $text_domain = '')
@@ -82,9 +84,7 @@ trait FiltersTemplates
 
         foreach (array_reverse($this->fileFinder->getPaths()) as $path) {
             foreach (
-                array_filter($this->files->allFiles($path), function ($file) {
-                    return $file->getExtension() === 'php';
-                }) as $full_path
+                array_filter($this->files->allFiles($path), fn ($file) => $file->getExtension() === 'php') as $full_path
             ) {
                 if (! preg_match('|Template Name:(.*)$|mi', file_get_contents($full_path), $header)) {
                     continue;
