@@ -66,8 +66,8 @@
   },
   "require-dev": {
     "dealerdirect/phpcodesniffer-composer-installer": "^1.0.0",
+    "mockery/mockery": "^1.6",
     "pestphp/pest": "^1.0",
-    "pestphp/pest-plugin-mock": "^1.0",
     "phpcompatibility/php-compatibility": "^9.3",
     "roave/security-advisories": "dev-master",
     "spatie/laravel-ignition": "^2.1",
