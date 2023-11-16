@@ -165,7 +165,7 @@ return [
         /*
          * Application Service Providers...
          */
-        App\Providers\ThemeServiceProvider::class,
+        // App\Providers\ThemeServiceProvider::class,
     ])->toArray(),
 
     /*
