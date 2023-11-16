@@ -9,8 +9,6 @@ class Debugger
 {
     /**
      * Create a new Debugger instance.
-     *
-     * @param Application $app
      */
     public function __construct(Application $app)
     {
@@ -20,7 +18,7 @@ class Debugger
     /**
      * Compose the view before rendering.
      *
-     * @param  View $view
+     * @param  View  $view
      * @return void
      */
     public function compose($view)
@@ -29,6 +27,7 @@ class Debugger
 
         if ($this->debugLevel === 'view') {
             dump($name);
+
             return;
         }
 
@@ -42,6 +41,7 @@ class Debugger
 
         if ($this->debugLevel === 'data') {
             dump($data);
+
             return;
         }
 

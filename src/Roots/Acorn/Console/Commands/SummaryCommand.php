@@ -30,7 +30,7 @@ class SummaryCommand extends ListCommand
      */
     protected $format = 'txt';
 
-   /**
+    /**
      * The command name width.
      *
      * @var int
@@ -39,8 +39,6 @@ class SummaryCommand extends ListCommand
 
     /**
      * Create a new Summary command instance.
-     *
-     * @param Container $app
      */
     public function __construct(Container $app)
     {

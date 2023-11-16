@@ -58,7 +58,7 @@ class WhoopsHandler extends FoundationWhoopsHandler
             ->addDataTableCallback('WordPress Data', function () {
                 global $wp;
 
-                if (!$wp instanceof WP) {
+                if (! $wp instanceof WP) {
                     return [];
                 }
 
@@ -71,7 +71,7 @@ class WhoopsHandler extends FoundationWhoopsHandler
             ->addDataTableCallback(sprintf('%s Data', WP_Query::class), function () {
                 global $wp_query;
 
-                if (!$wp_query instanceof WP_Query) {
+                if (! $wp_query instanceof WP_Query) {
                     return [];
                 }
 
@@ -84,7 +84,7 @@ class WhoopsHandler extends FoundationWhoopsHandler
             ->addDataTableCallback(sprintf('%s Data', WP_Post::class), function () {
                 $post = get_post();
 
-                if (!$post instanceof WP_Post) {
+                if (! $post instanceof WP_Post) {
                     return [];
                 }
 
@@ -104,7 +104,7 @@ class WhoopsHandler extends FoundationWhoopsHandler
     {
         $blacklist = [
             '_ENV' => $this->secrets,
-            '_SERVER' => $this->secrets
+            '_SERVER' => $this->secrets,
         ];
 
         foreach ($blacklist as $key => $secrets) {

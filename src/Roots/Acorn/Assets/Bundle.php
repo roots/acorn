@@ -10,24 +10,23 @@ use Roots\Acorn\Assets\Contracts\Bundle as BundleContract;
 
 class Bundle implements BundleContract
 {
-    use Enqueuable;
     use Conditional;
+    use Enqueuable;
 
     protected $id;
+
     protected $path;
+
     protected $uri;
+
     protected $runtime;
+
     protected $bundle;
 
     protected static $runtimes = [];
 
     /**
      * Create a new bundle.
-     *
-     * @param string $id
-     * @param array $bundle
-     * @param string $path
-     * @param string $uri
      */
     public function __construct(string $id, array $bundle, string $path, string $uri = '/')
     {
@@ -43,10 +42,9 @@ class Bundle implements BundleContract
      *
      * Optionally pass a function to execute on each CSS file.
      *
-     * @param callable $callable
      * @return Collection|$this
      */
-    public function css(?callable $callable = null)
+    public function css(callable $callable = null)
     {
         $styles = $this->conditional ? $this->bundle['css'] : [];
 
@@ -67,10 +65,9 @@ class Bundle implements BundleContract
      *
      * Optionally pass a function to execute on each JS file.
      *
-     * @param  callable $callable
      * @return Collection|$this
      */
-    public function js(?callable $callable = null)
+    public function js(callable $callable = null)
     {
         $scripts = $this->conditional ? array_merge($this->bundle['js'], $this->bundle['mjs']) : [];
 
@@ -128,7 +125,7 @@ class Bundle implements BundleContract
     /**
      * Get the bundle URL.
      *
-     * @param  string $path
+     * @param  string  $path
      * @return string
      */
     protected function getUrl($path)

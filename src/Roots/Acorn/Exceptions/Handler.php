@@ -2,9 +2,9 @@
 
 namespace Roots\Acorn\Exceptions;
 
-use Throwable;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Foundation\Exceptions\Handler as FoundationHandler;
+use Throwable;
 
 class Handler extends FoundationHandler
 {
@@ -12,7 +12,6 @@ class Handler extends FoundationHandler
      * Render an exception into an HTTP response.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $e
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @throws \Throwable

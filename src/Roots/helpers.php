@@ -3,19 +3,15 @@
 namespace Roots;
 
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory as ViewFactory;
 use Roots\Acorn\Assets\Bundle;
 use Roots\Acorn\Assets\Contracts\Asset;
-use Illuminate\Contracts\View\Factory as ViewFactory;
 use Roots\Acorn\Bootloader;
 
 /**
  * Get asset from manifest
- *
- * @param  string $asset
- * @param  string $manifest
- * @return Asset
  */
-function asset(string $asset, ?string $manifest = null): Asset
+function asset(string $asset, string $manifest = null): Asset
 {
     if (! $manifest) {
         return \app('assets.manifest')->asset($asset);
@@ -26,12 +22,8 @@ function asset(string $asset, ?string $manifest = null): Asset
 
 /**
  * Get bundle from manifest
- *
- * @param  string $bundle
- * @param  string $manifest
- * @return Bundle
  */
-function bundle(string $bundle, ?string $manifest = null): Bundle
+function bundle(string $bundle, string $manifest = null): Bundle
 {
     if (! $manifest) {
         return \app('assets.manifest')->bundle($bundle);
@@ -42,11 +34,8 @@ function bundle(string $bundle, ?string $manifest = null): Bundle
 
 /**
  * Instantiate the bootloader.
- *
- * @param Application $app
- * @return Bootloader
  */
-function bootloader(?Application $app = null): Bootloader
+function bootloader(Application $app = null): Bootloader
 {
     $bootloader = Bootloader::getInstance($app);
 
@@ -84,6 +73,7 @@ function bootloader(?Application $app = null): Bootloader
  * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
  *
  * @copyright Taylor Otwell
+ *
  * @link https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
  */
 function view($view = null, $data = [], $mergeData = [])
@@ -98,7 +88,6 @@ function view($view = null, $data = [], $mergeData = [])
         ? $factory->make($view, $data, $mergeData)
         : $factory->file($view, $data, $mergeData);
 }
-
 
 /**
  * @deprecated

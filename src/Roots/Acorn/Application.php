@@ -10,8 +10,6 @@ use Illuminate\Foundation\ProviderRepository;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Env;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
-use Roots\Acorn\PackageManifest;
 use Roots\Acorn\Exceptions\SkipProviderException;
 use Roots\Acorn\Filesystem\Filesystem;
 use RuntimeException;
@@ -40,7 +38,7 @@ class Application extends FoundationApplication
      * Create a new Illuminate application instance.
      *
      * @param  string|null  $basePath
-     * @param  array|null   $paths
+     * @param  array|null  $paths
      * @return void
      */
     public function __construct($basePath = null, $paths = null)
@@ -65,7 +63,7 @@ class Application extends FoundationApplication
      */
     protected function registerGlobalHelpers()
     {
-        require_once dirname(__DIR__, 2) . '/Illuminate/Foundation/helpers.php';
+        require_once dirname(__DIR__, 2).'/Illuminate/Foundation/helpers.php';
     }
 
     /**
@@ -190,7 +188,7 @@ class Application extends FoundationApplication
 
             $composer_paths = collect(get_option('active_plugins'))
                 ->map(function ($plugin) {
-                    return WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . dirname($plugin);
+                    return WP_PLUGIN_DIR.DIRECTORY_SEPARATOR.dirname($plugin);
                 })
                 ->merge([
                     $this->basePath(),
@@ -225,7 +223,7 @@ class Application extends FoundationApplication
      */
     public function isDownForMaintenance()
     {
-        return is_file($this->storagePath() . '/framework/down') || (defined('ABSPATH') && is_file(constant('ABSPATH') . '/.maintenance'));
+        return is_file($this->storagePath().'/framework/down') || (defined('ABSPATH') && is_file(constant('ABSPATH').'/.maintenance'));
     }
 
     /**
@@ -243,7 +241,6 @@ class Application extends FoundationApplication
     /**
      * Boot the given service provider.
      *
-     * @param  \Illuminate\Support\ServiceProvider  $provider
      * @return void
      */
     protected function bootProvider(ServiceProvider $provider)
@@ -296,8 +293,6 @@ class Application extends FoundationApplication
      * Skip booting service provider and log error.
      *
      * @param  \Illuminate\Support\ServiceProvider|string  $provider
-     * @param  Throwable $e
-     * @return \Illuminate\Support\ServiceProvider
      */
     protected function skipProvider($provider, Throwable $e): ServiceProvider
     {
@@ -321,7 +316,8 @@ class Application extends FoundationApplication
             throw $e;
         }
 
-        return is_object($provider) ? $provider : new class ($this) extends ServiceProvider {
+        return is_object($provider) ? $provider : new class($this) extends ServiceProvider
+        {
             //
         };
     }
@@ -343,7 +339,7 @@ class Application extends FoundationApplication
 
         foreach ((array) data_get($composer, 'autoload.psr-4') as $namespace => $path) {
             foreach ((array) $path as $pathChoice) {
-                if (realpath($this->path()) === realpath(dirname($composer_path) . DIRECTORY_SEPARATOR . $pathChoice)) {
+                if (realpath($this->path()) === realpath(dirname($composer_path).DIRECTORY_SEPARATOR.$pathChoice)) {
                     return $this->namespace = $namespace;
                 }
             }
@@ -360,23 +356,21 @@ class Application extends FoundationApplication
      *
      * If one is not found, then it will assume that there's a
      * composer.json file in the base path.
-     *
-     * @return string
      */
     protected function getAppComposer(): string
     {
-        return ((new Filesystem())->closest($this->path(), 'composer.json')) ?? $this->basePath('composer.json');
+        return (new Filesystem())->closest($this->path(), 'composer.json') ?? $this->basePath('composer.json');
     }
 
     /**
      * Set the application namespace.
      *
-     * @param string $namespace
+     * @param  string  $namespace
      * @return $this
      */
     public function useNamespace($namespace)
     {
-        $this->namespace = trim($namespace, '\\') . '\\';
+        $this->namespace = trim($namespace, '\\').'\\';
 
         return $this;
     }
@@ -388,7 +382,7 @@ class Application extends FoundationApplication
      */
     public function version()
     {
-        return 'Acorn ' . static::VERSION . ' (Laravel ' . parent::VERSION .  ')';
+        return 'Acorn '.static::VERSION.' (Laravel '.parent::VERSION.')';
     }
 
     public static function isExperimentalRouterEnabled()

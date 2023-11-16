@@ -9,19 +9,20 @@ class FileViewFinder extends FileViewFinderBase
     /**
      * Get possible relative locations of view files
      *
-     * @param  string   $path Absolute or relative path to possible view file
+     * @param  string  $path Absolute or relative path to possible view file
      * @return string[]
      */
     public function getPossibleViewFilesFromPath($path)
     {
         $path = $this->getPossibleViewNameFromPath($path);
+
         return $this->getPossibleViewFiles($path);
     }
 
     /**
      * Get possible view name based on path
      *
-     * @param  string $path Absolute or relative path to possible view file
+     * @param  string  $path Absolute or relative path to possible view file
      * @return string
      */
     public function getPossibleViewNameFromPath($file)
@@ -55,7 +56,7 @@ class FileViewFinder extends FileViewFinderBase
     /**
      * Remove recognized extensions from path
      *
-     * @param  string $file relative path to view file
+     * @param  string  $file relative path to view file
      * @return string view name
      */
     protected function stripExtensions($path)
@@ -68,8 +69,8 @@ class FileViewFinder extends FileViewFinderBase
     /**
      * Normalize paths
      *
-     * @param  string|string[] $path
-     * @param  string          $separator
+     * @param  string|string[]  $path
+     * @param  string  $separator
      * @return string|string[]
      */
     protected function normalizePath($path, $separator = '/')
