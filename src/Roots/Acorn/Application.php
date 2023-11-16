@@ -48,8 +48,9 @@ class Application extends FoundationApplication
         if ($basePath) {
             $this->basePath = rtrim($basePath, '\/');
         }
+
         if ($paths) {
-            $this->usePaths((array)$paths);
+            $this->usePaths((array) $paths);
         }
 
         $this->registerGlobalHelpers();
@@ -131,7 +132,7 @@ class Application extends FoundationApplication
      */
     public function bootstrapPath($path = '')
     {
-        return $this->joinPaths($this->bootstrapPath ?: $this->storagePath('framework'));
+        return $this->joinPaths($this->bootstrapPath ?: $this->storagePath('framework'), $path);
     }
 
     /**
@@ -250,13 +251,9 @@ class Application extends FoundationApplication
      */
     public function registerConfiguredProviders()
     {
-        $providers = Collection::make($this->config['app.providers'])
-            ->filter(function ($provider) {
-                return class_exists($provider);
-            })
-            ->partition(function ($provider) {
-                return Str::startsWith($provider, ['Illuminate\\', 'Roots\\']);
-            });
+        $providers = Collection::make($this->make('config')->get('app.providers'))
+            ->filter(fn ($provider) => class_exists($provider))
+            ->partition(fn ($provider) => str_starts_with($provider, 'Illuminate\\') || str_starts_with($provider, 'Roots\\'));
 
         $providers->splice(1, 0, [$this->make(PackageManifest::class)->providers()]);
 
@@ -277,6 +274,7 @@ class Application extends FoundationApplication
             if (is_string($provider) && ! class_exists($provider)) {
                 throw new SkipProviderException("Skipping provider [{$provider}] because it does not exist.");
             }
+
             return parent::register($provider, $force);
         } catch (Throwable $e) {
             return $this->skipProvider($provider, $e);
@@ -313,6 +311,7 @@ class Application extends FoundationApplication
         }
 
         return is_object($provider) ? $provider : new class ($this) extends ServiceProvider {
+            //
         };
     }
 
