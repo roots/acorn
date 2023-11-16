@@ -4,6 +4,7 @@ namespace Roots\Acorn;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Http\Kernel as KernelContract;
+use Illuminate\Support\Facades\Facade;
 
 class Kernel implements KernelContract
 {
