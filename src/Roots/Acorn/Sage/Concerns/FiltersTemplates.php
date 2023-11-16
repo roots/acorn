@@ -30,7 +30,7 @@ trait FiltersTemplates
         $hierarchy = array_diff($hierarchy, $fse_paths);
 
         // Extract all entries, which point to a custom blade template (e.g. template-foo.blade.php)
-        $custom_template = get_page_template_slug();
+        $custom_template = \get_page_template_slug();
         $custom_template_paths = [];
         if ($custom_template) {
             $custom_template_paths = array_filter($hierarchy,
