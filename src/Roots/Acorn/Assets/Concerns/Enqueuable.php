@@ -51,8 +51,6 @@ trait Enqueuable
     /**
      * Enqueue JS files in WordPress.
      *
-     * @param bool|array $args
-     * @param array $dependencies
      * @return $this
      */
     public function enqueueJs(bool|array $args = true, array $dependencies = [])
