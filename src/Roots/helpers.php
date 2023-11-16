@@ -90,6 +90,17 @@ function view($view = null, $data = [], $mergeData = [])
 }
 
 /**
+ * Check if the current theme supports FSE.
+ */
+function use_fse(): bool
+{
+    return \function_exists('wp_is_block_theme')
+           && \wp_is_block_theme()
+           && \current_theme_supports('block-templates');
+}
+
+
+/**
  * @deprecated
  */
 function app(...$args)
