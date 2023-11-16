@@ -32,9 +32,7 @@ class ViewFinder
     /**
      * Create new ViewFinder instance.
      *
-     * @param FileViewFinder $finder
-     * @param Filesystem $files
-     * @param string $path
+     * @param  string  $path
      * @return void
      */
     public function __construct(FileViewFinder $finder, Filesystem $files, $path = '')

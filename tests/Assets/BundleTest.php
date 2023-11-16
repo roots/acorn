@@ -26,12 +26,10 @@ it('accepts a callback for styles and scripts', function () {
     $manifest = json_decode(file_get_contents($this->fixture('bud_single_runtime/public/entrypoints.json')), JSON_OBJECT_AS_ARRAY);
     $app = new Bundle('app', $manifest['app'], $this->fixture('bud_single_runtime'), 'https://k.jo');
 
-    $app->js(fn ($handle, $src, $dependencies) =>
-        assertMatchesSnapshot(compact('handle', 'src', 'dependencies'))
+    $app->js(fn ($handle, $src, $dependencies) => assertMatchesSnapshot(compact('handle', 'src', 'dependencies'))
     );
 
-    $app->css(fn ($handle, $src) =>
-        assertMatchesSnapshot(compact('handle', 'src'))
+    $app->css(fn ($handle, $src) => assertMatchesSnapshot(compact('handle', 'src'))
     );
 });
 

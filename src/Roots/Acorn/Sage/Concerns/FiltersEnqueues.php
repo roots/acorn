@@ -9,9 +9,9 @@ trait FiltersEnqueues
      *
      * Filter: script_loader_tag
      *
-     * @param  string $tag
-     * @param  string $handle
-     * @param  string $src
+     * @param  string  $tag
+     * @param  string  $handle
+     * @param  string  $src
      * @return string
      */
     public function filterScriptLoaderTag($tag, $handle, $src)

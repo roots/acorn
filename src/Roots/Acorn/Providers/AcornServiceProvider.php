@@ -70,7 +70,7 @@ class AcornServiceProvider extends ServiceProvider
         $configs = array_merge($this->configs, array_values($this->providerConfigs));
 
         foreach ($configs as $config) {
-            $this->mergeConfigFrom(dirname(__DIR__, 4) . "/config/{$config}.php", $config);
+            $this->mergeConfigFrom(dirname(__DIR__, 4)."/config/{$config}.php", $config);
         }
     }
 
@@ -93,7 +93,7 @@ class AcornServiceProvider extends ServiceProvider
     {
         foreach ($this->filterPublishableConfigs() as $config) {
             $this->publishes([
-                dirname(__DIR__, 4) . "/config/{$config}.php" => config_path("{$config}.php")
+                dirname(__DIR__, 4)."/config/{$config}.php" => config_path("{$config}.php"),
             ], ['acorn', 'acorn-configs']);
         }
     }
@@ -130,7 +130,7 @@ class AcornServiceProvider extends ServiceProvider
 
             $files = new Filesystem();
 
-            $files->deleteDirectory(WP_CONTENT_DIR . '/cache/acorn');
+            $files->deleteDirectory(WP_CONTENT_DIR.'/cache/acorn');
         });
     }
 }

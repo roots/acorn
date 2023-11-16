@@ -9,7 +9,7 @@ class LaravelMixMiddleware
     /**
      * Handle the manifest config.
      *
-     * @param array $config
+     * @param  array  $config
      * @return array
      */
     public function handle($config)
@@ -25,9 +25,6 @@ class LaravelMixMiddleware
      * Get the URI to a Mix hot module replacement server.
      *
      * @link https://laravel-mix.com/docs/hot-module-replacement
-     *
-     * @param  string $path
-     * @return string|null
      */
     protected function getMixHotUri(string $path): ?string
     {

@@ -35,6 +35,7 @@ trait Arrayable
             })
             ->mapWithKeys(function ($method) {
                 $data = $this->{$method->name}();
+
                 return [Str::snake($method->name) => is_array($data) ? new Fluent($data) : $data];
             })
             ->all();

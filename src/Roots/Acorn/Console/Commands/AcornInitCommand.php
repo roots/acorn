@@ -13,7 +13,7 @@ class AcornInitCommand extends Command
      *
      * @var string
      */
-    protected $signature = <<<SIGNATURE
+    protected $signature = <<<'SIGNATURE'
     acorn:init
     {path?* : Application path to initialize in the base directory}
     {--base= : Application base directory}
@@ -74,7 +74,6 @@ class AcornInitCommand extends Command
      * Create a new command instance.
      *
      * @param  \Illuminate\Filesystem\Filesystem  $files
-     * @param  \Illuminate\Contracts\Foundation\Application $app
      * @return void
      */
     public function __construct(Filesystem $files, Application $app)
@@ -129,7 +128,7 @@ class AcornInitCommand extends Command
             $this->app->usePaths([$key => $path]);
         }
 
-        if (method_exists($this->app, $method = 'use' . ucfirst($key))) {
+        if (method_exists($this->app, $method = 'use'.ucfirst($key))) {
             $this->app->{$method}($path);
         }
 
@@ -139,14 +138,14 @@ class AcornInitCommand extends Command
     /**
      * Initialize the given path.
      *
-     * @param string $path
+     * @param  string  $path
      * @return bool
      */
     protected function createPath($path)
     {
         $this->files->ensureDirectoryExists("{$this->base_path}/{$path}", 0755, true);
 
-        if ($this->files->isDirectory($from = __DIR__ . "/stubs/paths/{$path}")) {
+        if ($this->files->isDirectory($from = __DIR__."/stubs/paths/{$path}")) {
             return $this->files->copyDirectory($from, "{$this->base_path}/{$path}");
         }
 

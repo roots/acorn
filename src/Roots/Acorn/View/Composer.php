@@ -2,8 +2,8 @@
 
 namespace Roots\Acorn\View;
 
-use Illuminate\Support\Str;
 use Illuminate\Support\Fluent;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 abstract class Composer
@@ -42,13 +42,13 @@ abstract class Composer
 
         $view = array_slice(explode('\\', static::class), 3);
         $view = array_map([Str::class, 'snake'], $view, array_fill(0, count($view), '-'));
+
         return implode('/', $view);
     }
 
     /**
      * Compose the view before rendering.
      *
-     * @param  View $view
      * @return void
      */
     public function compose(View $view)

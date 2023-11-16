@@ -10,7 +10,7 @@ class Filesystem extends FilesystemBase
      * Normalizes file path separators
      *
      * @param  mixed  $path
-     * @param  string $separator
+     * @param  string  $separator
      * @return mixed
      */
     public function normalizePath($path, $separator = '/')
@@ -21,8 +21,8 @@ class Filesystem extends FilesystemBase
     /**
      * Find the closest file up the directory tree.
      *
-     * @param string $path
-     * @param string $file
+     * @param  string  $path
+     * @param  string  $file
      * @return string|null
      */
     public function closest($path, $file)
@@ -30,7 +30,7 @@ class Filesystem extends FilesystemBase
         $current_directory = $path;
 
         while ($this->isReadable($current_directory)) {
-            if ($this->isFile($file_path = $current_directory . DIRECTORY_SEPARATOR . $file)) {
+            if ($this->isFile($file_path = $current_directory.DIRECTORY_SEPARATOR.$file)) {
                 return $file_path;
             }
 
@@ -49,12 +49,13 @@ class Filesystem extends FilesystemBase
     /**
      * Get relative path of target from specified base
      *
-     * @param string  $basePath
-     * @param string  $targetPath
+     * @param  string  $basePath
+     * @param  string  $targetPath
      * @return string
      *
      * @copyright Fabien Potencier
      * @license   MIT
+     *
      * @link      https://github.com/symfony/routing/blob/v4.1.1/Generator/UrlGenerator.php#L280-L329
      */
     public function getRelativePath($basePath, $targetPath)
@@ -80,7 +81,7 @@ class Filesystem extends FilesystemBase
         }
 
         $targetDirs[] = $targetFile;
-        $path = str_repeat('../', count($sourceDirs)) . implode('/', $targetDirs);
+        $path = str_repeat('../', count($sourceDirs)).implode('/', $targetDirs);
 
         return $path === '' || $path[0] === '/'
             || ($colonPos = strpos($path, ':')) !== false && ($colonPos < ($slashPos = strpos($path, '/'))

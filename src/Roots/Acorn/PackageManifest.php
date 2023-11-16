@@ -19,7 +19,6 @@ class PackageManifest extends FoundationPackageManifest
     /**
      * Create a new package manifest instance.
      *
-     * @param  \Illuminate\Filesystem\Filesystem  $files
      * @param  string[]  $composerPaths
      * @param  string  $manifestPath
      * @return void
@@ -34,8 +33,9 @@ class PackageManifest extends FoundationPackageManifest
     /**
      * Get a package name based on its provider
      *
-     * @param string $provider_name
+     * @param  string  $provider_name
      * @return string
+     *
      * @throws FileNotFoundException
      * @throws Exception
      */
@@ -78,8 +78,7 @@ class PackageManifest extends FoundationPackageManifest
 
             return collect($packages)->mapWithKeys(function ($package) use ($path, $composerPath) {
                 return [
-                    $this->format($package['name'] ?? basename($composerPath), dirname($path, 2)) =>
-                        $package['extra']['acorn'] ?? $package['extra']['laravel'] ?? []
+                    $this->format($package['name'] ?? basename($composerPath), dirname($path, 2)) => $package['extra']['acorn'] ?? $package['extra']['laravel'] ?? [],
                 ];
             })->each(function ($configuration) use (&$ignore) {
                 $ignore = array_merge($ignore, $configuration['dont-discover'] ?? []);
@@ -100,7 +99,7 @@ class PackageManifest extends FoundationPackageManifest
      */
     protected function format($package, $vendorPath = null)
     {
-        return str_replace($vendorPath . '/', '', $package);
+        return str_replace($vendorPath.'/', '', $package);
     }
 
     /**

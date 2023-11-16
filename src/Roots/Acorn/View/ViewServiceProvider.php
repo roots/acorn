@@ -2,13 +2,13 @@
 
 namespace Roots\Acorn\View;
 
-use ReflectionClass;
 use Illuminate\Contracts\View\Engine;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\View\Engines\CompilerEngine;
 use Illuminate\View\View;
 use Illuminate\View\ViewServiceProvider as ViewServiceProviderBase;
+use ReflectionClass;
 use Roots\Acorn\View\Composers\Debugger;
 use Symfony\Component\Finder\Finder;
 
@@ -114,7 +114,7 @@ class ViewServiceProvider extends ViewServiceProviderBase
             $compiled_extension = $app['config']->get('view.compiled_extension', 'php');
 
             $content = "<?= \\Roots\\view('{$view}', \$data ?? get_defined_vars())->render(); ?>"
-                . "\n<?php /**PATH {$path} ENDPATH**/ ?>";
+                ."\n<?php /**PATH {$path} ENDPATH**/ ?>";
 
             if (! file_exists($loader = "{$compiled_path}/{$id}-loader.{$compiled_extension}")) {
                 file_put_contents($loader, $content);
@@ -184,10 +184,10 @@ class ViewServiceProvider extends ViewServiceProviderBase
 
         // TODO: This should be cacheable, perhaps via `wp acorn` command
         foreach ((new Finder())->in($path)->files() as $composer) {
-            $composer = $namespace . str_replace(
+            $composer = $namespace.str_replace(
                 ['/', '.php'],
                 ['\\', ''],
-                Str::after($composer->getPathname(), $this->app->path() . DIRECTORY_SEPARATOR)
+                Str::after($composer->getPathname(), $this->app->path().DIRECTORY_SEPARATOR)
             );
 
             if (

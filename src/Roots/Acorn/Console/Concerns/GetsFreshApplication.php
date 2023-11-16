@@ -40,7 +40,6 @@ trait GetsFreshApplication
     /**
      * Get all of the configured paths for the Application.
      *
-     * @param Application $app
      * @return array
      */
     protected function getApplicationPaths(Application $app)

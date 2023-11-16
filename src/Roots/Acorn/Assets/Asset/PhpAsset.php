@@ -14,6 +14,7 @@ class PhpAsset extends Asset
     public function requireOnce()
     {
         $this->assertExists();
+
         return require_once $this->path();
     }
 
@@ -25,6 +26,7 @@ class PhpAsset extends Asset
     public function require()
     {
         $this->assertExists();
+
         return require $this->path();
     }
 
@@ -36,6 +38,7 @@ class PhpAsset extends Asset
     public function includeOnce()
     {
         $this->assertExists();
+
         return include_once $this->path();
     }
 
@@ -47,11 +50,13 @@ class PhpAsset extends Asset
     public function include()
     {
         $this->assertExists();
+
         return include $this->path();
     }
 
     /**
      * Assert that the asset exists.
+     *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function assertExists()

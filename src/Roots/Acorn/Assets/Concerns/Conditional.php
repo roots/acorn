@@ -14,7 +14,7 @@ trait Conditional
     /**
      * Set conditional loading.
      *
-     * @param bool|callable $conditional
+     * @param  bool|callable  $conditional
      * @return $this
      */
     public function when($conditional, ...$args)

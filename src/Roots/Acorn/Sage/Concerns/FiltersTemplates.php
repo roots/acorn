@@ -9,7 +9,7 @@ trait FiltersTemplates
      *
      * Filter: {type}_template_hierarchy
      *
-     * @param  array $files
+     * @param  array  $files
      * @return string[] List of possible views
      */
     public function filterTemplateHierarchy($files)
@@ -40,7 +40,7 @@ trait FiltersTemplates
         $this->app['sage.view'] = $this->view->exists($view) ? $view : $file;
         $this->app['sage.data'] = $data;
 
-        return get_template_directory() . '/index.php';
+        return get_template_directory().'/index.php';
     }
 
     /**
@@ -68,8 +68,8 @@ trait FiltersTemplates
      * @see \WP_Theme::get_post_templates()
      * @link https://github.com/WordPress/WordPress/blob/5.8.1/wp-includes/class-wp-theme.php#L1203-L1221
      *
-     * @param string $post_type
-     * @param string $text_domain
+     * @param  string  $post_type
+     * @param  string  $text_domain
      * @return string[]
      */
     protected function getTemplates($post_type = '', $text_domain = '')

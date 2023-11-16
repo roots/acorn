@@ -8,8 +8,6 @@ class Console extends Composer
 {
     /**
      * Execute acorn clear-compiled command.
-     *
-     * @return int
      */
     public function clearCompiled(): int
     {
@@ -18,8 +16,6 @@ class Console extends Composer
 
     /**
      * Execute acorn config:cache command.
-     *
-     * @return int
      */
     public function configCache(): int
     {
@@ -28,8 +24,6 @@ class Console extends Composer
 
     /**
      * Execute acorn config:clear command.
-     *
-     * @return int
      */
     public function configClear(): int
     {
@@ -38,8 +32,6 @@ class Console extends Composer
 
     /**
      * Execute acorn optimize command.
-     *
-     * @return int
      */
     public function optimize(): int
     {
@@ -48,8 +40,6 @@ class Console extends Composer
 
     /**
      * Execute acorn optimize:clear command.
-     *
-     * @return int
      */
     public function optimizeClear(): int
     {
@@ -58,8 +48,6 @@ class Console extends Composer
 
     /**
      * Execute acorn package:discover command.
-     *
-     * @return int
      */
     public function packageDiscover(): int
     {
@@ -68,8 +56,6 @@ class Console extends Composer
 
     /**
      * Execute acorn vendor:public command.
-     *
-     * @return int
      */
     public function vendorPublish(): int
     {
@@ -78,8 +64,6 @@ class Console extends Composer
 
     /**
      * Execute acorn view:cache command.
-     *
-     * @return int
      */
     public function viewCache(): int
     {
@@ -88,8 +72,6 @@ class Console extends Composer
 
     /**
      * Execute acorn view:clear command.
-     *
-     * @return int
      */
     public function viewClear(): int
     {
@@ -100,7 +82,6 @@ class Console extends Composer
      * Execute acorn command.
      *
      * @param  array  $command
-     * @return int
      */
     public function acorn($command): int
     {
@@ -116,7 +97,7 @@ class Console extends Composer
      */
     protected function findWpCli()
     {
-        if ($this->files->exists($this->workingPath . '/wp-cli.phar')) {
+        if ($this->files->exists($this->workingPath.'/wp-cli.phar')) {
             return [$this->phpBinary(), 'wp-cli.phar'];
         }
 

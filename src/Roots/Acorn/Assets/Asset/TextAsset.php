@@ -14,8 +14,7 @@ class TextAsset extends Asset
     /**
      * Get character encoding.
      *
-     * @param string $fallback Fallback if charset cannot be determined
-     * @return string
+     * @param  string  $fallback Fallback if charset cannot be determined
      */
     public function charset($fallback = 'UTF-8'): string
     {
@@ -37,12 +36,11 @@ class TextAsset extends Asset
     /**
      * Get data URL of asset.
      *
-     * @param string $mediatype MIME content type
-     * @param string $charset Character encoding
-     * @param string $urlencode List of characters to be percent-encoded
-     * @return string
+     * @param  string  $mediatype MIME content type
+     * @param  string  $charset Character encoding
+     * @param  string  $urlencode List of characters to be percent-encoded
      */
-    public function dataUrl(?string $mediatype = null, ?string $charset = null, string $urlencode = '%\'"'): string
+    public function dataUrl(string $mediatype = null, string $charset = null, string $urlencode = '%\'"'): string
     {
         if ($this->dataUrl) {
             return $this->dataUrl;
@@ -53,7 +51,7 @@ class TextAsset extends Asset
         }
 
         if (! strstr($mediatype, 'charset')) {
-            $mediatype .= ';charset=' . ($charset ?: $this->charset());
+            $mediatype .= ';charset='.($charset ?: $this->charset());
         }
 
         $percents = [];
@@ -69,12 +67,11 @@ class TextAsset extends Asset
     /**
      * Get data URL of asset.
      *
-     * @param string $mediatype MIME content type
-     * @param string $charset Character encoding
-     * @param string $urlencode List of characters to be percent-encoded
-     * @return string
+     * @param  string  $mediatype MIME content type
+     * @param  string  $charset Character encoding
+     * @param  string  $urlencode List of characters to be percent-encoded
      */
-    public function dataUri(?string $mediatype = null, ?string $charset = null, string $urlencode = '%\'"'): string
+    public function dataUri(string $mediatype = null, string $charset = null, string $urlencode = '%\'"'): string
     {
         return $this->dataUrl($mediatype, $charset, $urlencode);
     }

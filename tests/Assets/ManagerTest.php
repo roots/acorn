@@ -40,9 +40,9 @@ it('throws an error if an assets manifest does not exist', function () {
             'theme' => [
                 'path' => $this->fixture('bud_single_runtime'),
                 'url' => 'https://k.jo',
-                'assets' => __DIR__ . '/does/not/exist/manifest.json',
-            ]
-        ]
+                'assets' => __DIR__.'/does/not/exist/manifest.json',
+            ],
+        ],
     ]);
 
     $assets->manifest('theme')->asset('app.css')->uri();
@@ -55,8 +55,8 @@ it('reads an assets manifest', function () {
                 'path' => $this->fixture('bud_single_runtime'),
                 'url' => 'https://k.jo',
                 'assets' => $this->fixture('bud_single_runtime/public/manifest.json'),
-            ]
-        ]
+            ],
+        ],
     ]);
 
     assertMatchesSnapshot($assets->manifest('theme')->asset('app.css')->uri());
@@ -78,7 +78,7 @@ it('reads multiple manifests', function () {
                 'assets' => $this->fixture('bud_multi_compiler/public/editor/manifest.json'),
                 'bundles' => $this->fixture('bud_multi_compiler/public/editor/entrypoints.json'),
             ],
-        ]
+        ],
     ]);
 
     assertMatchesSnapshot($assets->manifest('app')->asset('app.js')->uri());
@@ -91,9 +91,9 @@ it('throws an error if a bundles manifest does not exist', function () {
             'theme' => [
                 'path' => $this->fixture('bud_single_runtime'),
                 'url' => 'https://k.jo',
-                'bundles' => __DIR__ . '/does/not/exist/entrypoints.json',
-            ]
-        ]
+                'bundles' => __DIR__.'/does/not/exist/entrypoints.json',
+            ],
+        ],
     ]);
 
     $assets->manifest('theme')->bundle('app')->js()->toJson();
@@ -106,8 +106,8 @@ it('reads a bundles manifest', function () {
                 'path' => $this->fixture('bud_single_runtime'),
                 'url' => 'https://k.jo',
                 'bundles' => $this->fixture('bud_single_runtime/public/entrypoints.json'),
-            ]
-        ]
+            ],
+        ],
     ]);
 
     assertMatchesSnapshot($assets->manifest('theme')->bundle('app')->js()->toJson());
@@ -122,8 +122,8 @@ it('reads a mix manifest', function () {
                 'path' => $this->fixture('mix_no_bundle/public'),
                 'url' => 'https://k.jo/public',
                 'assets' => $this->fixture('mix_no_bundle/public/mix-manifest.json'),
-            ]
-        ]
+            ],
+        ],
     ]);
 
     assertMatchesSnapshot($assets->manifest('theme')->asset('styles/app.css')->uri());
