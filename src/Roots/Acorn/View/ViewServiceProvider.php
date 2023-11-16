@@ -62,9 +62,10 @@ class ViewServiceProvider extends ViewServiceProviderBase
             $finder = new FileViewFinder($app['files'], array_unique($app['config']['view.paths']));
 
             foreach ($app['config']['view.namespaces'] as $namespace => $hints) {
-                $hints = array_merge(array_map(function ($path) use ($namespace) {
-                    return "{$path}/vendor/{$namespace}";
-                }, $finder->getPaths()), (array) $hints);
+                $hints = array_merge(
+                    array_map(fn ($path) => "{$path}/vendor/{$namespace}", $finder->getPaths()),
+                    (array) $hints
+                );
 
                 $finder->addNamespace($namespace, $hints);
             }
@@ -110,13 +111,13 @@ class ViewServiceProvider extends ViewServiceProviderBase
             $view = $this->getName();
             $path = $this->getPath();
             $id = md5($this->getCompiled());
-            $compiled_path = $app['config']['view.compiled'];
-            $compiled_extension = $app['config']->get('view.compiled_extension', 'php');
+            $compiledPath = $app['config']['view.compiled'];
+            $compiledExtension = $app['config']->get('view.compiled_extension', 'php');
 
             $content = "<?= \\Roots\\view('{$view}', \$data ?? get_defined_vars())->render(); ?>"
                 ."\n<?php /**PATH {$path} ENDPATH**/ ?>";
 
-            if (! file_exists($loader = "{$compiled_path}/{$id}-loader.{$compiled_extension}")) {
+            if (! file_exists($loader = "{$compiledPath}/{$id}-loader.{$compiledExtension}")) {
                 file_put_contents($loader, $content);
             }
 

@@ -105,9 +105,11 @@ class AcornServiceProvider extends ServiceProvider
      */
     protected function filterPublishableConfigs()
     {
-        $configs = array_filter($this->providerConfigs, function ($provider) {
-            return class_exists($provider) && $this->app->getProviders($provider);
-        }, ARRAY_FILTER_USE_KEY);
+        $configs = array_filter(
+            $this->providerConfigs,
+            fn ($provider) => class_exists($provider) && $this->app->getProviders($provider),
+            ARRAY_FILTER_USE_KEY
+        );
 
         return array_unique(array_merge($this->configs, array_values($configs)));
     }

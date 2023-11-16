@@ -372,13 +372,9 @@ class Bootloader
         ];
 
         return collect($searchPaths)
-            ->map(function ($path) {
-                return (is_string($path) && is_dir($path)) ? $path : null;
-            })
+            ->map(fn ($path) => (is_string($path) && is_dir($path)) ? $path : null)
             ->filter()
-            ->whenEmpty(function ($paths) use ($path) {
-                return $paths->add($this->fallbackPath($path));
-            })
+            ->whenEmpty(fn ($paths) => $paths->add($this->fallbackPath($path)))
             ->unique()
             ->first();
     }

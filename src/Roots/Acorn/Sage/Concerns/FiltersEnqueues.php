@@ -24,10 +24,8 @@ trait FiltersEnqueues
             return $tag;
         }
 
-        // remove current type if it's defined
         $tag = preg_replace('/type=["\'][^"\']+["\']/', '', $tag);
 
-        // now add module type
         return str_replace('<script ', '<script type="module" ', $tag);
     }
 }

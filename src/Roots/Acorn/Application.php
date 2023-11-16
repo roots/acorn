@@ -186,29 +186,23 @@ class Application extends FoundationApplication
         $this->singleton(FoundationPackageManifest::class, function () {
             $files = new Filesystem();
 
-            $composer_paths = collect(get_option('active_plugins'))
-                ->map(function ($plugin) {
-                    return WP_PLUGIN_DIR.DIRECTORY_SEPARATOR.dirname($plugin);
-                })
+            $composerPaths = collect(get_option('active_plugins'))
+                ->map(fn ($plugin) => WP_PLUGIN_DIR.DIRECTORY_SEPARATOR.dirname($plugin))
                 ->merge([
                     $this->basePath(),
                     dirname(WP_CONTENT_DIR, 2),
                     get_template_directory(),
                     get_stylesheet_directory(),
                 ])
-                ->map(function ($path) use ($files) {
-                    return rtrim($files->normalizePath($path), '/');
-                })
+                ->map(fn ($path) => rtrim($files->normalizePath($path), '/'))
                 ->unique()
-                ->filter(function ($path) use ($files) {
-                    return @$files->isFile("{$path}/vendor/composer/installed.json")
-                        && @$files->isFile("{$path}/composer.json");
-                })
-                ->all();
+                ->filter(fn ($path) => @$files->isFile("{$path}/vendor/composer/installed.json") &&
+                    @$files->isFile("{$path}/composer.json")
+                )->all();
 
             return new PackageManifest(
                 $files,
-                $composer_paths,
+                $composerPaths,
                 $this->getCachedPackagesPath()
             );
         });
@@ -296,18 +290,18 @@ class Application extends FoundationApplication
      */
     protected function skipProvider($provider, Throwable $e): ServiceProvider
     {
-        $provider_name = is_object($provider) ? get_class($provider) : $provider;
+        $providerName = is_object($provider) ? get_class($provider) : $provider;
 
         if (! $e instanceof SkipProviderException) {
             $message = [
-                BindingResolutionException::class => "Skipping provider [{$provider_name}] because it requires a dependency that cannot be found.",
-            ][$error = get_class($e)] ?? "Skipping provider [{$provider_name}] because it encountered an error [{$error}].";
+                BindingResolutionException::class => "Skipping provider [{$providerName}] because it requires a dependency that cannot be found.",
+            ][$error = get_class($e)] ?? "Skipping provider [{$providerName}] because it encountered an error [{$error}].";
 
             $e = new SkipProviderException($message, 0, $e);
         }
 
         if (method_exists($packages = $this->make(PackageManifest::class), 'getPackage')) {
-            $e->setPackage($packages->getPackage($provider_name));
+            $e->setPackage($packages->getPackage($providerName));
         }
 
         report($e);
