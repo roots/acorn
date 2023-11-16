@@ -17,23 +17,27 @@ trait FiltersTemplates
         $hierarchy = $this->sageFinder->locate($files);
 
         // If the theme does not support FSE, return the original hierarchy.
-        if ( ! function_exists( 'wp_is_block_theme' )
+        if (
+            ! function_exists('wp_is_block_theme')
              || ! \wp_is_block_theme()
-             || ! \current_theme_supports( 'block-templates' )
+             || ! \current_theme_supports('block-templates')
         ) {
             return $hierarchy;
         }
 
         // Extract all entries, which point to an official FSE path (e.g. templates/...)
-        $fse_paths = array_filter($hierarchy,
-            static fn ($file) => str_starts_with($file, 'templates/') || str_contains($file, 'templates/'));
+        $fse_paths = array_filter(
+            $hierarchy,
+            static fn ($file) => str_starts_with($file, 'templates/') || str_contains($file, 'templates/')
+        );
         $hierarchy = array_diff($hierarchy, $fse_paths);
 
         // Extract all entries, which point to a custom blade template (e.g. template-foo.blade.php)
         $custom_template = \get_page_template_slug();
         $custom_template_paths = [];
         if ($custom_template) {
-            $custom_template_paths = array_filter($hierarchy,
+            $custom_template_paths = array_filter(
+                $hierarchy,
                 static fn ($file) => str_contains($file, $custom_template)
             );
             $hierarchy = array_diff($hierarchy, $custom_template_paths);
@@ -55,7 +59,8 @@ trait FiltersTemplates
     {
         // Prevent duplication of markup
         // @ https://github.com/roots/acorn/pull/141#issuecomment-1343162742
-        if (@file_exists($file)
+        if (
+            @file_exists($file)
             && !str_contains($file, '.blade.php')
         ) {
             return $file;
