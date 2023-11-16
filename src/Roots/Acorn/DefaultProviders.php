@@ -2,6 +2,7 @@
 
 namespace Roots\Acorn;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\DefaultProviders as DefaultProvidersBase;
 
 class DefaultProviders extends DefaultProvidersBase
@@ -28,6 +29,9 @@ class DefaultProviders extends DefaultProvidersBase
     {
         parent::__construct($providers);
 
-        $this->providers = array_merge($this->providers, $this->acornProviders);
+        $this->providers = Collection::make($this->providers)
+            ->merge($this->acornProviders)
+            ->filter(fn ($provider) => ! str_contains($provider, 'Illuminate\\Foundation\\'))
+            ->all();
     }
 }
