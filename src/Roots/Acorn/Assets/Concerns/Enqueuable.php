@@ -59,12 +59,12 @@ trait Enqueuable
      * @param array $dependencies
      * @return $this
      */
-    public function enqueueJs(bool $in_footer = true, array $dependencies = [])
+    public function enqueueJs(bool|array $args = true, array $dependencies = [])
     {
-        $this->js(function ($handle, $src, $bundle_dependencies) use (&$dependencies, $in_footer) {
+        $this->js(function ($handle, $src, $bundle_dependencies) use (&$dependencies, $args) {
             $this->mergeDependencies($dependencies, $bundle_dependencies);
 
-            wp_enqueue_script($handle, $src, $dependencies, null, $in_footer);
+            wp_enqueue_script($handle, $src, $dependencies, null, $args);
 
             $this->inlineRuntime();
 
