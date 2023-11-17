@@ -26,10 +26,8 @@ echo PHP_EOL."Finished in {$timer} seconds.".PHP_EOL;
 
 /**
  * Get the latest Laravel version.
- *
- * @return mixed
  */
-function getVersion()
+function getVersion(): string
 {
     $request = curl_init(GITHUB_API_LARAVEL_TAGS);
     curl_setopt($request, CURLOPT_RETURNTRANSFER, true);
@@ -56,13 +54,11 @@ function getVersion()
 
 /**
  * Get the current Laravel version.
- *
- * @return mixed
  */
-function getCurrentVersion()
+function getCurrentVersion(): ?string
 {
     if (! file_exists($file = __DIR__.'/../src/Illuminate/Foundation/Application.php')) {
-        return;
+        return null;
     }
 
     $current = file_get_contents($file);
@@ -72,9 +68,7 @@ function getCurrentVersion()
 }
 
 /**
- * Create the temporary directory.
- *
- * @param  mixed  $path
+ * Create a directory if it doesn't exist.
  */
 function createDirectory(string $path): void
 {
@@ -86,11 +80,7 @@ function createDirectory(string $path): void
 }
 
 /**
- * Download and extract the Laravel archive.
- *
- * @param  mixed  $version
- * @param  mixed  $path
- * @return string
+ * Download and extract the archive.
  */
 function handleArchive(string $version, string $path): void
 {
