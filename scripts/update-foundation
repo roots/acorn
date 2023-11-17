@@ -22,7 +22,7 @@ deleteDirectory($tempPath);
 
 $timer = round(microtime(true) - $timer, 2);
 
-echo PHP_EOL."Finished in {$timer} seconds.";
+echo PHP_EOL."Finished in {$timer} seconds.".PHP_EOL;
 
 /**
  * Get the latest Laravel version.
