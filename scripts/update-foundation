@@ -42,9 +42,10 @@ function getVersion(): string
 
     $tags = json_decode($response);
     $version = $tags[0]->name;
+    $current = getCurrentVersion();
 
-    if ($version === getCurrentVersion() && ! in_array('--force', $_SERVER['argv'])) {
-        echo 'Laravel is already up to date. Use --force to force update.'.PHP_EOL;
+    if ($version === $current && ! in_array('--force', $_SERVER['argv'])) {
+        echo "Laravel {$current} is already the latest version. Use --force to force update.".PHP_EOL;
         exit(1);
     }
 
@@ -95,10 +96,6 @@ function handleArchive(string $version, string $path): void
 
 /**
  * Move the Foundation directory into the project.
- *
- * @param  mixed  $tempPath
- * @param  mixed  $targetPath
- * @param  mixed  $version
  */
 function moveDirectory(string $tempPath, string $targetPath, string $version): void
 {
@@ -122,8 +119,6 @@ function moveDirectory(string $tempPath, string $targetPath, string $version): v
 
 /**
  * Delete a directory recursively.
- *
- * @param  mixed  $directory
  */
 function deleteDirectory(string $directory): void
 {
