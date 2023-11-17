@@ -6,28 +6,30 @@ set_time_limit(0);
 define('GITHUB_API_LARAVEL_TAGS', 'https://api.github.com/repos/laravel/framework/tags');
 define('GITHUB_LARAVEL_ARCHIVE', 'https://github.com/laravel/framework/archive/');
 
+$timer = microtime(true);
+
 $path = __DIR__;
-$tempPath = $path.'/.temp';
-$foundationPath = $path.'/../src/Illuminate/Foundation/';
+$tempPath = "{$path}/.temp";
+$targetPath = "{$path}/../src/Illuminate/Foundation/";
 
-$version = getLatestLaravelVersion();
-echo "Latest Laravel Version: {$version}".PHP_EOL.PHP_EOL;
+$version = getVersion();
+echo "Latest Foundation Version: {$version}".PHP_EOL.PHP_EOL;
 
-prepareTempDirectory($tempPath);
-$archive = downloadLaravelArchive($version, $tempPath);
-extractLaravelArchive($archive, $tempPath);
-moveFoundationDirectory($tempPath, $version, $foundationPath);
-
+createDirectory($tempPath);
+handleArchive($version, $tempPath);
+moveDirectory($tempPath, $targetPath, $version);
 deleteDirectory($tempPath);
 
-echo PHP_EOL.'Done.'.PHP_EOL;
+$timer = round(microtime(true) - $timer, 2);
+
+echo PHP_EOL."Finished in {$timer} seconds.";
 
 /**
  * Get the latest Laravel version.
  *
  * @return mixed
  */
-function getLatestLaravelVersion()
+function getVersion()
 {
     $request = curl_init(GITHUB_API_LARAVEL_TAGS);
     curl_setopt($request, CURLOPT_RETURNTRANSFER, true);
@@ -37,97 +39,104 @@ function getLatestLaravelVersion()
     curl_close($request);
 
     if (! $response) {
-        throw new Exception('Error: Could not get the latest Laravel version.');
+        echo 'Error: Could not get the latest Laravel version.';
+        exit(1);
     }
 
     $tags = json_decode($response);
+    $version = $tags[0]->name;
 
-    return $tags[0]->name;
-}
-
-/**
- * Prepare the temporary directory.
- *
- * @param  mixed  $tempPath
- * @return void
- */
-function prepareTempDirectory($tempPath)
-{
-    if (file_exists($tempPath)) {
-        deleteDirectory($tempPath);
+    if ($version === getCurrentVersion() && ! in_array('--force', $_SERVER['argv'])) {
+        echo 'Laravel is already up to date.';
+        exit(1);
     }
 
-    mkdir($tempPath, 0777, true);
+    return $version;
 }
 
 /**
- * Download the Laravel archive.
+ * Get the current Laravel version.
+ *
+ * @return mixed
+ */
+function getCurrentVersion()
+{
+    if (! file_exists($file = __DIR__.'/../src/Illuminate/Foundation/Application.php')) {
+        return;
+    }
+
+    $current = file_get_contents($file);
+    preg_match('/VERSION = \'(.*)\'/', $current, $matches);
+
+    return "v{$matches[1]}";
+}
+
+/**
+ * Create the temporary directory.
+ *
+ * @param  mixed  $path
+ */
+function createDirectory(string $path): void
+{
+    if (file_exists($path)) {
+        deleteDirectory($path);
+    }
+
+    mkdir($path, 0777, true);
+}
+
+/**
+ * Download and extract the Laravel archive.
  *
  * @param  mixed  $version
- * @param  mixed  $tempPath
+ * @param  mixed  $path
  * @return string
  */
-function downloadLaravelArchive($version, $tempPath)
+function handleArchive(string $version, string $path): void
 {
     $file = "{$version}.tar.gz";
-    $archive = "{$tempPath}/{$file}";
+    $archive = "{$path}/{$file}";
 
     file_put_contents($archive, fopen(GITHUB_LARAVEL_ARCHIVE.$file, 'r'));
     echo "Downloaded the archive to: {$archive}".PHP_EOL;
 
-    return $archive;
+    (new PharData($archive))->extractTo($path);
+    echo "Extracted archive to: {$path}".PHP_EOL;
 }
 
 /**
- * Extract the Laravel archive.
- *
- * @param  mixed  $archive
- * @param  mixed  $tempPath
- * @return void
- */
-function extractLaravelArchive($archive, $tempPath)
-{
-    (new PharData($archive))->extractTo($tempPath);
-
-    echo "Extracted archive to: {$tempPath}".PHP_EOL;
-}
-
-/**
- * Move the Foundation directory to the project.
+ * Move the Foundation directory into the project.
  *
  * @param  mixed  $tempPath
+ * @param  mixed  $targetPath
  * @param  mixed  $version
- * @param  mixed  $foundationPath
- * @return void
  */
-function moveFoundationDirectory($tempPath, $version, $foundationPath)
+function moveDirectory(string $tempPath, string $targetPath, string $version): void
 {
     $version = substr($version, 1);
     $extracted = "{$tempPath}/framework-{$version}/src/Illuminate/Foundation";
 
     if (! file_exists($extracted)) {
-        echo 'Error: Extracted Foundation directory not found.'.PHP_EOL;
-
-        return;
+        echo 'Error: Extracted Foundation directory not found.';
+        exit(1);
     }
 
-    if (file_exists($foundationPath)) {
-        deleteDirectory($foundationPath);
+    if (file_exists($targetPath)) {
+        deleteDirectory($targetPath);
     }
 
-    mkdir($foundationPath, 0777, true);
-    rename($extracted, $foundationPath);
+    mkdir($targetPath, 0777, true);
+    rename($extracted, $targetPath);
 
-    echo "Moved Foundation to: {$foundationPath}".PHP_EOL;
+    echo "Moved Foundation to: {$targetPath}".PHP_EOL;
 }
 
 /**
  * Delete a directory recursively.
  *
  * @param  mixed  $directory
- * @return void
  */
-function deleteDirectory($directory)
+function deleteDirectory(string $directory): void
 {
     if (! file_exists($directory)) {
         return;
@@ -144,4 +153,6 @@ function deleteDirectory($directory)
     }
 
     rmdir($directory);
+
+    echo "Deleted directory: {$directory}".PHP_EOL;
 }
