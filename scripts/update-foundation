@@ -8,9 +8,8 @@ define('GITHUB_LARAVEL_ARCHIVE', 'https://github.com/laravel/framework/archive/'
 
 $timer = microtime(true);
 
-$path = __DIR__;
-$tempPath = "{$path}/.temp";
-$targetPath = "{$path}/../src/Illuminate/Foundation/";
+$tempPath = __DIR__.'/.temp';
+$targetPath = __DIR__.'/../src/Illuminate/Foundation/';
 
 $version = getVersion();
 echo "Latest Laravel Version: {$version}".PHP_EOL.PHP_EOL;
