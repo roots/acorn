@@ -47,7 +47,7 @@ function getVersion()
     $version = $tags[0]->name;
 
     if ($version === getCurrentVersion() && ! in_array('--force', $_SERVER['argv'])) {
-        echo 'Laravel is already up to date.';
+        echo 'Laravel is already up to date. Use --force to force update.';
         exit(1);
     }
 
