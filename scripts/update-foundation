@@ -13,7 +13,7 @@ $tempPath = "{$path}/.temp";
 $targetPath = "{$path}/../src/Illuminate/Foundation/";
 
 $version = getVersion();
-echo "Latest Foundation Version: {$version}".PHP_EOL.PHP_EOL;
+echo "Latest Laravel Version: {$version}".PHP_EOL.PHP_EOL;
 
 createDirectory($tempPath);
 handleArchive($version, $tempPath);
