@@ -61,7 +61,7 @@ trait FiltersTemplates
         // @ https://github.com/roots/acorn/pull/141#issuecomment-1343162742
         if (
             @file_exists($file)
-            && !str_contains($file, '.blade.php')
+            && ! str_contains($file, '.blade.php')
         ) {
             return $file;
         }

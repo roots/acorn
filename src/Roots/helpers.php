@@ -99,7 +99,6 @@ function use_fse(): bool
            && \current_theme_supports('block-templates');
 }
 
-
 /**
  * @deprecated
  */
