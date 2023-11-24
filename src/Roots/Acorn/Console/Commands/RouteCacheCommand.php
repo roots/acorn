@@ -3,7 +3,6 @@
 namespace Roots\Acorn\Console\Commands;
 
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
-use Roots\Acorn\Application;
 use Roots\Acorn\Console\Concerns\GetsFreshApplication;
 
 class RouteCacheCommand extends \Illuminate\Foundation\Console\RouteCacheCommand

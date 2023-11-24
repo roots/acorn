@@ -28,9 +28,7 @@ function temp(string $path = null)
     if (! $temp) {
         $temp = (new TemporaryDirectory())->create();
 
-        register_shutdown_function(function () use ($temp) {
-            $temp->delete();
-        });
+        register_shutdown_function(fn () => $temp->delete());
     }
 
     if ($path !== null) {
