@@ -26,6 +26,7 @@ class Kernel extends FoundationConsoleKernel
         \Illuminate\Foundation\Console\EnvironmentCommand::class,
         \Illuminate\Foundation\Console\PackageDiscoverCommand::class,
         \Illuminate\Foundation\Console\ProviderMakeCommand::class,
+        \Illuminate\Foundation\Console\RouteClearCommand::class,
         \Illuminate\Foundation\Console\RouteListCommand::class,
         \Illuminate\Foundation\Console\ViewCacheCommand::class,
         \Illuminate\Foundation\Console\ViewClearCommand::class,
@@ -37,6 +38,7 @@ class Kernel extends FoundationConsoleKernel
         \Roots\Acorn\Console\Commands\ConfigCacheCommand::class,
         \Roots\Acorn\Console\Commands\OptimizeClearCommand::class,
         \Roots\Acorn\Console\Commands\OptimizeCommand::class,
+        \Roots\Acorn\Console\Commands\RouteCacheCommand::class,
         \Roots\Acorn\Console\Commands\SummaryCommand::class,
         \Roots\Acorn\Console\Commands\VendorPublishCommand::class,
     ];
