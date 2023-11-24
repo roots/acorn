@@ -67,11 +67,11 @@
   "require-dev": {
     "laravel/pint": "^1.13",
     "mockery/mockery": "^1.6",
-    "pestphp/pest": "^1.0",
+    "pestphp/pest": "^2.25",
     "phpcompatibility/php-compatibility": "^9.3",
     "roave/security-advisories": "dev-master",
     "spatie/laravel-ignition": "^2.1",
-    "spatie/pest-plugin-snapshots": "^1.0",
+    "spatie/pest-plugin-snapshots": "^2.1",
     "spatie/temporary-directory": "^2.0",
     "tmarsteel/mockery-callable-mock": "^2.1",
     "wp-cli/wp-cli": "^2.5"
