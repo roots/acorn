@@ -28,7 +28,7 @@ class Bootloader
 
     /**
      * Filesystem helper
-     * 
+     *
      * @var \Roots\Acorn\Filesystem\Filesystem
      */
     protected $files;

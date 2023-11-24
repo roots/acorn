@@ -33,7 +33,7 @@ it('should set the basePath if env var is set', function () {
 
 it('should set the basePath if composer.json exists in theme', function () {
     $composer_path = $this->fixture('base_path/base_composer');
-    
+
     $this->stub('get_theme_file_path', fn ($path) => "{$composer_path}/{$path}");
 
     $app = (new Bootloader)->getApplication();

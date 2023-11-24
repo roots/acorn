@@ -5,11 +5,11 @@ namespace Roots\Acorn\Console\Commands;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Filesystem\Filesystem;
 use Roots\Acorn\Application;
+use Roots\Acorn\Console\Concerns\GetsFreshApplication;
+use Roots\Acorn\Console\Console;
 use Symfony\Component\Process\Exception\ProcessSignaledException;
 use Symfony\Component\Process\Exception\RuntimeException;
 use Symfony\Component\Process\Process;
-use Roots\Acorn\Console\Concerns\GetsFreshApplication;
-use Roots\Acorn\Console\Console;
 
 class RouteCacheCommand extends \Illuminate\Foundation\Console\RouteCacheCommand
 {
@@ -77,6 +77,7 @@ class RouteCacheCommand extends \Illuminate\Foundation\Console\RouteCacheCommand
      * @throws \Symfony\Component\Process\Exception\ProcessSignaledException
      *
      * @copyright Taylor Otwell
+     *
      * @link https://github.com/laravel/framework/blob/9.x/src/Illuminate/Database/Console/DatabaseInspectionCommand.php
      */
     protected function installDependencies()
