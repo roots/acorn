@@ -378,10 +378,4 @@ class Application extends FoundationApplication
     {
         return 'Acorn '.static::VERSION.' (Laravel '.parent::VERSION.')';
     }
-
-    public static function isExperimentalRouterEnabled()
-    {
-        return Env::get('ACORN_ENABLE_EXPERIMENTAL_ROUTER', false)
-            || Env::get('ACORN_ENABLE_EXPIRIMENTAL_ROUTER', false);
-    }
 }
