@@ -25,7 +25,7 @@ class Application extends FoundationApplication
      *
      * @var string
      */
-    public const VERSION = '4.x-dev';
+    public const VERSION = '4.0.0-beta.0';
 
     /**
      * The custom resources path defined by the developer.
