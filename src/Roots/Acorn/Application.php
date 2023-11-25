@@ -8,7 +8,6 @@ use Illuminate\Foundation\Application as FoundationApplication;
 use Illuminate\Foundation\PackageManifest as FoundationPackageManifest;
 use Illuminate\Foundation\ProviderRepository;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Env;
 use Illuminate\Support\ServiceProvider;
 use Roots\Acorn\Exceptions\SkipProviderException;
 use Roots\Acorn\Filesystem\Filesystem;
