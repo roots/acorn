@@ -1,0 +1,143 @@
+#!/usr/bin/php
+<?php
+
+set_time_limit(0);
+
+define('GITHUB_API_LARAVEL_TAGS', 'https://api.github.com/repos/laravel/framework/tags');
+define('GITHUB_LARAVEL_ARCHIVE', 'https://github.com/laravel/framework/archive/');
+
+$timer = microtime(true);
+
+$tempPath = __DIR__.'/.temp';
+$targetPath = __DIR__.'/../src/Illuminate/Foundation/';
+
+$version = getVersion();
+echo "Latest Laravel Version: {$version}".PHP_EOL.PHP_EOL;
+
+createDirectory($tempPath);
+handleArchive($version, $tempPath);
+moveDirectory($tempPath, $targetPath, $version);
+deleteDirectory($tempPath);
+
+$timer = round(microtime(true) - $timer, 2);
+
+echo PHP_EOL."Finished in {$timer} seconds.".PHP_EOL;
+
+/**
+ * Get the latest Laravel version.
+ */
+function getVersion(): string
+{
+    $request = curl_init(GITHUB_API_LARAVEL_TAGS);
+    curl_setopt($request, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($request, CURLOPT_USERAGENT, 'PHP Script');
+
+    $response = curl_exec($request);
+    curl_close($request);
+
+    if (! $response) {
+        echo 'Error: Could not get the latest Laravel version.';
+        exit(1);
+    }
+
+    $tags = json_decode($response);
+    $version = $tags[0]->name;
+    $current = getCurrentVersion();
+
+    if ($version === $current && ! in_array('--force', $_SERVER['argv'])) {
+        echo "Laravel is already on the latest version ({$current}).".PHP_EOL;
+        echo 'Use --force to force update.'.PHP_EOL;
+        exit(1);
+    }
+
+    return $version;
+}
+
+/**
+ * Get the current Laravel version.
+ */
+function getCurrentVersion(): ?string
+{
+    if (! file_exists($file = __DIR__.'/../src/Illuminate/Foundation/Application.php')) {
+        return null;
+    }
+
+    $current = file_get_contents($file);
+    preg_match('/VERSION = \'(.*)\'/', $current, $matches);
+
+    return "v{$matches[1]}";
+}
+
+/**
+ * Create a directory if it doesn't exist.
+ */
+function createDirectory(string $path): void
+{
+    if (file_exists($path)) {
+        deleteDirectory($path);
+    }
+
+    mkdir($path, 0777, true);
+}
+
+/**
+ * Download and extract the archive.
+ */
+function handleArchive(string $version, string $path): void
+{
+    $file = "{$version}.tar.gz";
+    $archive = "{$path}/{$file}";
+
+    file_put_contents($archive, fopen(GITHUB_LARAVEL_ARCHIVE.$file, 'r'));
+    echo "Downloaded the archive to: {$archive}".PHP_EOL;
+
+    (new PharData($archive))->extractTo($path);
+    echo "Extracted archive to: {$path}".PHP_EOL;
+}
+
+/**
+ * Move the Foundation directory into the project.
+ */
+function moveDirectory(string $tempPath, string $targetPath, string $version): void
+{
+    $version = substr($version, 1);
+    $extracted = "{$tempPath}/framework-{$version}/src/Illuminate/Foundation";
+
+    if (! file_exists($extracted)) {
+        echo 'Error: Extracted Foundation directory not found.';
+        exit(1);
+    }
+
+    if (file_exists($targetPath)) {
+        deleteDirectory($targetPath);
+    }
+
+    mkdir($targetPath, 0777, true);
+    rename($extracted, $targetPath);
+
+    echo "Moved Foundation to: {$targetPath}".PHP_EOL;
+}
+
+/**
+ * Delete a directory recursively.
+ */
+function deleteDirectory(string $directory): void
+{
+    if (! file_exists($directory)) {
+        return;
+    }
+
+    $files = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS),
+        RecursiveIteratorIterator::CHILD_FIRST
+    );
+
+    foreach ($files as $fileInfo) {
+        $remove = ($fileInfo->isDir() ? 'rmdir' : 'unlink');
+        $remove($fileInfo->getRealPath());
+    }
+
+    rmdir($directory);
+
+    echo "Deleted directory: {$directory}".PHP_EOL;
+}
