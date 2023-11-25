@@ -246,7 +246,7 @@ class Bootloader
     {
         $this->app ??= new Application($this->basePath(), $this->usePaths());
 
-        $app->singleton(
+        $this->app->singleton(
             \Illuminate\Contracts\Http\Kernel::class,
             \Roots\Acorn\Http\Kernel::class
         );
