@@ -28,7 +28,7 @@ class Bootloader
 
     /**
      * Filesystem helper
-     * 
+     *
      * @var \Roots\Acorn\Filesystem\Filesystem
      */
     protected $files;
@@ -76,7 +76,7 @@ class Bootloader
     public function __construct(ApplicationContract $app = null, Filesystem $files = null)
     {
         $this->app = $app;
-        $this->files = $files ?? new Filesystem;
+        $this->files = $files ?? new Filesystem();
 
         static::$instance ??= $this;
     }
@@ -428,11 +428,11 @@ class Bootloader
      */
     protected function fallbackStoragePath()
     {
-        $path = WP_CONTENT_DIR.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.'acorn';
-        $this->files->ensureDirectoryExists($path.DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.'data', 0755, true);
-        $this->files->ensureDirectoryExists($path.DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'views', 0755, true);
-        $this->files->ensureDirectoryExists($path.DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'sessions', 0755, true);
-        $this->files->ensureDirectoryExists($path.DIRECTORY_SEPARATOR.'logs', 0755, true);
+        $path = WP_CONTENT_DIR . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'acorn';
+        $this->files->ensureDirectoryExists($path . DIRECTORY_SEPARATOR . 'framework' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'data', 0755, true);
+        $this->files->ensureDirectoryExists($path . DIRECTORY_SEPARATOR . 'framework' . DIRECTORY_SEPARATOR . 'views', 0755, true);
+        $this->files->ensureDirectoryExists($path . DIRECTORY_SEPARATOR . 'framework' . DIRECTORY_SEPARATOR . 'sessions', 0755, true);
+        $this->files->ensureDirectoryExists($path . DIRECTORY_SEPARATOR . 'logs', 0755, true);
 
         return $path;
     }
