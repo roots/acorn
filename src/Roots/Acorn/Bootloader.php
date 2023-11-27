@@ -27,6 +27,13 @@ class Bootloader
     protected $app;
 
     /**
+     * Filesystem helper
+     *
+     * @var \Roots\Acorn\Filesystem\Filesystem
+     */
+    protected $files;
+
+    /**
      * Base path for the application
      *
      * @var string
@@ -61,9 +68,10 @@ class Bootloader
     /**
      * Create a new bootloader instance.
      */
-    public function __construct(ApplicationContract $app = null)
+    public function __construct(ApplicationContract $app = null, Filesystem $files = null)
     {
         $this->app = $app;
+        $this->files = $files ?? new Filesystem;
 
         static::$instance ??= $this;
     }
@@ -301,7 +309,7 @@ class Bootloader
 
             is_dir($app_path = get_theme_file_path('app')) => dirname($app_path),
 
-            $vendor_path = (new Filesystem())->closest(dirname(__DIR__, 4), 'composer.json') => dirname($vendor_path),
+            is_file($vendor_path = $this->files->closest(dirname(__DIR__, 4), 'composer.json')) => dirname($vendor_path),
 
             default => dirname(__DIR__, 3)
         };
@@ -399,12 +407,11 @@ class Bootloader
      */
     protected function fallbackStoragePath()
     {
-        $files = new Filesystem();
         $path = WP_CONTENT_DIR.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.'acorn';
-        $files->ensureDirectoryExists($path.DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.'data', 0755, true);
-        $files->ensureDirectoryExists($path.DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'views', 0755, true);
-        $files->ensureDirectoryExists($path.DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'sessions', 0755, true);
-        $files->ensureDirectoryExists($path.DIRECTORY_SEPARATOR.'logs', 0755, true);
+        $this->files->ensureDirectoryExists($path.DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.'data', 0755, true);
+        $this->files->ensureDirectoryExists($path.DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'views', 0755, true);
+        $this->files->ensureDirectoryExists($path.DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'sessions', 0755, true);
+        $this->files->ensureDirectoryExists($path.DIRECTORY_SEPARATOR.'logs', 0755, true);
 
         return $path;
     }
