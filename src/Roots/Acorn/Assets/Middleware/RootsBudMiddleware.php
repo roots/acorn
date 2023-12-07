@@ -13,7 +13,7 @@ class RootsBudMiddleware
      */
     protected $dev_origin;
 
-    public function __construct(?string $dev_origin = null)
+    public function __construct(string $dev_origin = null)
     {
         $this->dev_origin = $dev_origin;
     }
@@ -21,7 +21,7 @@ class RootsBudMiddleware
     /**
      * Handle the manifest config.
      *
-     * @param array $config
+     * @param  array  $config
      * @return array
      */
     public function handle($config)
@@ -37,9 +37,6 @@ class RootsBudMiddleware
      * Get the URI to a Bud hot module replacement server.
      *
      * @link https://budjs.netlify.app/docs/bud.serve
-     *
-     * @param  string $path
-     * @return string|null
      */
     protected function getBudDevUri(string $path): ?string
     {

@@ -11,7 +11,7 @@ trait FiltersThePost
      *
      * Filter: the_post
      *
-     * @param  WP_Post $post
+     * @param  WP_Post  $post
      * @return void
      */
     public function filterThePost($post)

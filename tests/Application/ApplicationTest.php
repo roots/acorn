@@ -159,7 +159,8 @@ it('gracefully skips a provider that fails to boot', function () {
 
     // the core of this test is to make sure that when a class or function is called that
     // does not exist, things don't blow up.
-    $provider = new class($app) extends BootableServiceProvider {
+    $provider = new class($app) extends BootableServiceProvider
+    {
         public function boot()
         {
             new \kjo();

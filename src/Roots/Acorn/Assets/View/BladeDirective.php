@@ -7,11 +7,11 @@ class BladeDirective
     /**
      * Invoke the @asset directive.
      *
-     * @param  string $expression
+     * @param  string  $expression
      * @return string
      */
     public function __invoke($expression)
     {
-        return sprintf("<?= %s(%s); ?>", '\Roots\asset', $expression);
+        return sprintf('<?= %s(%s); ?>', '\Roots\asset', $expression);
     }
 }

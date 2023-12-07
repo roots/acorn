@@ -1,11 +1,7 @@
 <?php
 
-use Illuminate\Support\Collection;
 use Roots\Acorn\Assets\Bundle;
 use Roots\Acorn\Tests\Test\TestCase;
-
-use function Spatie\Snapshots\assertMatchesJsonSnapshot;
-use function Spatie\Snapshots\assertMatchesSnapshot;
 
 uses(TestCase::class);
 

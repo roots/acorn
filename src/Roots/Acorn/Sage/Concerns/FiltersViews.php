@@ -11,7 +11,7 @@ trait FiltersViews
      *
      * Filter: comments_template
      *
-     * @param  string $file
+     * @param  string  $file
      * @return string Path to comments template
      */
     public function filterCommentsTemplate($file)

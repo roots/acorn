@@ -10,8 +10,8 @@ use Roots\Acorn\Tests\Test\Concerns\SupportsWordPressStubs;
 class TestCase extends MockeryTestCase
 {
     use SupportsGlobalStubs;
-    use SupportsWordPressStubs;
     use SupportsScopedFixtures;
+    use SupportsWordPressStubs;
 
     protected function setUp(): void
     {

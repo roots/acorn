@@ -1,4 +1,6 @@
+/.devcontainer export-ignore
 /.github export-ignore
 /.gitattributes export-ignore
 /scripts export-ignore
-*.css linguist-detectable=false
+/src/Illuminate/Foundation/** linguist-vendored
+/tests/Assets/__fixtures__/** -linguist-detectable

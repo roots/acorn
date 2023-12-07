@@ -6,7 +6,6 @@ use Illuminate\Support\Str;
 use Roots\Acorn\Assets\Contracts\Asset as AssetContract;
 use Roots\Acorn\Assets\Contracts\Bundle as BundleContract;
 use Roots\Acorn\Assets\Contracts\Manifest as ManifestContract;
-use Roots\Acorn\Assets\AssetFactory;
 
 class Manifest implements ManifestContract
 {
@@ -18,7 +17,7 @@ class Manifest implements ManifestContract
 
     protected $uri;
 
-    public function __construct(string $path, string $uri, array $assets = [], ?array $bundles = null)
+    public function __construct(string $path, string $uri, array $assets = [], array $bundles = null)
     {
         $this->path = $path;
         $this->uri = $uri;
@@ -32,8 +31,7 @@ class Manifest implements ManifestContract
     /**
      * Get specified asset.
      *
-     * @param string $key
-     * @return AssetContract
+     * @param  string  $key
      */
     public function asset($key): AssetContract
     {
@@ -48,8 +46,7 @@ class Manifest implements ManifestContract
     /**
      * Get specified bundles.
      *
-     * @param string $key
-     * @return BundleContract
+     * @param  string  $key
      */
     public function bundle($key): BundleContract
     {
@@ -58,8 +55,6 @@ class Manifest implements ManifestContract
 
     /**
      * Normalizes to forward slashes and removes leading slash.
-     *
-     * @return string
      */
     protected function normalizeRelativePath(string $path): string
     {

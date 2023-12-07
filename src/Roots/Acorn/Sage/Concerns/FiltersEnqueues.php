@@ -9,9 +9,9 @@ trait FiltersEnqueues
      *
      * Filter: script_loader_tag
      *
-     * @param  string $tag
-     * @param  string $handle
-     * @param  string $src
+     * @param  string  $tag
+     * @param  string  $handle
+     * @param  string  $src
      * @return string
      */
     public function filterScriptLoaderTag($tag, $handle, $src)
@@ -24,10 +24,8 @@ trait FiltersEnqueues
             return $tag;
         }
 
-        // remove current type if it's defined
         $tag = preg_replace('/type=["\'][^"\']+["\']/', '', $tag);
 
-        // now add module type
         return str_replace('<script ', '<script type="module" ', $tag);
     }
 }

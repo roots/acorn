@@ -27,6 +27,13 @@ class Bootloader
     protected $app;
 
     /**
+     * Filesystem helper
+     *
+     * @var \Roots\Acorn\Filesystem\Filesystem
+     */
+    protected $files;
+
+    /**
      * Base path for the application
      *
      * @var string
@@ -42,8 +49,6 @@ class Bootloader
 
     /**
      * Set the Bootloader instance
-     *
-     * @param Bootloader $bootloader
      */
     public static function setInstance(?self $bootloader)
     {
@@ -53,22 +58,20 @@ class Bootloader
     /**
      * Get the Bootloader instance
      *
-     * @param \Illuminate\Contracts\Foundation\Application $app
      * @return static
      */
-    public static function getInstance(?ApplicationContract $app = null)
+    public static function getInstance(ApplicationContract $app = null)
     {
         return static::$instance ??= new static($app);
     }
 
     /**
      * Create a new bootloader instance.
-     *
-     * @param \Illuminate\Contracts\Foundation\Application $app
      */
-    public function __construct(?ApplicationContract $app = null)
+    public function __construct(ApplicationContract $app = null, Filesystem $files = null)
     {
         $this->app = $app;
+        $this->files = $files ?? new Filesystem;
 
         static::$instance ??= $this;
     }
@@ -86,7 +89,7 @@ class Bootloader
     /**
      * Boot the Application.
      *
-     * @param callable $callback
+     * @param  callable  $callback
      * @return void
      */
     public function boot($callback = null)
@@ -107,14 +110,16 @@ class Bootloader
 
         if ($app->runningInConsole()) {
             $this->enableHttpsInConsole();
+
             return class_exists('WP_CLI') ? $this->bootWpCli($app) : $this->bootConsole($app);
         }
 
-        if (Env::get('ACORN_ENABLE_EXPIRIMENTAL_ROUTER')) {
+        if (Application::isExperimentalRouterEnabled()) {
             $app->singleton(
                 \Illuminate\Contracts\Http\Kernel::class,
                 \Roots\Acorn\Http\Kernel::class
             );
+
             return $this->bootHttp($app);
         }
 
@@ -138,7 +143,6 @@ class Bootloader
     /**
      * Boot the Application for console.
      *
-     * @param ApplicationContract $app
      * @return void
      */
     protected function bootConsole(ApplicationContract $app)
@@ -157,7 +161,6 @@ class Bootloader
     /**
      * Boot the Application for wp-cli.
      *
-     * @param ApplicationContract $app
      * @return void
      */
     protected function bootWpCli(ApplicationContract $app)
@@ -171,6 +174,12 @@ class Bootloader
             $command = implode(' ', $args);
 
             foreach ($assoc_args as $key => $value) {
+                if ($key === 'interaction' && $value === false) {
+                    $command .= ' --no-interaction';
+
+                    continue;
+                }
+
                 $command .= " --{$key}";
 
                 if ($value !== true) {
@@ -194,7 +203,6 @@ class Bootloader
     /**
      * Boot the Application for HTTP requests.
      *
-     * @param ApplicationContract $app
      * @return void
      */
     protected function bootHttp(ApplicationContract $app)
@@ -217,8 +225,7 @@ class Bootloader
 
         add_filter(
             'do_parse_request',
-            fn ($do_parse, \WP $wp, $extra_query_vars) =>
-            apply_filters('acorn/router/do_parse_request', $do_parse, $wp, $extra_query_vars),
+            fn ($do_parse, \WP $wp, $extra_query_vars) => apply_filters('acorn/router/do_parse_request', $do_parse, $wp, $extra_query_vars),
             100,
             3
         );
@@ -234,13 +241,14 @@ class Bootloader
             $body = $response->send();
 
             $kernel->terminate($request, $body);
+
+            exit;
         });
     }
 
     /**
      * Boot the Application for WordPress requests.
      *
-     * @param ApplicationContract $app
      * @return void
      */
     protected function bootWordPress(ApplicationContract $app)
@@ -252,8 +260,7 @@ class Bootloader
     /**
      * Get Application instance.
      *
-     * @param ApplicationContract $app
-     * @return \Illuminate\Contracts\Foundation\Application
+     * @param  ApplicationContract  $app
      */
     public function getApplication(): ApplicationContract
     {
@@ -277,8 +284,7 @@ class Bootloader
         if (class_exists(\Whoops\Run::class)) {
             $this->app->bind(
                 \Illuminate\Contracts\Foundation\ExceptionRenderer::class,
-                fn (\Illuminate\Contracts\Foundation\Application $app) =>
-                    $app->make(\Roots\Acorn\Exceptions\Whoops\WhoopsExceptionRenderer::class)
+                fn (\Illuminate\Contracts\Foundation\Application $app) => $app->make(\Roots\Acorn\Exceptions\Whoops\WhoopsExceptionRenderer::class)
             );
         }
 
@@ -287,8 +293,6 @@ class Bootloader
 
     /**
      * Get the application basepath
-     *
-     * @return string
      */
     protected function basePath(): string
     {
@@ -305,7 +309,7 @@ class Bootloader
 
             is_dir($app_path = get_theme_file_path('app')) => dirname($app_path),
 
-            $vendor_path = (new Filesystem())->closest(dirname(__DIR__, 4), 'composer.json') => dirname($vendor_path),
+            is_file($vendor_path = $this->files->closest(dirname(__DIR__, 4), 'composer.json')) => dirname($vendor_path),
 
             default => dirname(__DIR__, 3)
         };
@@ -313,8 +317,6 @@ class Bootloader
 
     /**
      * Use paths that are configurable by the developer.
-     *
-     * @return array
      */
     protected function usePaths(): array
     {
@@ -366,43 +368,35 @@ class Bootloader
     /**
      * Find a path that is configurable by the developer.
      *
-     * @param  string $path
-     * @return string
+     * @param  string  $path
      */
     protected function findPath($path): string
     {
         $path = trim($path, '\\/');
 
         $searchPaths = [
-            $this->basePath() . DIRECTORY_SEPARATOR . $path,
+            $this->basePath().DIRECTORY_SEPARATOR.$path,
             get_theme_file_path($path),
         ];
 
         return collect($searchPaths)
-            ->map(function ($path) {
-                return (is_string($path) && is_dir($path)) ? $path : null;
-            })
+            ->map(fn ($path) => (is_string($path) && is_dir($path)) ? $path : null)
             ->filter()
-            ->whenEmpty(function ($paths) use ($path) {
-                return $paths->add($this->fallbackPath($path));
-            })
+            ->whenEmpty(fn ($paths) => $paths->add($this->fallbackPath($path)))
             ->unique()
             ->first();
     }
 
     /**
      * Fallbacks for path types.
-     *
-     * @param string $path
-     * @return string
      */
     protected function fallbackPath(string $path): string
     {
         return match ($path) {
             'storage' => $this->fallbackStoragePath(),
-            'app' => $this->basePath() . DIRECTORY_SEPARATOR . 'app',
-            'public' => $this->basePath() . DIRECTORY_SEPARATOR . 'public',
-            default => dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . $path,
+            'app' => $this->basePath().DIRECTORY_SEPARATOR.'app',
+            'public' => $this->basePath().DIRECTORY_SEPARATOR.'public',
+            default => dirname(__DIR__, 3).DIRECTORY_SEPARATOR.$path,
         };
     }
 
@@ -413,12 +407,11 @@ class Bootloader
      */
     protected function fallbackStoragePath()
     {
-        $files = new Filesystem();
-        $path = WP_CONTENT_DIR . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'acorn';
-        $files->ensureDirectoryExists($path . DIRECTORY_SEPARATOR . 'framework' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'data', 0755, true);
-        $files->ensureDirectoryExists($path . DIRECTORY_SEPARATOR . 'framework' . DIRECTORY_SEPARATOR . 'views', 0755, true);
-        $files->ensureDirectoryExists($path . DIRECTORY_SEPARATOR . 'framework' . DIRECTORY_SEPARATOR . 'sessions', 0755, true);
-        $files->ensureDirectoryExists($path . DIRECTORY_SEPARATOR . 'logs', 0755, true);
+        $path = WP_CONTENT_DIR.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.'acorn';
+        $this->files->ensureDirectoryExists($path.DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.'data', 0755, true);
+        $this->files->ensureDirectoryExists($path.DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'views', 0755, true);
+        $this->files->ensureDirectoryExists($path.DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'sessions', 0755, true);
+        $this->files->ensureDirectoryExists($path.DIRECTORY_SEPARATOR.'logs', 0755, true);
 
         return $path;
     }

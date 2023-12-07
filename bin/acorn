@@ -5,6 +5,9 @@
     if (! is_file($autoload_path = dirname(__DIR__, 4) . '/vendor/autoload.php')) {
         $autoload_path = dirname(__DIR__) . '/vendor/autoload.php';
     }
+    if (filter_input(INPUT_ENV, 'APPLICATION_PATH')) {
+        $autoload_path = filter_input(INPUT_ENV, 'APPLICATION_PATH') . '/vendor/autoload.php';
+    }
     require_once $autoload_path;
 
     $composer_path = (new Roots\Acorn\Filesystem\Filesystem)->closest(dirname($autoload_path, 2), 'composer.json');
