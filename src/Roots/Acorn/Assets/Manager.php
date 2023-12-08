@@ -66,7 +66,7 @@ class Manager
     /**
      * Get a Manifest
      */
-    public function manifest(string $name, array $config = null): ManifestContract
+    public function manifest(string $name, ?array $config = null): ManifestContract
     {
         $manifest = $this->manifests[$name] ?? $this->resolve($name, $config);
 
