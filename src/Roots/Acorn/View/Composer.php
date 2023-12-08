@@ -33,6 +33,23 @@ abstract class Composer
     protected $data;
 
     /**
+     * The properties / methods that should not be exposed.
+     *
+     * @var array
+     */
+    protected $except = [];
+
+    /**
+     * The default properties / methods that should not be exposed.
+     *
+     * @var array
+     */
+    protected $defaultExcept = [
+        'views',
+        'compose',
+    ];
+
+    /**
      * The list of views served by this composer.
      *
      * @return string|string[]

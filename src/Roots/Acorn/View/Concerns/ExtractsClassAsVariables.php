@@ -11,13 +11,6 @@ use ReflectionProperty;
 trait ExtractsClassAsVariables
 {
     /**
-     * The properties / methods that should not be exposed.
-     *
-     * @var array
-     */
-    protected $except = [];
-
-    /**
      * The cache of public property names, keyed by class.
      *
      * @var array
@@ -137,9 +130,6 @@ trait ExtractsClassAsVariables
      */
     protected function ignoredMethods()
     {
-        return array_merge([
-            'views',
-            'compose',
-        ], $this->except);
+        return array_merge($this->defaultExcept, $this->except);
     }
 }
