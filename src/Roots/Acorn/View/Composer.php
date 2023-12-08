@@ -12,28 +12,28 @@ abstract class Composer
     use ExtractsClassAsVariables;
 
     /**
-     * List of views to receive data by this composer
+     * The list of views served by this composer.
      *
      * @var string[]
      */
     protected static $views;
 
     /**
-     * Current view
+     * The current view instance.
      *
-     * @var View
+     * @var \Illuminate\View\View
      */
     protected $view;
 
     /**
-     * Current view data
+     * The current view data.
      *
-     * @var Fluent
+     * @var \Illuminate\Support\Fluent
      */
     protected $data;
 
     /**
-     * List of views served by this composer
+     * The list of views served by this composer.
      *
      * @return string|string[]
      */
@@ -63,7 +63,7 @@ abstract class Composer
     }
 
     /**
-     * Data to be merged and passed to the view before rendering.
+     * The merged data to be passed to view before rendering.
      *
      * @return array
      */
@@ -85,7 +85,7 @@ abstract class Composer
     }
 
     /**
-     * Data to be passed to view before rendering
+     * The data passed to the view before rendering.
      *
      * @return array
      */
@@ -95,7 +95,7 @@ abstract class Composer
     }
 
     /**
-     * Data to be passed to view before rendering
+     * The override data passed to the view before rendering.
      *
      * @return array
      */
