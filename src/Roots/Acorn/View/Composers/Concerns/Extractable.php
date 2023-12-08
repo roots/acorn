@@ -1,6 +1,6 @@
 <?php
 
-namespace Roots\Acorn\View\Concerns;
+namespace Roots\Acorn\View\Composers\Concerns;
 
 use Closure;
 use Illuminate\View\InvokableComponentVariable;
@@ -8,7 +8,7 @@ use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
 
-trait ExtractsClassAsVariables
+trait Extractable
 {
     /**
      * The cache of public property names, keyed by class.

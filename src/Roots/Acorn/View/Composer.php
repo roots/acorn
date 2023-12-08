@@ -5,11 +5,11 @@ namespace Roots\Acorn\View;
 use Illuminate\Support\Fluent;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
-use Roots\Acorn\View\Concerns\ExtractsClassAsVariables;
+use Roots\Acorn\View\Composers\Concerns\Extractable;
 
 abstract class Composer
 {
-    use ExtractsClassAsVariables;
+    use Extractable;
 
     /**
      * The list of views served by this composer.
