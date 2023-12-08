@@ -5,9 +5,12 @@ namespace Roots\Acorn\View;
 use Illuminate\Support\Fluent;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Roots\Acorn\View\Concerns\ExtractsClassAsVariables;
 
 abstract class Composer
 {
+    use ExtractsClassAsVariables;
+
     /**
      * List of views to receive data by this composer
      *
@@ -66,6 +69,14 @@ abstract class Composer
      */
     protected function merge()
     {
+        if (! $this->with() && ! $this->override()) {
+            return array_merge(
+                $this->extractPublicProperties(),
+                $this->extractPublicMethods(),
+                $this->view->getData(),
+            );
+        }
+
         return array_merge(
             $this->with(),
             $this->view->getData(),
