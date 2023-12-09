@@ -17,7 +17,7 @@ trait Arrayable
     public function toArray()
     {
         return collect((new ReflectionClass(static::class))->getMethods(ReflectionMethod::IS_PUBLIC))
-            ->reject(fn ($method) => $this->shouldIgnore($method->name))
+            ->reject(fn ($method) => $this->shouldIgnore($method->name) || $method->isStatic())
             ->mapWithKeys(function ($method) {
                 $data = $this->{$method->name}();
 
