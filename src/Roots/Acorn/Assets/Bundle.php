@@ -13,16 +13,46 @@ class Bundle implements BundleContract
     use Conditional;
     use Enqueuable;
 
+    /**
+     * The bundle ID.
+     *
+     * @var string
+     */
     protected $id;
 
+    /**
+     * The bundle path.
+     *
+     * @var string
+     */
     protected $path;
 
+    /**
+     * The bundle URI.
+     *
+     * @var string
+     */
     protected $uri;
 
+    /**
+     * The bundle runtime.
+     *
+     * @var string|null
+     */
     protected $runtime;
 
+    /**
+     * The bundle contents.
+     *
+     * @var array
+     */
     protected $bundle;
 
+    /**
+     * The bundle runtimes.
+     *
+     * @var array
+     */
     protected static $runtimes = [];
 
     /**
@@ -125,10 +155,9 @@ class Bundle implements BundleContract
     /**
      * Get the bundle URL.
      *
-     * @param  string  $path
      * @return string
      */
-    protected function getUrl($path)
+    protected function getUrl(string $path)
     {
         if (parse_url($path, PHP_URL_HOST)) {
             return $path;
@@ -148,20 +177,39 @@ class Bundle implements BundleContract
     protected function setRuntime()
     {
         if (Arr::isAssoc($this->bundle['js'])) {
-            $this->runtime = $this->bundle['js']['runtime'] ?? $this->bundle['js']["runtime~{$this->id}"] ?? null;
+            $this->runtime = $this->bundle['js']['runtime']
+                ?? $this->bundle['js']["runtime~{$this->id}"]
+                ?? null;
+
             unset($this->bundle['js']['runtime'], $this->bundle['js']["runtime~{$this->id}"]);
-        } elseif (isset($this->bundle['js'][0]) && strpos($this->bundle['js'][0], 'runtime') === 0) {
-            $this->runtime = $this->bundle['js'][0];
-            unset($this->bundle['js'][0]);
-        } elseif (isset($this->bundle['js'][0]) && strpos($this->bundle['js'][0], 'js/runtime') === 0) {
-            $this->runtime = $this->bundle['js'][0];
-            unset($this->bundle['js'][0]);
-        } elseif (isset($this->bundle['mjs'][0]) && strpos($this->bundle['mjs'][0], 'runtime') === 0) {
-            $this->runtime = $this->bundle['mjs'][0];
-            unset($this->bundle['mjs'][0]);
-        } elseif (isset($this->bundle['mjs'][0]) && strpos($this->bundle['mjs'][0], 'js/runtime') === 0) {
-            $this->runtime = $this->bundle['mjs'][0];
-            unset($this->bundle['mjs'][0]);
+
+            return;
         }
+
+        $this->runtime = $this->getBundleRuntime() ?? $this->getBundleRuntime('mjs');
+    }
+
+    /**
+     * Retrieve the runtime in a bundle.
+     *
+     * @return string|null
+     */
+    protected function getBundleRuntime(string $type = 'js')
+    {
+        if (! $this->bundle[$type]) {
+            return null;
+        }
+
+        foreach ($this->bundle[$type] as $key => $value) {
+            if (! str_contains($value, 'runtime')) {
+                continue;
+            }
+
+            unset($this->bundle[$type][$key]);
+
+            return $value;
+        }
+
+        return null;
     }
 }
