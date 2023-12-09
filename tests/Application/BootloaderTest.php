@@ -32,34 +32,34 @@ it('should set the basePath if env var is set', function () {
 });
 
 it('should set the basePath if composer.json exists in theme', function () {
-    $composer_path = $this->fixture('base_path/base_composer');
+    $composerPath = $this->fixture('base_path/base_composer');
 
-    $this->stub('get_theme_file_path', fn ($path) => "{$composer_path}/{$path}");
+    $this->stub('get_theme_file_path', fn ($path) => "{$composerPath}/{$path}");
 
     $app = (new Bootloader)->getApplication();
 
-    expect($app->basePath())->toBe($composer_path);
+    expect($app->basePath())->toBe($composerPath);
 });
 
 it('should set the basePath if app exists in theme', function () {
-    $app_path = $this->fixture('base_path/base_app');
-    $this->stub('get_theme_file_path', fn () => $app_path);
+    $appPath = $this->fixture('base_path/base_app');
+    $this->stub('get_theme_file_path', fn () => $appPath);
 
     $app = Bootloader::getInstance()->getApplication();
 
-    expect($app->basePath())->toBe(dirname($app_path));
+    expect($app->basePath())->toBe(dirname($appPath));
 });
 
 it('should set the basePath if composer.json exists as ancestor of ../../../', function () {
     $files = mock(\Roots\Acorn\Filesystem\Filesystem::class);
     $this->stub('get_theme_file_path', fn () => '');
 
-    $composer_path = $this->fixture('base_path/base_composer');
+    $composerPath = $this->fixture('base_path/base_composer');
 
-    $files->shouldReceive('closest')->andReturn("{$composer_path}/composer.json");
+    $files->shouldReceive('closest')->andReturn("{$composerPath}/composer.json");
     $files->shouldReceive('ensureDirectoryExists');
 
     $app = (new Bootloader(null, $files))->getApplication();
 
-    expect($app->basePath())->toBe($composer_path);
+    expect($app->basePath())->toBe($composerPath);
 });

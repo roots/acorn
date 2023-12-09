@@ -127,7 +127,7 @@ class Bootloader
     }
 
     /**
-     * Enable $_SERVER[HTTPS] in a console environment.
+     * Enable `$_SERVER[HTTPS]` in a console environment.
      *
      * @return void
      */
@@ -168,12 +168,12 @@ class Bootloader
         $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
         $kernel->bootstrap();
 
-        \WP_CLI::add_command('acorn', function ($args, $assoc_args) use ($kernel) {
+        \WP_CLI::add_command('acorn', function ($args, $assocArgs) use ($kernel) {
             $kernel->commands();
 
             $command = implode(' ', $args);
 
-            foreach ($assoc_args as $key => $value) {
+            foreach ($assocArgs as $key => $value) {
                 if ($key === 'interaction' && $value === false) {
                     $command .= ' --no-interaction';
 
@@ -225,7 +225,7 @@ class Bootloader
 
         add_filter(
             'do_parse_request',
-            fn ($do_parse, \WP $wp, $extra_query_vars) => apply_filters('acorn/router/do_parse_request', $do_parse, $wp, $extra_query_vars),
+            fn ($doParse, \WP $wp, $extraQueryVars) => apply_filters('acorn/router/do_parse_request', $doParse, $wp, $extraQueryVars),
             100,
             3
         );
@@ -305,11 +305,11 @@ class Bootloader
 
             defined('ACORN_BASEPATH') => constant('ACORN_BASEPATH'),
 
-            is_file($composer_path = get_theme_file_path('composer.json')) => dirname($composer_path),
+            is_file($composerPath = get_theme_file_path('composer.json')) => dirname($composerPath),
 
-            is_dir($app_path = get_theme_file_path('app')) => dirname($app_path),
+            is_dir($appPath = get_theme_file_path('app')) => dirname($appPath),
 
-            is_file($vendor_path = $this->files->closest(dirname(__DIR__, 4), 'composer.json')) => dirname($vendor_path),
+            is_file($vendorPath = $this->files->closest(dirname(__DIR__, 4), 'composer.json')) => dirname($vendorPath),
 
             default => dirname(__DIR__, 3)
         };
