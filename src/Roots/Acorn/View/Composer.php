@@ -45,8 +45,12 @@ abstract class Composer
      * @var array
      */
     protected $defaultExcept = [
-        'views',
+        'cache',
         'compose',
+        'override',
+        'toArray',
+        'views',
+        'with',
     ];
 
     /**
@@ -119,5 +123,27 @@ abstract class Composer
     protected function override()
     {
         return [];
+    }
+
+    /**
+     * Determine if the given property / method should be ignored.
+     *
+     * @param  string  $name
+     * @return bool
+     */
+    protected function shouldIgnore($name)
+    {
+        return str_starts_with($name, '__') ||
+            in_array($name, $this->ignoredMethods());
+    }
+
+    /**
+     * Get the methods that should be ignored.
+     *
+     * @return array
+     */
+    protected function ignoredMethods()
+    {
+        return array_merge($this->defaultExcept, $this->except);
     }
 }

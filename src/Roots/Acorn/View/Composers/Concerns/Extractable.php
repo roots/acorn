@@ -37,15 +37,9 @@ trait Extractable
             $reflection = new ReflectionClass($this);
 
             static::$propertyCache[$class] = collect($reflection->getProperties(ReflectionProperty::IS_PUBLIC))
-                ->reject(function (ReflectionProperty $property) {
-                    return $property->isStatic();
-                })
-                ->reject(function (ReflectionProperty $property) {
-                    return $this->shouldIgnore($property->getName());
-                })
-                ->map(function (ReflectionProperty $property) {
-                    return $property->getName();
-                })->all();
+                ->reject(fn (ReflectionProperty $property) => $property->isStatic() || $this->shouldIgnore($property->getName()))
+                ->map(fn (ReflectionProperty $property) => $property->getName())
+                ->all();
         }
 
         $values = [];
@@ -70,12 +64,8 @@ trait Extractable
             $reflection = new ReflectionClass($this);
 
             static::$methodCache[$class] = collect($reflection->getMethods(ReflectionMethod::IS_PUBLIC))
-                ->reject(function (ReflectionMethod $method) {
-                    return $this->shouldIgnore($method->getName());
-                })
-                ->map(function (ReflectionMethod $method) {
-                    return $method->getName();
-                });
+                ->reject(fn (ReflectionMethod $method) => $this->shouldIgnore($method->getName()))
+                ->map(fn (ReflectionMethod $method) => $method->getName());
         }
 
         $values = [];
@@ -106,30 +96,6 @@ trait Extractable
      */
     protected function createInvokableVariable(string $method)
     {
-        return new InvokableComponentVariable(function () use ($method) {
-            return $this->{$method}();
-        });
-    }
-
-    /**
-     * Determine if the given property / method should be ignored.
-     *
-     * @param  string  $name
-     * @return bool
-     */
-    protected function shouldIgnore($name)
-    {
-        return str_starts_with($name, '__') ||
-            in_array($name, $this->ignoredMethods());
-    }
-
-    /**
-     * Get the methods that should be ignored.
-     *
-     * @return array
-     */
-    protected function ignoredMethods()
-    {
-        return array_merge($this->defaultExcept, $this->except);
+        return new InvokableComponentVariable(fn () => $this->{$method}());
     }
 }
