@@ -10,8 +10,7 @@ use Roots\Acorn\Assets\Contracts\Bundle as BundleContract;
 
 class Bundle implements BundleContract
 {
-    use Conditional;
-    use Enqueuable;
+    use Conditional, Enqueuable;
 
     /**
      * The bundle ID.
