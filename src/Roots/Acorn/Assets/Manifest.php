@@ -39,11 +39,6 @@ class Manifest implements ManifestContract
 
     /**
      * Create a new manifest instance.
-     *
-     * @param  string  $path
-     * @param  string  $uri
-     * @param  array  $assets
-     * @param  array|null  $bundles
      */
     public function __construct(string $path, string $uri, array $assets = [], array $bundles = null)
     {
