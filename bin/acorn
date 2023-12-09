@@ -5,9 +5,11 @@
     if (! is_file($autoloadPath = dirname(__DIR__, 4) . '/vendor/autoload.php')) {
         $autoloadPath = dirname(__DIR__) . '/vendor/autoload.php';
     }
+
     if (filter_input(INPUT_ENV, 'APPLICATION_PATH')) {
         $autoloadPath = filter_input(INPUT_ENV, 'APPLICATION_PATH') . '/vendor/autoload.php';
     }
+
     require_once $autoloadPath;
 
     $composerPath = (new Roots\Acorn\Filesystem\Filesystem)->closest(dirname($autoloadPath, 2), 'composer.json');
@@ -17,6 +19,7 @@
     $composer = json_decode(file_get_contents($composerPath), true);
 
     define('WP_USE_THEMES', false);
+
     require_once "{$rootPath}/{$composer['extra']['wordpress-install-dir']}/wp-blog-header.php";
 
     Roots\Acorn\Bootloader::getInstance()->boot();
