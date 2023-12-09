@@ -94,7 +94,7 @@ abstract class Composer
             return array_merge(
                 $this->extractPublicProperties(),
                 $this->extractPublicMethods(),
-                $this->view->getData(),
+                $this->view->getData()
             );
         }
 
