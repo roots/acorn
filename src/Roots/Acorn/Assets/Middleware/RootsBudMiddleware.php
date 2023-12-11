@@ -13,7 +13,7 @@ class RootsBudMiddleware
      */
     protected $dev_origin;
 
-    public function __construct(string $dev_origin = null)
+    public function __construct(?string $dev_origin = null)
     {
         $this->dev_origin = $dev_origin;
     }

@@ -14,7 +14,7 @@ trait SupportsGlobalStubs
      * @param  string  $fn       The name of the global function
      * @param  null|callable  $callable The real function to monitor
      */
-    protected function stub(string $fn, callable $callable = null): MockeryCallableMock
+    protected function stub(string $fn, ?callable $callable = null): MockeryCallableMock
     {
         $script = <<<'DECLARE_FUNCTION'
         if (! function_exists('%1$s')) {
