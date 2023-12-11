@@ -31,6 +31,14 @@ interface Asset
     public function contents();
 
     /**
+     * Get the relative path to the asset.
+     *
+     * @param string $base_path Base path to use for relative path.
+     * @return string
+     */
+    public function relativePath(string $base_path): string;
+
+    /**
      * Get data URL of asset.
      *
      * @return string
