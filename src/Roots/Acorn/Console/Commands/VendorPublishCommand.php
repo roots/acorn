@@ -16,8 +16,8 @@ class VendorPublishCommand extends FoundationVendorPublishCommand
      */
     protected function publishItem($from, $to)
     {
-        if (Str::startsWith($to, $vendor_path = dirname(__DIR__, 5))) {
-            $to = str_replace($vendor_path, $this->getLaravel()->basePath(), $to);
+        if (Str::startsWith($to, $vendorPath = dirname(__DIR__, 5))) {
+            $to = str_replace($vendorPath, $this->getLaravel()->basePath(), $to);
 
             $this->callAcornInit($from, $to);
         }

@@ -30,8 +30,8 @@ class Filesystem extends FilesystemBase
         $currentDirectory = $path;
 
         while ($this->isReadable($currentDirectory)) {
-            if ($this->isFile($file_path = $currentDirectory.DIRECTORY_SEPARATOR.$file)) {
-                return $file_path;
+            if ($this->isFile($filePath = $currentDirectory.DIRECTORY_SEPARATOR.$file)) {
+                return $filePath;
             }
 
             $parentDirectory = $this->dirname($currentDirectory);

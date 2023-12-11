@@ -17,7 +17,7 @@ class AssetFactory
      * @param  string  $uri Remote URI
      * @param  string  $type Asset type
      */
-    public static function create(string $path, string $uri, string $type = null): AssetContract
+    public static function create(string $path, string $uri, ?string $type = null): AssetContract
     {
         if (! $type) {
             $type = pathinfo($path, PATHINFO_EXTENSION);
