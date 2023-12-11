@@ -18,7 +18,7 @@ trait Enqueuable
      *
      * @return Collection|$this
      */
-    abstract public function js(callable $callable = null);
+    abstract public function js(?callable $callable = null);
 
     /**
      * Get CSS files in bundle.
@@ -27,7 +27,7 @@ trait Enqueuable
      *
      * @return Collection|$this
      */
-    abstract public function css(callable $callable = null);
+    abstract public function css(?callable $callable = null);
 
     abstract public function runtime();
 

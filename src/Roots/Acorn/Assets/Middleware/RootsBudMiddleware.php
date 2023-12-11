@@ -19,7 +19,7 @@ class RootsBudMiddleware
      * @param  string|null  $devOrigin
      * @return void
      */
-    public function __construct(string $devOrigin = null)
+    public function __construct(?string $dev_origin = null)
     {
         $this->devOrigin = $devOrigin;
     }

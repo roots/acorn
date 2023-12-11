@@ -114,7 +114,7 @@ class Asset implements AssetContract
      *
      * @param  string  $mediatype MIME content type
      */
-    public function dataUrl(string $mediatype = null): string
+    public function dataUrl(?string $mediatype = null): string
     {
         if ($this->dataUrl) {
             return $this->dataUrl;
@@ -132,7 +132,7 @@ class Asset implements AssetContract
      *
      * @param  string  $mediatype MIME content type
      */
-    public function dataUri(string $mediatype = null): string
+    public function dataUri(?string $mediatype = null): string
     {
         return $this->dataUrl($mediatype);
     }

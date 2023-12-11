@@ -25,7 +25,7 @@ class DefaultProviders extends DefaultProvidersBase
      *
      * @return void
      */
-    public function __construct(array $providers = null)
+    public function __construct(?array $providers = null)
     {
         parent::__construct($providers);
 
