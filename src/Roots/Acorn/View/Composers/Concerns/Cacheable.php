@@ -5,8 +5,6 @@ namespace Roots\Acorn\View\Composers\Concerns;
 use BadMethodCallException;
 use Illuminate\Support\Facades\Cache;
 
-use function Roots\cache;
-
 trait Cacheable
 {
     /**

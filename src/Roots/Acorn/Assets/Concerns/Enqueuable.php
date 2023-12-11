@@ -18,7 +18,7 @@ trait Enqueuable
      *
      * @return Collection|$this
      */
-    abstract public function js(callable $callable = null);
+    abstract public function js(?callable $callable = null);
 
     /**
      * Get CSS files in bundle.
@@ -27,7 +27,7 @@ trait Enqueuable
      *
      * @return Collection|$this
      */
-    abstract public function css(callable $callable = null);
+    abstract public function css(?callable $callable = null);
 
     abstract public function runtime();
 
@@ -55,8 +55,8 @@ trait Enqueuable
      */
     public function enqueueJs(bool|array $args = true, array $dependencies = [])
     {
-        $this->js(function ($handle, $src, $bundle_dependencies) use (&$dependencies, $args) {
-            $this->mergeDependencies($dependencies, $bundle_dependencies);
+        $this->js(function ($handle, $src, $bundleDependencies) use (&$dependencies, $args) {
+            $this->mergeDependencies($dependencies, $bundleDependencies);
 
             wp_enqueue_script($handle, $src, $dependencies, null, $args);
 
@@ -188,9 +188,9 @@ trait Enqueuable
      *
      * @return void
      */
-    protected function mergeDependencies(array &$dependencies, array ...$more_dependencies)
+    protected function mergeDependencies(array &$dependencies, array ...$moreDependencies)
     {
-        $dependencies = array_unique(array_merge($dependencies, ...$more_dependencies));
+        $dependencies = array_unique(array_merge($dependencies, ...$moreDependencies));
     }
 
     /**

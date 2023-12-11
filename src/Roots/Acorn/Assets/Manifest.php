@@ -9,15 +9,38 @@ use Roots\Acorn\Assets\Contracts\Manifest as ManifestContract;
 
 class Manifest implements ManifestContract
 {
+    /**
+     * The manifest assets.
+     *
+     * @var array
+     */
     protected $assets;
 
+    /**
+     * The manifest bundles.
+     *
+     * @var array
+     */
     protected $bundles;
 
+    /**
+     * The manifest path.
+     *
+     * @var string
+     */
     protected $path;
 
+    /**
+     * The manifest URI.
+     *
+     * @var string
+     */
     protected $uri;
 
-    public function __construct(string $path, string $uri, array $assets = [], array $bundles = null)
+    /**
+     * Create a new manifest instance.
+     */
+    public function __construct(string $path, string $uri, array $assets = [], ?array $bundles = null)
     {
         $this->path = $path;
         $this->uri = $uri;
@@ -36,9 +59,10 @@ class Manifest implements ManifestContract
     public function asset($key): AssetContract
     {
         $key = $this->normalizeRelativePath($key);
-        $relative_path = $this->assets[$key] ?? $key;
-        $path = Str::before("{$this->path}/{$relative_path}", '?');
-        $uri = "{$this->uri}/{$relative_path}";
+        $relativePath = $this->assets[$key] ?? $key;
+
+        $path = Str::before("{$this->path}/{$relativePath}", '?');
+        $uri = "{$this->uri}/{$relativePath}";
 
         return AssetFactory::create($path, $uri);
     }

@@ -12,7 +12,7 @@ class SkipProviderException extends InvalidArgumentException
      *
      * @return void
      */
-    public function __construct(string $message = '', int $code = 0, Throwable $previous = null, string $package = '')
+    public function __construct(string $message = '', int $code = 0, ?Throwable $previous = null, string $package = '')
     {
         parent::__construct($message, $code, $previous);
 
