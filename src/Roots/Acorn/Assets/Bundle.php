@@ -73,7 +73,7 @@ class Bundle implements BundleContract
      *
      * @return Collection|$this
      */
-    public function css(callable $callable = null)
+    public function css(?callable $callable = null)
     {
         $styles = $this->conditional ? $this->bundle['css'] : [];
 
@@ -96,7 +96,7 @@ class Bundle implements BundleContract
      *
      * @return Collection|$this
      */
-    public function js(callable $callable = null)
+    public function js(?callable $callable = null)
     {
         $scripts = $this->conditional ? array_merge($this->bundle['js'], $this->bundle['mjs']) : [];
 

@@ -60,7 +60,7 @@ class Bootloader
      *
      * @return static
      */
-    public static function getInstance(ApplicationContract $app = null)
+    public static function getInstance(?ApplicationContract $app = null)
     {
         return static::$instance ??= new static($app);
     }
@@ -68,7 +68,7 @@ class Bootloader
     /**
      * Create a new bootloader instance.
      */
-    public function __construct(ApplicationContract $app = null, Filesystem $files = null)
+    public function __construct(?ApplicationContract $app = null, ?Filesystem $files = null)
     {
         $this->app = $app;
         $this->files = $files ?? new Filesystem;
