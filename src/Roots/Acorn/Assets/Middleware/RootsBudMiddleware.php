@@ -73,7 +73,7 @@ class RootsBudMiddleware
     protected function getDevOriginHeader()
     {
         return $this->devOrigin
-            ?: filter_input(INPUT_ENV, 'HTTP_X_BUD_devOrigin', FILTER_SANITIZE_URL)
-            ?: filter_input(INPUT_SERVER, 'HTTP_X_BUD_devOrigin', FILTER_SANITIZE_URL);
+            ?: filter_input(INPUT_ENV, 'HTTP_X_BUD_DEV_ORIGIN', FILTER_SANITIZE_URL)
+            ?: filter_input(INPUT_SERVER, 'HTTP_X_BUD_DEV_ORIGIN', FILTER_SANITIZE_URL);
     }
 }
