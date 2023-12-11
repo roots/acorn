@@ -11,7 +11,7 @@ use Roots\Acorn\Bootloader;
 /**
  * Get asset from manifest
  */
-function asset(string $asset, string $manifest = null): Asset
+function asset(string $asset, ?string $manifest = null): Asset
 {
     if (! $manifest) {
         return \app('assets.manifest')->asset($asset);
@@ -23,7 +23,7 @@ function asset(string $asset, string $manifest = null): Asset
 /**
  * Get bundle from manifest
  */
-function bundle(string $bundle, string $manifest = null): Bundle
+function bundle(string $bundle, ?string $manifest = null): Bundle
 {
     if (! $manifest) {
         return \app('assets.manifest')->bundle($bundle);
@@ -35,7 +35,7 @@ function bundle(string $bundle, string $manifest = null): Bundle
 /**
  * Instantiate the bootloader.
  */
-function bootloader(Application $app = null): Bootloader
+function bootloader(?Application $app = null): Bootloader
 {
     $bootloader = Bootloader::getInstance($app);
 

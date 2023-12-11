@@ -6,37 +6,29 @@ use Illuminate\Support\Fluent;
 use Illuminate\Support\Str;
 use ReflectionClass;
 use ReflectionMethod;
+use Throwable;
 
 trait Arrayable
 {
     /**
-     * Ignored Methods
-     *
-     * @var string[]
-     */
-    protected $ignore = [];
-
-    /**
-     * Maps available class methods to an array.
+     * Map the public class methods to an array.
      *
      * @return array
      */
     public function toArray()
     {
         return collect((new ReflectionClass(static::class))->getMethods(ReflectionMethod::IS_PUBLIC))
-            ->filter(fn ($method) => ! in_array(
-                $method->name,
-                array_merge(
-                    $this->ignore,
-                    ['compose', 'toArray', 'with', 'views', 'override']
-                )
-            ))
-            ->filter(fn ($method) => ! Str::startsWith($method->name, ['__', 'cache']))
+            ->reject(fn ($method) => $this->shouldIgnore($method->name) || $method->isStatic())
             ->mapWithKeys(function ($method) {
-                $data = $this->{$method->name}();
+                try {
+                    $data = $this->{$method->name}();
 
-                return [Str::snake($method->name) => is_array($data) ? new Fluent($data) : $data];
+                    return [Str::snake($method->name) => is_array($data) ? new Fluent($data) : $data];
+                } catch (Throwable) {
+                    return [];
+                }
             })
+            ->filter()
             ->all();
     }
 }

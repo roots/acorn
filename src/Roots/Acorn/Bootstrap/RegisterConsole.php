@@ -30,7 +30,7 @@ class RegisterConsole
             return;
         }
 
-        WP_CLI::add_command('acorn', function ($args, $assoc_args) {
+        WP_CLI::add_command('acorn', function ($args, $assocArgs) {
             /** @var Kernel */
             $kernel = $this->app->make(Kernel::class);
 
@@ -38,7 +38,7 @@ class RegisterConsole
 
             $command = implode(' ', $args);
 
-            foreach ($assoc_args as $key => $value) {
+            foreach ($assocArgs as $key => $value) {
                 $command .= " {$this->formatOption($key, $value)}";
             }
 

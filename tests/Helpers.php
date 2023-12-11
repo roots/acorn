@@ -6,7 +6,7 @@ use Mockery;
 use Mockery\MockInterface;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 
-function acorn_root(string $path = null)
+function acorn_root(?string $path = null)
 {
     return dirname(__DIR__).($path ? "/{$path}" : '');
 }
@@ -21,7 +21,7 @@ function plugin_entrypoint()
  *
  * @return string|TemporaryDirectory
  */
-function temp(string $path = null)
+function temp(?string $path = null)
 {
     static $temp;
 
