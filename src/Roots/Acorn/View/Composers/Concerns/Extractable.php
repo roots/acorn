@@ -9,7 +9,7 @@ use ReflectionMethod;
 use ReflectionProperty;
 
 /**
- * Extract public properties from a composer to make available in a view. 
+ * Extract public properties from a composer to make available in a view.
  *
  * @copyright Taylor Otwell
  * @link https://github.com/illuminate/view/blob/v10.35.0/Component.php#L220-L342
