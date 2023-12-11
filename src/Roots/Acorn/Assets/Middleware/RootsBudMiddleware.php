@@ -16,7 +16,6 @@ class RootsBudMiddleware
     /**
      * Create a new Bud middleware instance.
      *
-     * @param  string|null  $devOrigin
      * @return void
      */
     public function __construct(?string $devOrigin = null)
