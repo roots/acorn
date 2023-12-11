@@ -17,7 +17,7 @@ class Manifest implements ManifestContract
 
     protected $uri;
 
-    public function __construct(string $path, string $uri, array $assets = [], array $bundles = null)
+    public function __construct(string $path, string $uri, array $assets = [], ?array $bundles = null)
     {
         $this->path = $path;
         $this->uri = $uri;

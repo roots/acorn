@@ -40,7 +40,7 @@ class TextAsset extends Asset
      * @param  string  $charset Character encoding
      * @param  string  $urlencode List of characters to be percent-encoded
      */
-    public function dataUrl(string $mediatype = null, string $charset = null, string $urlencode = '%\'"'): string
+    public function dataUrl(?string $mediatype = null, ?string $charset = null, string $urlencode = '%\'"'): string
     {
         if ($this->dataUrl) {
             return $this->dataUrl;
@@ -72,7 +72,7 @@ class TextAsset extends Asset
      * @param  string  $charset Character encoding
      * @param  string  $urlencode List of characters to be percent-encoded
      */
-    public function dataUri(string $mediatype = null, string $charset = null, string $urlencode = '%\'"'): string
+    public function dataUri(?string $mediatype = null, ?string $charset = null, string $urlencode = '%\'"'): string
     {
         return $this->dataUrl($mediatype, $charset, $urlencode);
     }
