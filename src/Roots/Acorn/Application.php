@@ -84,7 +84,7 @@ class Application extends FoundationApplication
      */
     public function usePaths(array $paths)
     {
-        $supported_paths = [
+        $supportedPaths = [
             'app' => 'appPath',
             'lang' => 'langPath',
             'config' => 'configPath',
@@ -95,14 +95,14 @@ class Application extends FoundationApplication
             'bootstrap' => 'bootstrapPath',
         ];
 
-        foreach ($paths as $path_type => $path) {
+        foreach ($paths as $pathType => $path) {
             $path = rtrim($path, '\\/');
 
-            if (! isset($supported_paths[$path_type])) {
-                throw new Exception("The {$path_type} path type is not supported.");
+            if (! isset($supportedPaths[$pathType])) {
+                throw new Exception("The {$pathType} path type is not supported.");
             }
 
-            $this->{$supported_paths[$path_type]} = $path;
+            $this->{$supportedPaths[$pathType]} = $path;
         }
 
         $this->bindPathsInContainer();
@@ -329,11 +329,11 @@ class Application extends FoundationApplication
             return $this->namespace;
         }
 
-        $composer = json_decode(file_get_contents($composer_path = $this->getAppComposer()), true);
+        $composer = json_decode(file_get_contents($composerPath = $this->getAppComposer()), true);
 
         foreach ((array) data_get($composer, 'autoload.psr-4') as $namespace => $path) {
             foreach ((array) $path as $pathChoice) {
-                if (realpath($this->path()) === realpath(dirname($composer_path).DIRECTORY_SEPARATOR.$pathChoice)) {
+                if (realpath($this->path()) === realpath(dirname($composerPath).DIRECTORY_SEPARATOR.$pathChoice)) {
                     return $this->namespace = $namespace;
                 }
             }
