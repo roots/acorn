@@ -114,16 +114,7 @@ class Bootloader
             return class_exists('WP_CLI') ? $this->bootWpCli($app) : $this->bootConsole($app);
         }
 
-        if (Application::isExperimentalRouterEnabled()) {
-            $app->singleton(
-                \Illuminate\Contracts\Http\Kernel::class,
-                \Roots\Acorn\Http\Kernel::class
-            );
-
-            return $this->bootHttp($app);
-        }
-
-        return $this->bootWordPress($app);
+        return $this->bootHttp($app);
     }
 
     /**
@@ -247,17 +238,6 @@ class Bootloader
     }
 
     /**
-     * Boot the Application for WordPress requests.
-     *
-     * @return void
-     */
-    protected function bootWordPress(ApplicationContract $app)
-    {
-        $app->make(\Illuminate\Contracts\Http\Kernel::class)
-            ->handle(\Illuminate\Http\Request::capture());
-    }
-
-    /**
      * Get Application instance.
      *
      * @param  ApplicationContract  $app
@@ -268,7 +248,7 @@ class Bootloader
 
         $this->app->singleton(
             \Illuminate\Contracts\Http\Kernel::class,
-            \Roots\Acorn\Kernel::class
+            \Roots\Acorn\Http\Kernel::class
         );
 
         $this->app->singleton(
