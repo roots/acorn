@@ -146,6 +146,7 @@ class Bootloader
         );
 
         $kernel->terminate($input, $status);
+
         exit($status);
     }
 
@@ -247,7 +248,7 @@ class Bootloader
                 $response instanceof \Illuminate\Http\JsonResponse,
                 is_string($response->getContent()),
                 $data = json_decode($response->getContent()),
-                isset($data->message) && $data->message == "wordpress_request_$time",
+                isset($data->message) && $data->message == "wordpress_request_{$time}",
             ])
         ) {
             $body = $response->send();
@@ -269,17 +270,17 @@ class Bootloader
 
         $this->app->singleton(
             \Illuminate\Contracts\Http\Kernel::class,
-            apply_filters('acorn/container/http-kernel', \Roots\Acorn\Http\Kernel::class)
+            \Roots\Acorn\Http\Kernel::class
         );
 
         $this->app->singleton(
             \Illuminate\Contracts\Console\Kernel::class,
-            apply_filters('acorn/container/console-kernel', \Roots\Acorn\Console\Kernel::class)
+            \Roots\Acorn\Console\Kernel::class
         );
 
         $this->app->singleton(
             \Illuminate\Contracts\Debug\ExceptionHandler::class,
-            apply_filters('acorn/container/exception-handler', \Roots\Acorn\Exceptions\Handler::class)
+            \Roots\Acorn\Exceptions\Handler::class
         );
 
         if (class_exists(\Whoops\Run::class)) {
@@ -409,6 +410,7 @@ class Bootloader
     protected function fallbackStoragePath()
     {
         $path = WP_CONTENT_DIR.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.'acorn';
+
         $this->files->ensureDirectoryExists($path.DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.'data', 0755, true);
         $this->files->ensureDirectoryExists($path.DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'views', 0755, true);
         $this->files->ensureDirectoryExists($path.DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'sessions', 0755, true);
