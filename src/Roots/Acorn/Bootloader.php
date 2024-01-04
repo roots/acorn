@@ -200,7 +200,7 @@ class Bootloader
     {
         $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
         $request = \Illuminate\Http\Request::capture();
-        $time = time();
+        $time = microtime();
 
         $app->instance('request', $request);
         Facade::clearResolvedInstance('request');
@@ -216,7 +216,7 @@ class Bootloader
         }, 100, 3);
 
         $app->make('router')
-            ->any('{any?}', fn () => response()->json(['message' => "wordpress_request_$time"]))
+            ->any('{any?}', fn () => response()->json(['message' => "wordpress_request_{$time}"]))
             ->where('any', '.*');
 
         add_action('parse_request', fn () => $this->handleLaravelRequest($time, $kernel, $request));
@@ -269,7 +269,7 @@ class Bootloader
 
         $this->app->singleton(
             \Illuminate\Contracts\Http\Kernel::class,
-            apply_filters('acorn/container/http-kernel', $httpKernel)
+            apply_filters('acorn/container/http-kernel', \Roots\Acorn\Http\Kernel::class)
         );
 
         $this->app->singleton(
