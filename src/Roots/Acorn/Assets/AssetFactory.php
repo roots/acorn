@@ -2,10 +2,10 @@
 
 namespace Roots\Acorn\Assets;
 
+use Roots\Acorn\Assets\Asset\Asset;
 use Roots\Acorn\Assets\Asset\JsonAsset;
 use Roots\Acorn\Assets\Asset\PhpAsset;
 use Roots\Acorn\Assets\Asset\SvgAsset;
-use Roots\Acorn\Assets\Asset\Asset;
 use Roots\Acorn\Assets\Contracts\Asset as AssetContract;
 
 class AssetFactory
@@ -13,9 +13,9 @@ class AssetFactory
     /**
      * Create Asset instance.
      *
-     * @param  string $path Local path
-     * @param  string $uri Remote URI
-     * @param  string $type Asset type
+     * @param  string  $path Local path
+     * @param  string  $uri Remote URI
+     * @param  string  $type Asset type
      */
     public static function create(string $path, string $uri, ?string $type = null): AssetContract
     {
@@ -23,7 +23,7 @@ class AssetFactory
             $type = pathinfo($path, PATHINFO_EXTENSION);
         }
 
-        if (method_exists(self::class, $method = 'create' . ucfirst(strtolower($type)) . 'Asset')) {
+        if (method_exists(self::class, $method = 'create'.ucfirst(strtolower($type)).'Asset')) {
             return self::{$method}($path, $uri);
         }
 
@@ -32,10 +32,6 @@ class AssetFactory
 
     /**
      * Convert an asset to another asset type.
-     *
-     * @param AssetContract $asset
-     * @param string $type
-     * @return AssetContract
      */
     public static function convert(AssetContract $asset, string $type): AssetContract
     {
@@ -44,10 +40,6 @@ class AssetFactory
 
     /**
      * Create Asset instance.
-     *
-     * @param string $path
-     * @param string $uri
-     * @return Asset
      */
     protected static function createAsset(string $path, string $uri): Asset
     {
@@ -56,10 +48,6 @@ class AssetFactory
 
     /**
      * Create JsonAsset instance.
-     *
-     * @param string $path
-     * @param string $uri
-     * @return JsonAsset
      */
     protected static function createJsonAsset(string $path, string $uri): JsonAsset
     {
@@ -68,10 +56,6 @@ class AssetFactory
 
     /**
      * Create PhpAsset instance.
-     *
-     * @param string $path
-     * @param string $uri
-     * @return PhpAsset
      */
     protected static function createPhpAsset(string $path, string $uri): PhpAsset
     {
@@ -80,10 +64,6 @@ class AssetFactory
 
     /**
      * Create SvgAsset instance.
-     *
-     * @param string $path
-     * @param string $uri
-     * @return SvgAsset
      */
     protected static function createSvgAsset(string $path, string $uri): SvgAsset
     {

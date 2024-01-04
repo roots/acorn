@@ -6,16 +6,15 @@ use Illuminate\Contracts\Container\Container as ContainerContract;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Support\Str;
 use Roots\Acorn\Filesystem\Filesystem;
-use Roots\Acorn\Sage\ViewFinder;
 use Roots\Acorn\View\FileViewFinder;
 
 class Sage
 {
     use Concerns\FiltersBodyClass;
+    use Concerns\FiltersEnqueues;
     use Concerns\FiltersTemplates;
     use Concerns\FiltersThePost;
     use Concerns\FiltersViews;
-    use Concerns\FiltersEnqueues;
 
     /**
      * The application implementation.
@@ -47,19 +46,11 @@ class Sage
 
     /**
      * The Filesystem instance.
-     *
-     * @var Filesystem
      */
     protected Filesystem $files;
 
     /**
      * Creates a new Sage instance.
-     *
-     * @param Filesystem        $files
-     * @param ViewFinder        $sageFinder
-     * @param FileViewFinder    $fileFinder
-     * @param ViewFactory       $view
-     * @param ContainerContract $app
      */
     public function __construct(
         Filesystem $files,
@@ -82,9 +73,8 @@ class Sage
      */
     public function filter($filter)
     {
-        if (method_exists($this, $filter)) {
-            return [$this, $filter];
-        }
-        return [$this, 'filter' . Str::studly($filter)];
+        return method_exists($this, $filter) ?
+            [$this, $filter] :
+            [$this, 'filter'.Str::studly($filter)];
     }
 }

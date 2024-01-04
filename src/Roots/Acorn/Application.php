@@ -8,10 +8,7 @@ use Illuminate\Foundation\Application as FoundationApplication;
 use Illuminate\Foundation\PackageManifest as FoundationPackageManifest;
 use Illuminate\Foundation\ProviderRepository;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Env;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
-use Roots\Acorn\PackageManifest;
 use Roots\Acorn\Exceptions\SkipProviderException;
 use Roots\Acorn\Filesystem\Filesystem;
 use RuntimeException;
@@ -27,47 +24,30 @@ class Application extends FoundationApplication
      *
      * @var string
      */
-    public const VERSION = '3.x-dev';
-
-    /**
-     * The custom bootstrap path defined by the developer.
-     *
-     * @var string
-     */
-    protected $bootstrapPath;
-
-    /**
-     * The custom config path defined by the developer.
-     *
-     * @var string
-     */
-    protected $configPath;
-
-    /**
-     * The custom public path defined by the developer.
-     *
-     * @var string
-     */
-    protected $publicPath;
+    public const VERSION = '4.x-dev';
 
     /**
      * The custom resources path defined by the developer.
      *
      * @var string
      */
-    protected $resourcesPath;
+    protected $resourcePath;
 
     /**
      * Create a new Illuminate application instance.
      *
      * @param  string|null  $basePath
-     * @param  array|null   $paths
+     * @param  array|null  $paths
      * @return void
      */
     public function __construct($basePath = null, $paths = null)
     {
+        if ($basePath) {
+            $this->basePath = rtrim($basePath, '\/');
+        }
+
         if ($paths) {
-            $this->usePaths((array)$paths);
+            $this->usePaths((array) $paths);
         }
 
         $this->registerGlobalHelpers();
@@ -82,7 +62,7 @@ class Application extends FoundationApplication
      */
     protected function registerGlobalHelpers()
     {
-        require_once dirname(__DIR__, 2) . '/Illuminate/Foundation/helpers.php';
+        require_once dirname(__DIR__, 2).'/Illuminate/Foundation/helpers.php';
     }
 
     /**
@@ -103,30 +83,53 @@ class Application extends FoundationApplication
      */
     public function usePaths(array $paths)
     {
-        $supported_paths = [
+        $supportedPaths = [
             'app' => 'appPath',
             'lang' => 'langPath',
             'config' => 'configPath',
             'public' => 'publicPath',
             'storage' => 'storagePath',
             'database' => 'databasePath',
-            'resources' => 'resourcesPath',
+            'resources' => 'resourcePath',
             'bootstrap' => 'bootstrapPath',
         ];
 
-        foreach ($paths as $path_type => $path) {
+        foreach ($paths as $pathType => $path) {
             $path = rtrim($path, '\\/');
 
-            if (! isset($supported_paths[$path_type])) {
-                throw new Exception("The {$path_type} path type is not supported.");
+            if (! isset($supportedPaths[$pathType])) {
+                throw new Exception("The {$pathType} path type is not supported.");
             }
 
-            $this->{$supported_paths[$path_type]} = $path;
+            $this->{$supportedPaths[$pathType]} = $path;
         }
 
         $this->bindPathsInContainer();
 
         return $this;
+    }
+
+    /**
+     * Bind all of the application paths in the container.
+     *
+     * @return void
+     */
+    protected function bindPathsInContainer()
+    {
+        $this->instance('path', $this->path());
+        $this->instance('path.base', $this->basePath());
+        $this->instance('path.config', $this->configPath());
+        $this->instance('path.database', $this->databasePath());
+        $this->instance('path.public', $this->publicPath());
+        $this->instance('path.resources', $this->resourcePath());
+        $this->instance('path.storage', $this->storagePath());
+        $this->instance('path.bootstrap', $this->bootstrapPath());
+
+        $this->useLangPath(value(function () {
+            return is_dir($directory = $this->resourcePath('lang'))
+                ? $directory
+                : $this->basePath('lang');
+        }));
     }
 
     /**
@@ -137,75 +140,7 @@ class Application extends FoundationApplication
      */
     public function bootstrapPath($path = '')
     {
-        return ($this->bootstrapPath ?: $this->basePath . DIRECTORY_SEPARATOR . 'bootstrap')
-            . ($path ? DIRECTORY_SEPARATOR . $path : $path);
-    }
-
-    /**
-     * Set the bootstrap directory.
-     *
-     * @param  string  $path
-     * @return $this
-     */
-    public function useBootstrapPath($path)
-    {
-        $this->bootstrapPath = $path;
-
-        $this->instance('path.bootstrap', $path);
-
-        return $this;
-    }
-
-    /**
-     * Get the path to the application configuration files.
-     *
-     * @param  string  $path Optionally, a path to append to the config path
-     * @return string
-     */
-    public function configPath($path = '')
-    {
-        return ($this->configPath ?: $this->basePath . DIRECTORY_SEPARATOR . 'config')
-            . ($path ? DIRECTORY_SEPARATOR . $path : $path);
-    }
-
-    /**
-     * Set the config directory.
-     *
-     * @param  string  $path
-     * @return $this
-     */
-    public function useConfigPath($path)
-    {
-        $this->configPath = $path;
-
-        $this->instance('path.config', $path);
-
-        return $this;
-    }
-
-    /**
-     * Get the path to the public / web directory.
-     *
-     * @return string
-     */
-    public function publicPath()
-    {
-        return $this->publicPath ?: $this->basePath . DIRECTORY_SEPARATOR . 'public';
-    }
-
-    /**
-     * Set the public directory.
-     *
-     * @param  string  $path
-     * @return $this
-     */
-    public function usePublicPath($path)
-    {
-        $this->publicPath = $path;
-
-        $this->instance('path.public', $path);
-
-        return $this;
+        return $this->joinPaths($this->bootstrapPath ?: $this->storagePath('framework'), $path);
     }
 
     /**
@@ -216,8 +151,7 @@ class Application extends FoundationApplication
      */
     public function resourcePath($path = '')
     {
-        return ($this->resourcesPath ?: $this->basePath . DIRECTORY_SEPARATOR . 'resources')
-            . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+        return $this->joinPaths($this->resourcePath ?: $this->basePath('resources'), $path);
     }
 
     /**
@@ -228,7 +162,7 @@ class Application extends FoundationApplication
      */
     public function useResourcePath($path)
     {
-        $this->resourcesPath = $path;
+        $this->resourcePath = $path;
 
         $this->instance('path.resources', $path);
 
@@ -251,29 +185,23 @@ class Application extends FoundationApplication
         $this->singleton(FoundationPackageManifest::class, function () {
             $files = new Filesystem();
 
-            $composer_paths = collect(get_option('active_plugins'))
-                ->map(function ($plugin) {
-                    return WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . dirname($plugin);
-                })
+            $composerPaths = collect(get_option('active_plugins'))
+                ->map(fn ($plugin) => WP_PLUGIN_DIR.DIRECTORY_SEPARATOR.dirname($plugin))
                 ->merge([
                     $this->basePath(),
                     dirname(WP_CONTENT_DIR, 2),
                     get_template_directory(),
                     get_stylesheet_directory(),
                 ])
-                ->map(function ($path) use ($files) {
-                    return rtrim($files->normalizePath($path), '/');
-                })
+                ->map(fn ($path) => rtrim($files->normalizePath($path), '/'))
                 ->unique()
-                ->filter(function ($path) use ($files) {
-                    return @$files->isFile("{$path}/vendor/composer/installed.json")
-                        && @$files->isFile("{$path}/composer.json");
-                })
-                ->all();
+                ->filter(fn ($path) => @$files->isFile("{$path}/vendor/composer/installed.json") &&
+                    @$files->isFile("{$path}/composer.json")
+                )->all();
 
             return new PackageManifest(
                 $files,
-                $composer_paths,
+                $composerPaths,
                 $this->getCachedPackagesPath()
             );
         });
@@ -288,7 +216,7 @@ class Application extends FoundationApplication
      */
     public function isDownForMaintenance()
     {
-        return is_file($this->storagePath() . '/framework/down') || (defined('ABSPATH') && is_file(constant('ABSPATH') . '/.maintenance'));
+        return is_file($this->storagePath().'/framework/down') || (defined('ABSPATH') && is_file(constant('ABSPATH').'/.maintenance'));
     }
 
     /**
@@ -306,7 +234,6 @@ class Application extends FoundationApplication
     /**
      * Boot the given service provider.
      *
-     * @param  \Illuminate\Support\ServiceProvider  $provider
      * @return void
      */
     protected function bootProvider(ServiceProvider $provider)
@@ -325,13 +252,9 @@ class Application extends FoundationApplication
      */
     public function registerConfiguredProviders()
     {
-        $providers = Collection::make($this->config['app.providers'])
-            ->filter(function ($provider) {
-                return class_exists($provider);
-            })
-            ->partition(function ($provider) {
-                return Str::startsWith($provider, ['Illuminate\\', 'Roots\\']);
-            });
+        $providers = Collection::make($this->make('config')->get('app.providers'))
+            ->filter(fn ($provider) => class_exists($provider))
+            ->partition(fn ($provider) => str_starts_with($provider, 'Illuminate\\') || str_starts_with($provider, 'Roots\\'));
 
         $providers->splice(1, 0, [$this->make(PackageManifest::class)->providers()]);
 
@@ -352,6 +275,7 @@ class Application extends FoundationApplication
             if (is_string($provider) && ! class_exists($provider)) {
                 throw new SkipProviderException("Skipping provider [{$provider}] because it does not exist.");
             }
+
             return parent::register($provider, $force);
         } catch (Throwable $e) {
             return $this->skipProvider($provider, $e);
@@ -362,23 +286,21 @@ class Application extends FoundationApplication
      * Skip booting service provider and log error.
      *
      * @param  \Illuminate\Support\ServiceProvider|string  $provider
-     * @param  Throwable $e
-     * @return \Illuminate\Support\ServiceProvider
      */
     protected function skipProvider($provider, Throwable $e): ServiceProvider
     {
-        $provider_name = is_object($provider) ? get_class($provider) : $provider;
+        $providerName = is_object($provider) ? get_class($provider) : $provider;
 
         if (! $e instanceof SkipProviderException) {
             $message = [
-                BindingResolutionException::class => "Skipping provider [{$provider_name}] because it requires a dependency that cannot be found.",
-            ][$error = get_class($e)] ?? "Skipping provider [{$provider_name}] because it encountered an error [{$error}].";
+                BindingResolutionException::class => "Skipping provider [{$providerName}] because it requires a dependency that cannot be found.",
+            ][$error = get_class($e)] ?? "Skipping provider [{$providerName}] because it encountered an error [{$error}].";
 
             $e = new SkipProviderException($message, 0, $e);
         }
 
         if (method_exists($packages = $this->make(PackageManifest::class), 'getPackage')) {
-            $e->setPackage($packages->getPackage($provider_name));
+            $e->setPackage($packages->getPackage($providerName));
         }
 
         report($e);
@@ -387,7 +309,9 @@ class Application extends FoundationApplication
             throw $e;
         }
 
-        return is_object($provider) ? $provider : new class ($this) extends ServiceProvider {
+        return is_object($provider) ? $provider : new class($this) extends ServiceProvider
+        {
+            //
         };
     }
 
@@ -404,11 +328,11 @@ class Application extends FoundationApplication
             return $this->namespace;
         }
 
-        $composer = json_decode(file_get_contents($composer_path = $this->getAppComposer()), true);
+        $composer = json_decode(file_get_contents($composerPath = $this->getAppComposer()), true);
 
         foreach ((array) data_get($composer, 'autoload.psr-4') as $namespace => $path) {
             foreach ((array) $path as $pathChoice) {
-                if (realpath($this->path()) === realpath(dirname($composer_path) . DIRECTORY_SEPARATOR . $pathChoice)) {
+                if (realpath($this->path()) === realpath(dirname($composerPath).DIRECTORY_SEPARATOR.$pathChoice)) {
                     return $this->namespace = $namespace;
                 }
             }
@@ -425,23 +349,21 @@ class Application extends FoundationApplication
      *
      * If one is not found, then it will assume that there's a
      * composer.json file in the base path.
-     *
-     * @return string
      */
     protected function getAppComposer(): string
     {
-        return ((new Filesystem())->closest($this->path(), 'composer.json')) ?? $this->basePath('composer.json');
+        return (new Filesystem())->closest($this->path(), 'composer.json') ?? $this->basePath('composer.json');
     }
 
     /**
      * Set the application namespace.
      *
-     * @param string $namespace
+     * @param  string  $namespace
      * @return $this
      */
     public function useNamespace($namespace)
     {
-        $this->namespace = trim($namespace, '\\') . '\\';
+        $this->namespace = trim($namespace, '\\').'\\';
 
         return $this;
     }
@@ -453,12 +375,6 @@ class Application extends FoundationApplication
      */
     public function version()
     {
-        return 'Acorn ' . static::VERSION . ' (Laravel ' . parent::VERSION .  ')';
-    }
-
-    public static function isExperimentalRouterEnabled()
-    {
-        return Env::get('ACORN_ENABLE_EXPERIMENTAL_ROUTER', false)
-            || Env::get('ACORN_ENABLE_EXPIRIMENTAL_ROUTER', false);
+        return 'Acorn '.static::VERSION.' (Laravel '.parent::VERSION.')';
     }
 }

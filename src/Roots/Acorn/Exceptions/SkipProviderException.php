@@ -10,18 +10,14 @@ class SkipProviderException extends InvalidArgumentException
     /**
      * Create a new exception.
      *
-     * @param string $message
-     * @param int $code
-     * @param Throwable $previous
      * @return void
      */
-    public function __construct(string $message = "", int $code = 0, ?Throwable $previous = null, string $package = '')
+    public function __construct(string $message = '', int $code = 0, ?Throwable $previous = null, string $package = '')
     {
         parent::__construct($message, $code, $previous);
 
         $this->package = $package;
     }
-
 
     /**
      * Name of the provider's package.
@@ -33,7 +29,6 @@ class SkipProviderException extends InvalidArgumentException
     /**
      * Set the name of the provider's package.
      *
-     * @param string $package
      * @return void
      */
     public function setPackage(string $package)
@@ -59,7 +54,7 @@ class SkipProviderException extends InvalidArgumentException
     public function context()
     {
         return [
-            'package' => $this->package()
+            'package' => $this->package(),
         ];
     }
 }

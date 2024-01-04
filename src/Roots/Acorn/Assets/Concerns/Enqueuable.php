@@ -16,7 +16,6 @@ trait Enqueuable
      *
      * Optionally pass a function to execute on each JS file.
      *
-     * @param callable $callable
      * @return Collection|$this
      */
     abstract public function js(?callable $callable = null);
@@ -26,7 +25,6 @@ trait Enqueuable
      *
      * Optionally pass a function to execute on each CSS file.
      *
-     * @param callable $callable
      * @return Collection|$this
      */
     abstract public function css(?callable $callable = null);
@@ -38,8 +36,6 @@ trait Enqueuable
     /**
      * Enqueue CSS files in WordPress.
      *
-     * @param string $media
-     * @param array $dependencies
      * @return $this
      */
     public function enqueueCss(string $media = 'all', array $dependencies = [])
@@ -55,16 +51,14 @@ trait Enqueuable
     /**
      * Enqueue JS files in WordPress.
      *
-     * @param bool $in_footer
-     * @param array $dependencies
      * @return $this
      */
-    public function enqueueJs(bool $in_footer = true, array $dependencies = [])
+    public function enqueueJs(bool|array $args = true, array $dependencies = [])
     {
-        $this->js(function ($handle, $src, $bundle_dependencies) use (&$dependencies, $in_footer) {
-            $this->mergeDependencies($dependencies, $bundle_dependencies);
+        $this->js(function ($handle, $src, $bundleDependencies) use (&$dependencies, $args) {
+            $this->mergeDependencies($dependencies, $bundleDependencies);
 
-            wp_enqueue_script($handle, $src, $dependencies, null, $in_footer);
+            wp_enqueue_script($handle, $src, $dependencies, null, $args);
 
             $this->inlineRuntime();
 
@@ -149,8 +143,8 @@ trait Enqueuable
     /**
      * Add an inline script before or after the bundle loads
      *
-     * @param string $contents
-     * @param string $position
+     * @param  string  $contents
+     * @param  string  $position
      * @return $this
      */
     public function inline($contents, $position = 'after')
@@ -159,7 +153,7 @@ trait Enqueuable
             return $this;
         }
 
-        $handle = "{$this->id}/" . (
+        $handle = "{$this->id}/".(
             $position === 'after'
                 ? array_pop($handles)
                 : array_shift($handles)
@@ -173,8 +167,8 @@ trait Enqueuable
     /**
      * Add localization data to be used by the bundle
      *
-     * @param string $name
-     * @param array $object
+     * @param  string  $name
+     * @param  array  $object
      * @return $this
      */
     public function localize($name, $object)
@@ -192,19 +186,18 @@ trait Enqueuable
     /**
      * Merge two or more arrays.
      *
-     * @param array $dependencies
-     * @param array $more_dependencies
      * @return void
      */
-    protected function mergeDependencies(array &$dependencies, array ...$more_dependencies)
+    protected function mergeDependencies(array &$dependencies, array ...$moreDependencies)
     {
-        $dependencies = array_unique(array_merge($dependencies, ...$more_dependencies));
+        $dependencies = array_unique(array_merge($dependencies, ...$moreDependencies));
     }
 
     /**
      * Reset inlined sources.
      *
      * @internal
+     *
      * @return void
      */
     public static function resetInlinedSources()

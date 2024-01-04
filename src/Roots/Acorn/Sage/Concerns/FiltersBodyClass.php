@@ -9,7 +9,7 @@ trait FiltersBodyClass
      *
      * Filter: body_class
      *
-     * @param  array $classes
+     * @param  array  $classes
      * @return array
      */
     public function filterBodyClass($classes)
@@ -22,10 +22,7 @@ trait FiltersBodyClass
             }
         }
 
-        return $classes->map(function ($class) {
-            return preg_replace(['/-blade(-php)?$/', '/^page-template-views/'], '', $class);
-        })
-        ->filter()
-        ->all();
+        return $classes->map(fn ($class) => preg_replace(['/-blade(-php)?$/', '/^page-template-views/'], '', $class)
+        )->filter()->all();
     }
 }

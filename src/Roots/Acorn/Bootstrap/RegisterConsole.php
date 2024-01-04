@@ -2,11 +2,11 @@
 
 namespace Roots\Acorn\Bootstrap;
 
-use WP_CLI;
 use Illuminate\Contracts\Foundation\Application;
 use Roots\Acorn\Console\Kernel;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use WP_CLI;
 
 class RegisterConsole
 {
@@ -20,7 +20,6 @@ class RegisterConsole
     /**
      * Bootstrap the given application.
      *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
      * @return void
      */
     public function bootstrap(Application $app)
@@ -31,7 +30,7 @@ class RegisterConsole
             return;
         }
 
-        WP_CLI::add_command('acorn', function ($args, $assoc_args) {
+        WP_CLI::add_command('acorn', function ($args, $assocArgs) {
             /** @var Kernel */
             $kernel = $this->app->make(Kernel::class);
 
@@ -39,7 +38,7 @@ class RegisterConsole
 
             $command = implode(' ', $args);
 
-            foreach ($assoc_args as $key => $value) {
+            foreach ($assocArgs as $key => $value) {
                 $command .= " {$this->formatOption($key, $value)}";
             }
 
@@ -56,8 +55,8 @@ class RegisterConsole
     /**
      * Formats and escapes argument for StringInput.
      *
-     * @param string $key
-     * @param string $value
+     * @param  string  $key
+     * @param  string  $value
      * @return string
      */
     protected function formatOption($key, $value)

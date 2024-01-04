@@ -11,15 +11,15 @@ trait SupportsGlobalStubs
     /**
      * Create stubs and spies for global functions.
      *
-     * @param string        $fn       The name of the global function
-     * @param null|callable $callable The real function to monitor
+     * @param  string  $fn       The name of the global function
+     * @param  null|callable  $callable The real function to monitor
      */
     protected function stub(string $fn, ?callable $callable = null): MockeryCallableMock
     {
-        $script = <<<DECLARE_FUNCTION
-        if (! function_exists('%1\$s')) {
-            function %1\$s (...\$args) {
-                return call_user_func_array(%2\$s::\$globals['%1\$s'], \$args);
+        $script = <<<'DECLARE_FUNCTION'
+        if (! function_exists('%1$s')) {
+            function %1$s (...$args) {
+                return call_user_func_array(%2$s::$globals['%1$s'], $args);
             }
         }
         DECLARE_FUNCTION;
@@ -32,7 +32,7 @@ trait SupportsGlobalStubs
     /**
      * Create multiple stubs and spies for global functions.
      *
-     * @param iterable $stubs
+     * @param  iterable  $stubs
      * @return MockeryCallableMock[]
      */
     protected function stubs(iterable $callables): array

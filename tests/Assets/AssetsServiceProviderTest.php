@@ -28,8 +28,8 @@ it('registers a default manifest', function () {
                     'assets' => $this->fixture('bud_multi_compiler/public/app/manifest.json'),
                     'bundles' => $this->fixture('bud_multi_compiler/public/app/entrypoints.json'),
                 ],
-            ]
-        ]
+            ],
+        ],
     ]));
     $app->register(\Roots\Acorn\Assets\AssetsServiceProvider::class);
 

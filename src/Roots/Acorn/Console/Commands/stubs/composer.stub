@@ -14,16 +14,4 @@ class DummyClass extends Composer
     protected static $views = [
         DummyViews
     ];
-
-    /**
-     * Data to be passed to view before rendering.
-     *
-     * @return array
-     */
-    public function with()
-    {
-        return [
-            //
-        ];
-    }
 }

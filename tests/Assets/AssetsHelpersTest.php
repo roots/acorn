@@ -1,11 +1,10 @@
 <?php
 
-use Roots\Acorn\Assets\Contracts\Manifest as ManifestContract;
 use Roots\Acorn\Tests\Test\TestCase;
 
-use function Spatie\Snapshots\assertMatchesSnapshot;
 use function Roots\asset;
 use function Roots\bundle;
+use function Spatie\Snapshots\assertMatchesSnapshot;
 
 uses(TestCase::class);
 
@@ -27,8 +26,8 @@ it('asset() can access the default manifest', function () {
                     'assets' => $this->fixture('bud_multi_compiler/public/editor/manifest.json'),
                     'bundles' => $this->fixture('bud_multi_compiler/public/editor/entrypoints.json'),
                 ],
-            ]
-        ]
+            ],
+        ],
     ]));
     $app->register(\Roots\Acorn\Assets\AssetsServiceProvider::class);
 
@@ -53,8 +52,8 @@ it('asset() can access a specified manifest', function () {
                     'assets' => $this->fixture('bud_multi_compiler/public/editor/manifest.json'),
                     'bundles' => $this->fixture('bud_multi_compiler/public/editor/entrypoints.json'),
                 ],
-            ]
-        ]
+            ],
+        ],
     ]));
     $app->register(\Roots\Acorn\Assets\AssetsServiceProvider::class);
 
@@ -79,8 +78,8 @@ it('bundle() can access the default manifest', function () {
                     'assets' => $this->fixture('bud_multi_compiler/public/editor/manifest.json'),
                     'bundles' => $this->fixture('bud_multi_compiler/public/editor/entrypoints.json'),
                 ],
-            ]
-        ]
+            ],
+        ],
     ]));
     $app->register(\Roots\Acorn\Assets\AssetsServiceProvider::class);
 
@@ -105,8 +104,8 @@ it('bundle() can access a specified manifest', function () {
                     'assets' => $this->fixture('bud_multi_compiler/public/editor/manifest.json'),
                     'bundles' => $this->fixture('bud_multi_compiler/public/editor/entrypoints.json'),
                 ],
-            ]
-        ]
+            ],
+        ],
     ]));
     $app->register(\Roots\Acorn\Assets\AssetsServiceProvider::class);
 

@@ -2,42 +2,42 @@
 
 namespace Roots\Acorn\Assets\Asset;
 
-use SplFileInfo;
 use Roots\Acorn\Assets\Contracts\Asset as AssetContract;
 use Roots\Acorn\Filesystem\Filesystem;
+use SplFileInfo;
 
 class Asset implements AssetContract
 {
     /**
-     * Local path
+     * The local asset path.
      *
      * @var string
      */
     protected $path;
 
     /**
-     * Remote URI
+     * The remote asset URI.
      *
      * @var string
      */
     protected $uri;
 
     /**
-     * MIME Content Type
+     * The asset MIME content type.
      *
      * @var string
      */
     protected $type;
 
     /**
-     * Base64-encoded contents
+     * The asset base64-encoded contents.
      *
      * @var string
      */
     protected $base64;
 
     /**
-     * Data URL of asset.
+     * The asset data URL.
      *
      * @var string
      */
@@ -46,8 +46,8 @@ class Asset implements AssetContract
     /**
      * Get asset from manifest
      *
-     * @param  string $path Local path
-     * @param  string $uri Remote URI
+     * @param  string  $path Local path
+     * @param  string  $uri Remote URI
      */
     public function __construct(string $path, string $uri)
     {
@@ -86,18 +86,17 @@ class Asset implements AssetContract
     /**
      * Get the relative path to the asset.
      *
-     * @param string $base_path Base path to use for relative path.
-     * @return string
+     * @param  string  $basePath Base path to use for relative path.
      */
-    public function relativePath(string $base_path): string
+    public function relativePath(string $basePath): string
     {
-        $base_path = rtrim($base_path, '/\\') . '/';
+        $basePath = rtrim($basePath, '/\\').'/';
 
-        return (new Filesystem())->getRelativePath($base_path, $this->path());
+        return (new Filesystem())->getRelativePath($basePath, $this->path());
     }
 
     /**
-     * Base64-encoded contents
+     * Get the base64-encoded contents of the asset.
      *
      * @return string
      */
@@ -113,8 +112,7 @@ class Asset implements AssetContract
     /**
      * Get data URL of asset.
      *
-     * @param string $mediatype MIME content type
-     * @return string
+     * @param  string  $mediatype MIME content type
      */
     public function dataUrl(?string $mediatype = null): string
     {
@@ -132,8 +130,7 @@ class Asset implements AssetContract
     /**
      * Get data URL of asset.
      *
-     * @param string $mediatype MIME content type
-     * @return string
+     * @param  string  $mediatype MIME content type
      */
     public function dataUri(?string $mediatype = null): string
     {
@@ -141,7 +138,7 @@ class Asset implements AssetContract
     }
 
     /**
-     * Get the MIME content type
+     * Get the MIME content type.
      *
      * @return string|false
      */
@@ -155,7 +152,7 @@ class Asset implements AssetContract
     }
 
     /**
-     * Get the MIME content type
+     * Get the MIME content type.
      *
      * @return string|false
      */

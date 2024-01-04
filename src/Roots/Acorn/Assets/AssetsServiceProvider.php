@@ -39,6 +39,11 @@ class AssetsServiceProvider extends ServiceProvider
         }
     }
 
+    /**
+     * Get the default manifest.
+     *
+     * @return string
+     */
     protected function getDefaultManifest()
     {
         return $this->app['config']['assets.default'];

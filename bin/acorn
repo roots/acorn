@@ -2,22 +2,25 @@
 <?php
 
 (static function () {
-    if (! is_file($autoload_path = dirname(__DIR__, 4) . '/vendor/autoload.php')) {
-        $autoload_path = dirname(__DIR__) . '/vendor/autoload.php';
+    if (! is_file($autoloadPath = dirname(__DIR__, 4) . '/vendor/autoload.php')) {
+        $autoloadPath = dirname(__DIR__) . '/vendor/autoload.php';
     }
+
     if (filter_input(INPUT_ENV, 'APPLICATION_PATH')) {
-        $autoload_path = filter_input(INPUT_ENV, 'APPLICATION_PATH') . '/vendor/autoload.php';
+        $autoloadPath = filter_input(INPUT_ENV, 'APPLICATION_PATH') . '/vendor/autoload.php';
     }
-    require_once $autoload_path;
 
-    $composer_path = (new Roots\Acorn\Filesystem\Filesystem)->closest(dirname($autoload_path, 2), 'composer.json');
+    require_once $autoloadPath;
 
-    $root_path = dirname($composer_path);
+    $composerPath = (new Roots\Acorn\Filesystem\Filesystem)->closest(dirname($autoloadPath, 2), 'composer.json');
 
-    $composer = json_decode(file_get_contents($composer_path), true);
+    $rootPath = dirname($composerPath);
+
+    $composer = json_decode(file_get_contents($composerPath), true);
 
     define('WP_USE_THEMES', false);
-    require_once "{$root_path}/{$composer['extra']['wordpress-install-dir']}/wp-blog-header.php";
+
+    require_once "{$rootPath}/{$composer['extra']['wordpress-install-dir']}/wp-blog-header.php";
 
     Roots\Acorn\Bootloader::getInstance()->boot();
 })();

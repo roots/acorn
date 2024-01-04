@@ -6,18 +6,40 @@ use Illuminate\Support\Str;
 use Roots\Acorn\Assets\Contracts\Asset as AssetContract;
 use Roots\Acorn\Assets\Contracts\Bundle as BundleContract;
 use Roots\Acorn\Assets\Contracts\Manifest as ManifestContract;
-use Roots\Acorn\Assets\AssetFactory;
 
 class Manifest implements ManifestContract
 {
+    /**
+     * The manifest assets.
+     *
+     * @var array
+     */
     protected $assets;
 
+    /**
+     * The manifest bundles.
+     *
+     * @var array
+     */
     protected $bundles;
 
+    /**
+     * The manifest path.
+     *
+     * @var string
+     */
     protected $path;
 
+    /**
+     * The manifest URI.
+     *
+     * @var string
+     */
     protected $uri;
 
+    /**
+     * Create a new manifest instance.
+     */
     public function __construct(string $path, string $uri, array $assets = [], ?array $bundles = null)
     {
         $this->path = $path;
@@ -32,15 +54,15 @@ class Manifest implements ManifestContract
     /**
      * Get specified asset.
      *
-     * @param string $key
-     * @return AssetContract
+     * @param  string  $key
      */
     public function asset($key): AssetContract
     {
         $key = $this->normalizeRelativePath($key);
-        $relative_path = $this->assets[$key] ?? $key;
-        $path = Str::before("{$this->path}/{$relative_path}", '?');
-        $uri = "{$this->uri}/{$relative_path}";
+        $relativePath = $this->assets[$key] ?? $key;
+
+        $path = Str::before("{$this->path}/{$relativePath}", '?');
+        $uri = "{$this->uri}/{$relativePath}";
 
         return AssetFactory::create($path, $uri);
     }
@@ -48,8 +70,7 @@ class Manifest implements ManifestContract
     /**
      * Get specified bundles.
      *
-     * @param string $key
-     * @return BundleContract
+     * @param  string  $key
      */
     public function bundle($key): BundleContract
     {
@@ -58,8 +79,6 @@ class Manifest implements ManifestContract
 
     /**
      * Normalizes to forward slashes and removes leading slash.
-     *
-     * @return string
      */
     protected function normalizeRelativePath(string $path): string
     {

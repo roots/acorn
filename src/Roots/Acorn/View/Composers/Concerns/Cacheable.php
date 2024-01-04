@@ -5,8 +5,6 @@ namespace Roots\Acorn\View\Composers\Concerns;
 use BadMethodCallException;
 use Illuminate\Support\Facades\Cache;
 
-use function Roots\cache;
-
 trait Cacheable
 {
     /**
@@ -49,7 +47,7 @@ trait Cacheable
         static $cache;
 
         $arguments = func_get_args();
-        $tags = $this->cache_tags ?? [static::class, 'post-' . get_the_ID(), get_post_type()];
+        $tags = $this->cache_tags ?? [static::class, 'post-'.get_the_ID(), get_post_type()];
 
         if (! $cache) {
             try {
@@ -94,12 +92,12 @@ trait Cacheable
     /**
      * Forget cache data
      *
-     * @param string $key
+     * @param  string  $key
      * @return void
      */
     protected function forget($key = null)
     {
-        return $this->cache()->forget($key ?? static::class . get_the_ID());
+        return $this->cache()->forget($key ?? static::class.get_the_ID());
     }
 
     /**
@@ -121,7 +119,7 @@ trait Cacheable
      */
     protected function merge()
     {
-        $key = $this->cache_key ?? hash('crc32b', static::class . serialize(
+        $key = $this->cache_key ?? hash('crc32b', static::class.serialize(
             get_queried_object()
             ?? collect($_SERVER)->only('HTTP_HOST', 'REQUEST_URI', 'QUERY_STRING', 'WP_HOME')->toArray()
         ));

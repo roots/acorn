@@ -30,7 +30,7 @@ trait SupportsWordPressStubs
             'get_stylesheet_directory' => fn ($path = null) => temp($path ?? 'stylesheet_directory'),
             'get_template_directory' => fn ($path = null) => temp($path ?? 'template_directory'),
             'get_theme_file_path' => fn ($path = null) => temp($path ?? 'theme_file_path'),
-            'do_action' => fn (...$args) => !! $this->apply(...$args),
+            'do_action' => fn (...$args) => (bool) $this->apply(...$args),
             'doing_action',
             'did_action',
             'add_action' => fn (...$args) => $this->filter(...$args),

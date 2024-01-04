@@ -32,16 +32,14 @@ class ViewFinder
     /**
      * Create new ViewFinder instance.
      *
-     * @param FileViewFinder $finder
-     * @param Filesystem $files
-     * @param string $path
+     * @param  string  $path
      * @return void
      */
     public function __construct(FileViewFinder $finder, Filesystem $files, $path = '')
     {
         $this->finder = $finder;
         $this->files = $files;
-        $this->path = $path ? realpath($path) : get_theme_file_path();
+        $this->path = realpath($path ? $path : get_theme_file_path());
     }
 
     /**
@@ -57,17 +55,12 @@ class ViewFinder
         }
 
         return $this->getRelativeViewPaths()
-            ->flatMap(function ($viewPath) use ($file) {
-                return collect($this->finder->getPossibleViewFilesFromPath($file))
-                    ->merge([$file])
-                    ->map(function ($file) use ($viewPath) {
-                        return "{$viewPath}/{$file}";
-                    });
-            })
+            ->flatMap(fn ($viewPath) => collect($this->finder->getPossibleViewFilesFromPath($file))
+                ->merge([$file])
+                ->map(fn ($file) => "{$viewPath}/{$file}")
+            )
             ->unique()
-            ->map(function ($file) {
-                return trim($file, '\\/');
-            })
+            ->map(fn ($file) => trim($file, '\\/'))
             ->toArray();
     }
 
@@ -99,8 +92,6 @@ class ViewFinder
     protected function getRelativeViewPaths()
     {
         return collect($this->finder->getPaths())
-            ->map(function ($viewsPath) {
-                return $this->files->getRelativePath("{$this->path}/", $viewsPath);
-            });
+            ->map(fn ($viewsPath) => $this->files->getRelativePath("{$this->path}/", $viewsPath));
     }
 }

@@ -19,6 +19,7 @@ class ComposerMakeCommand extends GeneratorCommand
      * @var string
      */
     protected $description = 'Create a new view composer class';
+
     /**
      * The type of class being generated.
      *
@@ -40,7 +41,7 @@ class ComposerMakeCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__ . '/stubs/composer.stub';
+        return __DIR__.'/stubs/composer.stub';
     }
 
     /**
@@ -51,7 +52,7 @@ class ComposerMakeCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\View\Composers';
+        return $rootNamespace.'\View\Composers';
     }
 
     /**
@@ -59,6 +60,7 @@ class ComposerMakeCommand extends GeneratorCommand
      *
      * @param  string  $name
      * @return string
+     *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function buildClass($name)
@@ -72,12 +74,13 @@ class ComposerMakeCommand extends GeneratorCommand
      * Replace the class name for the given stub.
      *
      * @param  string  $stub
-     * @param  array   $views
+     * @param  array  $views
      * @return string
      */
     protected function replaceViews($stub, $views)
     {
         $views = implode("',\n        '", $views);
+
         return str_replace('DummyViews', empty($views) ? '//' : "'{$views}'", $stub);
     }
 
