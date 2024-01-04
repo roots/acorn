@@ -49,6 +49,7 @@
     "illuminate/container": "^10.33",
     "illuminate/contracts": "^10.33",
     "illuminate/database": "^10.33",
+    "illuminate/encryption": "^10.33",
     "illuminate/events": "^10.33",
     "illuminate/filesystem": "^10.33",
     "illuminate/http": "^10.33",
