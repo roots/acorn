@@ -7,15 +7,20 @@ use Illuminate\Support\Str;
 class RootsBudMiddleware
 {
     /**
-     * Dev server URI
+     * The Bud dev server origin header.
      *
      * @var string
      */
-    protected $dev_origin;
+    protected $devOrigin;
 
-    public function __construct(?string $dev_origin = null)
+    /**
+     * Create a new Bud middleware instance.
+     *
+     * @return void
+     */
+    public function __construct(?string $devOrigin = null)
     {
-        $this->dev_origin = $dev_origin;
+        $this->devOrigin = $devOrigin;
     }
 
     /**
@@ -44,7 +49,7 @@ class RootsBudMiddleware
             return null;
         }
 
-        if (! $dev_origin_header = $this->getDevOriginHeader()) {
+        if (! $devOriginHeader = $this->getDevOriginHeader()) {
             return null;
         }
 
@@ -52,7 +57,7 @@ class RootsBudMiddleware
             return null;
         }
 
-        if (strstr($dev_origin_header, $dev->hostname) === false) {
+        if (strstr($devOriginHeader, $dev->hostname) === false) {
             return null;
         }
 
@@ -66,7 +71,7 @@ class RootsBudMiddleware
      */
     protected function getDevOriginHeader()
     {
-        return $this->dev_origin
+        return $this->devOrigin
             ?: filter_input(INPUT_ENV, 'HTTP_X_BUD_DEV_ORIGIN', FILTER_SANITIZE_URL)
             ?: filter_input(INPUT_SERVER, 'HTTP_X_BUD_DEV_ORIGIN', FILTER_SANITIZE_URL);
     }

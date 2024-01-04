@@ -39,7 +39,7 @@ class ViewFinder
     {
         $this->finder = $finder;
         $this->files = $files;
-        $this->path = $path ? realpath($path) : get_theme_file_path();
+        $this->path = realpath($path ? $path : get_theme_file_path());
     }
 
     /**
