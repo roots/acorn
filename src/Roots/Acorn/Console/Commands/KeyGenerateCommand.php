@@ -15,14 +15,20 @@ class KeyGenerateCommand extends FoundationKeyGenerateCommand
      */
     protected function writeNewEnvironmentFileWith($key)
     {
-        $env = file_exists($this->laravel->environmentFilePath())
+        $envFile = file_exists($this->laravel->environmentFilePath())
             ? $this->laravel->environmentFilePath()
-            : File::closest(base_path(), '.env');
+            : File::closest($this->laravel->basePath(), '.env');
+
+        if (! $envFile) {
+            $this->error('Unable to set application key. Create a .env file.');
+
+            return false;
+        }
 
         $replaced = preg_replace(
             $this->keyReplacementPattern(),
             'APP_KEY='.$key,
-            $input = file_get_contents($env)
+            $input = file_get_contents($envFile)
         );
 
         if ($replaced === $input || $replaced === null) {
@@ -31,7 +37,7 @@ class KeyGenerateCommand extends FoundationKeyGenerateCommand
             return false;
         }
 
-        file_put_contents($env, $replaced);
+        file_put_contents($envFile, $replaced);
 
         return true;
     }
