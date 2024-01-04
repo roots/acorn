@@ -13,28 +13,28 @@ use function get_theme_file_path;
 class Bootloader
 {
     /**
-     * Bootloader instance
+     * The Bootloader instance.
      *
      * @var static
      */
     protected static $instance;
 
     /**
-     * Application instance
+     * The Application instance.
      *
      * @var \Illuminate\Contracts\Foundation\Application
      */
     protected $app;
 
     /**
-     * Filesystem helper
+     * The Filesystem instance.
      *
      * @var \Roots\Acorn\Filesystem\Filesystem
      */
     protected $files;
 
     /**
-     * Base path for the application
+     * The application's base path.
      *
      * @var string
      */
@@ -48,7 +48,7 @@ class Bootloader
     protected $absoluteApplicationPathPrefixes = ['/', '\\'];
 
     /**
-     * Set the Bootloader instance
+     * Set the Bootloader instance.
      */
     public static function setInstance(?self $bootloader)
     {
@@ -56,7 +56,7 @@ class Bootloader
     }
 
     /**
-     * Get the Bootloader instance
+     * Get the Bootloader instance.
      *
      * @return static
      */
@@ -220,15 +220,15 @@ class Bootloader
             ->any('{any?}', fn () => response()->json(['message' => "wordpress_request_{$time}"]))
             ->where('any', '.*');
 
-        add_action('parse_request', fn () => $this->handleLaravelRequest($time, $kernel, $request));
+        add_action('parse_request', fn () => $this->handleRequest($time, $kernel, $request));
     }
 
     /**
-     * Handle the Request with Laravel's Router
+     * Handle the request.
      *
      * @return void
      */
-    protected function handleLaravelRequest(
+    protected function handleRequest(
         string $time,
         \Illuminate\Contracts\Http\Kernel $kernel,
         \Illuminate\Http\Request $request
@@ -260,9 +260,7 @@ class Bootloader
     }
 
     /**
-     * Get Application instance.
-     *
-     * @param  ApplicationContract  $app
+     * Get the Application instance.
      */
     public function getApplication(): ApplicationContract
     {
@@ -294,7 +292,7 @@ class Bootloader
     }
 
     /**
-     * Get the application basepath
+     * Get the application's base path.
      */
     protected function basePath(): string
     {
