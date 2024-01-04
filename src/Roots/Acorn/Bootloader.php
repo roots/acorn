@@ -216,7 +216,7 @@ class Bootloader
         }, 100, 3);
 
         $app->make('router')
-            ->any('{any?}', fn () => response()->json(['message' => "wordpress_request_$time" ]))
+            ->any('{any?}', fn () => response()->json(['message' => "wordpress_request_$time"]))
             ->where('any', '.*');
 
         add_action('parse_request', fn () => $this->handleLaravelRequest($time, $kernel, $request));
@@ -225,9 +225,6 @@ class Bootloader
     /**
      * Handle the Request with Laravel's Router
      *
-     * @param string $time
-     * @param \Illuminate\Contracts\Http\Kernel $kernel
-     * @param \Illuminate\Http\Request $request
      * @return void
      */
     protected function handleLaravelRequest(
@@ -235,10 +232,6 @@ class Bootloader
         \Illuminate\Contracts\Http\Kernel $kernel,
         \Illuminate\Http\Request $request
     ) {
-        /**
-         * @var \Symfony\Component\HttpFoundation\Response $response
-         * @see \Illuminate\Contracts\Routing\ResponseFactory
-         */
         $response = $kernel->handle($request);
 
         if (
@@ -251,10 +244,10 @@ class Bootloader
 
         if (
             in_array(false, [
-            $response instanceof \Illuminate\Http\JsonResponse,
-            is_string($response->getContent()),
-            $data = json_decode($response->getContent()),
-            isset($data->message) && $data->message == "wordpress_request_$time",
+                $response instanceof \Illuminate\Http\JsonResponse,
+                is_string($response->getContent()),
+                $data = json_decode($response->getContent()),
+                isset($data->message) && $data->message == "wordpress_request_$time",
             ])
         ) {
             $body = $response->send();
