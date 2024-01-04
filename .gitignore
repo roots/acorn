@@ -1,6 +1,5 @@
 .php_cs.cache
 .phpunit.*
-.idea
 phpunit.xml
 /composer.lock
 /coverage
