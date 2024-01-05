@@ -59,6 +59,7 @@
     "illuminate/queue": "^10.33",
     "illuminate/routing": "^10.33",
     "illuminate/support": "^10.33",
+    "illuminate/validation": "^10.33",
     "illuminate/view": "^10.33",
     "laravel/prompts": "^0.1.7",
     "laravel/serializable-closure": "^1.3",
