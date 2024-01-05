@@ -1,15 +1,17 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Roots\Acorn\Assets;
 
-use Illuminate\Foundation\Vite as LaravelVite;
+use Illuminate\Foundation\Vite as FoundationVite;
 
-class Vite extends LaravelVite
+class Vite extends FoundationVite
 {
     /**
-     * {@inheritDoc}
+     * Generate an asset path for the application.
+     *
+     * @param  string  $path
+     * @param  bool|null  $secure
+     * @return string
      */
     protected function assetPath($path, $secure = null)
     {
