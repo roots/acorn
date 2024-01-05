@@ -13,28 +13,28 @@ use function get_theme_file_path;
 class Bootloader
 {
     /**
-     * Bootloader instance
+     * The Bootloader instance.
      *
      * @var static
      */
     protected static $instance;
 
     /**
-     * Application instance
+     * The Application instance.
      *
      * @var \Illuminate\Contracts\Foundation\Application
      */
     protected $app;
 
     /**
-     * Filesystem helper
+     * The Filesystem instance.
      *
      * @var \Roots\Acorn\Filesystem\Filesystem
      */
     protected $files;
 
     /**
-     * Base path for the application
+     * The application's base path.
      *
      * @var string
      */
@@ -48,7 +48,7 @@ class Bootloader
     protected $absoluteApplicationPathPrefixes = ['/', '\\'];
 
     /**
-     * Set the Bootloader instance
+     * Set the Bootloader instance.
      */
     public static function setInstance(?self $bootloader)
     {
@@ -56,7 +56,7 @@ class Bootloader
     }
 
     /**
-     * Get the Bootloader instance
+     * Get the Bootloader instance.
      *
      * @return static
      */
@@ -146,6 +146,7 @@ class Bootloader
         );
 
         $kernel->terminate($input, $status);
+
         exit($status);
     }
 
@@ -200,47 +201,66 @@ class Bootloader
     {
         $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
         $request = \Illuminate\Http\Request::capture();
+        $time = microtime();
 
         $app->instance('request', $request);
         Facade::clearResolvedInstance('request');
 
         $kernel->bootstrap($request);
 
-        try {
+        add_filter('do_parse_request', function ($doParse, \WP $wp, $extraQueryVars) use ($app, $request) {
             if (! $app->make('router')->getRoutes()->match($request)) {
-                throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException();
+                return $doParse;
             }
-        } catch (\Exception $e) {
+
+            return apply_filters('acorn/router/do_parse_request', $doParse, $wp, $extraQueryVars);
+        }, 100, 3);
+
+        $app->make('router')
+            ->any('{any?}', fn () => response()->json(['message' => "wordpress_request_{$time}"]))
+            ->where('any', '.*');
+
+        add_action('parse_request', fn () => $this->handleRequest($time, $kernel, $request));
+    }
+
+    /**
+     * Handle the request.
+     *
+     * @return void
+     */
+    protected function handleRequest(
+        string $time,
+        \Illuminate\Contracts\Http\Kernel $kernel,
+        \Illuminate\Http\Request $request
+    ) {
+        $response = $kernel->handle($request);
+
+        if (
+            $response instanceof \Symfony\Component\HttpFoundation\Response
+            && ! $response->isServerError()
+            && $response->getStatusCode() >= 400
+        ) {
             return;
         }
 
-        add_filter(
-            'do_parse_request',
-            fn ($doParse, \WP $wp, $extraQueryVars) => apply_filters('acorn/router/do_parse_request', $doParse, $wp, $extraQueryVars),
-            100,
-            3
-        );
-
-        add_action('parse_request', function () use ($kernel, $request) {
-            /** @var \Illuminate\Http\Response */
-            $response = $kernel->handle($request);
-
-            if (! $response->isServerError() && $response->status() >= 400) {
-                return;
-            }
-
+        if (
+            in_array(false, [
+                $response instanceof \Illuminate\Http\JsonResponse,
+                is_string($response->getContent()),
+                $data = json_decode($response->getContent()),
+                isset($data->message) && $data->message == "wordpress_request_{$time}",
+            ])
+        ) {
             $body = $response->send();
 
             $kernel->terminate($request, $body);
 
             exit;
-        });
+        }
     }
 
     /**
-     * Get Application instance.
-     *
-     * @param  ApplicationContract  $app
+     * Get the Application instance.
      */
     public function getApplication(): ApplicationContract
     {
@@ -272,7 +292,7 @@ class Bootloader
     }
 
     /**
-     * Get the application basepath
+     * Get the application's base path.
      */
     protected function basePath(): string
     {
@@ -388,6 +408,7 @@ class Bootloader
     protected function fallbackStoragePath()
     {
         $path = WP_CONTENT_DIR.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.'acorn';
+
         $this->files->ensureDirectoryExists($path.DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.'data', 0755, true);
         $this->files->ensureDirectoryExists($path.DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'views', 0755, true);
         $this->files->ensureDirectoryExists($path.DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'sessions', 0755, true);
