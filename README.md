@@ -33,7 +33,7 @@
 Acorn is an open source project and completely free to use. If you've benefited from our projects and would like to support our future endeavors, please consider [sponsoring Roots](https://github.com/sponsors/roots).
 
 <div align="center">
-<a href="https://k-m.com/"><img src="https://cdn.roots.io/app/uploads/km-digital.svg" alt="KM Digital" width="120" height="90"></a> <a href="https://carrot.com/"><img src="https://cdn.roots.io/app/uploads/carrot.svg" alt="Carrot" width="120" height="90"></a> <a href="https://wordpress.com/"><img src="https://cdn.roots.io/app/uploads/wordpress.svg" alt="WordPress.com" width="120" height="90"></a> <a href="https://worksitesafety.ca/careers/"><img src="https://cdn.roots.io/app/uploads/worksite-safety.svg" alt="Worksite Safety" width="120" height="90"></a> <a href="https://www.copiadigital.com/"><img src="https://cdn.roots.io/app/uploads/copia-digital.svg" alt="Copia Digital" width="120" height="90"></a> <a href="https://www.freave.com/"><img src="https://cdn.roots.io/app/uploads/freave.svg" alt="Freave" width="120" height="90"></a>
+<a href="https://k-m.com/"><img src="https://cdn.roots.io/app/uploads/km-digital.svg" alt="KM Digital" width="120" height="90"></a> <a href="https://carrot.com/"><img src="https://cdn.roots.io/app/uploads/carrot.svg" alt="Carrot" width="120" height="90"></a> <a href="https://wordpress.com/"><img src="https://cdn.roots.io/app/uploads/wordpress.svg" alt="WordPress.com" width="120" height="90"></a> <a href="https://pantheon.io/"><img src="https://cdn.roots.io/app/uploads/pantheon.svg" alt="Pantheon" width="120" height="90"></a> <a href="https://worksitesafety.ca/careers/"><img src="https://cdn.roots.io/app/uploads/worksite-safety.svg" alt="Worksite Safety" width="120" height="90"></a> <a href="https://www.copiadigital.com/"><img src="https://cdn.roots.io/app/uploads/copia-digital.svg" alt="Copia Digital" width="120" height="90"></a> 
 </div>
 
 ## Overview
@@ -44,17 +44,27 @@ Acorn is a framework for integrating Laravel within WordPress.
 
 | Component                | Support | Notes |
 | ------------------------ | :-----: | ----- |
+| illuminate/bus           | 🟢 | |
 | illuminate/cache         | 🟢 | |
+| illuminate/collections   | 🟢 | |
+| illuminate/conditionable | 🟢 | |
 | illuminate/config        | 🟢 | |
 | illuminate/console       | 🟢 | |
 | illuminate/container     | 🟢 | |
 | illuminate/contracts     | 🟢 | |
+| illuminate/contracts     | 🟢 | |
 | illuminate/database      | 🟢 | |
+| illuminate/encryption    | 🟢 | |
 | illuminate/events        | 🟢 | |
 | illuminate/filesystem    | 🟢 | |
+| illuminate/hashing       | 🟢 | |
 | illuminate/http          | 🟢 | |
 | illuminate/log           | 🟢 | |
+| illuminate/macroable     | 🟢 | |
+| illuminate/pipeline      | 🟢 | |
+| illuminate/queue         | 🟢 | |
 | illuminate/routing       | 🟢 | |
+| illuminate/session       | 🟢 | |
 | illuminate/support       | 🟢 | |
 | illuminate/view          | 🟢 | |
 
@@ -66,21 +76,11 @@ Acorn is a framework for integrating Laravel within WordPress.
 | ------------------------ | :-----: | ----- |
 | illuminate/auth          | 🔴 | |
 | illuminate/broadcasting  | 🔴 | |
-| illuminate/bus           | 🔴 | |
-| illuminate/collections   | 🔴 | |
-| illuminate/conditionable | 🔴 | |
-| illuminate/contracts     | 🔴 | |
 | illuminate/cookie        | 🔴 | |
-| illuminate/encryption    | 🔴 | |
-| illuminate/hashing       | 🔴 | |
-| illuminate/macroable     | 🔴 | |
 | illuminate/mail          | 🔴 | |
 | illuminate/notifications | 🔴 | |
 | illuminate/pagination    | 🔴 | [Available via Log1x/pagi](https://github.com/Log1x/pagi)
-| illuminate/pipeline      | 🔴 | |
-| illuminate/queue         | 🔴 | |
 | illuminate/redis         | 🔴 | |
-| illuminate/session       | 🔴 | |
 | illuminate/testing       | 🔴 | |
 | illuminate/translation   | 🔴 | |
 | illuminate/validation    | 🔴 | |
@@ -98,4 +98,3 @@ See the [Acorn installation documentation](https://roots.io/acorn/docs/installat
 - Follow [@rootswp on Twitter](https://twitter.com/rootswp)
 - Read the [Roots Blog](https://roots.io/blog/)
 - Subscribe to the [Roots Newsletter](https://roots.io/newsletter/)
-
