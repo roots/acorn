@@ -31,7 +31,7 @@ class KeyGenerateCommand extends FoundationKeyGenerateCommand
             return true;
         }
 
-        $this->error('Unable to set application key. No APP_KEY variable was found in the .env file.');
+        $this->error('Unable to set application key.');
 
         return false;
     }
