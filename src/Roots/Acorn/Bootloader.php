@@ -266,6 +266,8 @@ class Bootloader
     {
         $this->app ??= new Application($this->basePath(), $this->usePaths());
 
+        $this->app->useEnvironmentPath($this->environmentPath());
+
         $this->app->singleton(
             \Illuminate\Contracts\Http\Kernel::class,
             \Roots\Acorn\Http\Kernel::class
@@ -313,6 +315,16 @@ class Bootloader
 
             default => dirname(__DIR__, 3)
         };
+    }
+
+    /**
+     * Get the environment file path.
+     */
+    protected function environmentPath(): string
+    {
+        return is_file($envPath = $this->files->closest($this->basePath(), '.env'))
+            ? dirname($envPath)
+            : $this->basePath();
     }
 
     /**
