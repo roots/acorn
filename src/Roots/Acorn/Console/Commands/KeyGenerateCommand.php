@@ -15,9 +15,7 @@ class KeyGenerateCommand extends FoundationKeyGenerateCommand
      */
     protected function writeNewEnvironmentFileWith($key)
     {
-        $envFile = file_exists($this->laravel->environmentFilePath())
-            ? $this->laravel->environmentFilePath()
-            : File::closest($this->laravel->basePath(), '.env');
+        $envFile = $this->laravel->environmentFilePath();
 
         if (! $envFile) {
             $this->error('Unable to set application key. Create a .env file.');
@@ -25,6 +23,21 @@ class KeyGenerateCommand extends FoundationKeyGenerateCommand
             return false;
         }
 
+        if ($this->replace($envFile, $key)) {
+            return true;
+        }
+
+        if ($this->prepend($envFile, $key)) {
+            return true;
+        }
+
+        $this->error('Unable to set application key. No APP_KEY variable was found in the .env file.');
+
+        return false;
+    }
+
+    protected function replace($envFile, $key): bool
+    {
         $replaced = preg_replace(
             $this->keyReplacementPattern(),
             'APP_KEY='.$key,
@@ -32,13 +45,14 @@ class KeyGenerateCommand extends FoundationKeyGenerateCommand
         );
 
         if ($replaced === $input || $replaced === null) {
-            $this->error('Unable to set application key. No APP_KEY variable was found in the .env file.');
-
             return false;
         }
 
-        file_put_contents($envFile, $replaced);
+        return file_put_contents($envFile, $replaced) !== false;
+    }
 
-        return true;
+    protected function prepend($envFile, $key): bool
+    {
+        return File::prepend($envFile, 'APP_KEY='.$key.PHP_EOL) !== false;
     }
 }
