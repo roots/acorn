@@ -44,18 +44,29 @@ Acorn is a framework for integrating Laravel within WordPress.
 
 | Component                | Support | Notes |
 | ------------------------ | :-----: | ----- |
+| illuminate/bus           | 🟢 | |
 | illuminate/cache         | 🟢 | |
+| illuminate/collections   | 🟢 | |
+| illuminate/conditionable | 🟢 | |
 | illuminate/config        | 🟢 | |
 | illuminate/console       | 🟢 | |
 | illuminate/container     | 🟢 | |
 | illuminate/contracts     | 🟢 | |
+| illuminate/contracts     | 🟢 | |
 | illuminate/database      | 🟢 | |
+| illuminate/encryption    | 🟢 | |
 | illuminate/events        | 🟢 | |
 | illuminate/filesystem    | 🟢 | |
+| illuminate/hashing       | 🟢 | |
 | illuminate/http          | 🟢 | |
 | illuminate/log           | 🟢 | |
+| illuminate/macroable     | 🟢 | |
+| illuminate/pipeline      | 🟢 | |
+| illuminate/queue         | 🟢 | |
 | illuminate/routing       | 🟢 | |
+| illuminate/session       | 🟢 | |
 | illuminate/support       | 🟢 | |
+| illuminate/validation    | 🟢 | |
 | illuminate/view          | 🟢 | |
 
 <details>
@@ -66,24 +77,13 @@ Acorn is a framework for integrating Laravel within WordPress.
 | ------------------------ | :-----: | ----- |
 | illuminate/auth          | 🔴 | |
 | illuminate/broadcasting  | 🔴 | |
-| illuminate/bus           | 🔴 | |
-| illuminate/collections   | 🔴 | |
-| illuminate/conditionable | 🔴 | |
-| illuminate/contracts     | 🔴 | |
 | illuminate/cookie        | 🔴 | |
-| illuminate/encryption    | 🔴 | |
-| illuminate/hashing       | 🔴 | |
-| illuminate/macroable     | 🔴 | |
 | illuminate/mail          | 🔴 | |
 | illuminate/notifications | 🔴 | |
 | illuminate/pagination    | 🔴 | [Available via Log1x/pagi](https://github.com/Log1x/pagi)
-| illuminate/pipeline      | 🔴 | |
-| illuminate/queue         | 🔴 | |
 | illuminate/redis         | 🔴 | |
-| illuminate/session       | 🔴 | |
 | illuminate/testing       | 🔴 | |
 | illuminate/translation   | 🔴 | |
-| illuminate/validation    | 🔴 | |
   
 </details>
 

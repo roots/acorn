@@ -7,7 +7,7 @@ curl https://get.volta.sh | bash -s -- --version latest
 export VOLTA_HOME="${HOME}/.volta"
 export PATH="${VOLTA_HOME}/bin:${PATH}"
 volta install node
-volta install yarn
+volta install bun
 
 WORKSPACE_FOLDER="${WORKSPACE_FOLDER:-"${PWD##*/}"}"
 
@@ -25,8 +25,10 @@ git config devcontainers-theme.show-dirty 1
 # Install WordPress and activate the plugin/theme.
 cd /roots/app
 
-yarn install || true
-yarn build || true
+if [ -f 'package.json' ]; then
+    bun install || true
+    bun run build || true
+fi
 
 wp db reset --yes
 wp core install --url="${WP_HOME}" --title="Roots Test" --admin_user="admin" --admin_email="admin@roots.test" --admin_password="password1" --skip-email
@@ -43,12 +45,9 @@ install_theme() {
     if [ -f 'composer.json' ]; then
         composer install || true
     fi
-    if [ -f 'package-lock.json' ]; then
-        npm i || true
-        npm run-script build || true
-    elif [ -f 'package.json' ]; then
-        yarn install || true
-        yarn build || true
+    if [ -f 'package.json' ]; then
+        bun install || true
+        bun run build || true
     fi
 }
 

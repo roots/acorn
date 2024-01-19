@@ -38,7 +38,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
       zip \
     && pecl install imagick-3.7.0 && docker-php-ext-enable imagick \
     && pecl install -o -f redis && docker-php-ext-enable redis \
-    && pecl install xdebug-3.2.1 && docker-php-ext-enable xdebug \
+    && pecl install xdebug-3.3.1 && docker-php-ext-enable xdebug \
     && apt-get -y autoremove && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
 # Install composer

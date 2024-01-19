@@ -79,7 +79,7 @@ else
   && composer require -d /roots/app $(cat "${WORKSPACE_FOLDER}/composer.json" | jq '.name' | tr -d '"') --no-interaction
 fi
 
-composer remove -d /roots/app wpackagist-theme/twentytwentythree
+composer remove -d /roots/app wpackagist-theme/twentytwentyfour
 composer require -d /roots/app roots/soil
 
 # Set filesystem permissions
