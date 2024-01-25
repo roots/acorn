@@ -359,8 +359,8 @@ class Bootloader
         }
 
         return Str::startsWith($env, $this->absoluteApplicationPathPrefixes)
-                ? $env
-                : $this->basePath($env);
+            ? $env
+            : $this->basePath($env);
     }
 
     /**

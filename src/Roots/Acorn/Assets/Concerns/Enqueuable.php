@@ -186,8 +186,8 @@ trait Enqueuable
     /**
      * Add script translations to be used by the bundle
      *
-     * @param string $domain
-     * @param string $path
+     * @param  string  $domain
+     * @param  string  $path
      * @return $this
      */
     public function translate($domain = null, $path = null)
