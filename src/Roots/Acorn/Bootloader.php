@@ -238,7 +238,6 @@ class Bootloader
         if (
             $response instanceof \Symfony\Component\HttpFoundation\Response
             && ! $response->isServerError()
-            && $response->getStatusCode() >= 400
         ) {
             return;
         }
