@@ -240,10 +240,6 @@ class Bootloader
             /** @var \Illuminate\Http\Response */
             $response = $kernel->handle($request);
 
-            if (! $response->isServerError() && $response->status() >= 400) {
-                return;
-            }
-
             $body = $response->send();
 
             $kernel->terminate($request, $body);
