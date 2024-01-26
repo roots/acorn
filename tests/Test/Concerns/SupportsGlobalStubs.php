@@ -11,8 +11,8 @@ trait SupportsGlobalStubs
     /**
      * Create stubs and spies for global functions.
      *
-     * @param  string  $fn       The name of the global function
-     * @param  null|callable  $callable The real function to monitor
+     * @param  string  $fn  The name of the global function
+     * @param  null|callable  $callable  The real function to monitor
      */
     protected function stub(string $fn, ?callable $callable = null): MockeryCallableMock
     {

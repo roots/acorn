@@ -52,7 +52,6 @@ Acorn is a framework for integrating Laravel within WordPress.
 | illuminate/console       | 🟢 | |
 | illuminate/container     | 🟢 | |
 | illuminate/contracts     | 🟢 | |
-| illuminate/contracts     | 🟢 | |
 | illuminate/database      | 🟢 | |
 | illuminate/encryption    | 🟢 | |
 | illuminate/events        | 🟢 | |

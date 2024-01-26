@@ -46,8 +46,8 @@ class Asset implements AssetContract
     /**
      * Get asset from manifest
      *
-     * @param  string  $path Local path
-     * @param  string  $uri Remote URI
+     * @param  string  $path  Local path
+     * @param  string  $uri  Remote URI
      */
     public function __construct(string $path, string $uri)
     {
@@ -86,7 +86,7 @@ class Asset implements AssetContract
     /**
      * Get the relative path to the asset.
      *
-     * @param  string  $basePath Base path to use for relative path.
+     * @param  string  $basePath  Base path to use for relative path.
      */
     public function relativePath(string $basePath): string
     {
@@ -112,7 +112,7 @@ class Asset implements AssetContract
     /**
      * Get data URL of asset.
      *
-     * @param  string  $mediatype MIME content type
+     * @param  string  $mediatype  MIME content type
      */
     public function dataUrl(?string $mediatype = null): string
     {
@@ -130,7 +130,7 @@ class Asset implements AssetContract
     /**
      * Get data URL of asset.
      *
-     * @param  string  $mediatype MIME content type
+     * @param  string  $mediatype  MIME content type
      */
     public function dataUri(?string $mediatype = null): string
     {
