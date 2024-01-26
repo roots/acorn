@@ -14,7 +14,7 @@ class TextAsset extends Asset
     /**
      * Get character encoding.
      *
-     * @param  string  $fallback Fallback if charset cannot be determined
+     * @param  string  $fallback  Fallback if charset cannot be determined
      */
     public function charset($fallback = 'UTF-8'): string
     {
@@ -36,9 +36,9 @@ class TextAsset extends Asset
     /**
      * Get data URL of asset.
      *
-     * @param  string  $mediatype MIME content type
-     * @param  string  $charset Character encoding
-     * @param  string  $urlencode List of characters to be percent-encoded
+     * @param  string  $mediatype  MIME content type
+     * @param  string  $charset  Character encoding
+     * @param  string  $urlencode  List of characters to be percent-encoded
      */
     public function dataUrl(?string $mediatype = null, ?string $charset = null, string $urlencode = '%\'"'): string
     {
@@ -68,9 +68,9 @@ class TextAsset extends Asset
     /**
      * Get data URL of asset.
      *
-     * @param  string  $mediatype MIME content type
-     * @param  string  $charset Character encoding
-     * @param  string  $urlencode List of characters to be percent-encoded
+     * @param  string  $mediatype  MIME content type
+     * @param  string  $charset  Character encoding
+     * @param  string  $urlencode  List of characters to be percent-encoded
      */
     public function dataUri(?string $mediatype = null, ?string $charset = null, string $urlencode = '%\'"'): string
     {

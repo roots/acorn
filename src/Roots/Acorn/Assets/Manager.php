@@ -114,7 +114,7 @@ class Manager
     /**
      * Opens a JSON manifest file from the local file system
      *
-     * @param  string  $jsonManifest Path to .json file
+     * @param  string  $jsonManifest  Path to .json file
      */
     protected function getJsonManifest(string $jsonManifest): array
     {

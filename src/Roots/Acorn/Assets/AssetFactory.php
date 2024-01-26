@@ -13,9 +13,9 @@ class AssetFactory
     /**
      * Create Asset instance.
      *
-     * @param  string  $path Local path
-     * @param  string  $uri Remote URI
-     * @param  string  $type Asset type
+     * @param  string  $path  Local path
+     * @param  string  $uri  Remote URI
+     * @param  string  $type  Asset type
      */
     public static function create(string $path, string $uri, ?string $type = null): AssetContract
     {

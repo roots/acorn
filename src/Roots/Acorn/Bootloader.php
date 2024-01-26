@@ -238,7 +238,6 @@ class Bootloader
         if (
             $response instanceof \Symfony\Component\HttpFoundation\Response
             && ! $response->isServerError()
-            && $response->getStatusCode() >= 400
         ) {
             return;
         }
@@ -360,8 +359,8 @@ class Bootloader
         }
 
         return Str::startsWith($env, $this->absoluteApplicationPathPrefixes)
-                ? $env
-                : $this->basePath($env);
+            ? $env
+            : $this->basePath($env);
     }
 
     /**

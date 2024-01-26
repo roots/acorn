@@ -135,7 +135,7 @@ class Application extends FoundationApplication
     /**
      * Get the path to the bootstrap directory.
      *
-     * @param  string  $path Optionally, a path to append to the bootstrap path
+     * @param  string  $path  Optionally, a path to append to the bootstrap path
      * @return string
      */
     public function bootstrapPath($path = '')
