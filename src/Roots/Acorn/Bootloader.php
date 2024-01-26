@@ -201,26 +201,36 @@ class Bootloader
     {
         $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
         $request = \Illuminate\Http\Request::capture();
-        $time = microtime();
 
         $app->instance('request', $request);
         Facade::clearResolvedInstance('request');
 
         $kernel->bootstrap($request);
 
-        add_filter('do_parse_request', function ($doParse, \WP $wp, $extraQueryVars) use ($app, $request) {
-            if (! $app->make('router')->getRoutes()->match($request)) {
+        $app->make('router')
+            ->any('{any?}', fn () => ob_get_clean())
+            ->where('any', '.*')
+            ->name('wordpress_request');
+
+        /** @var \Illuminate\Routing\Route $route */
+        $route = $app->make('router')->getRoutes()->match($request);
+
+        add_filter('do_parse_request', function ($doParse, \WP $wp, $extraQueryVars) use ($route) {
+            if (! $route) {
                 return $doParse;
             }
 
             return apply_filters('acorn/router/do_parse_request', $doParse, $wp, $extraQueryVars);
         }, 100, 3);
 
-        $app->make('router')
-            ->any('{any?}', fn () => response()->json(['message' => "wordpress_request_{$time}"]))
-            ->where('any', '.*');
+        if ($isWPRequest = $route->getName() === 'wordpress_request') {
+            ob_start();
+        }
 
-        add_action('parse_request', fn () => $this->handleRequest($time, $kernel, $request));
+        add_action(
+            $isWPRequest ? 'shutdown' : 'parse_request',
+            fn () => $this->handleRequest($kernel, $request)
+        );
     }
 
     /**
@@ -229,33 +239,16 @@ class Bootloader
      * @return void
      */
     protected function handleRequest(
-        string $time,
         \Illuminate\Contracts\Http\Kernel $kernel,
         \Illuminate\Http\Request $request
     ) {
         $response = $kernel->handle($request);
 
-        if (
-            $response instanceof \Symfony\Component\HttpFoundation\Response
-            && ! $response->isServerError()
-        ) {
-            return;
-        }
+        $body = $response->send();
 
-        if (
-            in_array(false, [
-                $response instanceof \Illuminate\Http\JsonResponse,
-                is_string($response->getContent()),
-                $data = json_decode($response->getContent()),
-                isset($data->message) && $data->message == "wordpress_request_{$time}",
-            ])
-        ) {
-            $body = $response->send();
+        $kernel->terminate($request, $body);
 
-            $kernel->terminate($request, $body);
-
-            exit;
-        }
+        exit((int) $response->isServerError());
     }
 
     /**
