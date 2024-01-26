@@ -210,6 +210,7 @@ class Bootloader
         $app->make('router')
             ->any('{any?}', fn () => ob_get_clean())
             ->where('any', '.*')
+            ->middleware('web')
             ->name('wordpress_request');
 
         /** @var \Illuminate\Routing\Route $route */
