@@ -210,7 +210,6 @@ class Bootloader
         $app->make('router')
             ->any('{any?}', fn () => ob_get_clean())
             ->where('any', '.*')
-            ->middleware($app->config->get('routing.wordpress', 'web'))
             ->name('wordpress_request');
 
         /** @var \Illuminate\Routing\Route $route */
@@ -225,12 +224,19 @@ class Bootloader
         }, 100, 3);
 
         if ($isWPRequest = $route->getName() === 'wordpress_request') {
+            $route->middleware(
+                str_starts_with($request->path(), 'wp-json')
+                ? $app->config->get('router.wordpress.api', 'api')
+                : $app->config->get('router.wordpress.web', 'web')
+            );
+
             ob_start();
         }
 
         add_action(
             $isWPRequest ? 'shutdown' : 'parse_request',
-            fn () => $this->handleRequest($kernel, $request)
+            fn () => $this->handleRequest($kernel, $request),
+            $isWPRequest ? PHP_INT_MAX : 10
         );
     }
 
