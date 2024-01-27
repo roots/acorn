@@ -225,7 +225,7 @@ class Bootloader
 
         if ($isWPRequest = $route->getName() === 'wordpress_request') {
             $route->middleware(
-                str_starts_with($request->path(), 'wp-json')
+                preg_match('/^wp-json(\/.*)?/', $request->path())
                 ? $app->config->get('router.wordpress.api', 'api')
                 : $app->config->get('router.wordpress.web', 'web')
             );
