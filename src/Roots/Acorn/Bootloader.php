@@ -3,6 +3,7 @@
 namespace Roots\Acorn;
 
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
+use Illuminate\Http\Response;
 use Illuminate\Support\Env;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Str;
@@ -208,7 +209,14 @@ class Bootloader
         $kernel->bootstrap($request);
 
         $app->make('router')
-            ->any('{any?}', fn () => ob_get_clean())
+            ->any('{any?}', fn () => tap(response(), function (Response $response) {
+                foreach (headers_list() as $header) {
+                    header_remove($header);
+                    $response->header(...explode(': ', $header));
+                }
+
+                $response->setContent(ob_get_clean());
+            }))
             ->where('any', '.*')
             ->name('wordpress_request');
 
