@@ -237,7 +237,14 @@ class Bootloader
                     $response->header($header, $value);
                 }
 
-                $response->setContent(ob_get_clean());
+                $content = '';
+
+                $levels = ob_get_level();
+                for ( $i = 0; $i < $levels; $i++ ) {
+                    $content .= ob_get_clean();
+                }
+
+                $response->setContent($content);
             }))
             ->where('any', '.*')
             ->name('wordpress_request');
@@ -272,7 +279,8 @@ class Bootloader
 
         ob_start();
 
-        add_action('shutdown', fn () => $this->handleRequest($kernel, $request), PHP_INT_MAX);
+        remove_action('shutdown', 'wp_ob_end_flush_all', 1);
+        add_action('shutdown', fn () => $this->handleRequest($kernel, $request), 100);
     }
 
     /**
