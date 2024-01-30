@@ -230,10 +230,11 @@ class Bootloader
         $app->make('router')
             ->any('{any?}', fn () => tap(response(''), function (Response $response) {
                 foreach (headers_list() as $header) {
+                    [$header, $value] = explode(': ', $header, 2);
                     if (! headers_sent()) {
                         header_remove($header);
                     }
-                    $response->header(...explode(': ', $header));
+                    $response->header($header, $value);
                 }
 
                 $response->setContent(ob_get_clean());
