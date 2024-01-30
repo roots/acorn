@@ -9,8 +9,8 @@
     <img alt="Packagist Downloads" src="https://img.shields.io/packagist/dt/roots/acorn?label=downloads&colorB=2b3072&colorA=525ddc&style=flat-square">
   </a>
 
-  <a href="https://laravel.com/docs/9.x">
-    <img alt="Laravel v9" src="https://img.shields.io/static/v1?label=laravel&message=v9&logo=Laravel&style=flat-square&color=f9322c" />
+  <a href="https://laravel.com/docs/10.x">
+    <img alt="Laravel v10" src="https://img.shields.io/static/v1?label=laravel&message=v10&logo=Laravel&style=flat-square&color=f9322c" />
   </a>
 
   <a href="https://github.com/roots/acorn/actions/workflows/main.yml">

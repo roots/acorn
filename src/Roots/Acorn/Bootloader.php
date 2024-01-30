@@ -3,6 +3,7 @@
 namespace Roots\Acorn;
 
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
+use Illuminate\Http\Response;
 use Illuminate\Support\Env;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Str;
@@ -201,26 +202,74 @@ class Bootloader
     {
         $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
         $request = \Illuminate\Http\Request::capture();
-        $time = microtime();
 
         $app->instance('request', $request);
+
         Facade::clearResolvedInstance('request');
 
         $kernel->bootstrap($request);
 
-        add_filter('do_parse_request', function ($doParse, \WP $wp, $extraQueryVars) use ($app, $request) {
-            if (! $app->make('router')->getRoutes()->match($request)) {
+        $this->registerWordPressRoute($app);
+
+        /** @var \Illuminate\Routing\Route $route */
+        $route = $app->make('router')->getRoutes()->match($request);
+
+        /** @var array $config */
+        $config = $app->config->get('router.wordpress', ['web' => 'web', 'api' => 'api']);
+
+        $this->registerRequestHandler($kernel, $request, $route, $config);
+    }
+
+    /**
+     * Register the WordPress route.
+     *
+     * @return void
+     */
+    protected function registerWordPressRoute(ApplicationContract $app)
+    {
+        $app->make('router')
+            ->any('{any?}', fn () => tap(response(), function (Response $response) {
+                foreach (headers_list() as $header) {
+                    header_remove($header);
+                    $response->header(...explode(': ', $header));
+                }
+
+                $response->setContent(ob_get_clean());
+            }))
+            ->where('any', '.*')
+            ->name('wordpress_request');
+    }
+
+    /**
+     * Register the request handler.
+     *
+     * @return void
+     */
+    protected function registerRequestHandler(
+        \Illuminate\Contracts\Http\Kernel $kernel,
+        \Illuminate\Http\Request $request,
+        ?\Illuminate\Routing\Route $route,
+        array $config
+    ) {
+        add_filter('do_parse_request', function ($doParse, \WP $wp, $extraQueryVars) use ($route) {
+            if (! $route) {
                 return $doParse;
             }
 
             return apply_filters('acorn/router/do_parse_request', $doParse, $wp, $extraQueryVars);
         }, 100, 3);
 
-        $app->make('router')
-            ->any('{any?}', fn () => response()->json(['message' => "wordpress_request_{$time}"]))
-            ->where('any', '.*');
+        if ($route->getName() !== 'wordpress_request') {
+            add_action('parse_request', fn () => $this->handleRequest($kernel, $request));
 
-        add_action('parse_request', fn () => $this->handleRequest($time, $kernel, $request));
+            return;
+        }
+
+        $route->middleware(preg_match('/^wp-json(\/.*)?/', $request->path()) ? $config['api'] : $config['web']);
+
+        ob_start();
+
+        add_action('shutdown', fn () => $this->handleRequest($kernel, $request), PHP_INT_MAX);
     }
 
     /**
@@ -229,33 +278,16 @@ class Bootloader
      * @return void
      */
     protected function handleRequest(
-        string $time,
         \Illuminate\Contracts\Http\Kernel $kernel,
         \Illuminate\Http\Request $request
     ) {
         $response = $kernel->handle($request);
 
-        if (
-            $response instanceof \Symfony\Component\HttpFoundation\Response
-            && ! $response->isServerError()
-        ) {
-            return;
-        }
+        $body = $response->send();
 
-        if (
-            in_array(false, [
-                $response instanceof \Illuminate\Http\JsonResponse,
-                is_string($response->getContent()),
-                $data = json_decode($response->getContent()),
-                isset($data->message) && $data->message == "wordpress_request_{$time}",
-            ])
-        ) {
-            $body = $response->send();
+        $kernel->terminate($request, $body);
 
-            $kernel->terminate($request, $body);
-
-            exit;
-        }
+        exit((int) $response->isServerError());
     }
 
     /**
