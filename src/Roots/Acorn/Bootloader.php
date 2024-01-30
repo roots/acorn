@@ -208,6 +208,19 @@ class Bootloader
 
         $kernel->bootstrap($request);
 
+        $this->registerWordPressRoute($app);
+
+        /** @var \Illuminate\Routing\Route $route */
+        $route = $app->make('router')->getRoutes()->match($request);
+
+        /** @var array $config */
+        $config = $app->config->get('router.wordpress', ['web' => 'web', 'api' => 'api']);
+
+        $this->registerRequestHandler($kernel, $request, $route, $config);
+    }
+
+    protected function registerWordPressRoute(ApplicationContract $app)
+    {
         $app->make('router')
             ->any('{any?}', fn () => tap(response(), function (Response $response) {
                 foreach (headers_list() as $header) {
@@ -219,10 +232,14 @@ class Bootloader
             }))
             ->where('any', '.*')
             ->name('wordpress_request');
+    }
 
-        /** @var \Illuminate\Routing\Route $route */
-        $route = $app->make('router')->getRoutes()->match($request);
-
+    protected function registerRequestHandler(
+        \Illuminate\Contracts\Http\Kernel $kernel,
+        \Illuminate\Http\Request $request,
+        ?\Illuminate\Routing\Route $route,
+        array $config
+    ) {
         add_filter('do_parse_request', function ($doParse, \WP $wp, $extraQueryVars) use ($route) {
             if (! $route) {
                 return $doParse;
@@ -231,21 +248,16 @@ class Bootloader
             return apply_filters('acorn/router/do_parse_request', $doParse, $wp, $extraQueryVars);
         }, 100, 3);
 
-        if ($isWPRequest = $route->getName() === 'wordpress_request') {
-            $route->middleware(
-                preg_match('/^wp-json(\/.*)?/', $request->path())
-                ? $app->config->get('router.wordpress.api', 'api')
-                : $app->config->get('router.wordpress.web', 'web')
-            );
+        if ($route->getName() !== 'wordpress_request') {
+            add_action('parse_request', fn () => $this->handleRequest($kernel, $request));
 
-            ob_start();
+            return;
         }
+        $route->middleware(preg_match('/^wp-json(\/.*)?/', $request->path()) ? $config['api'] : $config['web']);
 
-        add_action(
-            $isWPRequest ? 'shutdown' : 'parse_request',
-            fn () => $this->handleRequest($kernel, $request),
-            $isWPRequest ? PHP_INT_MAX : 10
-        );
+        ob_start();
+
+        add_action('shutdown', fn () => $this->handleRequest($kernel, $request), PHP_INT_MAX);
     }
 
     /**
