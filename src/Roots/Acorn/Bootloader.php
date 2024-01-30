@@ -204,6 +204,7 @@ class Bootloader
         $request = \Illuminate\Http\Request::capture();
 
         $app->instance('request', $request);
+
         Facade::clearResolvedInstance('request');
 
         $kernel->bootstrap($request);
@@ -219,6 +220,11 @@ class Bootloader
         $this->registerRequestHandler($kernel, $request, $route, $config);
     }
 
+    /**
+     * Register the WordPress route.
+     *
+     * @return void
+     */
     protected function registerWordPressRoute(ApplicationContract $app)
     {
         $app->make('router')
@@ -234,6 +240,11 @@ class Bootloader
             ->name('wordpress_request');
     }
 
+    /**
+     * Register the request handler.
+     *
+     * @return void
+     */
     protected function registerRequestHandler(
         \Illuminate\Contracts\Http\Kernel $kernel,
         \Illuminate\Http\Request $request,
@@ -253,6 +264,7 @@ class Bootloader
 
             return;
         }
+
         $route->middleware(preg_match('/^wp-json(\/.*)?/', $request->path()) ? $config['api'] : $config['web']);
 
         ob_start();
