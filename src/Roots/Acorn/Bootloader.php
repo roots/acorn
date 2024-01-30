@@ -240,7 +240,7 @@ class Bootloader
                 $content = '';
 
                 $levels = ob_get_level();
-                for ( $i = 0; $i < $levels; $i++ ) {
+                for ($i = 0; $i < $levels; $i++) {
                     $content .= ob_get_clean();
                 }
 
