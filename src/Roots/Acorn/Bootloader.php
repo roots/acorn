@@ -228,9 +228,11 @@ class Bootloader
     protected function registerWordPressRoute(ApplicationContract $app)
     {
         $app->make('router')
-            ->any('{any?}', fn () => tap(response(), function (Response $response) {
+            ->any('{any?}', fn () => tap(response(''), function (Response $response) {
                 foreach (headers_list() as $header) {
-                    header_remove($header);
+                    if (!headers_sent()) {
+                        header_remove($header);
+                    }
                     $response->header(...explode(': ', $header));
                 }
 
