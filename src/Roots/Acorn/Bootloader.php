@@ -230,13 +230,21 @@ class Bootloader
         $app->make('router')
             ->any('{any?}', fn () => tap(response(''), function (Response $response) {
                 foreach (headers_list() as $header) {
+                    [$header, $value] = explode(': ', $header, 2);
                     if (! headers_sent()) {
                         header_remove($header);
                     }
-                    $response->header(...explode(': ', $header));
+                    $response->header($header, $value);
                 }
 
-                $response->setContent(ob_get_clean());
+                $content = '';
+
+                $levels = ob_get_level();
+                for ($i = 0; $i < $levels; $i++) {
+                    $content .= ob_get_clean();
+                }
+
+                $response->setContent($content);
             }))
             ->where('any', '.*')
             ->name('wordpress_request');
@@ -271,7 +279,8 @@ class Bootloader
 
         ob_start();
 
-        add_action('shutdown', fn () => $this->handleRequest($kernel, $request), PHP_INT_MAX);
+        remove_action('shutdown', 'wp_ob_end_flush_all', 1);
+        add_action('shutdown', fn () => $this->handleRequest($kernel, $request), 100);
     }
 
     /**
