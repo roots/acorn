@@ -84,13 +84,12 @@
   },
   "suggest": {
     "roots/acorn-prettify": "A collection of modules to apply theme-agnostic front-end modifications (^1.0).",
-    "spatie/laravel-ignition": "A beautiful error page for development (^1.6)."
+    "spatie/laravel-ignition": "A beautiful error page for development (^2.0)."
   },
   "config": {
     "sort-packages": true,
     "allow-plugins": {
-      "pestphp/pest-plugin": true,
-      "dealerdirect/phpcodesniffer-composer-installer": true
+      "pestphp/pest-plugin": true
     }
   },
   "minimum-stability": "dev",
