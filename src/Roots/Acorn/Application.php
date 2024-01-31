@@ -24,7 +24,7 @@ class Application extends FoundationApplication
      *
      * @var string
      */
-    public const VERSION = '4.x-dev';
+    public const VERSION = '4.0.0';
 
     /**
      * The custom resources path defined by the developer.
@@ -195,8 +195,9 @@ class Application extends FoundationApplication
                 ])
                 ->map(fn ($path) => rtrim($files->normalizePath($path), '/'))
                 ->unique()
-                ->filter(fn ($path) => @$files->isFile("{$path}/vendor/composer/installed.json") &&
-                    @$files->isFile("{$path}/composer.json")
+                ->filter(
+                    fn ($path) => @$files->isFile("{$path}/vendor/composer/installed.json") &&
+                        @$files->isFile("{$path}/composer.json")
                 )->all();
 
             return new PackageManifest(
