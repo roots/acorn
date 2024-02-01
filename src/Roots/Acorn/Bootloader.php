@@ -261,6 +261,14 @@ class Bootloader
         ?\Illuminate\Routing\Route $route,
         array $config
     ) {
+        if (strpos($request->getRequestUri(), '/wp-login.php') !== false) {
+            add_filter('do_parse_request', function ($doParse, \WP $wp, $extraQueryVars) {
+                return false;
+            }, 100, 3);
+
+            return;
+        }
+
         add_filter('do_parse_request', function ($doParse, \WP $wp, $extraQueryVars) use ($route) {
             if (! $route) {
                 return $doParse;
