@@ -261,12 +261,12 @@ class Bootloader
         ?\Illuminate\Routing\Route $route,
         array $config
     ) {
-        if (
-            strpos($request->getRequestUri(), '/wp-comments-post.php') !== false ||
-            strpos($request->getRequestUri(), '/wp-login.php') !== false ||
-            strpos($request->getRequestUri(), '/wp-signup.php') !== false ||
-            strpos($request->getRequestUri(), '/wp-admin/') !== false
-        ) {
+        if (Str::contains($request->getRequestUri(), [
+            '/wp-comments-post.php',
+            '/wp-login.php',
+            '/wp-signup.php',
+            '/wp-admin/',
+        ])) {
             return; // Let WordPress handle these requests
         }
 
