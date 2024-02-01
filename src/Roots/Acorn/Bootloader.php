@@ -261,10 +261,14 @@ class Bootloader
         ?\Illuminate\Routing\Route $route,
         array $config
     ) {
-        if (strpos($request->getRequestUri(), '/wp-login.php') !== false) {
+        if (
+            strpos($request->getRequestUri(), '/wp-comments-post.php') !== false ||
+            strpos($request->getRequestUri(), '/wp-login.php') !== false ||
+            strpos($request->getRequestUri(), '/wp-signup.php') !== false ||
+            strpos($request->getRequestUri(), '/wp-admin/') !== false
+        ) {
             add_filter('do_parse_request', '__return_false', 100, 3);
-
-            return;
+            return; // Let WordPress handle these requests
         }
 
         add_filter('do_parse_request', function ($doParse, \WP $wp, $extraQueryVars) use ($route) {
