@@ -267,7 +267,6 @@ class Bootloader
             strpos($request->getRequestUri(), '/wp-signup.php') !== false ||
             strpos($request->getRequestUri(), '/wp-admin/') !== false
         ) {
-            add_filter('do_parse_request', '__return_false', 100, 3);
             return; // Let WordPress handle these requests
         }
 
