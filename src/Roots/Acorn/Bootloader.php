@@ -261,6 +261,15 @@ class Bootloader
         ?\Illuminate\Routing\Route $route,
         array $config
     ) {
+        if (Str::contains($request->getRequestUri(), [
+            '/wp-comments-post.php',
+            '/wp-login.php',
+            '/wp-signup.php',
+            '/wp-admin/',
+        ])) {
+            return; // Let WordPress handle these requests
+        }
+
         add_filter('do_parse_request', function ($doParse, \WP $wp, $extraQueryVars) use ($route) {
             if (! $route) {
                 return $doParse;
