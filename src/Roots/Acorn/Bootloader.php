@@ -373,7 +373,7 @@ class Bootloader
      */
     protected function environmentPath(): string
     {
-        return is_file($envPath = $this->files->closest($this->basePath(), '.env'))
+        return is_file($envPath = $this->files->closest($this->basePath(), '.env') ?? '')
             ? dirname($envPath)
             : $this->basePath();
     }
