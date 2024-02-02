@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Checkout the project
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup the PHP ${{ matrix.php }} environment on ${{ runner.os }}
         uses: shivammathur/setup-php@v2
@@ -28,11 +28,11 @@ jobs:
           php-version: ${{ matrix.php }}
           coverage: xdebug
         env:
-          COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Restore the Composer cache directory
         id: composercache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v2
         with:
