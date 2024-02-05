@@ -270,6 +270,10 @@ class Bootloader
             return; // Let WordPress handle these requests
         }
 
+        if (redirect_canonical(null, false)) {
+            return; // Let WordPress handle these requests
+        }
+
         add_filter('do_parse_request', function ($doParse, \WP $wp, $extraQueryVars) use ($route) {
             if (! $route) {
                 return $doParse;
