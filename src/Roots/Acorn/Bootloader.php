@@ -263,6 +263,7 @@ class Bootloader
     ) {
         if (Str::contains($request->getRequestUri(), [
             '/wp-comments-post.php',
+            '/wp-cron.php',
             '/wp-login.php',
             '/wp-signup.php',
             '/wp-admin/',
