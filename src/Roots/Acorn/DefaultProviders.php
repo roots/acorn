@@ -32,6 +32,8 @@ class DefaultProviders extends DefaultProvidersBase
         $this->providers = Collection::make($this->providers)
             ->merge($this->acornProviders)
             ->filter(fn ($provider) => ! str_contains($provider, 'Illuminate\\Foundation\\'))
+            ->push('Illuminate\\Foundation\\Providers\\ComposerServiceProvider')
+            ->push('Illuminate\\Database\\MigrationServiceProvider')
             ->all();
     }
 }

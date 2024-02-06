@@ -214,10 +214,19 @@ class Bootloader
         /** @var \Illuminate\Routing\Route $route */
         $route = $app->make('router')->getRoutes()->match($request);
 
-        /** @var array $config */
-        $config = $app->config->get('router.wordpress', ['web' => 'web', 'api' => 'api']);
+        if ($route->getName() !== 'wordpress_request') {
+            $this->registerRequestHandler($kernel, $request, $route);
+        } elseif (env('ACORN_ENABLE_EXPERIMENTAL_WORDPRESS_REQUEST_HANDLER', false)) {
+            $this->registerWordPressRequestHandler($kernel, $request, $route, $app->config->get('router.wordpress', ['web' => 'web', 'api' => 'api']));
+        }
 
-        $this->registerRequestHandler($kernel, $request, $route, $config);
+        add_filter('do_parse_request', function ($doParse, \WP $wp, $extraQueryVars) use ($route) {
+            if ($route->getName() === 'wordpress_request') {
+                return $doParse;
+            }
+
+            return apply_filters('acorn/router/do_parse_request', $doParse, $wp, $extraQueryVars);
+        }, 100, 3);
     }
 
     /**
@@ -228,13 +237,17 @@ class Bootloader
     protected function registerWordPressRoute(ApplicationContract $app)
     {
         $app->make('router')
-            ->any('{any?}', fn () => tap(response(''), function (Response $response) {
+            ->any('{any?}', fn () => tap(response(''), function (Response $response) use ($app) {
                 foreach (headers_list() as $header) {
                     [$header, $value] = explode(': ', $header, 2);
                     if (! headers_sent()) {
                         header_remove($header);
                     }
                     $response->header($header, $value);
+                }
+
+                if ($app->hasDebugModeEnabled()) {
+                    $response->header('X-Powered-By', $app->version());
                 }
 
                 $content = '';
@@ -258,6 +271,22 @@ class Bootloader
     protected function registerRequestHandler(
         \Illuminate\Contracts\Http\Kernel $kernel,
         \Illuminate\Http\Request $request,
+        ?\Illuminate\Routing\Route $route
+    ) {
+        add_filter('do_parse_request', function ($doParse, \WP $wp, $extraQueryVars) use ($route) {
+            if (! $route) {
+                return $doParse;
+            }
+
+            return apply_filters('acorn/router/do_parse_request', $doParse, $wp, $extraQueryVars);
+        }, 100, 3);
+
+        add_action('parse_request', fn () => $this->handleRequest($kernel, $request));
+    }
+
+    protected function registerWordPressRequestHandler(
+        \Illuminate\Contracts\Http\Kernel $kernel,
+        \Illuminate\Http\Request $request,
         ?\Illuminate\Routing\Route $route,
         array $config
     ) {
@@ -270,18 +299,8 @@ class Bootloader
             return; // Let WordPress handle these requests
         }
 
-        add_filter('do_parse_request', function ($doParse, \WP $wp, $extraQueryVars) use ($route) {
-            if (! $route) {
-                return $doParse;
-            }
-
-            return apply_filters('acorn/router/do_parse_request', $doParse, $wp, $extraQueryVars);
-        }, 100, 3);
-
-        if ($route->getName() !== 'wordpress_request') {
-            add_action('parse_request', fn () => $this->handleRequest($kernel, $request));
-
-            return;
+        if (redirect_canonical(null, false)) {
+            return; // Let WordPress handle these requests
         }
 
         $route->middleware(preg_match('/^wp-json(\/.*)?/', $request->path()) ? $config['api'] : $config['web']);
