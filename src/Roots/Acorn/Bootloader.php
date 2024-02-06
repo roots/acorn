@@ -220,7 +220,7 @@ class Bootloader
             $this->registerWordPressRequestHandler($kernel, $request, $route, $app->config->get('router.wordpress', ['web' => 'web', 'api' => 'api']));
         }
 
-        add_filter('do_parse_request', function ($doParse, \WP $wp, $extraQueryVars) use ($kernel, $request, $route) {
+        add_filter('do_parse_request', function ($doParse, \WP $wp, $extraQueryVars) use ($route) {
             if ($route->getName() === 'wordpress_request') {
                 return $doParse;
             }
@@ -238,6 +238,7 @@ class Bootloader
     {
         $app->make('router')
             ->any('{any?}', fn () => tap(response(''), function (Response $response) use ($app) {
+                dd('eloel');
                 foreach (headers_list() as $header) {
                     [$header, $value] = explode(': ', $header, 2);
                     if (! headers_sent()) {
