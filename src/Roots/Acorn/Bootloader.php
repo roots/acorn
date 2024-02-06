@@ -238,7 +238,6 @@ class Bootloader
     {
         $app->make('router')
             ->any('{any?}', fn () => tap(response(''), function (Response $response) use ($app) {
-                dd('eloel');
                 foreach (headers_list() as $header) {
                     [$header, $value] = explode(': ', $header, 2);
                     if (! headers_sent()) {
