@@ -90,7 +90,11 @@ abstract class Composer
      */
     protected function merge()
     {
-        if (! $this->with() && ! $this->override()) {
+
+        $withOutcome = $this->with();
+        $overrideOutcome = $this->override();
+        
+        if (! $withOutcome && ! $overrideOutcome) {
             return array_merge(
                 $this->extractPublicProperties(),
                 $this->extractPublicMethods(),
@@ -99,9 +103,9 @@ abstract class Composer
         }
 
         return array_merge(
-            $this->with(),
+            $withOutcome,
             $this->view->getData(),
-            $this->override()
+            $overrideOutcome
         );
     }
 
