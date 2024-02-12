@@ -47,7 +47,7 @@
     "ext-mbstring": "*",
     "illuminate/cache": "^10.43",
     "illuminate/config": "^10.43",
-    "illuminate/console": "^10.0",
+    "illuminate/console": "^10.43",
     "illuminate/container": "^10.43",
     "illuminate/contracts": "^10.43",
     "illuminate/database": "^10.43",
