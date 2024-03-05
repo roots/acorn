@@ -45,6 +45,7 @@
     "php": ">=8.1",
     "ext-json": "*",
     "ext-mbstring": "*",
+    "guzzlehttp/guzzle": "^7.8",
     "illuminate/cache": "^10.43",
     "illuminate/config": "^10.43",
     "illuminate/console": "^10.43",
