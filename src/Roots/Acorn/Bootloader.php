@@ -240,23 +240,25 @@ class Bootloader
         \Illuminate\Http\Request $request,
         ?\Illuminate\Routing\Route $route
     ): void {
+        $path = $request->getBaseUrl().$request->getPathInfo();
+
         $except = collect([
             admin_url(),
             wp_login_url(),
             wp_registration_url(),
-        ])->map(fn ($url) => parse_url($url, PHP_URL_PATH));
+        ])->map(fn ($url) => parse_url($url, PHP_URL_PATH))->unique()->filter();
 
         $api = parse_url(rest_url(), PHP_URL_PATH);
 
         if (
-            Str::startsWith($request->getPathInfo(), $except->all()) ||
-            Str::endsWith($request->getPathInfo(), '.php')
+            Str::startsWith($path, $except->all()) ||
+            Str::endsWith($path, '.php')
         ) {
             return;
         }
 
         if (
-            $isApi = Str::startsWith($request->getPathInfo(), $api) &&
+            $isApi = Str::startsWith($path, $api) &&
             redirect_canonical(null, false)
         ) {
             return;
