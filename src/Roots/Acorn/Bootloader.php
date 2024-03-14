@@ -213,7 +213,7 @@ class Bootloader
                         header_remove($header);
                     }
 
-                    $response->header($header, $value);
+                    $response->header($header, $value, $header !== 'Set-Cookie');
                 }
 
                 if ($this->app->hasDebugModeEnabled()) {
