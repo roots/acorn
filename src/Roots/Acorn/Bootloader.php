@@ -186,7 +186,9 @@ class Bootloader
 
         $kernel->bootstrap($request);
 
-        $this->registerDefaultRoute();
+        if ($this->shouldHandleDefaultRequest()) {
+            $this->registerDefaultRoute();
+        }
 
         try {
             $route = $this->app->make('router')->getRoutes()->match($request);
@@ -278,6 +280,10 @@ class Bootloader
             return;
         }
 
+        if (! $this->shouldHandleDefaultRequest()) {
+            return;
+        }
+
         $config = $this->app->config->get('router.wordpress', ['web' => 'web', 'api' => 'api']);
 
         $route->middleware($isApi ? $config['api'] : $config['web']);
@@ -302,6 +308,14 @@ class Bootloader
         $kernel->terminate($request, $body);
 
         exit((int) $response->isServerError());
+    }
+
+    /**
+     * Determine if the default WordPress request should be handled.
+     */
+    protected function shouldHandleDefaultRequest(): bool
+    {
+        return env('ACORN_ENABLE_EXPERIMENTAL_WORDPRESS_REQUEST_HANDLER', false);
     }
 
     /**
