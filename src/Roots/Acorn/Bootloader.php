@@ -15,38 +15,28 @@ class Bootloader
 {
     /**
      * The Bootloader instance.
-     *
-     * @var static
      */
     protected static $instance;
 
     /**
      * The Application instance.
-     *
-     * @var \Illuminate\Contracts\Foundation\Application
      */
-    protected $app;
+    protected ?ApplicationContract $app;
 
     /**
      * The Filesystem instance.
-     *
-     * @var \Roots\Acorn\Filesystem\Filesystem
      */
-    protected $files;
+    protected Filesystem $files;
 
     /**
      * The application's base path.
-     *
-     * @var string
      */
-    protected $basePath;
+    protected string $basePath = '';
 
     /**
      * The prefixes of absolute cache paths for use during normalization.
-     *
-     * @var string[]
      */
-    protected $absoluteApplicationPathPrefixes = ['/', '\\'];
+    protected array $absoluteApplicationPathPrefixes = ['/', '\\'];
 
     /**
      * Create a new bootloader instance.
@@ -78,7 +68,7 @@ class Bootloader
     /**
      * Get the Bootloader instance.
      */
-    public static function getInstance(?ApplicationContract $app = null): self
+    public static function getInstance(?ApplicationContract $app = null): static
     {
         return static::$instance ??= new static($app);
     }
@@ -202,7 +192,7 @@ class Bootloader
             $route = $this->app->make('router')->getRoutes()->match($request);
 
             $this->registerRequestHandler($kernel, $request, $route);
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             //
         }
     }
