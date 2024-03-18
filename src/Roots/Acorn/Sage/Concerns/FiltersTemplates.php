@@ -29,10 +29,6 @@ trait FiltersTemplates
      */
     public function filterTemplateInclude($file)
     {
-        if (! Str::endsWith($file, '.blade.php') && @file_exists($file)) {
-            return $file;
-        }
-
         $view = $this->fileFinder
             ->getPossibleViewNameFromPath($file = realpath($file));
 
