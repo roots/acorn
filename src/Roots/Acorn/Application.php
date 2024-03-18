@@ -273,11 +273,7 @@ class Application extends FoundationApplication
     {
         try {
             if (is_string($provider) && ! class_exists($provider)) {
-                if ($this->runningInConsole()) {
-                    return;
-                }
-
-                throw new SkipProviderException("Skipping provider [{$provider}] because it does not exist.");
+                return $this->skipProvider($provider, new SkipProviderException("Skipping provider [{$provider}] because it does not exist."));
             }
 
             return parent::register($provider, $force);
@@ -309,7 +305,7 @@ class Application extends FoundationApplication
 
         report($e);
 
-        if ($this->environment('development', 'testing', 'local')) {
+        if ($this->environment('development', 'testing', 'local') && ! $this->runningInConsole()) {
             throw $e;
         }
 
