@@ -186,9 +186,7 @@ class Bootloader
 
         $kernel->bootstrap($request);
 
-        if ($this->shouldHandleDefaultRequest()) {
-            $this->registerDefaultRoute();
-        }
+        $this->registerDefaultRoute();
 
         try {
             $route = $this->app->make('router')->getRoutes()->match($request);
