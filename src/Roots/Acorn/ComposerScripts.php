@@ -3,12 +3,11 @@
 namespace Roots\Acorn;
 
 use Illuminate\Foundation\ComposerScripts as FoundationComposerScripts;
-use Roots\Acorn\Console\Concerns\GetsFreshApplication;
+use Roots\Acorn\Console\Console;
+use Roots\Acorn\Filesystem\Filesystem;
 
 class ComposerScripts extends FoundationComposerScripts
 {
-    use GetsFreshApplication;
-
     /**
      * Clear the cached Laravel bootstrapping files.
      *
@@ -16,18 +15,9 @@ class ComposerScripts extends FoundationComposerScripts
      */
     protected static function clearCompiled()
     {
-        $laravel = (new self)->getFreshApplication();
+        $console = new Console(new Filesystem(), getcwd());
 
-        if (is_file($configPath = $laravel->getCachedConfigPath())) {
-            @unlink($configPath);
-        }
-
-        if (is_file($servicesPath = $laravel->getCachedServicesPath())) {
-            @unlink($servicesPath);
-        }
-
-        if (is_file($packagesPath = $laravel->getCachedPackagesPath())) {
-            @unlink($packagesPath);
-        }
+        $console->configClear();
+        $console->clearCompiled();
     }
 }
