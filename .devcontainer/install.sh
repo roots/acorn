@@ -60,6 +60,18 @@ if [ -d "web" ]; then
   fi
 fi
 
+# use `content` instead of `app` for wp-content
+if [ -d "public/app" ]; then
+  mv public/app public/content
+  sed -i 's/public\/app/public\/content/g' composer.json
+
+  if [ -f 'config/application.php' ]; then
+    sed -i 's/\/app/\/content/g' config/application.php
+  elif [ -f 'bedrock/application.php' ]; then
+    sed -i 's/\/app/\/content/g' bedrock/application.php
+  fi
+fi
+
 cd /roots/app
 
 # Install Composer dependencies
@@ -67,20 +79,20 @@ composer -d /roots/app install --no-progress --optimize-autoloader --prefer-dist
 
 # Link the workspace folder
 if cat "${WORKSPACE_FOLDER}/composer.json" | jq '.type' | grep -q wordpress-theme; then
-  ln -fs "${WORKSPACE_FOLDER}" "/roots/app/public/app/themes/$(basename ${WORKSPACE_FOLDER})"
+  ln -fs "${WORKSPACE_FOLDER}" "/roots/app/public/content/themes/$(basename ${WORKSPACE_FOLDER})"
 elif cat "${WORKSPACE_FOLDER}/composer.json" | jq '.type' | grep -q wordpress-plugin; then
-  ln -fs "${WORKSPACE_FOLDER}" "/roots/app/public/app/plugins/$(basename ${WORKSPACE_FOLDER})"
+  ln -fs "${WORKSPACE_FOLDER}" "/roots/app/public/content/plugins/$(basename ${WORKSPACE_FOLDER})"
 elif cat "${WORKSPACE_FOLDER}/composer.json" | jq '.type' | grep -q wordpress-muplugin; then
-  ln -fs "${WORKSPACE_FOLDER}" "/roots/app/public/app/mu-plugins/$(basename ${WORKSPACE_FOLDER})"
+  ln -fs "${WORKSPACE_FOLDER}" "/roots/app/public/content/mu-plugins/$(basename ${WORKSPACE_FOLDER})"
 else
   cat /roots/app/composer.json | jq ".repositories += [{ type: \"path\", url: \"${WORKSPACE_FOLDER}\" }]" > /roots/app/composer.tmp \
   && rm /roots/app/composer.json \
   && mv /roots/app/composer.tmp /roots/app/composer.json \
-  && composer require -d /roots/app $(cat "${WORKSPACE_FOLDER}/composer.json" | jq '.name' | tr -d '"') --no-interaction
+  && composer require -d /roots/app $(cat "${WORKSPACE_FOLDER}/composer.json" | jq '.name' | tr -d '"') --no-interaction -W
 fi
 
-composer remove -d /roots/app wpackagist-theme/twentytwentythree
-composer require -d /roots/app roots/soil
+composer remove -d /roots/app wpackagist-theme/twentytwentyfour
+composer require -d /roots/app roots/acorn-prettify -W
 
 # Set filesystem permissions
 sudo chown -R vscode:www-data /roots/app

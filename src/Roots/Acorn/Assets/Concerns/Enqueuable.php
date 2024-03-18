@@ -184,6 +184,25 @@ trait Enqueuable
     }
 
     /**
+     * Add script translations to be used by the bundle
+     *
+     * @param  string  $domain
+     * @param  string  $path
+     * @return $this
+     */
+    public function translate($domain = null, $path = null)
+    {
+        $domain ??= wp_get_theme()->get('TextDomain');
+        $path ??= lang_path();
+
+        $this->js()->keys()->each(function ($handle) use ($domain, $path) {
+            wp_set_script_translations("{$this->id}/{$handle}", $domain, $path);
+        });
+
+        return $this;
+    }
+
+    /**
      * Merge two or more arrays.
      *
      * @return void

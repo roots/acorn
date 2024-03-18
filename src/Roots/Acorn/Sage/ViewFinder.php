@@ -39,7 +39,7 @@ class ViewFinder
     {
         $this->finder = $finder;
         $this->files = $files;
-        $this->path = realpath($path ? $path : get_theme_file_path());
+        $this->path = realpath($path ?: get_theme_file_path());
     }
 
     /**
@@ -55,9 +55,10 @@ class ViewFinder
         }
 
         return $this->getRelativeViewPaths()
-            ->flatMap(fn ($viewPath) => collect($this->finder->getPossibleViewFilesFromPath($file))
-                ->merge([$file])
-                ->map(fn ($file) => "{$viewPath}/{$file}")
+            ->flatMap(
+                fn ($viewPath) => collect($this->finder->getPossibleViewFilesFromPath($file))
+                    ->merge([$file])
+                    ->map(fn ($file) => "{$viewPath}/{$file}")
             )
             ->unique()
             ->map(fn ($file) => trim($file, '\\/'))

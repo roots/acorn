@@ -33,7 +33,7 @@ interface Asset
     /**
      * Get the relative path to the asset.
      *
-     * @param  string  $base_path Base path to use for relative path.
+     * @param  string  $base_path  Base path to use for relative path.
      */
     public function relativePath(string $base_path): string;
 

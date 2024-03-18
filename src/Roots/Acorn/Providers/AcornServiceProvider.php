@@ -21,7 +21,6 @@ class AcornServiceProvider extends ServiceProvider
      * @var string[]
      */
     protected $providerConfigs = [
-        \Fruitcake\Cors\CorsServiceProvider::class => 'cors',
         \Illuminate\Auth\AuthServiceProvider::class => 'auth',
         \Illuminate\Broadcasting\BroadcastServiceProvider::class => 'broadcasting',
         \Illuminate\Cache\CacheServiceProvider::class => 'cache',
