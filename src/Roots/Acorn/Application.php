@@ -274,6 +274,10 @@ class Application extends FoundationApplication
     {
         try {
             if (is_string($provider) && ! class_exists($provider)) {
+                if ($this->runningInConsole()) {
+                    return;
+                }
+
                 throw new SkipProviderException("Skipping provider [{$provider}] because it does not exist.");
             }
 
