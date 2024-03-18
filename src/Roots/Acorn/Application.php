@@ -305,7 +305,7 @@ class Application extends FoundationApplication
 
         report($e);
 
-        if ($this->environment('development', 'testing', 'local')) {
+        if ($this->environment('development', 'testing', 'local') && ! $this->runningInConsole()) {
             throw $e;
         }
 
