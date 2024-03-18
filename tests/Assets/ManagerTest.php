@@ -1,7 +1,7 @@
 <?php
 
 use Roots\Acorn\Assets\Contracts\Manifest as ManifestContract;
-use Roots\Acorn\Assets\Contracts\ManifestNotFoundException;
+use Roots\Acorn\Assets\Exceptions\ManifestNotFoundException;
 use Roots\Acorn\Assets\Manager;
 use Roots\Acorn\Assets\Manifest;
 use Roots\Acorn\Tests\Test\TestCase;

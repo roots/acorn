@@ -4,7 +4,7 @@ namespace Roots\Acorn\Assets;
 
 use InvalidArgumentException;
 use Roots\Acorn\Assets\Contracts\Manifest as ManifestContract;
-use Roots\Acorn\Assets\Contracts\ManifestNotFoundException;
+use Roots\Acorn\Assets\Exceptions\ManifestNotFoundException;
 use Roots\Acorn\Assets\Middleware\LaravelMixMiddleware;
 use Roots\Acorn\Assets\Middleware\RootsBudMiddleware;
 
