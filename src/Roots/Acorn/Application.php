@@ -306,7 +306,7 @@ class Application extends FoundationApplication
         report($e);
 
         if ($this->environment('development', 'testing', 'local') && ! $this->runningInConsole()) {
-            throw $e;
+            $this->booted(fn () => throw $e);
         }
 
         return is_object($provider) ? $provider : new class($this) extends ServiceProvider
