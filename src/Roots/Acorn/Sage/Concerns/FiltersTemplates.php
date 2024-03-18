@@ -29,7 +29,7 @@ trait FiltersTemplates
      */
     public function filterTemplateInclude($file)
     {
-        if (@file_exists($file) && ! Str::endsWith($file, '.blade.php')) {
+        if (! Str::endsWith($file, '.blade.php') && @file_exists($file)) {
             return $file;
         }
 
