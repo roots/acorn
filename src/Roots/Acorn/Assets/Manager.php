@@ -119,7 +119,7 @@ class Manager
     protected function getJsonManifest(string $jsonManifest): array
     {
         if (! file_exists($jsonManifest)) {
-            throw new ManifestNotFoundException("The manifest [{$jsonManifest}] cannot be found.");
+            throw new ManifestNotFoundException("The asset manifest [{$jsonManifest}] cannot be found.");
         }
 
         return json_decode(file_get_contents($jsonManifest), true) ?? [];
