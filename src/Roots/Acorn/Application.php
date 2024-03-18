@@ -273,7 +273,7 @@ class Application extends FoundationApplication
     {
         try {
             if (is_string($provider) && ! class_exists($provider)) {
-                return $this->skipProvider($provider, new SkipProviderException("Skipping provider [{$provider}] because it does not exist."));
+                throw new SkipProviderException("Skipping provider [{$provider}] because it does not exist.");
             }
 
             return parent::register($provider, $force);
