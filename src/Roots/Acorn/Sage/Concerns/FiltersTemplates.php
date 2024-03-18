@@ -2,6 +2,8 @@
 
 namespace Roots\Acorn\Sage\Concerns;
 
+use Illuminate\Support\Str;
+
 trait FiltersTemplates
 {
     /**
@@ -14,7 +16,7 @@ trait FiltersTemplates
      */
     public function filterTemplateHierarchy($files)
     {
-        return $files + [$this->sageFinder->locate($files)];
+        return [...$this->sageFinder->locate($files), ...$files];
     }
 
     /**
@@ -27,8 +29,7 @@ trait FiltersTemplates
      */
     public function filterTemplateInclude($file)
     {
-
-        if (@file_exists($file)) {
+        if (@file_exists($file) && ! Str::endsWith($file, '.blade.php')) {
             return $file;
         }
 
