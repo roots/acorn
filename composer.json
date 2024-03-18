@@ -72,7 +72,7 @@
     "vlucas/phpdotenv": "^5.4.1"
   },
   "require-dev": {
-    "laravel/pint": "^1.13",
+    "laravel/pint": "1.14",
     "mockery/mockery": "^1.6",
     "pestphp/pest": "^2.25",
     "phpcompatibility/php-compatibility": "^9.3",
