@@ -2,8 +2,6 @@
 
 namespace Roots\Acorn\Sage\Concerns;
 
-use Illuminate\Support\Str;
-
 trait FiltersTemplates
 {
     /**
