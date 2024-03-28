@@ -80,6 +80,7 @@ class Manifest implements ManifestContract
         if (! isset($this->bundles[$key])) {
             throw new BundleNotFoundException("Bundle [{$key}] not found in manifest.");
         }
+
         return new Bundle($key, $this->bundles[$key], $this->path, $this->uri);
     }
 
