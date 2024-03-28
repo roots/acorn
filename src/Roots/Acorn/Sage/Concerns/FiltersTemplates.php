@@ -14,7 +14,11 @@ trait FiltersTemplates
      */
     public function filterTemplateHierarchy($files)
     {
-        return [...$this->sageFinder->locate($files), ...$files];
+        $templates = [...$this->sageFinder->locate($files), ...$files];
+
+        return ! get_theme_support('block-templates')
+            ? $templates
+            : array_reverse($templates);
     }
 
     /**
