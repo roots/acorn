@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Roots\Acorn\Assets\Contracts\Asset as AssetContract;
 use Roots\Acorn\Assets\Contracts\Bundle as BundleContract;
 use Roots\Acorn\Assets\Contracts\Manifest as ManifestContract;
+use Roots\Acorn\Assets\Exceptions\BundleNotFoundException;
 
 class Manifest implements ManifestContract
 {
@@ -71,9 +72,14 @@ class Manifest implements ManifestContract
      * Get specified bundles.
      *
      * @param  string  $key
+     *
+     * @throws \Roots\Acorn\Assets\Exceptions\BundleNotFoundException
      */
     public function bundle($key): BundleContract
     {
+        if (! isset($this->bundles[$key])) {
+            throw new BundleNotFoundException("Bundle [{$key}] not found in manifest.");
+        }
         return new Bundle($key, $this->bundles[$key], $this->path, $this->uri);
     }
 
