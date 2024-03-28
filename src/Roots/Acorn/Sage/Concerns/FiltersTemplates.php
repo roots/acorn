@@ -16,7 +16,7 @@ trait FiltersTemplates
     {
         $templates = [...$this->sageFinder->locate($files), ...$files];
 
-        return ! get_theme_support('block-templates')
+        return ! current_theme_supports('block-templates')
             ? $templates
             : array_reverse($templates);
     }
