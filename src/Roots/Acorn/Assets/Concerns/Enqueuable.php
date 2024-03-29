@@ -2,6 +2,8 @@
 
 namespace Roots\Acorn\Assets\Concerns;
 
+use Illuminate\Support\Str;
+
 trait Enqueuable
 {
     /**
@@ -83,9 +85,30 @@ trait Enqueuable
      *
      * @return $this
      */
-    public function editorStyles()
+    public function editorStyles(bool $url = false)
     {
-        $this->css(fn ($handle, $src) => add_editor_style($src));
+        $this->css(function ($handle, $src) use ($url) {
+            if ($url) {
+                add_editor_style($src);
+
+                return;
+            }
+
+            if (! Str::startsWith($this->path, $path = get_theme_file_path())) {
+                return;
+            }
+
+            $path = Str::of($this->path)
+                ->after($path)
+                ->toString();
+
+            $style = Str::of($src)
+                ->afterLast($path)
+                ->start($path)
+                ->toString();
+
+            add_editor_style($style);
+        });
 
         return $this;
     }
