@@ -2,6 +2,9 @@
 
 namespace Roots\Acorn\Assets\Concerns;
 
+use Illuminate\Support\Str;
+use Roots\Acorn\Filesystem\Filesystem;
+
 trait Enqueuable
 {
     /**
@@ -85,7 +88,24 @@ trait Enqueuable
      */
     public function editorStyles()
     {
-        $this->css(fn ($handle, $src) => add_editor_style($src));
+        $relativePath = (new Filesystem)->getRelativePath(
+            Str::finish(get_theme_file_path(), '/'),
+            $this->path
+        );
+
+        $this->css(function ($handle, $src) use ($relativePath) {
+            if (! Str::startsWith($src, $this->uri)) {
+                return add_editor_style($src);
+            }
+
+            $style = Str::of($src)
+                ->after($this->uri)
+                ->ltrim('/')
+                ->start("{$relativePath}/")
+                ->toString();
+
+            add_editor_style($style);
+        });
 
         return $this;
     }
