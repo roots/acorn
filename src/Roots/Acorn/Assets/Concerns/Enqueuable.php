@@ -79,6 +79,18 @@ trait Enqueuable
     }
 
     /**
+     * Add CSS files as editor styles in WordPress.
+     *
+     * @return $this
+     */
+    public function editorStyles()
+    {
+        $this->css(fn ($handle, $src) => add_editor_style($src));
+
+        return $this;
+    }
+
+    /**
      * Dequeue CSS files in WordPress.
      *
      * @return $this

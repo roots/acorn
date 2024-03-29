@@ -42,6 +42,15 @@ it('can enqueue css', function () {
     $app->enqueueCss();
 });
 
+it('can add editor styles', function () {
+    $manifest = json_decode(file_get_contents($this->fixture('bud_single_runtime/public/entrypoints.json')), JSON_OBJECT_AS_ARRAY);
+    $app = new Bundle('app', $manifest['app'], $this->fixture('bud_single_runtime'), 'https://k.jo');
+
+    $this->stub('add_editor_style', fn (...$args) => assertMatchesSnapshot($args));
+
+    $app->editorStyles();
+});
+
 it('can dequeue css', function () {
     $manifest = json_decode(file_get_contents($this->fixture('bud_single_runtime/public/entrypoints.json')), JSON_OBJECT_AS_ARRAY);
     $app = new Bundle('app', $manifest['app'], $this->fixture('bud_single_runtime'), 'https://k.jo');
