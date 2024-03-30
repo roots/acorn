@@ -14,9 +14,28 @@ trait FiltersTemplates
      */
     public function filterTemplateHierarchy($files)
     {
-        return wp_is_block_theme() && current_theme_supports('block-templates')
-            ? [...$files, ...$this->sageFinder->locate($files)]
-            : [...$this->sageFinder->locate($files), ...$files];
+        $templates = $this->sageFinder->locate($files);
+
+        if (
+            ! function_exists('wp_is_block_theme') ||
+            ! wp_is_block_theme() ||
+            ! current_theme_supports('block-templates')
+        ) {
+            return [...$templates, ...$files];
+        }
+
+        $paths = [];
+
+        if ($template = get_page_template_slug()) {
+            $paths = array_filter(
+                $templates,
+                fn ($file) => str_contains($file, $template)
+            );
+
+            $templates = array_diff($templates, $paths);
+        }
+
+        return [...$paths, ...$files, ...$templates];
     }
 
     /**
