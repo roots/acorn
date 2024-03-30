@@ -24,18 +24,18 @@ trait FiltersTemplates
             return [...$templates, ...$files];
         }
 
-        $paths = [];
+        $pages = [];
 
         if ($template = get_page_template_slug()) {
-            $paths = array_filter(
+            $pages = array_filter(
                 $templates,
                 fn ($file) => str_contains($file, $template)
             );
 
-            $templates = array_diff($templates, $paths);
+            $templates = array_diff($templates, $pages);
         }
 
-        return [...$paths, ...$files, ...$templates];
+        return [...$pages, ...$files, ...$templates];
     }
 
     /**
