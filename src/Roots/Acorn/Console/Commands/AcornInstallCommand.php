@@ -37,7 +37,7 @@ class AcornInstallCommand extends Command
     }
 
     /**
-     * Install the Acorn autoload dump script.
+     * Ask to install the Acorn autoload dump script.
      */
     protected function askToInstallScript(): void
     {
