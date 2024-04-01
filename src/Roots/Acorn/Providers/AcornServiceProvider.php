@@ -22,17 +22,14 @@ class AcornServiceProvider extends ServiceProvider
      */
     protected $providerConfigs = [
         \Illuminate\Auth\AuthServiceProvider::class => 'auth',
-        \Illuminate\Broadcasting\BroadcastServiceProvider::class => 'broadcasting',
         \Illuminate\Cache\CacheServiceProvider::class => 'cache',
         \Illuminate\Database\DatabaseServiceProvider::class => 'database',
         \Illuminate\Filesystem\FilesystemServiceProvider::class => 'filesystems',
-        \Illuminate\Hashing\HashServiceProvider::class => 'hashing',
         \Illuminate\Log\LogServiceProvider::class => 'logging',
         \Illuminate\Mail\MailServiceProvider::class => 'mail',
         \Illuminate\Queue\QueueServiceProvider::class => 'queue',
         \Illuminate\Session\SessionServiceProvider::class => 'session',
         \Illuminate\View\ViewServiceProvider::class => 'view',
-        \Laravel\Sanctum\SanctumServiceProvider::class => 'sanctum',
         \Roots\Acorn\Assets\AssetsServiceProvider::class => 'assets',
     ];
 
