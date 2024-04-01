@@ -108,7 +108,7 @@ class AcornInstallCommand extends Command
         }
 
         if (confirm(
-            label: '🎉 All done! Would you like to show some love by starring the Acorn repo on GitHub?',
+            label: '🎉 All done! Would you like to show love by starring Acorn on GitHub?',
             default: true,
         )) {
             match (PHP_OS_FAMILY) {
