@@ -79,8 +79,8 @@ class AcornInstallCommand extends Command
         $configuration['scripts']['post-autoload-dump'][] = $script;
 
         $configuration = str(json_encode($configuration, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES))
-            ->append(PHP_EOL)
             ->replace('    ', '  ')
+            ->append(PHP_EOL)
             ->toString();
 
         file_put_contents(
