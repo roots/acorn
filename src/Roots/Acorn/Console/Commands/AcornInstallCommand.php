@@ -14,8 +14,8 @@ class AcornInstallCommand extends Command
      * @var string
      */
     protected $signature = 'acorn:install
-                            {--init : Initialize Acorn}
-                            {--autoload : Install the Acorn autoload dump script}';
+                            {--autoload : Install the Acorn autoload dump script}
+                            {--init : Initialize Acorn}';
 
     /**
      * The console command description.
@@ -41,6 +41,10 @@ class AcornInstallCommand extends Command
      */
     protected function askToInstallScript(): void
     {
+        if (! $this->option('autoload') && $this->option('no-interaction')) {
+            return;
+        }
+
         if ($this->option('autoload') || confirm(
             label: 'Would you like to install the Acorn autoload dump script?',
             default: true,
@@ -90,6 +94,10 @@ class AcornInstallCommand extends Command
      */
     protected function askToInitialize(): void
     {
+        if (! $this->option('init') && $this->option('no-interaction')) {
+            return;
+        }
+
         if ($this->option('init') || confirm(
             label: 'Would you like to initialize Acorn?',
             default: true,
