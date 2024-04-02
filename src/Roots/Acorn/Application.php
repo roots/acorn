@@ -80,7 +80,9 @@ class Application extends FoundationApplication
             ->withEvents()
             ->withCommands()
             ->withProviders()
-            ->withRouting();
+            ->withRouting()
+            ->withMiddleware()
+            ->withExceptions();
     }
 
     /**
