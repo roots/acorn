@@ -22,14 +22,17 @@ class AcornServiceProvider extends ServiceProvider
      */
     protected $providerConfigs = [
         \Illuminate\Auth\AuthServiceProvider::class => 'auth',
+        \Illuminate\Broadcasting\BroadcastServiceProvider::class => 'broadcasting',
         \Illuminate\Cache\CacheServiceProvider::class => 'cache',
         \Illuminate\Database\DatabaseServiceProvider::class => 'database',
         \Illuminate\Filesystem\FilesystemServiceProvider::class => 'filesystems',
+        \Illuminate\Hashing\HashServiceProvider::class => 'hashing',
         \Illuminate\Log\LogServiceProvider::class => 'logging',
         \Illuminate\Mail\MailServiceProvider::class => 'mail',
         \Illuminate\Queue\QueueServiceProvider::class => 'queue',
         \Illuminate\Session\SessionServiceProvider::class => 'session',
         \Illuminate\View\ViewServiceProvider::class => 'view',
+        \Laravel\Sanctum\SanctumServiceProvider::class => 'sanctum',
         \Roots\Acorn\Assets\AssetsServiceProvider::class => 'assets',
     ];
 
@@ -40,7 +43,7 @@ class AcornServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->registerConfigs();
+        //
     }
 
     /**
@@ -53,20 +56,6 @@ class AcornServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->registerPublishables();
             $this->registerPostInitEvent();
-        }
-    }
-
-    /**
-     * Register application configs.
-     *
-     * @return void
-     */
-    protected function registerConfigs()
-    {
-        $configs = array_merge($this->configs, array_values($this->providerConfigs));
-
-        foreach ($configs as $config) {
-            $this->mergeConfigFrom(dirname(__DIR__, 4)."/config/{$config}.php", $config);
         }
     }
 
@@ -88,8 +77,14 @@ class AcornServiceProvider extends ServiceProvider
     protected function publishConfigs()
     {
         foreach ($this->filterPublishableConfigs() as $config) {
+            $path = dirname(__DIR__, 4);
+
+            $file = file_exists($stub = "{$path}/config-stubs/{$config}.php")
+                ? $stub
+                : "{$path}/config/{$config}.php";
+
             $this->publishes([
-                dirname(__DIR__, 4)."/config/{$config}.php" => config_path("{$config}.php"),
+                $file => config_path("{$config}.php"),
             ], ['acorn', 'acorn-configs']);
         }
     }
