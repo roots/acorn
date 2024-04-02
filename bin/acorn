@@ -22,5 +22,5 @@
 
     require_once "{$rootPath}/{$composer['extra']['wordpress-install-dir']}/wp-blog-header.php";
 
-    Roots\Acorn\Bootloader::getInstance()->boot();
+    Roots\Acorn\Application::configure()->boot();
 })();
