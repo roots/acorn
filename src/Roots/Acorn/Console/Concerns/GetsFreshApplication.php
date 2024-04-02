@@ -2,8 +2,8 @@
 
 namespace Roots\Acorn\Console\Concerns;
 
-use Illuminate\Contracts\Foundation\Application;
-use Roots\Acorn\Bootloader;
+use Illuminate\Contracts\Foundation\Application as ApplicationContract;
+use Roots\Acorn\Application;
 
 trait GetsFreshApplication
 {
@@ -14,13 +14,12 @@ trait GetsFreshApplication
      */
     protected function getFreshApplication()
     {
-        $bootloaderClass = get_class(Bootloader::getInstance());
-        $applicationClass = get_class($app = Bootloader::getInstance()->getApplication());
+        $application = get_class($app = Application::getInstance());
 
-        return (new $bootloaderClass(new $applicationClass(
+        return (new $application(
             $app->basePath(),
             $this->getApplicationPaths($app)
-        )))->getApplication();
+        ))->getApplication();
     }
 
     /**
