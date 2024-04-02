@@ -79,4 +79,5 @@ return [
     'directives' => [
         // 'foo'  => App\View\FooDirective::class,
     ],
+
 ];

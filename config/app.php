@@ -52,12 +52,16 @@ return [
     |--------------------------------------------------------------------------
     |
     | This URL is used by the console to properly generate URLs when using
-    | the Acorn command line tool. You should set this to the root of
-    | the application so that it's available within Acorn commands.
+    | the Artisan command line tool. You should set this to the root of
+    | the application so that it's available within Artisan commands.
     |
     */
 
     'url' => env('APP_URL', home_url()),
+
+    'frontend_url' => env('FRONTEND_URL', 'http://localhost:3000'),
+
+    'asset_url' => env('ASSET_URL'),
 
     /*
     |--------------------------------------------------------------------------
@@ -85,7 +89,29 @@ return [
 
     'locale' => env('APP_LOCALE', get_locale()),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Application Fallback Locale
+    |--------------------------------------------------------------------------
+    |
+    | The fallback locale determines the locale to use when the default one
+    | is not available. You may change the value to correspond to any of
+    | the languages which are currently supported by your application.
+    |
+    */
+
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Faker Locale
+    |--------------------------------------------------------------------------
+    |
+    | This locale will be used by the Faker PHP library when generating fake
+    | data for your database seeds. For example, this will be used to get
+    | localized telephone numbers, street address information and more.
+    |
+    */
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
 
@@ -133,21 +159,19 @@ return [
     | Autoloaded Service Providers
     |--------------------------------------------------------------------------
     |
-    | The service providers listed here will be automatically loaded on the
-    | request to your application. Feel free to add your own services to
-    | this array to grant expanded functionality to your applications.
+    | The service providers listed here will be automatically loaded on any
+    | requests to your application. You may add your own services to the
+    | arrays below to provide additional features to this application.
     |
     */
 
     'providers' => ServiceProvider::defaultProviders()->merge([
-        /*
-         * Package Service Providers...
-         */
-
-        /*
-         * Application Service Providers...
-         */
-        // App\Providers\ThemeServiceProvider::class,
+        // Package Service Providers...
+    ])->merge([
+        // Application Service Providers...
+        // App\Providers\AppServiceProvider::class,
+    ])->merge([
+        // Added Service Providers (Do not remove this line)...
     ])->toArray(),
 
     /*
@@ -156,8 +180,8 @@ return [
     |--------------------------------------------------------------------------
     |
     | This array of class aliases will be registered when this application
-    | is started. However, feel free to register as many as you wish as
-    | the aliases are "lazy" loaded so they don't hinder performance.
+    | is started. You may add any additional class aliases which should
+    | be loaded to the array. For speed, all aliases are lazy loaded.
     |
     */
 
