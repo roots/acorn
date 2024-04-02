@@ -34,6 +34,7 @@ class Kernel extends FoundationConsoleKernel
         \Illuminate\Routing\Console\MiddlewareMakeCommand::class,
         \Roots\Acorn\Console\Commands\AboutCommand::class,
         \Roots\Acorn\Console\Commands\AcornInitCommand::class,
+        \Roots\Acorn\Console\Commands\AcornInstallCommand::class,
         \Roots\Acorn\Console\Commands\ComposerMakeCommand::class,
         \Roots\Acorn\Console\Commands\ConfigCacheCommand::class,
         \Roots\Acorn\Console\Commands\KeyGenerateCommand::class,
