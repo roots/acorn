@@ -12,6 +12,7 @@ use Illuminate\Foundation\ProviderRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Env;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -253,7 +254,9 @@ class Application extends FoundationApplication
                 throw new Exception("The {$pathType} path type is not supported.");
             }
 
-            $this->{$supportedPaths[$pathType]} = $this->normalizePath($path);
+            $this->{$supportedPaths[$pathType]} = Str::startsWith($path, $this->absoluteCachePathPrefixes)
+                ? $path
+                : $this->basePath($path);
         }
 
         $this->bindPathsInContainer();
@@ -684,10 +687,10 @@ class Application extends FoundationApplication
         $paths = [];
 
         foreach (['app', 'config', 'storage', 'resources', 'public'] as $path) {
-            $paths[$path] = $this->findPath($path);
+            $paths[$path] = $this->normalizeApplicationPath($path);
         }
 
-        $paths['bootstrap'] = "{$paths['storage']}/framework";
+        $paths['bootstrap'] = $this->normalizeApplicationPath($path, "{$paths['storage']}/framework");
 
         return $paths;
     }
@@ -695,11 +698,18 @@ class Application extends FoundationApplication
     /**
      * Normalize a relative or absolute path to an application directory.
      */
-    protected function normalizePath(string $path): string
+    protected function normalizeApplicationPath(string $path, ?string $default = null): string
     {
-        return Str::startsWith($path, ['/', '\\'])
-            ? $path
-            : $this->basePath($path);
+        $key = strtoupper($path);
+
+        if (is_null($env = Env::get("ACORN_{$key}_PATH"))) {
+            return $default
+                ?? (defined("ACORN_{$key}_PATH") ? constant("ACORN_{$key}_PATH") : $this->findPath($path));
+        }
+
+        return Str::startsWith($env, $this->absoluteCachePathPrefixes)
+            ? $env
+            : $this->basePath($env);
     }
 
     /**
@@ -710,7 +720,7 @@ class Application extends FoundationApplication
         $path = trim($path, '\\/');
 
         $searchPaths = [
-            "{$this->basePath()}/{$path}",
+            $this->basePath($path),
             get_theme_file_path($path),
         ];
 
