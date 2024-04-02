@@ -3,16 +3,24 @@
 namespace Roots\Acorn;
 
 use Exception;
+use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
 use Illuminate\Foundation\Application as FoundationApplication;
 use Illuminate\Foundation\PackageManifest as FoundationPackageManifest;
 use Illuminate\Foundation\ProviderRepository;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Roots\Acorn\Exceptions\SkipProviderException;
 use Roots\Acorn\Filesystem\Filesystem;
 use RuntimeException;
 use Throwable;
+use WP_CLI;
 
 /**
  * Application container
@@ -24,10 +32,10 @@ class Application extends FoundationApplication
      *
      * @var string
      */
-    public const VERSION = '4.x-dev';
+    public const VERSION = '5.x-dev';
 
     /**
-     * The custom resources path defined by the developer.
+     * The custom resource path defined by the developer.
      *
      * @var string
      */
@@ -37,22 +45,162 @@ class Application extends FoundationApplication
      * Create a new Illuminate application instance.
      *
      * @param  string|null  $basePath
-     * @param  array|null  $paths
+     * @param  array  $paths
      * @return void
      */
-    public function __construct($basePath = null, $paths = null)
+    public function __construct($basePath = null)
     {
         if ($basePath) {
             $this->basePath = rtrim($basePath, '\/');
         }
 
-        if ($paths) {
-            $this->usePaths((array) $paths);
-        }
+        $this->useEnvironmentPath($this->environmentPath());
+
+        $this->usePaths($this->defaultPaths());
 
         $this->registerGlobalHelpers();
 
         parent::__construct($basePath);
+    }
+
+    /**
+     * Begin configuring a new Laravel application instance.
+     *
+     * @return \Roots\Acorn\Configuration\ApplicationBuilder
+     */
+    public static function configure(?string $basePath = null)
+    {
+        $basePath = match (true) {
+            is_string($basePath) => $basePath,
+            default => static::inferBasePath(),
+        };
+
+        return (new Configuration\ApplicationBuilder(new static($basePath)))
+            ->withKernels()
+            ->withEvents()
+            ->withCommands()
+            ->withProviders()
+            ->withRouting();
+    }
+
+    /**
+     * Boot the application's service providers.
+     *
+     * @return $this
+     */
+    public function bootAcorn()
+    {
+        if ($this->isBooted()) {
+            return $this;
+        }
+
+        if (! defined('LARAVEL_START')) {
+            define('LARAVEL_START', microtime(true));
+        }
+
+        if ($this->runningInConsole()) {
+            $this->enableHttpsInConsole();
+
+            class_exists('WP_CLI') ? $this->bootWpCli() : $this->bootConsole();
+
+            return $this;
+        }
+
+        $this->bootHttp();
+
+        return $this;
+    }
+
+    /**
+     * Boot the Application for console.
+     */
+    protected function bootConsole(): void
+    {
+        $kernel = $this->app->make(ConsoleKernelContract::class);
+
+        $status = $kernel->handle(
+            $input = new \Symfony\Component\Console\Input\ArgvInput(),
+            new \Symfony\Component\Console\Output\ConsoleOutput()
+        );
+
+        $kernel->terminate($input, $status);
+
+        exit($status);
+    }
+
+    /**
+     * Boot the Application for WP-CLI.
+     */
+    protected function bootWpCli(): void
+    {
+        $kernel = $this->app->make(ConsoleKernelContract::class);
+        $kernel->bootstrap();
+
+        WP_CLI::add_command('acorn', function ($args, $options) use ($kernel) {
+            $kernel->commands();
+
+            $command = implode(' ', $args);
+
+            foreach ($options as $key => $value) {
+                if ($key === 'interaction' && $value === false) {
+                    $command .= ' --no-interaction';
+
+                    continue;
+                }
+
+                $command .= " --{$key}";
+
+                if ($value !== true) {
+                    $command .= "='{$value}'";
+                }
+            }
+
+            $command = str_replace('\\', '\\\\', $command);
+
+            $status = $kernel->handle(
+                $input = new \Symfony\Component\Console\Input\StringInput($command),
+                new \Symfony\Component\Console\Output\ConsoleOutput()
+            );
+
+            $kernel->terminate($input, $status);
+
+            WP_CLI::halt($status);
+        });
+    }
+
+    /**
+     * Boot the Application for HTTP requests.
+     */
+    protected function bootHttp(): void
+    {
+        $kernel = $this->app->make(HttpKernelContract::class);
+        $request = Request::capture();
+
+        $this->app->instance('request', $request);
+
+        Facade::clearResolvedInstance('request');
+
+        $kernel->bootstrap($request);
+
+        $this->registerDefaultRoute();
+
+        try {
+            $route = $this->app->make('router')->getRoutes()->match($request);
+
+            $this->registerRequestHandler($request, $route);
+        } catch (Throwable) {
+            //
+        }
+    }
+
+    /**
+     * Get the environment file path.
+     */
+    public function environmentPath(): string
+    {
+        return is_file($envPath = (new Filesystem)->closest($this->basePath(), '.env') ?? '')
+            ? dirname($envPath)
+            : $this->basePath();
     }
 
     /**
@@ -101,7 +249,7 @@ class Application extends FoundationApplication
                 throw new Exception("The {$pathType} path type is not supported.");
             }
 
-            $this->{$supportedPaths[$pathType]} = $path;
+            $this->{$supportedPaths[$pathType]} = $this->normalizePath($path);
         }
 
         $this->bindPathsInContainer();
@@ -125,11 +273,10 @@ class Application extends FoundationApplication
         $this->instance('path.storage', $this->storagePath());
         $this->instance('path.bootstrap', $this->bootstrapPath());
 
-        $this->useLangPath(value(function () {
-            return is_dir($directory = $this->resourcePath('lang'))
+        $this->useLangPath(value(fn () => is_dir($directory = $this->resourcePath('lang'))
                 ? $directory
-                : $this->basePath('lang');
-        }));
+                : $this->basePath('lang')
+        ));
     }
 
     /**
@@ -177,9 +324,15 @@ class Application extends FoundationApplication
     protected function registerBaseBindings()
     {
         parent::registerBaseBindings();
+
         $this->registerPackageManifest();
     }
 
+    /**
+     * Register the package manifest.
+     *
+     * @return void
+     */
     protected function registerPackageManifest()
     {
         $this->singleton(FoundationPackageManifest::class, function () {
@@ -376,5 +529,225 @@ class Application extends FoundationApplication
     public function version()
     {
         return 'Acorn '.static::VERSION.' (Laravel '.parent::VERSION.')';
+    }
+
+    /**
+     * Infer the application's base directory from the environment.
+     *
+     * @return string
+     */
+    public static function inferBasePath()
+    {
+        return match (true) {
+            isset($_ENV['APP_BASE_PATH']) => $_ENV['APP_BASE_PATH'],
+
+            defined('ACORN_BASEPATH') => constant('ACORN_BASEPATH'),
+
+            is_file($composerPath = get_theme_file_path('composer.json')) => dirname($composerPath),
+
+            is_dir($appPath = get_theme_file_path('app')) => dirname($appPath),
+
+            is_file($vendorPath = (new Filesystem)->closest(dirname(__DIR__, 4), 'composer.json')) => dirname($vendorPath),
+
+            default => dirname(__DIR__, 3),
+        };
+    }
+
+    /**
+     * Enable `$_SERVER[HTTPS]` in a console environment.
+     */
+    protected function enableHttpsInConsole(): void
+    {
+        $enable = apply_filters('acorn/enable_https_in_console', parse_url(get_option('home'), PHP_URL_SCHEME) === 'https');
+
+        if ($enable) {
+            $_SERVER['HTTPS'] = 'on';
+        }
+    }
+
+    /**
+     * Register the default WordPress route.
+     */
+    protected function registerDefaultRoute(): void
+    {
+        Route::any('{any?}', fn () => tap(response(''), function (Response $response) {
+            foreach (headers_list() as $header) {
+                [$header, $value] = explode(': ', $header, 2);
+
+                if (! headers_sent()) {
+                    header_remove($header);
+                }
+
+                $response->header($header, $value, $header !== 'Set-Cookie');
+            }
+
+            if ($this->app->hasDebugModeEnabled()) {
+                $response->header('X-Powered-By', $this->app->version());
+            }
+
+            $content = '';
+
+            $levels = ob_get_level();
+
+            for ($i = 0; $i < $levels; $i++) {
+                $content .= ob_get_clean();
+            }
+
+            $response->setContent($content);
+        }))
+            ->where('any', '.*')
+            ->name('wordpress');
+    }
+
+    /**
+     * Register the request handler.
+     */
+    protected function registerRequestHandler(
+        \Illuminate\Http\Request $request,
+        ?\Illuminate\Routing\Route $route
+    ): void {
+        $kernel = $this->make(HttpKernelContract::class);
+
+        $path = Str::finish($request->getBaseUrl(), $request->getPathInfo());
+
+        $except = collect([
+            admin_url(),
+            wp_login_url(),
+            wp_registration_url(),
+        ])->map(fn ($url) => parse_url($url, PHP_URL_PATH))->unique()->filter();
+
+        $api = parse_url(rest_url(), PHP_URL_PATH);
+
+        if (
+            Str::startsWith($path, $except->all()) ||
+            Str::endsWith($path, '.php')
+        ) {
+            return;
+        }
+
+        if (
+            $isApi = Str::startsWith($path, $api) &&
+            redirect_canonical(null, false)
+        ) {
+            return;
+        }
+
+        add_filter('do_parse_request', function ($condition, $wp, $params) use ($route) {
+            if (! $route) {
+                return $condition;
+            }
+
+            return apply_filters('acorn/router/do_parse_request', $condition, $wp, $params);
+        }, 100, 3);
+
+        if ($route->getName() !== 'wordpress') {
+            add_action('parse_request', fn () => $this->handleRequest($request));
+
+            return;
+        }
+
+        $config = $this->app->config->get('router.wordpress', ['web' => 'web', 'api' => 'api']);
+
+        $route->middleware($isApi ? $config['api'] : $config['web']);
+
+        ob_start();
+
+        remove_action('shutdown', 'wp_ob_end_flush_all', 1);
+        add_action('shutdown', fn () => $this->handleRequest($request), 100);
+    }
+
+    /**
+     * Handle the request.
+     */
+    public function handleRequest(\Illuminate\Http\Request $request): void
+    {
+        $kernel = $this->make(HttpKernelContract::class);
+
+        $response = $kernel->handle($request);
+
+        $body = $response->send();
+
+        $kernel->terminate($request, $response);
+
+        exit((int) $response->isServerError());
+    }
+
+    /**
+     * Use the configured default paths.
+     */
+    public function defaultPaths(): array
+    {
+        $paths = [];
+
+        foreach (['app', 'config', 'storage', 'resources', 'public'] as $path) {
+            $paths[$path] = $this->findPath($path);
+        }
+
+        $paths['bootstrap'] = "{$paths['storage']}/framework";
+
+        return $paths;
+    }
+
+    /**
+     * Normalize a relative or absolute path to an application directory.
+     */
+    protected function normalizePath(string $path): string
+    {
+        return Str::startsWith($path, ['/', '\\'])
+            ? $path
+            : $this->basePath($path);
+    }
+
+    /**
+     * Find a path that is configurable by the developer.
+     */
+    protected function findPath(string $path): string
+    {
+        $path = trim($path, '\\/');
+
+        $searchPaths = [
+            "{$this->basePath()}/{$path}",
+            get_theme_file_path($path),
+        ];
+
+        return collect($searchPaths)
+            ->map(fn ($path) => (is_string($path) && is_dir($path)) ? $path : null)
+            ->filter()
+            ->whenEmpty(fn ($paths) => $paths->add($this->fallbackPath($path)))
+            ->unique()
+            ->first();
+    }
+
+    /**
+     * Fallbacks for path types.
+     */
+    protected function fallbackPath(string $path): string
+    {
+        return match ($path) {
+            'storage' => $this->fallbackStoragePath(),
+            'app' => "{$this->basePath()}/app",
+            'public' => "{$this->basePath()}/public",
+            default => dirname(__DIR__, 3)."/{$path}",
+        };
+    }
+
+    /**
+     * Ensure that all of the storage directories exist.
+     */
+    protected function fallbackStoragePath(): string
+    {
+        $files = new Filesystem;
+        $path = Str::finish(WP_CONTENT_DIR, '/cache/acorn');
+
+        foreach ([
+            'framework/cache/data',
+            'framework/views',
+            'framework/sessions',
+            'logs',
+        ] as $directory) {
+            $files->ensureDirectoryExists("{$path}/{$directory}", 0755, true);
+        }
+
+        return $path;
     }
 }
