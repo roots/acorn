@@ -2,7 +2,6 @@
 
 namespace Roots\Acorn\Console\Concerns;
 
-use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Roots\Acorn\Application;
 
 trait GetsFreshApplication
