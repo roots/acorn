@@ -17,7 +17,6 @@ class DefaultProviders extends DefaultProvidersBase
         \Roots\Acorn\Assets\AssetsServiceProvider::class,
         \Roots\Acorn\Filesystem\FilesystemServiceProvider::class,
         \Roots\Acorn\Providers\AcornServiceProvider::class,
-        \Roots\Acorn\Providers\RouteServiceProvider::class,
         \Roots\Acorn\View\ViewServiceProvider::class,
     ];
 
