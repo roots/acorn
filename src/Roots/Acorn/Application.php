@@ -43,10 +43,9 @@ class Application extends FoundationApplication
     protected $resourcePath;
 
     /**
-     * Create a new Illuminate application instance.
+     * Create a new Application instance.
      *
      * @param  string|null  $basePath
-     * @param  array  $paths
      * @return void
      */
     public function __construct($basePath = null)
