@@ -32,7 +32,6 @@ class AcornServiceProvider extends ServiceProvider
         \Illuminate\Queue\QueueServiceProvider::class => 'queue',
         \Illuminate\Session\SessionServiceProvider::class => 'session',
         \Illuminate\View\ViewServiceProvider::class => 'view',
-        \Laravel\Sanctum\SanctumServiceProvider::class => 'sanctum',
         \Roots\Acorn\Assets\AssetsServiceProvider::class => 'assets',
     ];
 
