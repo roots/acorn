@@ -228,7 +228,6 @@ class Application extends FoundationApplication
      * - resources
      * - storage
      *
-     * @param  array  $path
      * @return $this
      */
     public function usePaths(array $paths)
@@ -727,8 +726,8 @@ class Application extends FoundationApplication
     {
         return match ($path) {
             'storage' => $this->fallbackStoragePath(),
-            'app' => "{$this->basePath()}/app",
-            'public' => "{$this->basePath()}/public",
+            'app' => $this->basePath('app'),
+            'public' => $this->basePath('public'),
             default => dirname(__DIR__, 3)."/{$path}",
         };
     }
