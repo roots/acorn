@@ -2,8 +2,7 @@
 
 namespace Roots\Acorn\Console\Concerns;
 
-use Illuminate\Contracts\Foundation\Application;
-use Roots\Acorn\Bootloader;
+use Roots\Acorn\Application;
 
 trait GetsFreshApplication
 {
@@ -14,13 +13,11 @@ trait GetsFreshApplication
      */
     protected function getFreshApplication()
     {
-        $bootloaderClass = get_class(Bootloader::getInstance());
-        $applicationClass = get_class($app = Bootloader::getInstance()->getApplication());
+        $application = get_class($app = Application::getInstance());
 
-        return (new $bootloaderClass(new $applicationClass(
-            $app->basePath(),
-            $this->getApplicationPaths($app)
-        )))->getApplication();
+        return $application::configure($app->basePath())
+            ->withPaths(...$this->getApplicationPaths($app))
+            ->boot();
     }
 
     /**
@@ -45,14 +42,14 @@ trait GetsFreshApplication
     protected function getApplicationPaths(Application $app)
     {
         return [
-            'app' => method_exists($app, 'path') ? $app->path() : $app->make('path'),
-            'lang' => method_exists($app, 'langPath') ? $app->langPath() : $app->make('path.lang'),
+            'app' => $app->path(),
             'config' => $app->configPath(),
-            'public' => method_exists($app, 'publicPath') ? $app->publicPath() : $app->make('path.public'),
             'storage' => $app->storagePath(),
-            'database' => $app->databasePath(),
             'resources' => $app->resourcePath(),
+            'public' => $app->publicPath(),
             'bootstrap' => $app->bootstrapPath(),
+            'lang' => $app->langPath(),
+            'database' => $app->databasePath(),
         ];
     }
 }

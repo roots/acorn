@@ -32,7 +32,6 @@ class AcornServiceProvider extends ServiceProvider
         \Illuminate\Queue\QueueServiceProvider::class => 'queue',
         \Illuminate\Session\SessionServiceProvider::class => 'session',
         \Illuminate\View\ViewServiceProvider::class => 'view',
-        \Laravel\Sanctum\SanctumServiceProvider::class => 'sanctum',
         \Roots\Acorn\Assets\AssetsServiceProvider::class => 'assets',
     ];
 
@@ -43,7 +42,7 @@ class AcornServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->registerConfigs();
+        //
     }
 
     /**
@@ -56,20 +55,6 @@ class AcornServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->registerPublishables();
             $this->registerPostInitEvent();
-        }
-    }
-
-    /**
-     * Register application configs.
-     *
-     * @return void
-     */
-    protected function registerConfigs()
-    {
-        $configs = array_merge($this->configs, array_values($this->providerConfigs));
-
-        foreach ($configs as $config) {
-            $this->mergeConfigFrom(dirname(__DIR__, 4)."/config/{$config}.php", $config);
         }
     }
 
@@ -91,8 +76,14 @@ class AcornServiceProvider extends ServiceProvider
     protected function publishConfigs()
     {
         foreach ($this->filterPublishableConfigs() as $config) {
+            $path = dirname(__DIR__, 4);
+
+            $file = file_exists($stub = "{$path}/config-stubs/{$config}.php")
+                ? $stub
+                : "{$path}/config/{$config}.php";
+
             $this->publishes([
-                dirname(__DIR__, 4)."/config/{$config}.php" => config_path("{$config}.php"),
+                $file => config_path("{$config}.php"),
             ], ['acorn', 'acorn-configs']);
         }
     }

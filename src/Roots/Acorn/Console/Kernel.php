@@ -51,7 +51,7 @@ class Kernel extends FoundationConsoleKernel
      */
     protected $bootstrappers = [
         \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
-        \Roots\Acorn\Bootstrap\LoadConfiguration::class,
+        \Illuminate\Foundation\Bootstrap\LoadConfiguration::class,
         \Roots\Acorn\Bootstrap\HandleExceptions::class,
         \Roots\Acorn\Bootstrap\RegisterFacades::class,
         \Illuminate\Foundation\Bootstrap\SetRequestForConsole::class,
@@ -74,7 +74,7 @@ class Kernel extends FoundationConsoleKernel
         $this->events = $events;
 
         $this->app->booted(function () {
-            $this->defineConsoleSchedule();
+            $this->resolveConsoleSchedule();
         });
     }
 

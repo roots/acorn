@@ -2,11 +2,11 @@
 
 namespace Roots;
 
-use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Illuminate\Contracts\View\Factory as ViewFactory;
+use Roots\Acorn\Application;
 use Roots\Acorn\Assets\Bundle;
 use Roots\Acorn\Assets\Contracts\Asset;
-use Roots\Acorn\Bootloader;
 
 /**
  * Get asset from manifest
@@ -34,34 +34,13 @@ function bundle(string $bundle, ?string $manifest = null): Bundle
 
 /**
  * Instantiate the bootloader.
+ *
+ * @deprecated Use `Application::configure()->boot()` instead.
  */
-function bootloader(?Application $app = null): Bootloader
+function bootloader(?ApplicationContract $app = null): Application
 {
-    $bootloader = Bootloader::getInstance($app);
-
-    /**
-     * @deprecated
-     */
-    \Roots\add_actions(['after_setup_theme', 'rest_api_init'], function () use ($bootloader) {
-        $app = $bootloader->getApplication();
-
-        if ($app->hasBeenBootstrapped()) {
-            return;
-        }
-
-        if ($app->runningInConsole()) {
-            return $bootloader->boot();
-        }
-
-        \Roots\wp_die(
-            'Acorn failed to boot. Run <code>\\Roots\\bootloader()->boot()</code>.<br><br>If you\'re using Sage, you need to <a href="https://github.com/roots/sage/blob/258d1f9675043108f7ecff0d4ed5586413a414e9/functions.php#L32">update <strong>sage/functions.php:32</strong></a>',
-            '<code>\\Roots\\bootloader()</code> was called incorrectly.',
-            'Acorn &rsaquo; Boot Error',
-            'Check out the <a href="https://github.com/roots/acorn/releases/tag/v2.0.0-beta.10">release notes</a> for more information.<br><br>This message will be removed with the next beta release of Acorn.'
-        );
-    }, 6);
-
-    return $bootloader;
+    return Application::configure()
+        ->boot();
 }
 
 /**

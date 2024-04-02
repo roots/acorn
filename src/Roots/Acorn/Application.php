@@ -9,6 +9,9 @@ use Illuminate\Foundation\PackageManifest as FoundationPackageManifest;
 use Illuminate\Foundation\ProviderRepository;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
+use Roots\Acorn\Application\Concerns\Bootable;
+use Roots\Acorn\Configuration\ApplicationBuilder;
 use Roots\Acorn\Exceptions\SkipProviderException;
 use Roots\Acorn\Filesystem\Filesystem;
 use RuntimeException;
@@ -19,6 +22,8 @@ use Throwable;
  */
 class Application extends FoundationApplication
 {
+    use Bootable;
+
     /**
      * The Acorn framework version.
      *
@@ -27,32 +32,65 @@ class Application extends FoundationApplication
     public const VERSION = '5.x-dev';
 
     /**
-     * The custom resources path defined by the developer.
+     * The custom resource path defined by the developer.
      *
      * @var string
      */
     protected $resourcePath;
 
     /**
-     * Create a new Illuminate application instance.
+     * Create a new Application instance.
      *
      * @param  string|null  $basePath
-     * @param  array|null  $paths
      * @return void
      */
-    public function __construct($basePath = null, $paths = null)
+    public function __construct($basePath = null)
     {
         if ($basePath) {
             $this->basePath = rtrim($basePath, '\/');
         }
 
-        if ($paths) {
-            $this->usePaths((array) $paths);
-        }
+        $this->useEnvironmentPath($this->environmentPath());
 
         $this->registerGlobalHelpers();
 
         parent::__construct($basePath);
+    }
+
+    /**
+     * Begin configuring a new Laravel application instance.
+     *
+     * @return \Roots\Acorn\Configuration\ApplicationBuilder
+     */
+    public static function configure(?string $basePath = null)
+    {
+        $basePath = match (true) {
+            is_string($basePath) => $basePath,
+            default => ApplicationBuilder::inferBasePath(),
+        };
+
+        return (new ApplicationBuilder(new static($basePath)))
+            ->withPaths()
+            ->withKernels()
+            ->withEvents()
+            ->withCommands()
+            ->withProviders()
+            ->withRouting(
+                web: $basePath.'/routes/web.php',
+                api: $basePath.'/routes/api.php',
+            )
+            ->withMiddleware()
+            ->withExceptions();
+    }
+
+    /**
+     * Get the environment file path.
+     */
+    public function environmentPath(): string
+    {
+        return is_file($envPath = (new Filesystem)->closest($this->basePath(), '.env') ?? '')
+            ? dirname($envPath)
+            : $this->basePath();
     }
 
     /**
@@ -77,8 +115,8 @@ class Application extends FoundationApplication
      * - public
      * - resources
      * - storage
+     * - environment
      *
-     * @param  array  $path
      * @return $this
      */
     public function usePaths(array $paths)
@@ -92,6 +130,7 @@ class Application extends FoundationApplication
             'database' => 'databasePath',
             'resources' => 'resourcePath',
             'bootstrap' => 'bootstrapPath',
+            'environment' => 'environmentPath',
         ];
 
         foreach ($paths as $pathType => $path) {
@@ -101,7 +140,9 @@ class Application extends FoundationApplication
                 throw new Exception("The {$pathType} path type is not supported.");
             }
 
-            $this->{$supportedPaths[$pathType]} = $path;
+            $this->{$supportedPaths[$pathType]} = Str::startsWith($path, $this->absoluteCachePathPrefixes)
+                ? $path
+                : $this->basePath($path);
         }
 
         $this->bindPathsInContainer();
@@ -123,13 +164,18 @@ class Application extends FoundationApplication
         $this->instance('path.public', $this->publicPath());
         $this->instance('path.resources', $this->resourcePath());
         $this->instance('path.storage', $this->storagePath());
-        $this->instance('path.bootstrap', $this->bootstrapPath());
 
-        $this->useLangPath(value(function () {
-            return is_dir($directory = $this->resourcePath('lang'))
+        $this->useBootstrapPath(value(function () {
+            return is_dir($directory = $this->basePath('.laravel'))
                 ? $directory
-                : $this->basePath('lang');
+                : $this->bootstrapPath();
         }));
+
+        $this->useLangPath(value(
+            fn () => is_dir($directory = $this->resourcePath('lang'))
+                ? $directory
+                : $this->basePath('lang')
+        ));
     }
 
     /**
@@ -177,9 +223,15 @@ class Application extends FoundationApplication
     protected function registerBaseBindings()
     {
         parent::registerBaseBindings();
+
         $this->registerPackageManifest();
     }
 
+    /**
+     * Register the package manifest.
+     *
+     * @return void
+     */
     protected function registerPackageManifest()
     {
         $this->singleton(FoundationPackageManifest::class, function () {
@@ -195,8 +247,9 @@ class Application extends FoundationApplication
                 ])
                 ->map(fn ($path) => rtrim($files->normalizePath($path), '/'))
                 ->unique()
-                ->filter(fn ($path) => @$files->isFile("{$path}/vendor/composer/installed.json") &&
-                    @$files->isFile("{$path}/composer.json")
+                ->filter(
+                    fn ($path) => @$files->isFile("{$path}/vendor/composer/installed.json") &&
+                        @$files->isFile("{$path}/composer.json")
                 )->all();
 
             return new PackageManifest(
@@ -292,9 +345,10 @@ class Application extends FoundationApplication
         $providerName = is_object($provider) ? get_class($provider) : $provider;
 
         if (! $e instanceof SkipProviderException) {
+            $error = get_class($e);
             $message = [
                 BindingResolutionException::class => "Skipping provider [{$providerName}] because it requires a dependency that cannot be found.",
-            ][$error = get_class($e)] ?? "Skipping provider [{$providerName}] because it encountered an error [{$error}].";
+            ][$error] ?? "Skipping provider [{$providerName}] because it encountered an error [{$error}].";
 
             $e = new SkipProviderException($message, 0, $e);
         }

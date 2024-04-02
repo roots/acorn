@@ -84,7 +84,7 @@ class HandleExceptions extends FoundationHandleExceptionsBootstrapper
      */
     protected function renderHttpResponse(Throwable $e)
     {
-        if (ob_get_length()) {
+        for ($i = 0; $i < ob_get_level(); $i++) {
             ob_end_clean();
         }
 

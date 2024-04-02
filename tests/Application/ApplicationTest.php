@@ -11,7 +11,7 @@ use function Roots\Acorn\Tests\temp;
 uses(TestCase::class);
 
 it('instantiates with custom paths', function () {
-    $app = new Application(null, [
+    $app = (new Application)->usePaths([
         'app' => $this->fixture('use_paths/app'),
         'config' => $this->fixture('use_paths/config'),
     ]);
