@@ -15,10 +15,9 @@ trait GetsFreshApplication
     {
         $application = get_class($app = Application::getInstance());
 
-        return (new $application(
-            $app->basePath(),
-            $this->getApplicationPaths($app)
-        ))->getApplication();
+        return $application::configure($app->basePath())
+            ->withPaths($this->getApplicationPaths($app))
+            ->boot();
     }
 
     /**
