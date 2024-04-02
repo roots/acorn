@@ -2,7 +2,9 @@
 
 namespace Roots;
 
+use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Illuminate\Contracts\View\Factory as ViewFactory;
+use Roots\Acorn\Application;
 use Roots\Acorn\Assets\Bundle;
 use Roots\Acorn\Assets\Contracts\Asset;
 
@@ -28,6 +30,17 @@ function bundle(string $bundle, ?string $manifest = null): Bundle
     }
 
     return \app('assets')->manifest($manifest)->bundle($bundle);
+}
+
+/**
+ * Instantiate the bootloader.
+ *
+ * @deprecated Use `Application::configure()->boot()` instead.
+ */
+function bootloader(?ApplicationContract $app = null): Application
+{
+    return Application::configure()
+        ->boot();
 }
 
 /**
