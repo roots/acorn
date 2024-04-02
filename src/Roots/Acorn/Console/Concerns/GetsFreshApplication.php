@@ -16,7 +16,7 @@ trait GetsFreshApplication
         $application = get_class($app = Application::getInstance());
 
         return $application::configure($app->basePath())
-            ->withPaths($this->getApplicationPaths($app))
+            ->withPaths(...$this->getApplicationPaths($app))
             ->boot();
     }
 
@@ -42,14 +42,14 @@ trait GetsFreshApplication
     protected function getApplicationPaths(Application $app)
     {
         return [
-            'app' => method_exists($app, 'path') ? $app->path() : $app->make('path'),
-            'lang' => method_exists($app, 'langPath') ? $app->langPath() : $app->make('path.lang'),
+            'app' => $app->path(),
             'config' => $app->configPath(),
-            'public' => method_exists($app, 'publicPath') ? $app->publicPath() : $app->make('path.public'),
             'storage' => $app->storagePath(),
-            'database' => $app->databasePath(),
             'resources' => $app->resourcePath(),
+            'public' => $app->publicPath(),
             'bootstrap' => $app->bootstrapPath(),
+            'lang' => $app->langPath(),
+            'database' => $app->databasePath(),
         ];
     }
 }

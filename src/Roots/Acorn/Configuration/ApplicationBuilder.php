@@ -5,10 +5,12 @@ namespace Roots\Acorn\Configuration;
 use Illuminate\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Foundation\Bootstrap\RegisterProviders;
 use Illuminate\Foundation\Configuration\ApplicationBuilder as FoundationApplicationBuilder;
-use Roots\Acorn\Application;
+use Roots\Acorn\Configuration\Concerns\Paths;
 
 class ApplicationBuilder extends FoundationApplicationBuilder
 {
+    use Paths;
+
     /**
      * Register the standard kernel classes for the application.
      *
@@ -47,18 +49,6 @@ class ApplicationBuilder extends FoundationApplicationBuilder
             \Roots\Acorn\Exceptions\Handler::class,
             fn ($handler) => $using(new Exceptions($handler)),
         );
-
-        return $this;
-    }
-
-    /**
-     * Register and configure the application's paths.
-     *
-     * @return $this
-     */
-    public function withPaths(array $paths = [])
-    {
-        $this->app->usePaths($paths);
 
         return $this;
     }
