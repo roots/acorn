@@ -4,7 +4,7 @@ namespace Roots\Acorn\Bootstrap;
 
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\Facade;
-use Roots\Acorn\Application\Application;
+use Roots\Acorn\Application;
 use Roots\Acorn\PackageManifest;
 
 class RegisterFacades

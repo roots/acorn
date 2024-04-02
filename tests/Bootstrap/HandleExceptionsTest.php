@@ -2,7 +2,7 @@
 
 use Illuminate\Config\Repository as Config;
 use Illuminate\Log\LogManager;
-use Roots\Acorn\Application\Application;
+use Roots\Acorn\Application;
 use Roots\Acorn\Bootstrap\HandleExceptions;
 use Roots\Acorn\Tests\Test\TestCase;
 

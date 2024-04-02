@@ -101,7 +101,7 @@ class ApplicationBuilder extends FoundationApplicationBuilder
     /**
      * Get the application instance.
      *
-     * @return \Roots\Acorn\Application\Application
+     * @return \Roots\Acorn\Application
      */
     public function create()
     {
@@ -111,7 +111,7 @@ class ApplicationBuilder extends FoundationApplicationBuilder
     /**
      * Boot the application.
      *
-     * @return \Roots\Acorn\Application\Application
+     * @return \Roots\Acorn\Application
      */
     public function boot()
     {

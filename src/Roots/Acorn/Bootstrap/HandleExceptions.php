@@ -13,7 +13,7 @@ class HandleExceptions extends FoundationHandleExceptionsBootstrapper
     /**
      * Bootstrap the given application.
      *
-     * @param  \Roots\Acorn\Application\Application  $app
+     * @param  \Roots\Acorn\Application  $app
      * @return void
      */
     public function bootstrap(Application $app)
