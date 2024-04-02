@@ -2,7 +2,7 @@
 <?php
 
 (static function () {
-    if (! is_file($autoloadPath = dirname(__DIR__, 4) . '/vendor/autoload.php')) {
+    if (!is_file($autoloadPath = dirname(__DIR__, 4) . '/vendor/autoload.php')) {
         $autoloadPath = dirname(__DIR__) . '/vendor/autoload.php';
     }
 
@@ -22,5 +22,5 @@
 
     require_once "{$rootPath}/{$composer['extra']['wordpress-install-dir']}/wp-blog-header.php";
 
-    Roots\Acorn\Application::configure()->boot();
+    Roots\Acorn\Application\Application::configure()->boot();
 })();

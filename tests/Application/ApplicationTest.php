@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Config\Repository as ConfigRepository;
-use Roots\Acorn\Application;
+use Roots\Acorn\Application\Application;
 use Roots\Acorn\Tests\Test\Stubs\BootableServiceProvider;
 use Roots\Acorn\Tests\Test\TestCase;
 
@@ -208,6 +208,19 @@ it('gracefully skips a provider that does not exist', function () {
 it('uses custom aliases', function () {
     $app = new Application();
 
-    expect($app->getAlias(\Roots\Acorn\Application::class))->toBe('app');
+    expect($app->getAlias(\Roots\Acorn\Application\Application::class))->toBe('app');
     expect($app->getAlias(\Roots\Acorn\PackageManifest::class))->toBe(\Illuminate\Foundation\PackageManifest::class);
 });
+
+it('deprecates the Application class', function () {
+    $app = new \Roots\Acorn\Application();
+
+    $manager = $app['log'] = mock(\Illuminate\Log\LogManager::class);
+    $app->bootstrapWith([]);
+
+    $manager->shouldReceive('debug')->once()->andReturnUsing(function ($message) {
+        expect($message)->toContain('Roots\Acorn\Application is deprecated.');
+    });
+
+    $app->boot();
+})->skip('This test will be enabled when Application class is deprecated.');

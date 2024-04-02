@@ -6,7 +6,7 @@ use Illuminate\Foundation\Application as FoundationApplication;
 use Illuminate\Foundation\Console\AboutCommand as BaseCommand;
 use Illuminate\Support\Str;
 use ReflectionFunction;
-use Roots\Acorn\Application;
+use Roots\Acorn\Application\Application;
 
 class AboutCommand extends BaseCommand
 {

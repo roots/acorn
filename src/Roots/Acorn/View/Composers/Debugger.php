@@ -3,7 +3,7 @@
 namespace Roots\Acorn\View\Composers;
 
 use Illuminate\View\View;
-use Roots\Acorn\Application;
+use Roots\Acorn\Application\Application;
 
 class Debugger
 {

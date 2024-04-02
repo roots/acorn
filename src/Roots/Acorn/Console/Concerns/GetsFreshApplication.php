@@ -2,7 +2,7 @@
 
 namespace Roots\Acorn\Console\Concerns;
 
-use Roots\Acorn\Application;
+use Roots\Acorn\Application\Application;
 
 trait GetsFreshApplication
 {
