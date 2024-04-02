@@ -35,6 +35,7 @@ class DefaultProviders extends DefaultProvidersBase
             ->filter(fn ($provider) => ! str_contains($provider, 'Illuminate\\Foundation\\'))
             ->push('Illuminate\\Foundation\\Providers\\ComposerServiceProvider')
             ->push('Illuminate\\Database\\MigrationServiceProvider')
+            ->unique()
             ->all();
     }
 }
