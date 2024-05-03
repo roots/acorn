@@ -75,7 +75,7 @@ fi
 cd /roots/app
 
 # Install Composer dependencies
-composer -d /roots/app install --no-progress --optimize-autoloader --prefer-dist --no-interaction
+composer -d /roots/app install --no-progress --optimize-autoloader --prefer-dist --no-interaction --ignore-platform-reqs
 
 # Link the workspace folder
 if cat "${WORKSPACE_FOLDER}/composer.json" | jq '.type' | grep -q wordpress-theme; then
@@ -88,7 +88,7 @@ else
   cat /roots/app/composer.json | jq ".repositories += [{ type: \"path\", url: \"${WORKSPACE_FOLDER}\" }]" > /roots/app/composer.tmp \
   && rm /roots/app/composer.json \
   && mv /roots/app/composer.tmp /roots/app/composer.json \
-  && composer require -d /roots/app $(cat "${WORKSPACE_FOLDER}/composer.json" | jq '.name' | tr -d '"') --no-interaction -W
+  && composer require -d /roots/app $(cat "${WORKSPACE_FOLDER}/composer.json" | jq '.name' | tr -d '"') --no-interaction -W --ignore-platform-reqs
 fi
 
 composer remove -d /roots/app wpackagist-theme/twentytwentyfour
