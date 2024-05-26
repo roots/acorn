@@ -14,24 +14,26 @@ class Kernel extends FoundationConsoleKernel
      * @var array
      */
     protected $commands = [
-        \Illuminate\Queue\Console\WorkCommand::class,
         \Illuminate\Cache\Console\ClearCommand::class,
         \Illuminate\Cache\Console\ForgetCommand::class,
         \Illuminate\Database\Console\DbCommand::class,
         \Illuminate\Database\Console\Seeds\SeedCommand::class,
+        \Illuminate\Database\Console\TableCommand::class,
         \Illuminate\Database\Console\WipeCommand::class,
         \Illuminate\Foundation\Console\ClearCompiledCommand::class,
         \Illuminate\Foundation\Console\ComponentMakeCommand::class,
         \Illuminate\Foundation\Console\ConfigClearCommand::class,
         \Illuminate\Foundation\Console\ConsoleMakeCommand::class,
         \Illuminate\Foundation\Console\EnvironmentCommand::class,
+        \Illuminate\Foundation\Console\JobMakeCommand::class,
         \Illuminate\Foundation\Console\PackageDiscoverCommand::class,
         \Illuminate\Foundation\Console\ProviderMakeCommand::class,
         \Illuminate\Foundation\Console\RouteClearCommand::class,
         \Illuminate\Foundation\Console\RouteListCommand::class,
-        \Illuminate\Foundation\Console\JobMakeCommand::class,
         \Illuminate\Foundation\Console\ViewCacheCommand::class,
         \Illuminate\Foundation\Console\ViewClearCommand::class,
+        \Illuminate\Queue\Console\TableCommand::class,
+        \Illuminate\Queue\Console\WorkCommand::class,
         \Illuminate\Routing\Console\ControllerMakeCommand::class,
         \Illuminate\Routing\Console\MiddlewareMakeCommand::class,
         \Roots\Acorn\Console\Commands\AboutCommand::class,
@@ -45,8 +47,6 @@ class Kernel extends FoundationConsoleKernel
         \Roots\Acorn\Console\Commands\RouteCacheCommand::class,
         \Roots\Acorn\Console\Commands\SummaryCommand::class,
         \Roots\Acorn\Console\Commands\VendorPublishCommand::class,
-        \Illuminate\Database\Console\TableCommand::class,
-        \Illuminate\Queue\Console\TableCommand::class,
     ];
 
     /**
