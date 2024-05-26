@@ -5,8 +5,6 @@ namespace Roots\Acorn\Console;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Console\Kernel as FoundationConsoleKernel;
-use Illuminate\Queue\Console\WorkCommand;
-use Illuminate\Queue\Worker;
 
 class Kernel extends FoundationConsoleKernel
 {
