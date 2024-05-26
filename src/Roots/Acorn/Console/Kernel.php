@@ -5,6 +5,8 @@ namespace Roots\Acorn\Console;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Console\Kernel as FoundationConsoleKernel;
+use Illuminate\Queue\Console\WorkCommand;
+use Illuminate\Queue\Worker;
 
 class Kernel extends FoundationConsoleKernel
 {
@@ -14,6 +16,7 @@ class Kernel extends FoundationConsoleKernel
      * @var array
      */
     protected $commands = [
+        \Illuminate\Queue\Console\WorkCommand::class,
         \Illuminate\Cache\Console\ClearCommand::class,
         \Illuminate\Cache\Console\ForgetCommand::class,
         \Illuminate\Database\Console\DbCommand::class,
@@ -28,6 +31,7 @@ class Kernel extends FoundationConsoleKernel
         \Illuminate\Foundation\Console\ProviderMakeCommand::class,
         \Illuminate\Foundation\Console\RouteClearCommand::class,
         \Illuminate\Foundation\Console\RouteListCommand::class,
+        \Illuminate\Foundation\Console\JobMakeCommand::class,
         \Illuminate\Foundation\Console\ViewCacheCommand::class,
         \Illuminate\Foundation\Console\ViewClearCommand::class,
         \Illuminate\Routing\Console\ControllerMakeCommand::class,
@@ -43,6 +47,8 @@ class Kernel extends FoundationConsoleKernel
         \Roots\Acorn\Console\Commands\RouteCacheCommand::class,
         \Roots\Acorn\Console\Commands\SummaryCommand::class,
         \Roots\Acorn\Console\Commands\VendorPublishCommand::class,
+        \Illuminate\Database\Console\TableCommand::class,
+        \Illuminate\Queue\Console\TableCommand::class,
     ];
 
     /**
