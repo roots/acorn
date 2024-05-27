@@ -2,7 +2,6 @@
 
 namespace Roots\Acorn;
 
-use Illuminate\Queue\QueueServiceProvider;
 use Illuminate\Support\Collection;
 use Illuminate\Support\DefaultProviders as DefaultProvidersBase;
 
