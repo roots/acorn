@@ -4,9 +4,9 @@ namespace Roots\Acorn\Providers;
 
 use Illuminate\Queue\Worker;
 use Illuminate\Support\ServiceProvider;
-use Roots\Acorn\Application;
 
-class QueueServiceProvider extends ServiceProvider {
+class QueueServiceProvider extends ServiceProvider
+{
     /**
      * Register services.
      *
@@ -24,6 +24,6 @@ class QueueServiceProvider extends ServiceProvider {
      */
     public function boot()
     {
-       //
+        //
     }
 }
