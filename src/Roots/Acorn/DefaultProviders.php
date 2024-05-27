@@ -2,6 +2,7 @@
 
 namespace Roots\Acorn;
 
+use Illuminate\Queue\QueueServiceProvider;
 use Illuminate\Support\Collection;
 use Illuminate\Support\DefaultProviders as DefaultProvidersBase;
 
@@ -17,8 +18,8 @@ class DefaultProviders extends DefaultProvidersBase
         \Roots\Acorn\Assets\AssetsServiceProvider::class,
         \Roots\Acorn\Filesystem\FilesystemServiceProvider::class,
         \Roots\Acorn\Providers\AcornServiceProvider::class,
+        \Roots\Acorn\Providers\QueueServiceProvider::class,
         \Roots\Acorn\View\ViewServiceProvider::class,
-        \Illuminate\Queue\QueueServiceProvider::class,
     ];
 
     /**
