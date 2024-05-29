@@ -18,6 +18,7 @@ class Kernel extends FoundationConsoleKernel
         \Illuminate\Cache\Console\ForgetCommand::class,
         \Illuminate\Database\Console\DbCommand::class,
         \Illuminate\Database\Console\Seeds\SeedCommand::class,
+        \Illuminate\Database\Console\Seeds\SeederMakeCommand::class,
         \Illuminate\Database\Console\TableCommand::class,
         \Illuminate\Database\Console\WipeCommand::class,
         \Illuminate\Foundation\Console\ClearCompiledCommand::class,
