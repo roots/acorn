@@ -32,6 +32,7 @@ class DefaultProviders extends DefaultProvidersBase
      */
     protected array $disallowedProviders = [
         \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
+        \Illuminate\View\ViewServiceProvider::class,
     ];
 
     /**
@@ -42,6 +43,10 @@ class DefaultProviders extends DefaultProvidersBase
     public function __construct(?array $providers = null)
     {
         parent::__construct($providers);
+
+        if ($providers) {
+            return;
+        }
 
         $this->providers = Collection::make($this->providers)
             ->merge($this->acornProviders)
