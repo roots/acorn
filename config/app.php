@@ -3,8 +3,6 @@
 use Illuminate\Support\Facades\Facade;
 use Roots\Acorn\ServiceProvider;
 
-use function Roots\env;
-
 return [
 
     /*
