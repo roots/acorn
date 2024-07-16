@@ -44,6 +44,8 @@ class DefaultProviders extends DefaultProvidersBase
     {
         parent::__construct($providers);
 
+        $this->providers = array_unique($this->providers);
+
         if ($providers) {
             return;
         }
