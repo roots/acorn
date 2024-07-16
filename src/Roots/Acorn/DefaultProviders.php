@@ -4,20 +4,34 @@ namespace Roots\Acorn;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\DefaultProviders as DefaultProvidersBase;
+use Illuminate\Support\Str;
 
 class DefaultProviders extends DefaultProvidersBase
 {
     /**
      * The Acorn providers.
-     *
-     * @var array
      */
-    protected $acornProviders = [
+    protected array $acornProviders = [
         \Roots\Acorn\Assets\AssetsServiceProvider::class,
         \Roots\Acorn\Filesystem\FilesystemServiceProvider::class,
         \Roots\Acorn\Providers\AcornServiceProvider::class,
         \Roots\Acorn\Providers\QueueServiceProvider::class,
         \Roots\Acorn\View\ViewServiceProvider::class,
+    ];
+
+    /**
+     * The additional framework providers.
+     */
+    protected array $additionalProviders = [
+        \Illuminate\Foundation\Providers\ComposerServiceProvider::class,
+        \Illuminate\Database\MigrationServiceProvider::class,
+    ];
+
+    /**
+     * The disallowed providers.
+     */
+    protected array $disallowedProviders = [
+        \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
     ];
 
     /**
@@ -31,9 +45,8 @@ class DefaultProviders extends DefaultProvidersBase
 
         $this->providers = Collection::make($this->providers)
             ->merge($this->acornProviders)
-            ->filter(fn ($provider) => ! str_contains($provider, 'Illuminate\\Foundation\\'))
-            ->push('Illuminate\\Foundation\\Providers\\ComposerServiceProvider')
-            ->push('Illuminate\\Database\\MigrationServiceProvider')
+            ->filter(fn ($provider) => ! Str::contains($provider, $this->disallowedProviders))
+            ->merge($this->additionalProviders)
             ->unique()
             ->all();
     }
