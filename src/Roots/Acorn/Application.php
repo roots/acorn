@@ -75,10 +75,6 @@ class Application extends FoundationApplication
             ->withEvents()
             ->withCommands()
             ->withProviders()
-            ->withRouting(
-                web: $basePath.'/routes/web.php',
-                api: $basePath.'/routes/api.php',
-            )
             ->withMiddleware()
             ->withExceptions();
     }
