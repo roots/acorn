@@ -2,6 +2,8 @@
 
 namespace Roots\Acorn\Sage\Concerns;
 
+use Illuminate\Support\Str;
+
 trait FiltersTemplates
 {
     /**
@@ -35,13 +37,12 @@ trait FiltersTemplates
             $templates = array_diff($templates, $pages);
         }
 
-        if (($index = array_search('index.php', $files)) !== false) {
-            unset($files[$index]);
-
-            $templates[] = 'index.php';
-        }
-
-        return [...$pages, ...$files, ...$templates];
+        return collect([...$pages, ...$files, ...$templates])
+            ->groupBy(function ($item) {
+                return Str::of($item)->afterLast('/')->before('.');
+            })
+            ->flatten()
+            ->toArray();
     }
 
     /**
