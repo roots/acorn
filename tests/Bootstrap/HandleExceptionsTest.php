@@ -11,8 +11,8 @@ use function Roots\Acorn\Tests\mock;
 uses(TestCase::class);
 
 beforeEach(function () {
-    $this->container = Application::setInstance(new Application());
-    $this->config = new Config();
+    $this->container = Application::setInstance(new Application);
+    $this->config = new Config;
 
     $this->config->set('app.debug', true);
 
@@ -20,7 +20,7 @@ beforeEach(function () {
 
     $this->container->bootstrapWith([]);
 
-    $this->handleExceptions = new HandleExceptions();
+    $this->handleExceptions = new HandleExceptions;
 
     with(new ReflectionClass($this->handleExceptions), function ($reflection) {
         $property = tap($reflection->getProperty('app'))->setAccessible(true);

@@ -44,7 +44,7 @@ class RegisterConsole
 
             $command = str_replace('\\', '\\\\', $command);
 
-            $status = $kernel->handle($input = new StringInput($command), new ConsoleOutput());
+            $status = $kernel->handle($input = new StringInput($command), new ConsoleOutput);
 
             $kernel->terminate($input, $status);
 

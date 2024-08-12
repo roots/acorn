@@ -120,7 +120,7 @@ class AcornServiceProvider extends ServiceProvider
                 return;
             }
 
-            $files = new Filesystem();
+            $files = new Filesystem;
 
             $files->deleteDirectory(WP_CONTENT_DIR.'/cache/acorn');
         });

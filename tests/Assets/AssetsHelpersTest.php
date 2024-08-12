@@ -9,7 +9,7 @@ use function Spatie\Snapshots\assertMatchesSnapshot;
 uses(TestCase::class);
 
 it('asset() can access the default manifest', function () {
-    $app = new \Roots\Acorn\Application();
+    $app = new \Roots\Acorn\Application;
     $app->singleton('config', fn () => new \Illuminate\Config\Repository([
         'assets' => [
             'default' => 'app',
@@ -35,7 +35,7 @@ it('asset() can access the default manifest', function () {
 });
 
 it('asset() can access a specified manifest', function () {
-    $app = new \Roots\Acorn\Application();
+    $app = new \Roots\Acorn\Application;
     $app->singleton('config', fn () => new \Illuminate\Config\Repository([
         'assets' => [
             'default' => 'app',
@@ -61,7 +61,7 @@ it('asset() can access a specified manifest', function () {
 });
 
 it('bundle() can access the default manifest', function () {
-    $app = new \Roots\Acorn\Application();
+    $app = new \Roots\Acorn\Application;
     $app->singleton('config', fn () => new \Illuminate\Config\Repository([
         'assets' => [
             'default' => 'app',
@@ -87,7 +87,7 @@ it('bundle() can access the default manifest', function () {
 });
 
 it('bundle() can access a specified manifest', function () {
-    $app = new \Roots\Acorn\Application();
+    $app = new \Roots\Acorn\Application;
     $app->singleton('config', fn () => new \Illuminate\Config\Repository([
         'assets' => [
             'default' => 'app',

@@ -9,15 +9,15 @@ use function Spatie\Snapshots\assertMatchesSnapshot;
 uses(TestCase::class);
 
 it('registers an asset manager', function () {
-    $app = new \Roots\Acorn\Application();
-    $app->singleton('config', fn () => new \Illuminate\Config\Repository());
+    $app = new \Roots\Acorn\Application;
+    $app->singleton('config', fn () => new \Illuminate\Config\Repository);
     $app->register(\Roots\Acorn\Assets\AssetsServiceProvider::class);
 
     expect($app->make('assets'))->toBeInstanceOf(Manager::class);
 });
 
 it('registers a default manifest', function () {
-    $app = new \Roots\Acorn\Application();
+    $app = new \Roots\Acorn\Application;
     $app->singleton('config', fn () => new \Illuminate\Config\Repository([
         'assets' => [
             'default' => 'app',

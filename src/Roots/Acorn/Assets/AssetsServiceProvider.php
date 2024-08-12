@@ -37,7 +37,7 @@ class AssetsServiceProvider extends ServiceProvider
         if ($this->app->bound('view')) {
             $this->app->make('view')
                 ->getEngineResolver()->resolve('blade')->getCompiler()
-                ->directive('asset', new BladeDirective());
+                ->directive('asset', new BladeDirective);
         }
     }
 
