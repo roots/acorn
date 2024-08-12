@@ -184,7 +184,7 @@ class ViewServiceProvider extends ViewServiceProviderBase
         $namespace = $this->app->getNamespace();
 
         // TODO: This should be cacheable, perhaps via `wp acorn` command
-        foreach ((new Finder())->in($path)->files() as $composer) {
+        foreach ((new Finder)->in($path)->files() as $composer) {
             $composer = $namespace.str_replace(
                 ['/', '.php'],
                 ['\\', ''],

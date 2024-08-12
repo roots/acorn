@@ -50,8 +50,8 @@ trait Bootable
         $kernel = $this->make(ConsoleKernelContract::class);
 
         $status = $kernel->handle(
-            $input = new \Symfony\Component\Console\Input\ArgvInput(),
-            new \Symfony\Component\Console\Output\ConsoleOutput()
+            $input = new \Symfony\Component\Console\Input\ArgvInput,
+            new \Symfony\Component\Console\Output\ConsoleOutput
         );
 
         $kernel->terminate($input, $status);
@@ -90,7 +90,7 @@ trait Bootable
 
             $status = $kernel->handle(
                 $input = new \Symfony\Component\Console\Input\StringInput($command),
-                new \Symfony\Component\Console\Output\ConsoleOutput()
+                new \Symfony\Component\Console\Output\ConsoleOutput
             );
 
             $kernel->terminate($input, $status);

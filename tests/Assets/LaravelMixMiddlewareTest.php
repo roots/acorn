@@ -8,7 +8,7 @@ use function Spatie\Snapshots\assertMatchesSnapshot;
 uses(TestCase::class);
 
 it('skips url modification if hot file is absent', function () {
-    $middleware = new LaravelMixMiddleware();
+    $middleware = new LaravelMixMiddleware;
 
     $config = $middleware->handle([
         'path' => $this->fixture('mix_no_bundle/public'),
@@ -19,7 +19,7 @@ it('skips url modification if hot file is absent', function () {
 });
 
 it('modifies url when hot file is present', function () {
-    $middleware = new LaravelMixMiddleware();
+    $middleware = new LaravelMixMiddleware;
 
     $config = $middleware->handle([
         'path' => $this->fixture('mix_no_bundle_hmr/public'),

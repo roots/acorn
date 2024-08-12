@@ -11,7 +11,7 @@ use function Spatie\Snapshots\assertMatchesSnapshot;
 uses(TestCase::class);
 
 it('creates a manifest', function () {
-    $assets = new Manager();
+    $assets = new Manager;
 
     $manifest = $assets->manifest('theme', [
         'path' => $this->fixture('bud_single_runtime'),
@@ -23,7 +23,7 @@ it('creates a manifest', function () {
 });
 
 it('registers a manifest', function () {
-    $assets = new Manager();
+    $assets = new Manager;
 
     $assets->register('theme', new Manifest(
         $this->fixture('bud_single_runtime'),

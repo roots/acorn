@@ -104,7 +104,7 @@ class Manager
     {
         return array_reduce($this->middleware, function (array $config, $middleware): array {
             if (is_string($middleware) && class_exists($middleware)) {
-                $middleware = new $middleware();
+                $middleware = new $middleware;
             }
 
             return is_callable($middleware) ? $middleware($config) : $middleware->handle($config);

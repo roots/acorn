@@ -231,7 +231,7 @@ class Application extends FoundationApplication
     protected function registerPackageManifest()
     {
         $this->singleton(FoundationPackageManifest::class, function () {
-            $files = new Filesystem();
+            $files = new Filesystem;
 
             $composerPaths = collect(get_option('active_plugins'))
                 ->map(fn ($plugin) => WP_PLUGIN_DIR.DIRECTORY_SEPARATOR.dirname($plugin))
@@ -307,7 +307,7 @@ class Application extends FoundationApplication
 
         $providers->splice(1, 0, [$this->make(PackageManifest::class)->providers()]);
 
-        (new ProviderRepository($this, new Filesystem(), $this->getCachedServicesPath()))
+        (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPath()))
             ->load($providers->collapse()->toArray());
     }
 
@@ -402,7 +402,7 @@ class Application extends FoundationApplication
      */
     protected function getAppComposer(): string
     {
-        return (new Filesystem())->closest($this->path(), 'composer.json') ?? $this->basePath('composer.json');
+        return (new Filesystem)->closest($this->path(), 'composer.json') ?? $this->basePath('composer.json');
     }
 
     /**
