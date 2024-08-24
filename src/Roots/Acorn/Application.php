@@ -69,12 +69,19 @@ class Application extends FoundationApplication
             default => ApplicationBuilder::inferBasePath(),
         };
 
+        $web = $basePath.'/routes/web.php';
+        $api = $basePath.'/routes/api.php';
+
         return (new ApplicationBuilder(new static($basePath)))
             ->withPaths()
             ->withKernels()
             ->withEvents()
             ->withCommands()
             ->withProviders()
+            ->withRouting(
+                web: file_exists($web) ? $web : null,
+                api: file_exists($api) ? $api : null,
+            )
             ->withMiddleware()
             ->withExceptions();
     }
