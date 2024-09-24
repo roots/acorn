@@ -143,7 +143,10 @@ trait Bootable
     {
         Route::any('{any?}', fn () => tap(response(''), function (Response $response) {
             foreach (headers_list() as $header) {
-                [$header, $value] = explode(': ', $header, 2);
+                [$header, $value] = explode(':', $header, 2);
+                // HTTP/1.1 Header specification: https://datatracker.ietf.org/doc/html/rfc7230#section-3.2
+                // remove the optional leading whitespace
+                $value = ltrim($value);
 
                 if (! headers_sent()) {
                     header_remove($header);
