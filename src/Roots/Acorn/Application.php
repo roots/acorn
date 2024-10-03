@@ -344,7 +344,7 @@ class Application extends FoundationApplication
             $error = get_class($e);
             $message = [
                 BindingResolutionException::class => "Skipping provider [{$providerName}] because it requires a dependency that cannot be found.",
-            ][$error] ?? "Skipping provider [{$providerName}] because it encountered an error [{$error}].";
+            ][$error] ?? "Skipping provider [{$providerName}] because it encountered an error [{$error}]: {$e->getMessage()}";
 
             $e = new SkipProviderException($message, 0, $e);
         }
