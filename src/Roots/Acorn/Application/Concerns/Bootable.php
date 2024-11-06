@@ -211,7 +211,9 @@ trait Bootable
             return;
         }
 
-        $route->middleware('web');
+        $middleware = $this->config->get('router.wordpress.web', 'web');
+
+        $route->middleware($middleware);
 
         ob_start();
 
