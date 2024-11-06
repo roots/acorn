@@ -156,6 +156,8 @@ trait Bootable
                 $response->header('X-Powered-By', $this->version());
             }
 
+            $response->setStatusCode(http_response_code());
+
             $content = '';
 
             $levels = ob_get_level();
@@ -194,13 +196,6 @@ trait Bootable
             return;
         }
 
-        if (
-            $isApi = Str::startsWith($path, $api) &&
-            redirect_canonical(null, false)
-        ) {
-            return;
-        }
-
         add_filter('do_parse_request', function ($condition, $wp, $params) use ($route) {
             if (! $route) {
                 return $condition;
@@ -215,9 +210,15 @@ trait Bootable
             return;
         }
 
-        $config = $this->config->get('router.wordpress', ['web' => 'web', 'api' => 'api']);
+        if (redirect_canonical(null, false)) {
+            return;
+        }
 
-        $route->middleware($isApi ? $config['api'] : $config['web']);
+        $middleware = Str::startsWith($path, $api)
+            ? $this->config->get('router.wordpress.api', 'api')
+            : $this->config->get('router.wordpress.web', 'web');
+
+        $route->middleware($middleware);
 
         ob_start();
 
