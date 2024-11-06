@@ -218,6 +218,8 @@ class Bootloader
                     $response->header('X-Powered-By', $this->app->version());
                 }
 
+                $response->setStatusCode(http_response_code());
+
                 $content = '';
 
                 $levels = ob_get_level();
@@ -257,13 +259,6 @@ class Bootloader
             return;
         }
 
-        if (
-            $isApi = Str::startsWith($path, $api) &&
-            redirect_canonical(null, false)
-        ) {
-            return;
-        }
-
         add_filter('do_parse_request', function ($condition, $wp, $params) use ($route) {
             if (! $route) {
                 return $condition;
@@ -282,9 +277,15 @@ class Bootloader
             return;
         }
 
-        $config = $this->app->config->get('router.wordpress', ['web' => 'web', 'api' => 'api']);
+        if (redirect_canonical(null, false)) {
+            return;
+        }
 
-        $route->middleware($isApi ? $config['api'] : $config['web']);
+        $middleware = Str::startsWith($path, $api)
+            ? $this->app->config->get('router.wordpress.api', 'api')
+            : $this->app->config->get('router.wordpress.web', 'web');
+
+        $route->middleware($middleware);
 
         ob_start();
 
