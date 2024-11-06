@@ -79,6 +79,12 @@ trait Bootable
                     continue;
                 }
 
+                if ($key === 'artisan-path' && $value !== false) {
+                    $this->environmentPath("{$value}");
+                    $command .= ' --path='.escapeshellarg($value);
+                    continue;
+                }
+                
                 $command .= " --{$key}";
 
                 if ($value !== true) {
