@@ -180,11 +180,12 @@ trait Bootable
         $path = Str::finish($request->getBaseUrl(), $request->getPathInfo());
 
         $except = collect([
-            rest_url(),
             admin_url(),
             wp_login_url(),
             wp_registration_url(),
         ])->map(fn ($url) => parse_url($url, PHP_URL_PATH))->unique()->filter();
+
+        $api = parse_url(rest_url(), PHP_URL_PATH);
 
         if (
             Str::startsWith($path, $except->all()) ||
@@ -211,7 +212,9 @@ trait Bootable
             return;
         }
 
-        $middleware = $this->config->get('router.wordpress.web', 'web');
+        $middleware = Str::startsWith($path, $api)
+            ? $this->config->get('router.wordpress.api', 'api')
+            : $this->config->get('router.wordpress.web', 'web');
 
         $route->middleware($middleware);
 
