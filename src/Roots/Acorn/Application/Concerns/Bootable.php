@@ -156,6 +156,8 @@ trait Bootable
                 $response->header('X-Powered-By', $this->version());
             }
 
+            $response->setStatusCode(http_response_code());
+
             $content = '';
 
             $levels = ob_get_level();
