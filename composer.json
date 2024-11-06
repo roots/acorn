@@ -51,6 +51,7 @@
     "illuminate/console": "^11.0",
     "illuminate/container": "^11.0",
     "illuminate/contracts": "^11.0",
+    "illuminate/cookie": "^11.0",
     "illuminate/database": "^11.0",
     "illuminate/encryption": "^11.0",
     "illuminate/events": "^11.0",
