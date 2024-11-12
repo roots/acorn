@@ -25,6 +25,7 @@ class DefaultProviders extends DefaultProvidersBase
     protected array $additionalProviders = [
         \Illuminate\Foundation\Providers\ComposerServiceProvider::class,
         \Illuminate\Database\MigrationServiceProvider::class,
+        \Illuminate\Foundation\Hashing\HashServiceProvider::class
     ];
 
     /**
