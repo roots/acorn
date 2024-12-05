@@ -2,7 +2,6 @@
 
 namespace Roots\Acorn\Exceptions;
 
-use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Foundation\Exceptions\Handler as FoundationHandler;
 use Throwable;
 
