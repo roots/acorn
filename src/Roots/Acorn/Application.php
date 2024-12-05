@@ -74,7 +74,7 @@ class Application extends FoundationApplication
             default => ApplicationBuilder::inferBasePath(),
         };
 
-        $application = (new ApplicationBuilder(new static($basePath)))
+        return (new ApplicationBuilder(new static($basePath)))
             ->withPaths()
             ->withKernels()
             ->withEvents()
@@ -82,8 +82,6 @@ class Application extends FoundationApplication
             ->withProviders()
             ->withMiddleware()
             ->withExceptions();
-
-        return $application;
     }
 
     /**
