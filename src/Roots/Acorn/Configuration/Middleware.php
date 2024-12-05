@@ -46,6 +46,16 @@ class Middleware extends FoundationMiddleware
     }
 
     /**
+     * Modify the middleware in the "wordpress" group.
+     *
+     * @return $this
+     */
+    public function wordpress(array|string $append = [], array|string $prepend = [], array|string $remove = [], array $replace = [])
+    {
+        return $this->modifyGroup('wordpress', $append, $prepend, $remove, $replace);
+    }
+
+    /**
      * Get the middleware groups.
      *
      * @return array
@@ -55,10 +65,10 @@ class Middleware extends FoundationMiddleware
         $middleware = [
             'web' => array_values(array_filter([
                 // \Illuminate\Cookie\Middleware\EncryptCookies::class,
-                // \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+                \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
                 \Illuminate\Session\Middleware\StartSession::class,
                 \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-                // \Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
+                // \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
                 \Illuminate\Routing\Middleware\SubstituteBindings::class,
                 $this->authenticatedSessions ? 'auth.session' : null,
             ])),
@@ -69,6 +79,8 @@ class Middleware extends FoundationMiddleware
                 \Illuminate\Routing\Middleware\SubstituteBindings::class,
             ])),
         ];
+
+        $middleware['wordpress'] = $middleware['web'];
 
         $middleware = array_merge($middleware, $this->groups);
 

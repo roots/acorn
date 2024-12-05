@@ -39,6 +39,11 @@ class Application extends FoundationApplication
     protected $resourcePath;
 
     /**
+     * Indicates if the application handles WordPress requests.
+     */
+    protected bool $handleWordPressRequests = false;
+
+    /**
      * Create a new Application instance.
      *
      * @param  string|null  $basePath
@@ -77,6 +82,24 @@ class Application extends FoundationApplication
             ->withProviders()
             ->withMiddleware()
             ->withExceptions();
+    }
+
+    /**
+     * Handle WordPress routes using the request handler.
+     */
+    public function handleWordPressRequests(): self
+    {
+        $this->handleWordPressRequests = true;
+
+        return $this;
+    }
+
+    /**
+     * Determine if the application handles WordPress requests.
+     */
+    public function handlesWordPressRequests(): bool
+    {
+        return $this->handleWordPressRequests;
     }
 
     /**

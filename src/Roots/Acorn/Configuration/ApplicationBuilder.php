@@ -2,9 +2,11 @@
 
 namespace Roots\Acorn\Configuration;
 
+use Closure;
 use Illuminate\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Foundation\Bootstrap\RegisterProviders;
 use Illuminate\Foundation\Configuration\ApplicationBuilder as FoundationApplicationBuilder;
+use Roots\Acorn\Application;
 use Roots\Acorn\Configuration\Concerns\Paths;
 
 class ApplicationBuilder extends FoundationApplicationBuilder
@@ -49,6 +51,35 @@ class ApplicationBuilder extends FoundationApplicationBuilder
             \Roots\Acorn\Exceptions\Handler::class,
             fn ($handler) => $using(new Exceptions($handler)),
         );
+
+        return $this;
+    }
+
+    /**
+     * Register the routing services for the application.
+     *
+     * @return $this
+     */
+    public function withRouting(?Closure $using = null,
+        array|string|null $web = null,
+        array|string|null $api = null,
+        ?string $commands = null,
+        ?string $channels = null,
+        ?string $pages = null,
+        ?string $health = null,
+        string $apiPrefix = 'api',
+        ?callable $then = null,
+        bool $wordpress = false)
+    {
+        if (! $web && file_exists($path = base_path('routes/web.php'))) {
+            $web = $path;
+        }
+
+        parent::withRouting($using, $web, $api, $commands, $channels, $apiPrefix, $then);
+
+        if ($wordpress) {
+            $this->app->handleWordPressRequests();
+        }
 
         return $this;
     }

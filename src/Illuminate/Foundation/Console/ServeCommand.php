@@ -8,9 +8,9 @@ use Illuminate\Support\Env;
 use Illuminate\Support\InteractsWithTime;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
+use function Illuminate\Support\php_binary;
 use function Termwind\terminal;
 
 #[AsCommand(name: 'serve')]
@@ -178,7 +178,7 @@ class ServeCommand extends Command
             : __DIR__.'/../resources/server.php';
 
         return [
-            (new PhpExecutableFinder)->find(false),
+            php_binary(),
             '-S',
             $this->host().':'.$this->port(),
             $server,
@@ -291,7 +291,7 @@ class ServeCommand extends Command
                 }
 
                 if (str($line)->contains(' Accepted')) {
-                    $requestPort = $this->getRequestPortFromLine($line);
+                    $requestPort = static::getRequestPortFromLine($line);
 
                     $this->requestsPool[$requestPort] = [
                         $this->getDateFromLine($line),
@@ -299,15 +299,15 @@ class ServeCommand extends Command
                         microtime(true),
                     ];
                 } elseif (str($line)->contains([' [200]: GET '])) {
-                    $requestPort = $this->getRequestPortFromLine($line);
+                    $requestPort = static::getRequestPortFromLine($line);
 
                     $this->requestsPool[$requestPort][1] = trim(explode('[200]: GET', $line)[1]);
                 } elseif (str($line)->contains('URI:')) {
-                    $requestPort = $this->getRequestPortFromLine($line);
+                    $requestPort = static::getRequestPortFromLine($line);
 
                     $this->requestsPool[$requestPort][1] = trim(explode('URI: ', $line)[1]);
                 } elseif (str($line)->contains(' Closing')) {
-                    $requestPort = $this->getRequestPortFromLine($line);
+                    $requestPort = static::getRequestPortFromLine($line);
 
                     if (empty($this->requestsPool[$requestPort])) {
                         $this->requestsPool[$requestPort] = [
@@ -357,7 +357,7 @@ class ServeCommand extends Command
      */
     protected function getDateFromLine($line)
     {
-        $regex = env('PHP_CLI_SERVER_WORKERS', 1) > 1
+        $regex = ! windows_os() && env('PHP_CLI_SERVER_WORKERS', 1) > 1
             ? '/^\[\d+]\s\[([a-zA-Z0-9: ]+)\]/'
             : '/^\[([^\]]+)\]/';
 
@@ -374,11 +374,15 @@ class ServeCommand extends Command
      * @param  string  $line
      * @return int
      */
-    protected function getRequestPortFromLine($line)
+    public static function getRequestPortFromLine($line)
     {
-        preg_match('/:(\d+)\s(?:(?:\w+$)|(?:\[.*))/', $line, $matches);
+        preg_match('/(\[\w+\s\w+\s\d+\s[\d:]+\s\d{4}\]\s)?:(\d+)\s(?:(?:\w+$)|(?:\[.*))/', $line, $matches);
 
-        return (int) $matches[1];
+        if (! isset($matches[2])) {
+            throw new \InvalidArgumentException("Failed to extract the request port. Ensure the log line contains a valid port: {$line}");
+        }
+
+        return (int) $matches[2];
     }
 
     /**
