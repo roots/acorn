@@ -113,7 +113,9 @@ trait Bootable
 
         $kernel->bootstrap($request);
 
-        $this->registerDefaultRoute();
+        if ($this->app->handlesWordPressRequests()) {
+            $this->registerWordPressRoute();
+        }
 
         try {
             $route = $this->make('router')->getRoutes()->match($request);
@@ -137,9 +139,9 @@ trait Bootable
     }
 
     /**
-     * Register the default WordPress route.
+     * Register a default route for WordPress requests.
      */
-    protected function registerDefaultRoute(): void
+    protected function registerWordPressRoute(): void
     {
         Route::any('{any?}', fn () => tap(response(''), function (Response $response) {
             foreach (headers_list() as $header) {
@@ -185,9 +187,8 @@ trait Bootable
             admin_url(),
             wp_login_url(),
             wp_registration_url(),
+            rest_url(),
         ])->map(fn ($url) => parse_url($url, PHP_URL_PATH))->unique()->filter();
-
-        $api = parse_url(rest_url(), PHP_URL_PATH);
 
         if (
             Str::startsWith($path, $except->all()) ||
@@ -210,15 +211,14 @@ trait Bootable
             return;
         }
 
-        if (redirect_canonical(null, false)) {
+        if (
+            ! $this->app->handlesWordPressRequests() ||
+            redirect_canonical(null, false)
+        ) {
             return;
         }
 
-        $middleware = Str::startsWith($path, $api)
-            ? $this->config->get('router.wordpress.api', 'api')
-            : $this->config->get('router.wordpress.web', 'web');
-
-        $route->middleware($middleware);
+        $route->middleware('wordpress');
 
         ob_start();
 
