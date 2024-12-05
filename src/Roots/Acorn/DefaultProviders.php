@@ -23,6 +23,7 @@ class DefaultProviders extends DefaultProvidersBase
      * The additional framework providers.
      */
     protected array $additionalProviders = [
+        \Illuminate\Foundation\Providers\FoundationServiceProvider::class,
         \Illuminate\Foundation\Providers\ComposerServiceProvider::class,
         \Illuminate\Database\MigrationServiceProvider::class,
     ];
