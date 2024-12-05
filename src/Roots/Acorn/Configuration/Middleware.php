@@ -46,6 +46,16 @@ class Middleware extends FoundationMiddleware
     }
 
     /**
+     * Modify the middleware in the "wordpress" group.
+     *
+     * @return $this
+     */
+    public function wordpress(array|string $append = [], array|string $prepend = [], array|string $remove = [], array $replace = [])
+    {
+        return $this->modifyGroup('wordpress', $append, $prepend, $remove, $replace);
+    }
+
+    /**
      * Get the middleware groups.
      *
      * @return array
