@@ -55,6 +55,7 @@
     "illuminate/encryption": "^11.0",
     "illuminate/events": "^11.0",
     "illuminate/filesystem": "^11.0",
+    "illuminate/hashing": "^11.0",
     "illuminate/http": "^11.0",
     "illuminate/log": "^11.0",
     "illuminate/queue": "^11.0",
