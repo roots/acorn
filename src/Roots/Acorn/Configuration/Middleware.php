@@ -64,11 +64,11 @@ class Middleware extends FoundationMiddleware
     {
         $middleware = [
             'web' => array_values(array_filter([
-                \Roots\Acorn\Http\Middleware\EncryptCookies::class,
+                // \Illuminate\Cookie\Middleware\EncryptCookies::class,
                 \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
                 \Illuminate\Session\Middleware\StartSession::class,
                 \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-                \Roots\Acorn\Http\Middleware\VerifyCsrfToken::class,
+                // \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
                 \Illuminate\Routing\Middleware\SubstituteBindings::class,
                 $this->authenticatedSessions ? 'auth.session' : null,
             ])),
