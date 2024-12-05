@@ -2,15 +2,12 @@
 
 namespace Roots\Acorn\Configuration\Concerns;
 
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Env;
 use Illuminate\Support\Str;
 use Roots\Acorn\Filesystem\Filesystem;
 
 trait Paths
 {
-    protected Application $app;
-
     /**
      * Infer the application's base directory from the environment.
      *
