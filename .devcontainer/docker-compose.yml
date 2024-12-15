@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: roots/dev-8.3
+    image: roots/dev-8.4
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     environment:
