@@ -23,6 +23,9 @@ jobs:
               sleep 1
             done
             wp core install --url=http://web:8080 --title=Acorn --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email --allow-root
+
+            cd /roots/acorn
+            composer install
             composer run-script test tests/Integration/Routing
 
       - name: Verify routes
