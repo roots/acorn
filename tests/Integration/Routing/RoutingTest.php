@@ -10,6 +10,7 @@ expect()->extend('toHaveBodyClass', function (string $class) {
     preg_match('/<body[^>]*class=["\']([^"\']*)["\']/', $this->value, $matches);
     expect($matches)->toHaveCount(2, 'No body tag with class attribute found');
     expect($matches[1])->toContain($class);
+
     return $this;
 });
 
@@ -40,7 +41,7 @@ it('handles non-existent routes with 404', function () {
         'http_errors' => false,
     ]);
 
-    $response = $client->request('GET', 'http://web:8080/non-existent-' . time());
+    $response = $client->request('GET', 'http://web:8080/non-existent-'.time());
     expect($response->getStatusCode())->toBe(404);
     expect((string) $response->getBody())->toContain('Page not found');
     expect((string) $response->getBody())->toHaveBodyClass('error404');
