@@ -4,7 +4,7 @@ namespace Roots\Acorn\Tests\Integration\Routing;
 
 use GuzzleHttp\Client;
 
-uses(RoutingTestCase::class);
+uses(RoutingTestCase::class)->group('integration');
 
 expect()->extend('toHaveBodyClass', function (string $class) {
     preg_match('/<body[^>]*class=["\']([^"\']*)["\']/', $this->value, $matches);
