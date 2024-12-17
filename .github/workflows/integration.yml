@@ -19,6 +19,9 @@ jobs:
           runCmd: |
             cd /roots/app
             composer install
+            composer remove roots/acorn
+            composer require roots/acorn --no-interaction
+            composer require nunomaduro/collision
             while ! mysqladmin ping -h"database" --silent; do
               sleep 1
             done
