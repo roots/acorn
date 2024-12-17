@@ -19,9 +19,12 @@ jobs:
           runCmd: |
             cd /roots/app
             composer install
+            # ???
             composer remove roots/acorn
             composer require roots/acorn --no-interaction
-            composer require nunomaduro/collision
+            composer require --dev nunomaduro/collision
+            composer require --dev spatie/laravel-ignition
+            # ???
             while ! mysqladmin ping -h"database" --silent; do
               sleep 1
             done
