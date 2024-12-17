@@ -1,0 +1,29 @@
+name: Integration
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Copy .env file
+        working-directory: .devcontainer
+        run: cp config/app/.env.example .env
+
+      - name: Start dev container and test
+        uses: devcontainers/ci@v0.3
+        with:
+          configFile: .devcontainer/devcontainer.json
+          runCmd: |
+            composer install
+            while ! mysqladmin ping -h"database" --silent; do
+              sleep 1
+            done
+            wp core install --url=http://web:8080 --title=Acorn --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email --allow-root
+            composer test tests/Integration/Routing
+
+      - name: Verify routes
+        run: |
+          curl -s http://localhost:8080/test/ | grep "Howdy"
