@@ -23,6 +23,7 @@ jobs:
               sleep 1
             done
             wp core install --url=http://web:8080 --title=Acorn --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email --allow-root
+            wp acorn optimize:clear
 
             cd /roots/acorn
             composer install
