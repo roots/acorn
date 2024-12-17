@@ -17,12 +17,13 @@ jobs:
         with:
           configFile: .devcontainer/devcontainer.json
           runCmd: |
+            cd /roots/app
             composer install
             while ! mysqladmin ping -h"database" --silent; do
               sleep 1
             done
             wp core install --url=http://web:8080 --title=Acorn --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email --allow-root
-            composer test tests/Integration/Routing
+            composer run-script test tests/Integration/Routing
 
       - name: Verify routes
         run: |
