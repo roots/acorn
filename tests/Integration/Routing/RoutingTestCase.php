@@ -2,8 +2,8 @@
 
 namespace Roots\Acorn\Tests\Integration\Routing;
 
-use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Illuminate\Foundation\Testing\Concerns\MakesHttpRequests;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Roots\Acorn\Tests\Test\Concerns\SupportsGlobalStubs;
 use Roots\Acorn\Tests\Test\Concerns\SupportsScopedFixtures;
 
@@ -19,7 +19,7 @@ class RoutingTestCase extends MockeryTestCase
         $this->clearStubs();
 
         // Ensure routes directory exists
-        if (!is_dir('/roots/app/public/routes')) {
+        if (! is_dir('/roots/app/public/routes')) {
             mkdir('/roots/app/public/routes', 0777, true);
         }
 
@@ -37,7 +37,7 @@ PHP;
         file_put_contents('/roots/app/public/routes/web.php', $webRoutes);
 
         // Ensure mu-plugins directory exists
-        if (!is_dir('/roots/app/public/content/mu-plugins')) {
+        if (! is_dir('/roots/app/public/content/mu-plugins')) {
             mkdir('/roots/app/public/content/mu-plugins', 0777, true);
         }
 

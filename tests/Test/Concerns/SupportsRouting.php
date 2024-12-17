@@ -2,8 +2,8 @@
 
 namespace Roots\Acorn\Tests\Test\Concerns;
 
-use Roots\Acorn\Application;
 use Illuminate\Support\Facades\Route;
+use Roots\Acorn\Application;
 
 trait SupportsRouting
 {
