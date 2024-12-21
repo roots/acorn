@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: roots/dev-8.3
+    image: roots/dev-8.4
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     environment:
@@ -29,6 +29,9 @@ services:
     image: nginx:latest
     ports:
       - '${FORWARD_WEB_PORT:-8080}:80'
+
+    expose:
+      - '8080'
     environment:
       - NGINX_ENTRYPOINT_WORKER_PROCESSES_AUTOTUNE=1
     volumes:
