@@ -1,0 +1,40 @@
+name: Integration
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Copy .env file
+        working-directory: .devcontainer
+        run: cp config/app/.env.example .env
+
+      - name: Start dev container and test
+        uses: devcontainers/ci@v0.3
+        with:
+          configFile: .devcontainer/devcontainer.json
+          runCmd: |
+            cd /roots/app
+            composer install
+            # ???
+            composer remove roots/acorn
+            composer require roots/acorn --no-interaction
+            composer require --dev nunomaduro/collision
+            composer require --dev spatie/laravel-ignition
+            # ???
+            while ! mysqladmin ping -h"database" --silent; do
+              sleep 1
+            done
+            wp core install --url=http://web:8080 --title=Acorn --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email --allow-root
+            wp acorn optimize:clear
+
+            cd /roots/acorn
+            composer install
+            composer run-script test tests/Integration/Routing
+
+      - name: Verify routes
+        run: |
+          curl -s http://localhost:8080/test/ | grep "Howdy"
