@@ -72,7 +72,7 @@ return [
     |
     */
 
-    'timezone' => get_option('timezone_string') ?: env('APP_TIMEZONE', 'UTC'),
+    'timezone' => env('APP_TIMEZONE', 'UTC'),
 
     /*
     |--------------------------------------------------------------------------
