@@ -143,33 +143,37 @@ trait Bootable
      */
     protected function registerWordPressRoute(): void
     {
-        Route::any('{any?}', fn () => tap(response(''), function (Response $response) {
-            foreach (headers_list() as $header) {
-                [$header, $value] = preg_split("/:\s{0,1}/", $header, 2);
+        Route::any('{any?}', fn (Request $request) => tap(
+            response(''),
+            function (Response $response) use ($request) {
+                foreach (headers_list() as $header) {
+                    [$header, $value] = preg_split("/:\s{0,1}/", $header, 2);
 
-                if (! headers_sent()) {
-                    header_remove($header);
+                    if (! headers_sent()) {
+                        header_remove($header);
+                    }
+
+                    $response->header($header, $value, $header !== 'Set-Cookie');
                 }
 
-                $response->header($header, $value, $header !== 'Set-Cookie');
-            }
+                if ($this->hasDebugModeEnabled()) {
+                    $response->header('X-Powered-By', $this->version());
+                }
 
-            if ($this->hasDebugModeEnabled()) {
-                $response->header('X-Powered-By', $this->version());
-            }
+                $response->setStatusCode(http_response_code());
 
-            $response->setStatusCode(http_response_code());
+                // Get the output buffer contents from our shutdown handler
+                $content = $request->request->get('wp_ob_content');
 
-            $content = '';
+                $levels = ob_get_level();
 
-            $levels = ob_get_level();
+                for ($i = 0; $i < $levels; $i++) {
+                    $content .= ob_get_contents();
+                }
 
-            for ($i = 0; $i < $levels; $i++) {
-                $content .= ob_get_clean();
-            }
-
-            $response->setContent($content);
-        }))
+                $response->setContent($content);
+            })
+        )
             ->where('any', '.*')
             ->name('wordpress');
     }
@@ -220,9 +224,23 @@ trait Bootable
 
         $route->middleware('wordpress');
 
+        // We need to save our start level as there might be higher level output buffer handlers due to caching plugins.
+        $startLevel = ob_get_level();
         ob_start();
 
         remove_action('shutdown', 'wp_ob_end_flush_all', 1);
+        add_action('shutdown', function () use ($request, $startLevel) {
+            // Clean buffer only until our start level, keep possible higher level buffers to their handlers
+            $levels = ob_get_level() - $startLevel;
+            $content = '';
+
+            for ($i = 0; $i < $levels; $i++) {
+                $content .= ob_get_clean();
+            }
+
+            // Save content onto request to have it available in the Response handler
+            $request->request->set('wp_ob_content', $content);
+        }, 1);
         add_action('shutdown', fn () => $this->handleRequest($request), 100);
     }
 
