@@ -33,6 +33,8 @@ class Kernel extends FoundationConsoleKernel
         \Illuminate\Foundation\Console\RouteListCommand::class,
         \Illuminate\Foundation\Console\ViewCacheCommand::class,
         \Illuminate\Foundation\Console\ViewClearCommand::class,
+        \Illuminate\Queue\Console\BatchesTableCommand::class,
+        \Illuminate\Queue\Console\FailedTableCommand::class,
         \Illuminate\Queue\Console\TableCommand::class,
         \Illuminate\Queue\Console\WorkCommand::class,
         \Illuminate\Routing\Console\ControllerMakeCommand::class,
