@@ -223,22 +223,17 @@ trait Bootable
         ob_start();
 
         remove_action('shutdown', 'wp_ob_end_flush_all', 1);
-        add_action('shutdown', fn () => $this->handleRequest($request), 100);
-    }
 
-    /**
-     * Handle the request.
-     */
-    public function handleRequest(\Illuminate\Http\Request $request): void
-    {
         $kernel = $this->make(HttpKernelContract::class);
 
         $response = $kernel->handle($request);
 
-        $response->send();
+        add_action('shutdown', function () use ($kernel, $request, $response) {
+            $response->send();
 
-        $kernel->terminate($request, $response);
+            $kernel->terminate($request, $response);
 
-        exit((int) $response->isServerError());
+            exit((int) $response->isServerError());
+        }, 100);
     }
 }
