@@ -98,6 +98,7 @@ class SummaryCommand extends ListCommand
 
         $namespaces = collect($this->getApplication()->all())
             ->filter(fn ($command) => ! $command->isHidden())
+            ->unique(fn ($command) => $command->getName())
             ->groupBy(function ($command) {
                 $nameParts = explode(':', $name = $command->getName());
 
