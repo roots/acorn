@@ -91,6 +91,12 @@ class Manager
 
         $path = $config['path'];
         $url = $config['url'];
+
+        $viteManifest = $path . '/build/manifest.json';
+        if (file_exists($viteManifest)) {
+            return new Manifest($path, $url, [], ['vite' => ['js' => [], 'css' => []]]);
+        }
+
         $assets = isset($config['assets']) ? $this->getJsonManifest($config['assets']) : [];
         $bundles = isset($config['bundles']) ? $this->getJsonManifest($config['bundles']) : [];
 
