@@ -17,6 +17,6 @@ class Vite extends FoundationVite
      */
     protected function assetPath($path, $secure = null)
     {
-        return str_replace('/build/build', '/build', asset($path)->uri());
+        return str_replace('/build/build/', '/build/', asset($path)->uri());
     }
 }
