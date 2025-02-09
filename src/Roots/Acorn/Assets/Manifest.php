@@ -48,6 +48,10 @@ class Manifest implements ManifestContract
         $this->bundles = $bundles;
 
         foreach ($assets as $original => $revved) {
+            if (is_array($revved)) {
+                $revved = $revved['file'];
+            }
+
             $this->assets[$this->normalizeRelativePath($original)] = $this->normalizeRelativePath($revved);
         }
     }
