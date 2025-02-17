@@ -45,6 +45,7 @@
     "php": ">=8.2",
     "ext-json": "*",
     "ext-mbstring": "*",
+    "dragonmantank/cron-expression": "^3.4",
     "guzzlehttp/guzzle": "^7.8",
     "illuminate/cache": "^11.0",
     "illuminate/config": "^11.0",
