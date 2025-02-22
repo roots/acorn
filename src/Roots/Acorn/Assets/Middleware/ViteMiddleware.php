@@ -14,7 +14,7 @@ class ViteMiddleware
      */
     public function handle($config)
     {
-        if (! Vite::manifestHash()) {
+        if (! Vite::manifestHash() && ! Vite::isRunningHot()) {
             return $config;
         }
 
