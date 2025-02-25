@@ -17,6 +17,7 @@ trait GetsFreshApplication
 
         return $application::configure($app->basePath())
             ->withPaths(...$this->getApplicationPaths($app))
+            ->withRouting()
             ->boot();
     }
 
