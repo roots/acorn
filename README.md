@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://packagist.org/packages/roots/acorn"><img alt="Packagist Downloads" src="https://img.shields.io/packagist/dt/roots/acorn?label=downloads&colorB=2b3072&colorA=525ddc&style=flat-square"></a>
-  <a href="https://laravel.com/docs/11.x"><img alt="Laravel v11" src="https://img.shields.io/static/v1?label=laravel&message=v11&logo=Laravel&style=flat-square&color=f9322c"></a>
+  <a href="https://laravel.com/docs/12.x"><img alt="Laravel v12" src="https://img.shields.io/static/v1?label=laravel&message=v12&logo=Laravel&style=flat-square&color=f9322c"></a>
   <a href="https://github.com/roots/acorn/actions/workflows/main.yml"><img alt="Build Status" src="https://img.shields.io/github/actions/workflow/status/roots/acorn/main.yml?branch=main&logo=github&label=CI&style=flat-square"></a>
   <a href="https://bsky.app/profile/roots.dev"><img alt="Follow roots.dev on Bluesky" src="https://img.shields.io/badge/follow-@roots.dev-0085ff?logo=bluesky&style=flat-square"></a>
 </p>
