@@ -44,7 +44,7 @@ trait InteractsWithExceptionHandling
     /**
      * Only handle the given exceptions via the exception handler.
      *
-     * @param  list<class-string<\Throwable>>  $exceptions
+     * @param  array  $exceptions
      * @return $this
      */
     protected function handleExceptions(array $exceptions)
@@ -65,7 +65,7 @@ trait InteractsWithExceptionHandling
     /**
      * Disable exception handling for the test.
      *
-     * @param  list<class-string<\Throwable>>  $except
+     * @param  array  $except
      * @return $this
      */
     protected function withoutExceptionHandling(array $except = [])
@@ -87,7 +87,7 @@ trait InteractsWithExceptionHandling
              * Create a new class instance.
              *
              * @param  \Illuminate\Contracts\Debug\ExceptionHandler  $originalHandler
-             * @param  list<class-string<\Throwable>>  $except
+             * @param  array  $except
              * @return void
              */
             public function __construct($originalHandler, $except = [])
@@ -113,7 +113,7 @@ trait InteractsWithExceptionHandling
              * Determine if the exception should be reported.
              *
              * @param  \Throwable  $e
-             * @return false
+             * @return bool
              */
             public function shouldReport(Throwable $e)
             {
@@ -172,7 +172,7 @@ trait InteractsWithExceptionHandling
      * Assert that the given callback throws an exception with the given message when invoked.
      *
      * @param  \Closure  $test
-     * @param  (\Closure(\Throwable): bool)|class-string<\Throwable>  $expectedClass
+     * @param  \Closure|class-string<\Throwable>  $expectedClass
      * @param  string|null  $expectedMessage
      * @return $this
      */

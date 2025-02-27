@@ -5,9 +5,7 @@ namespace Illuminate\Foundation\Testing\Concerns;
 use Carbon\CarbonImmutable;
 use Illuminate\Console\Application as Artisan;
 use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Migrations\Migrator;
 use Illuminate\Foundation\Bootstrap\HandleExceptions;
 use Illuminate\Foundation\Bootstrap\RegisterProviders;
 use Illuminate\Foundation\Console\AboutCommand;
@@ -170,10 +168,8 @@ trait InteractsWithTestCaseLifecycle
         Component::forgetComponentsResolver();
         Component::forgetFactory();
         ConvertEmptyStringsToNull::flushState();
-        Factory::flushState();
         EncryptCookies::flushState();
         HandleExceptions::flushState();
-        Migrator::withoutMigrations([]);
         Once::flush();
         PreventRequestsDuringMaintenance::flushState();
         Queue::createPayloadUsing(null);
@@ -245,12 +241,10 @@ trait InteractsWithTestCaseLifecycle
      */
     public static function tearDownAfterClassUsingTestCase()
     {
-        if (class_exists(PHPUnitRegistry::class)) {
-            (function () {
-                $this->classDocBlocks = [];
-                $this->methodDocBlocks = [];
-            })->call(PHPUnitRegistry::getInstance());
-        }
+        (function () {
+            $this->classDocBlocks = [];
+            $this->methodDocBlocks = [];
+        })->call(PHPUnitRegistry::getInstance());
     }
 
     /**

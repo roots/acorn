@@ -18,7 +18,7 @@ trait RefreshDatabase
     {
         $this->beforeRefreshingDatabase();
 
-        if ($this->usingInMemoryDatabases()) {
+        if ($this->usingInMemoryDatabase()) {
             $this->restoreInMemoryDatabase();
         }
 
@@ -28,33 +28,15 @@ trait RefreshDatabase
     }
 
     /**
-     * Determine if any of the connections transacting is using in-memory databases.
+     * Determine if an in-memory database is being used.
      *
      * @return bool
      */
-    protected function usingInMemoryDatabases()
+    protected function usingInMemoryDatabase()
     {
-        foreach ($this->connectionsToTransact() as $name) {
-            if ($this->usingInMemoryDatabase($name)) {
-                return true;
-            }
-        }
+        $default = config('database.default');
 
-        return false;
-    }
-
-    /**
-     * Determine if a given database connection is an in-memory database.
-     *
-     * @return bool
-     */
-    protected function usingInMemoryDatabase(?string $name = null)
-    {
-        if (is_null($name)) {
-            $name = config('database.default');
-        }
-
-        return config("database.connections.{$name}.database") === ':memory:';
+        return config("database.connections.$default.database") === ':memory:';
     }
 
     /**
@@ -81,7 +63,7 @@ trait RefreshDatabase
     protected function refreshTestDatabase()
     {
         if (! RefreshDatabaseState::$migrated) {
-            $this->migrateDatabases();
+            $this->artisan('migrate:fresh', $this->migrateFreshUsing());
 
             $this->app[Kernel::class]->setArtisan(null);
 
@@ -89,16 +71,6 @@ trait RefreshDatabase
         }
 
         $this->beginDatabaseTransaction();
-    }
-
-    /**
-     * Migrate the database.
-     *
-     * @return void
-     */
-    protected function migrateDatabases()
-    {
-        $this->artisan('migrate:fresh', $this->migrateFreshUsing());
     }
 
     /**
@@ -119,7 +91,7 @@ trait RefreshDatabase
 
             $connection->setTransactionManager($transactionsManager);
 
-            if ($this->usingInMemoryDatabase($name)) {
+            if ($this->usingInMemoryDatabase()) {
                 RefreshDatabaseState::$inMemoryConnections[$name] ??= $connection->getPdo();
             }
 
@@ -156,7 +128,7 @@ trait RefreshDatabase
     protected function connectionsToTransact()
     {
         return property_exists($this, 'connectionsToTransact')
-                            ? $this->connectionsToTransact : [config('database.default')];
+                            ? $this->connectionsToTransact : [null];
     }
 
     /**

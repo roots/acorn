@@ -108,7 +108,6 @@ class Inspiring
             'The biggest battle is the war against ignorance. - Mustafa Kemal Atatürk',
             'Always remember that you are absolutely unique. Just like everyone else. - Margaret Mead',
             'You must be the change you wish to see in the world. - Mahatma Gandhi',
-            'We must ship. - Taylor Otwell',
         ]);
     }
 

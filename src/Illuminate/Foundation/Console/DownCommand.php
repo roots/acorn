@@ -42,7 +42,7 @@ class DownCommand extends Command
     public function handle()
     {
         try {
-            if ($this->laravel->maintenanceMode()->active() && ! $this->getSecret()) {
+            if ($this->laravel->maintenanceMode()->active()) {
                 $this->components->info('Application is already down.');
 
                 return 0;

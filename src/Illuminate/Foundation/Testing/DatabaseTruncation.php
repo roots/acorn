@@ -4,6 +4,7 @@ namespace Illuminate\Foundation\Testing;
 
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\Schema\PostgresBuilder;
 use Illuminate\Foundation\Testing\Traits\CanConfigureMigrationCommands;
 use Illuminate\Support\Collection;
 
@@ -93,12 +94,14 @@ trait DatabaseTruncation
                 function (Collection $tables) use ($connection, $name) {
                     $exceptTables = $this->exceptTables($connection, $name);
 
-                    return $tables->reject(fn (array $table) => $this->tableExistsIn($table, $exceptTables));
+                    return $tables->filter(fn (array $table) => ! $this->tableExistsIn($table, $exceptTables));
                 }
             )
             ->each(function (array $table) use ($connection) {
                 $connection->withoutTablePrefix(function ($connection) use ($table) {
-                    $table = $connection->table($table['schema_qualified_name']);
+                    $table = $connection->table(
+                        $table['schema'] ? $table['schema'].'.'.$table['name'] : $table['name']
+                    );
 
                     if ($table->exists()) {
                         $table->truncate();
@@ -120,7 +123,12 @@ trait DatabaseTruncation
 
         $schema = $connection->getSchemaBuilder();
 
-        return static::$allTables[$name] = (new Collection($schema->getTables($schema->getCurrentSchemaListing())))->all();
+        return static::$allTables[$name] = (new Collection($schema->getTables()))->when(
+            $schema instanceof PostgresBuilder ? $schema->getSchemas() : null,
+            fn (Collection $tables, array $schemas) => $tables->filter(
+                fn (array $table) => in_array($table['schema'], $schemas)
+            )
+        )->all();
     }
 
     /**
@@ -129,7 +137,7 @@ trait DatabaseTruncation
     protected function tableExistsIn(array $table, array $tables): bool
     {
         return $table['schema']
-            ? ! empty(array_intersect([$table['name'], $table['schema_qualified_name']], $tables))
+            ? ! empty(array_intersect([$table['name'], $table['schema'].'.'.$table['name']], $tables))
             : in_array($table['name'], $tables);
     }
 
