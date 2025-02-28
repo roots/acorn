@@ -154,10 +154,6 @@ trait Bootable
                 $response->header($header, $value, $header !== 'Set-Cookie');
             }
 
-            if ($this->hasDebugModeEnabled()) {
-                $response->header('X-Powered-By', $this->version());
-            }
-
             $response->setStatusCode(http_response_code());
 
             $content = '';

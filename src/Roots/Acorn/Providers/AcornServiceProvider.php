@@ -56,6 +56,28 @@ class AcornServiceProvider extends ServiceProvider
             $this->registerPublishables();
             $this->registerPostInitEvent();
         }
+
+        $this->poweredBy();
+    }
+
+    /**
+     * Add a header.
+     *
+     * Disable with `add_filter('acorn/powered_by', '__return_false');`
+     *
+     * @return void
+     */
+    protected function poweredBy()
+    {
+        add_filter('wp_headers', function ($headers) {
+            if (! apply_filters('acorn/powered_by', true)) {
+                return $headers;
+            }
+
+            $headers['X-Powered-By'] = $this->app->version();
+
+            return $headers;
+        });
     }
 
     /**
