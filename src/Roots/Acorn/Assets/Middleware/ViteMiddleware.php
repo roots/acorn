@@ -18,6 +18,10 @@ class ViteMiddleware
             return $config;
         }
 
+        if (str_contains($config['path'], '/build')) {
+            return $config;
+        }
+
         return [
             'url' => get_theme_file_uri('public/build'),
             'path' => public_path('build'),
