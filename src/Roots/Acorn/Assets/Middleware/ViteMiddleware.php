@@ -18,7 +18,7 @@ class ViteMiddleware
             return $config;
         }
 
-        if (! empty($config['url']) && ! empty($config['path'])) {
+        if (str_contains($config['path'], '/build/')) {
             return $config;
         }
 
