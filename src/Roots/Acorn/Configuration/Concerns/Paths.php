@@ -115,7 +115,10 @@ trait Paths
     protected function fallbackStoragePath(): string
     {
         $files = new Filesystem;
-        $path = Str::finish(WP_CONTENT_DIR, '/cache/acorn');
+        $path = Str::of(WP_CONTENT_DIR)
+            ->finish('/cache/acorn')
+            ->replace('/', DIRECTORY_SEPARATOR)
+            ->toString();
 
         foreach ([
             'framework/cache/data',
