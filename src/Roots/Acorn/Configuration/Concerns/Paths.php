@@ -6,6 +6,8 @@ use Illuminate\Support\Env;
 use Illuminate\Support\Str;
 use Roots\Acorn\Filesystem\Filesystem;
 
+use function Illuminate\Filesystem\join_paths;
+
 trait Paths
 {
     /**
@@ -55,7 +57,7 @@ trait Paths
             $paths[$path] = $this->normalizeApplicationPath($path);
         }
 
-        $paths['bootstrap'] = $this->normalizeApplicationPath($path, "{$paths['storage']}/framework");
+        $paths['bootstrap'] = $this->normalizeApplicationPath($path, join_paths($paths['storage'], 'framework'));
 
         return $paths;
     }
@@ -115,7 +117,10 @@ trait Paths
     protected function fallbackStoragePath(): string
     {
         $files = new Filesystem;
-        $path = Str::finish(WP_CONTENT_DIR, '/cache/acorn');
+        $path = Str::of(WP_CONTENT_DIR)
+            ->finish('/cache/acorn')
+            ->replace('/', DIRECTORY_SEPARATOR)
+            ->toString();
 
         foreach ([
             'framework/cache/data',
