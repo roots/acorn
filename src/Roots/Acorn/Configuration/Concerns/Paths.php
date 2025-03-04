@@ -6,6 +6,8 @@ use Illuminate\Support\Env;
 use Illuminate\Support\Str;
 use Roots\Acorn\Filesystem\Filesystem;
 
+use function Illuminate\Filesystem\join_paths;
+
 trait Paths
 {
     /**
@@ -55,7 +57,7 @@ trait Paths
             $paths[$path] = $this->normalizeApplicationPath($path);
         }
 
-        $paths['bootstrap'] = $this->normalizeApplicationPath($path, "{$paths['storage']}/framework");
+        $paths['bootstrap'] = $this->normalizeApplicationPath($path, join_paths($paths['storage'], 'framework'));
 
         return $paths;
     }
