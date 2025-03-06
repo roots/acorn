@@ -131,9 +131,20 @@ class Application extends FoundationApplication
      */
     protected function registerSupportHelpers()
     {
-        $path = InstalledVersions::getInstallPath('illuminate/support');
-
-        require_once "{$path}/helpers.php";
+        $vendorPath = dirname(__DIR__, 5); // Navigate to the vendor directory
+        $supportHelpersPath = "{$vendorPath}/laravel/framework/src/Illuminate/Support/helpers.php";
+        
+        if (file_exists($supportHelpersPath)) {
+            require_once $supportHelpersPath;
+        } else {
+            // Fallback to local Illuminate directory if it exists
+            $localPath = dirname(__DIR__, 2).'/Illuminate/Support/helpers.php';
+            if (file_exists($localPath)) {
+                require_once $localPath;
+            } else {
+                error_log('Unable to locate Illuminate Support helpers.php file');
+            }
+        }
     }
 
     /**
