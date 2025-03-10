@@ -173,9 +173,7 @@ class Application extends FoundationApplication
                 throw new Exception("The {$pathType} path type is not supported.");
             }
 
-            $this->{$supportedPaths[$pathType]} = Str::startsWith($path, $this->absoluteCachePathPrefixes)
-                ? $path
-                : $this->basePath($path);
+            $this->{$supportedPaths[$pathType]} = $path;
         }
 
         $this->bindPathsInContainer();
