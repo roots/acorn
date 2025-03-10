@@ -10,7 +10,6 @@ use Illuminate\Foundation\PackageManifest as FoundationPackageManifest;
 use Illuminate\Foundation\ProviderRepository;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
 use Roots\Acorn\Application\Concerns\Bootable;
 use Roots\Acorn\Configuration\ApplicationBuilder;
 use Roots\Acorn\Exceptions\SkipProviderException;
