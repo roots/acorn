@@ -10,7 +10,6 @@ use Illuminate\Foundation\PackageManifest as FoundationPackageManifest;
 use Illuminate\Foundation\ProviderRepository;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
 use Roots\Acorn\Application\Concerns\Bootable;
 use Roots\Acorn\Configuration\ApplicationBuilder;
 use Roots\Acorn\Exceptions\SkipProviderException;
@@ -173,9 +172,7 @@ class Application extends FoundationApplication
                 throw new Exception("The {$pathType} path type is not supported.");
             }
 
-            $this->{$supportedPaths[$pathType]} = Str::startsWith($path, $this->absoluteCachePathPrefixes)
-                ? $path
-                : $this->basePath($path);
+            $this->{$supportedPaths[$pathType]} = $path;
         }
 
         $this->bindPathsInContainer();
