@@ -75,7 +75,7 @@ class ApplicationBuilder extends FoundationApplicationBuilder
             $web = $path;
         }
 
-        parent::withRouting($using, $web, $api, $commands, $channels, $apiPrefix, $then);
+        parent::withRouting($using, $web, $api, $commands, $channels, $pages, $health, $apiPrefix, $then);
 
         if ($wordpress) {
             $this->app->handleWordPressRequests();
