@@ -232,4 +232,20 @@ trait Bootable
             exit((int) $response->isServerError());
         }, 100);
     }
+
+    /**
+     * Handle the request.
+     */
+    public function handleRequest(\Illuminate\Http\Request $request): void
+    {
+        $kernel = $this->make(HttpKernelContract::class);
+
+        $response = $kernel->handle($request);
+
+        $response->send();
+
+        $kernel->terminate($request, $response);
+
+        exit((int) $response->isServerError());
+    }
 }
