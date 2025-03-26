@@ -2,7 +2,6 @@
 
 namespace Roots\Acorn;
 
-use Composer\InstalledVersions;
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Foundation\Application as FoundationApplication;
@@ -58,7 +57,6 @@ class Application extends FoundationApplication
         $this->useEnvironmentPath($this->environmentPath());
 
         $this->registerGlobalHelpers();
-        $this->registerSupportHelpers();
 
         parent::__construct($basePath);
     }
@@ -121,18 +119,6 @@ class Application extends FoundationApplication
     protected function registerGlobalHelpers()
     {
         require_once dirname(__DIR__, 2).'/Illuminate/Foundation/helpers.php';
-    }
-
-    /**
-     * Load the support helper functions.
-     *
-     * @return void
-     */
-    protected function registerSupportHelpers()
-    {
-        $path = InstalledVersions::getInstallPath('illuminate/support');
-
-        require_once "{$path}/helpers.php";
     }
 
     /**
