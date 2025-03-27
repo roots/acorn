@@ -14,6 +14,11 @@ class ApplicationBuilder extends FoundationApplicationBuilder
     use Paths;
 
     /**
+     * The application builder configuration.
+     */
+    protected array $config = [];
+
+    /**
      * Register the standard kernel classes for the application.
      *
      * @return $this
@@ -81,6 +86,17 @@ class ApplicationBuilder extends FoundationApplicationBuilder
             $this->app->handleWordPressRequests();
         }
 
+        $this->config['routing'] = [
+            'web' => $web,
+            'api' => $api,
+            'commands' => $commands,
+            'channels' => $channels,
+            'pages' => $pages,
+            'health' => $health,
+            'apiPrefix' => $apiPrefix,
+            'wordpress' => $wordpress,
+        ];
+
         return $this;
     }
 
@@ -126,6 +142,11 @@ class ApplicationBuilder extends FoundationApplicationBuilder
                 : null
         );
 
+        $this->config['providers'] = [
+            ...$this->config['providers'] ?? [],
+            ...$providers,
+        ];
+
         return $this;
     }
 
@@ -146,6 +167,6 @@ class ApplicationBuilder extends FoundationApplicationBuilder
      */
     public function boot()
     {
-        return $this->app->bootAcorn();
+        return $this->app->bootAcorn($this->config);
     }
 }
