@@ -15,9 +15,23 @@ trait GetsFreshApplication
     {
         $application = get_class($app = Application::getInstance());
 
+        $config = $app->getBootConfiguration();
+
+        $routing = $config['routing'] ?? [];
+
         return $application::configure($app->basePath())
             ->withPaths(...$this->getApplicationPaths($app))
-            ->withRouting()
+            ->withProviders($config['providers'] ?? [])
+            ->withRouting(
+                web: $routing['web'] ?? null,
+                api: $routing['api'] ?? null,
+                commands: $routing['commands'] ?? null,
+                channels: $routing['channels'] ?? null,
+                pages: $routing['pages'] ?? null,
+                health: $routing['health'] ?? null,
+                apiPrefix: $routing['apiPrefix'] ?? 'api',
+                wordpress: $routing['wordpress'] ?? false,
+            )
             ->boot();
     }
 

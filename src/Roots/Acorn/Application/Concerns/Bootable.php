@@ -15,15 +15,20 @@ use WP_CLI;
 trait Bootable
 {
     /**
-     * Boot the application's service providers.
-     *
-     * @return $this
+     * The configuration used to boot the application.
      */
-    public function bootAcorn()
+    protected array $bootConfiguration = [];
+
+    /**
+     * Boot the application and handle the request.
+     */
+    public function bootAcorn(array $bootConfiguration = []): static
     {
         if ($this->isBooted()) {
             return $this;
         }
+
+        $this->bootConfiguration = $bootConfiguration;
 
         if (! defined('LARAVEL_START')) {
             define('LARAVEL_START', microtime(true));
@@ -231,5 +236,13 @@ trait Bootable
 
             exit((int) $response->isServerError());
         }, 100);
+    }
+
+    /**
+     * Retrieve the boot configuration.
+     */
+    public function getBootConfiguration(): array
+    {
+        return $this->bootConfiguration;
     }
 }
