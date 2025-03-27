@@ -239,6 +239,22 @@ trait Bootable
     }
 
     /**
+     * Handle the request.
+     */
+    public function handleRequest(Request $request): void
+    {
+        $kernel = $this->make(HttpKernelContract::class);
+
+        $response = $kernel->handle($request);
+
+        $response->send();
+
+        $kernel->terminate($request, $response);
+
+        exit((int) $response->isServerError());
+    }
+
+    /**
      * Retrieve the boot configuration.
      */
     public function getBootConfiguration(): array
