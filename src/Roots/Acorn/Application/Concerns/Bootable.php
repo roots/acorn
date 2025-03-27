@@ -253,7 +253,7 @@ trait Bootable
 
         exit((int) $response->isServerError());
     }
-  
+
     /**
      * Retrieve the boot configuration.
      */
