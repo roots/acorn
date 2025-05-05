@@ -72,7 +72,7 @@ trait Paths
                 ?? (defined("ACORN_{$key}_PATH") ? constant("ACORN_{$key}_PATH") : $this->findPath($path));
         }
 
-        return Str::startsWith($env, $this->app->absoluteCachePathPrefixes)
+        return Str::startsWith($env, ['/', '\\'])
             ? $env
             : $this->app->basePath($env);
     }
