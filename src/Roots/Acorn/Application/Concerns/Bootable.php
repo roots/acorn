@@ -79,7 +79,9 @@ trait Bootable
         WP_CLI::add_command('acorn', function ($args, $options) use ($kernel) {
             $kernel->commands();
 
-            $command = implode(' ', $args);
+            $escaped = array_map(fn ($arg) => escapeshellarg($arg), $args);
+
+            $command = implode(' ', $escaped);
 
             foreach ($options as $key => $value) {
                 if ($key === 'interaction' && $value === false) {
@@ -91,7 +93,7 @@ trait Bootable
                 $command .= " --{$key}";
 
                 if ($value !== true) {
-                    $command .= "='{$value}'";
+                    $command .= '=' . escapeshellarg($value);
                 }
             }
 
