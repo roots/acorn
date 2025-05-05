@@ -93,7 +93,7 @@ trait Bootable
                 $command .= " --{$key}";
 
                 if ($value !== true) {
-                    $command .= '=' . escapeshellarg($value);
+                    $command .= '='.escapeshellarg($value);
                 }
             }
 
