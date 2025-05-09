@@ -205,6 +205,72 @@ it('gracefully skips a provider that does not exist', function () {
     $app->boot();
 });
 
+it('calls registered callbacks', function () {
+    $app = new Application(temp('base_path'));
+
+    mkdir($app->storagePath('framework/cache'), 0777, true);
+
+    $app->bind('config', fn () => new ConfigRepository);
+
+    $manifest = mock(\Roots\Acorn\PackageManifest::class);
+
+    $app->singleton(\Illuminate\Foundation\PackageManifest::class, fn () => $manifest);
+
+    $manifest
+        ->shouldReceive('providers')
+        ->andReturn([]);
+
+    $callback = Mockery::mock(new class
+    {
+        public function __invoke(...$args) {}
+    });
+
+    $callback
+        ->shouldReceive('__invoke')
+        ->withArgs([$app])
+        ->once();
+
+    $app->registered($callback);
+
+    $app->registerConfiguredProviders();
+});
+
+it('calls booting callbacks', function () {
+    $app = new Application;
+
+    $callback = Mockery::mock(new class
+    {
+        public function __invoke(...$args) {}
+    });
+
+    $callback
+        ->shouldReceive('__invoke')
+        ->withArgs([$app])
+        ->once();
+
+    $app->booting($callback);
+
+    $app->boot();
+});
+
+it('calls booted callbacks', function () {
+    $app = new Application;
+
+    $callback = Mockery::mock(new class
+    {
+        public function __invoke(...$args) {}
+    });
+
+    $callback
+        ->shouldReceive('__invoke')
+        ->withArgs([$app])
+        ->once();
+
+    $app->booted($callback);
+
+    $app->boot();
+});
+
 it('uses custom aliases', function () {
     $app = new Application;
 
