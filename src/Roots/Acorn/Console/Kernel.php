@@ -96,5 +96,10 @@ class Kernel extends FoundationConsoleKernel
     public function commands()
     {
         $this->load($this->app->path('Console/Commands'));
+
+        $consoleFile = base_path('routes/console.php');
+        if (file_exists($consoleFile)) {
+            require $consoleFile;
+        }
     }
 }
