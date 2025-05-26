@@ -77,8 +77,6 @@ trait Bootable
         $kernel->bootstrap();
 
         WP_CLI::add_command('acorn', function ($args, $options) use ($kernel) {
-            $kernel->commands();
-
             $escaped = array_map(fn ($arg) => escapeshellarg($arg), $args);
 
             $command = implode(' ', $escaped);
