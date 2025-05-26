@@ -86,10 +86,6 @@ class Kernel extends FoundationConsoleKernel
 
         $this->app = $app;
         $this->events = $events;
-
-        $this->app->booted(function () {
-            $this->resolveConsoleSchedule();
-        });
     }
 
     /**
