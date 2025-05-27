@@ -249,7 +249,7 @@ trait Bootable
         }, 100);
 
         add_action('shutdown', function () use ($kernel, $request, $response) {
-            $response->sendContent();
+            $response->send();
 
             $kernel->terminate($request, $response);
 
