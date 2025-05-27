@@ -97,9 +97,8 @@ class Kernel extends FoundationConsoleKernel
     {
         $this->load($this->app->path('Console/Commands'));
 
-        $consoleFile = base_path('routes/console.php');
-        if (file_exists($consoleFile)) {
-            require $consoleFile;
+        if (file_exists($routes = base_path('routes/console.php'))) {
+            require $routes;
         }
     }
 }
