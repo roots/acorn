@@ -234,22 +234,21 @@ trait Bootable
 
         $response = $kernel->handle($request);
 
-        add_action('send_headers', function () use ($response) {
-            foreach ($response->headers->getCookies() as $cookie) {
-                setcookie(
-                    $cookie->getName(),
-                    $cookie->getValue(),
-                    $cookie->getExpiresTime(),
-                    $cookie->getPath(),
-                    $cookie->getDomain(),
-                    $cookie->isSecure(),
-                    $cookie->isHttpOnly()
-                );
-            }
-        }, 100);
+        $response->headers->remove('cache-control');
+
+        add_action('send_headers', fn () => $response->sendHeaders(), 100);
 
         add_action('shutdown', function () use ($kernel, $request, $response) {
-            $response->send();
+            $response->sendContent();
+
+            if (function_exists('fastcgi_finish_request')) {
+                fastcgi_finish_request();
+            } elseif (function_exists('litespeed_finish_request')) {
+                litespeed_finish_request();
+            } elseif (! in_array(PHP_SAPI, ['cli', 'phpdbg', 'embed'], true)) {
+                Response::closeOutputBuffers(0, true);
+                flush();
+            }
 
             $kernel->terminate($request, $response);
 
