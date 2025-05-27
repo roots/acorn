@@ -234,7 +234,19 @@ trait Bootable
 
         $response = $kernel->handle($request);
 
-        add_action('send_headers', fn () => $response->sendHeaders(), 100);
+        add_action('send_headers', function () use ($response) {
+            foreach ($response->headers->getCookies() as $cookie) {
+                setcookie(
+                    $cookie->getName(),
+                    $cookie->getValue(),
+                    $cookie->getExpiresTime(),
+                    $cookie->getPath(),
+                    $cookie->getDomain(),
+                    $cookie->isSecure(),
+                    $cookie->isHttpOnly()
+                );
+            }
+        }, 100);
 
         add_action('shutdown', function () use ($kernel, $request, $response) {
             $response->sendContent();
