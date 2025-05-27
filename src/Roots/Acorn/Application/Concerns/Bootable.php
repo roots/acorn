@@ -177,6 +177,7 @@ trait Bootable
 
             $response->setContent($content);
         }))
+            ->middleware('wordpress')
             ->where('any', '.*')
             ->name('wordpress');
     }
@@ -225,8 +226,6 @@ trait Bootable
             return;
         }
 
-        $route->middleware('wordpress');
-
         ob_start();
 
         remove_action('shutdown', 'wp_ob_end_flush_all', 1);
@@ -235,8 +234,10 @@ trait Bootable
 
         $response = $kernel->handle($request);
 
+        add_action('send_headers', fn () => $response->sendHeaders(), 100);
+
         add_action('shutdown', function () use ($kernel, $request, $response) {
-            $response->send();
+            $response->sendContent();
 
             $kernel->terminate($request, $response);
 
