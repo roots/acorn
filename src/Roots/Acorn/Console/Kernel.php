@@ -86,10 +86,6 @@ class Kernel extends FoundationConsoleKernel
 
         $this->app = $app;
         $this->events = $events;
-
-        $this->app->booted(function () {
-            $this->resolveConsoleSchedule();
-        });
     }
 
     /**
@@ -100,5 +96,9 @@ class Kernel extends FoundationConsoleKernel
     public function commands()
     {
         $this->load($this->app->path('Console/Commands'));
+
+        if (file_exists($routes = base_path('routes/console.php'))) {
+            require $routes;
+        }
     }
 }
