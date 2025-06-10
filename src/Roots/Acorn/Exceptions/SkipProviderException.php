@@ -17,6 +17,11 @@ class SkipProviderException extends InvalidArgumentException
         parent::__construct($message, $code, $previous);
 
         $this->package = $package;
+
+        if ($previous) {
+            $this->file = $previous->getFile();
+            $this->line = $previous->getLine();
+        }
     }
 
     /**
