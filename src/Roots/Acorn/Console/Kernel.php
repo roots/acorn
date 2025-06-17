@@ -84,8 +84,7 @@ class Kernel extends FoundationConsoleKernel
             define('ARTISAN_BINARY', dirname(__DIR__, 4).'/bin/acorn');
         }
 
-        $this->app = $app;
-        $this->events = $events;
+        parent::__construct($app, $events);
     }
 
     /**
