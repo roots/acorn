@@ -47,6 +47,7 @@
     "ext-mbstring": "*",
     "dragonmantank/cron-expression": "^3.4",
     "guzzlehttp/guzzle": "^7.8",
+    "illuminate/auth": "^12.0",
     "illuminate/cache": "^12.0",
     "illuminate/config": "^12.0",
     "illuminate/console": "^12.0",
