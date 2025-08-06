@@ -4,9 +4,22 @@ This dev container provides a full WordPress development environment for working
 
 ## Quick Start
 
+### VS Code (Recommended)
 1. Open in VS Code with Dev Containers extension
 2. Wait for container build and WordPress installation
 3. Access site at http://localhost:8080
+
+### Command Line
+```bash
+# Install devcontainer CLI
+npm install -g @devcontainers/cli
+
+# Start dev container
+devcontainer up --workspace-folder .
+
+# Execute commands in container
+devcontainer exec --workspace-folder . wp --info
+```
 
 ## Services
 
@@ -59,7 +72,12 @@ bun run dev
 
 ## Customization
 
-The container clones Bedrock by default. To use a different WordPress setup:
+**WordPress Site Title**: Defaults to "Acorn Testing". Override with:
+```bash
+WP_SITE_TITLE="My Custom Site"
+```
+
+**WordPress Repository**: Clones Bedrock by default. To use a different setup:
 ```bash
 REPOSITORY_URL=https://github.com/your/repo.git
 ```

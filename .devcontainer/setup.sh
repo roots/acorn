@@ -11,6 +11,9 @@ volta install bun
 
 WORKSPACE_FOLDER="${WORKSPACE_FOLDER:-"${PWD##*/}"}"
 
+# WordPress site title - defaults to "Acorn Testing", can be overridden
+WP_SITE_TITLE="${WP_SITE_TITLE:-"Acorn Testing"}"
+
 # source our application env vars to be used here
 . '/roots/app/.env';
 
@@ -31,12 +34,15 @@ if [ -f 'package.json' ]; then
 fi
 
 wp db reset --yes
-wp core install --url="${WP_HOME}" --title="Roots Test" --admin_user="admin" --admin_email="admin@roots.test" --admin_password="password" --skip-email
+wp core install --url="${WP_HOME}" --title="${WP_SITE_TITLE}" --admin_user="admin" --admin_email="admin@roots.test" --admin_password="password" --skip-email
 
 # Add sage if there are no themes
 if [ ! "$(ls -d $(wp theme path --skip-plugins --skip-themes 2>/dev/null)/*/)" ]; then
-    composer require -d /roots/app roots/sage
+    composer create-project roots/sage $(wp theme path --skip-plugins --skip-themes 2>/dev/null)/sage
     wp theme activate sage
+    # Build the Sage theme
+    cd $(wp theme path --skip-plugins --skip-themes 2>/dev/null)/sage
+    bun install && bun run build
 fi
 
 install_theme() {

@@ -23,7 +23,7 @@ fi
 
 REPOSITORY_URL="${REPOSITORY_URL:-'https://github.com/roots/bedrock.git'}"
 
-sudo chown -R vscode:www-data /roots
+sudo chown -R vscode:www-data /roots/app
 cd /roots/app
 
 # if composer.json already exists, exit early
@@ -91,11 +91,11 @@ else
   && composer require -d /roots/app $(cat "${WORKSPACE_FOLDER}/composer.json" | jq '.name' | tr -d '"') --no-interaction -W --ignore-platform-reqs
 fi
 
-composer remove -d /roots/app wpackagist-theme/twentytwentyfour
+composer remove -d /roots/app wpackagist-theme/twentytwentyfive
 composer require -d /roots/app roots/acorn-prettify -W
 
 # Set filesystem permissions
-sudo chown -R vscode:www-data /roots/app
+sudo chown -R vscode:www-data /roots/app/public/content
 sudo find /roots/app/ -type d -exec chmod g+s {} \;
 sudo chmod g+w -R /roots/app
 
