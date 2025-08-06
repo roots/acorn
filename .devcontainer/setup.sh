@@ -31,7 +31,7 @@ if [ -f 'package.json' ]; then
 fi
 
 wp db reset --yes
-wp core install --url="${WP_HOME}" --title="Roots Test" --admin_user="admin" --admin_email="admin@roots.test" --admin_password="password1" --skip-email
+wp core install --url="${WP_HOME}" --title="Roots Test" --admin_user="admin" --admin_email="admin@roots.test" --admin_password="password" --skip-email
 
 # Add sage if there are no themes
 if [ ! "$(ls -d $(wp theme path --skip-plugins --skip-themes 2>/dev/null)/*/)" ]; then
