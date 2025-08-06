@@ -38,7 +38,7 @@ wp core install --url="${WP_HOME}" --title="${WP_SITE_TITLE}" --admin_user="admi
 
 # Add sage if there are no themes
 if [ ! "$(ls -d $(wp theme path --skip-plugins --skip-themes 2>/dev/null)/*/)" ]; then
-    composer create-project roots/sage $(wp theme path --skip-plugins --skip-themes 2>/dev/null)/sage
+    composer require -d /roots/app roots/sage
     wp theme activate sage
     # Build the Sage theme
     cd $(wp theme path --skip-plugins --skip-themes 2>/dev/null)/sage
