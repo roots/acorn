@@ -58,3 +58,5 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 ENV APPLICATION_PATH=/roots/app
 
 USER vscode
+
+# Trigger dev container workflow
