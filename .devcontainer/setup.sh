@@ -38,6 +38,8 @@ wp core install --url="${WP_HOME}" --title="${WP_SITE_TITLE}" --admin_user="admi
 
 # Add sage if it's not active
 if ! wp theme status sage --skip-plugins --skip-themes 2>/dev/null | grep -q "^sage.*active"; then
+    # Ensure COMPOSER_ROOT_VERSION is available for composer
+    export COMPOSER_ROOT_VERSION="${COMPOSER_ROOT_VERSION:-5.0.x-dev}"
     cd /roots/app
     # Only require sage if it doesn't exist
     if ! wp theme is-installed sage --skip-plugins --skip-themes 2>/dev/null; then
@@ -65,5 +67,4 @@ find $(wp theme path --skip-plugins --skip-themes 2>/dev/null) -mindepth 1 -maxd
     while read theme; do install_theme "$theme"; done
 
 wp dotenv salts regenerate --skip-plugins --skip-themes 2>/dev/null || true
-wp plugin activate soil --skip-plugins --skip-themes 2>/dev/null || true
 wp rewrite structure '%postname%' --hard --skip-plugins --skip-themes 2>/dev/null

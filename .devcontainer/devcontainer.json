@@ -13,10 +13,7 @@
             "userGid": "1000",
             "upgradePackages": "true"
         },
-        "ghcr.io/devcontainers/features/sshd:1": {},
-        "ghcr.io/devcontainers/features/git:1": {
-            "version": "latest"
-        }
+        "ghcr.io/devcontainers/features/sshd:1": {}
     },
     "initializeCommand": "[ ! -f '.devcontainer/.env' ] && cp '.devcontainer/config/app/.env.example' '.devcontainer/.env' || true",
     "onCreateCommand": "chmod +x ./${localWorkspaceFolderBasename}/.devcontainer/install.sh && ./${localWorkspaceFolderBasename}/.devcontainer/install.sh",
