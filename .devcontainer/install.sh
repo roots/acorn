@@ -102,7 +102,7 @@ sudo chmod g+w -R /roots/app
 cd /roots
 
 # wp-cli.yml file
-cat <<WPCLI > /roots/wp-cli.yml
+sudo tee /roots/wp-cli.yml > /dev/null <<WPCLI
 path: /roots/app/public/wp
 server:
   docroot: /roots/app/public

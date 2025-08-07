@@ -13,60 +13,62 @@ class RoutingTestCase extends MockeryTestCase
     use SupportsGlobalStubs;
     use SupportsScopedFixtures;
 
+    private $originalFunctionsContent;
+    private $functionsFile = '/roots/app/public/content/themes/sage/functions.php';
+    private $routesFile = '/roots/app/public/content/themes/sage/routes/web.php';
+
     protected function setUp(): void
     {
         parent::setUp();
         $this->clearStubs();
 
-        // Ensure routes directory exists
-        if (! is_dir('/roots/app/public/routes')) {
-            mkdir('/roots/app/public/routes', 0777, true);
+        // Ensure Sage routes directory exists
+        $routesDir = dirname($this->routesFile);
+        if (! is_dir($routesDir)) {
+            mkdir($routesDir, 0777, true);
         }
 
-        // Create web.php routes file
+        // Create test routes file
         $webRoutes = <<<'PHP'
 <?php
 
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['web'])->group(function () {
-    Route::get('/test', fn() => 'Howdy')->name('test');
-});
+Route::get('/test', fn() => 'Howdy')->name('test');
 PHP;
 
-        file_put_contents('/roots/app/public/routes/web.php', $webRoutes);
+        file_put_contents($this->routesFile, $webRoutes);
 
-        // Ensure mu-plugins directory exists
-        if (! is_dir('/roots/app/public/content/mu-plugins')) {
-            mkdir('/roots/app/public/content/mu-plugins', 0777, true);
+        // Backup original functions.php and add routing
+        $this->originalFunctionsContent = file_get_contents($this->functionsFile);
+
+        if (!str_contains($this->originalFunctionsContent, 'withRouting')) {
+            $newContent = str_replace(
+                '->boot();',
+                '->withRouting(web: __DIR__ . \'/routes/web.php\')' . "\n    ->boot();",
+                $this->originalFunctionsContent
+            );
+            file_put_contents($this->functionsFile, $newContent);
         }
 
-        // Create or update the Acorn boot mu-plugin
-        $bootPlugin = <<<'PHP'
-<?php
-/*
-Plugin Name: Acorn Boot
-*/
+        // Ensure Sage is the active theme
+        if (function_exists('switch_theme')) {
+            switch_theme('sage');
+        }
+    }
 
-use Roots\Acorn\Application;
-use Roots\Acorn\Configuration\Exceptions;
-use Roots\Acorn\Configuration\Middleware;
+    protected function tearDown(): void
+    {
+        // Restore original functions.php
+        if ($this->originalFunctionsContent) {
+            file_put_contents($this->functionsFile, $this->originalFunctionsContent);
+        }
 
-add_action('after_setup_theme', function () {
-    Application::configure()
-        ->withMiddleware(function (Middleware $middleware) {
-            //
-        })
-        ->withExceptions(function (Exceptions $exceptions) {
-            //
-        })
-        ->withRouting(
-            web: '/roots/app/public/routes/web.php'
-        )
-        ->boot();
-}, 0);
-PHP;
+        // Clean up test routes file
+        if (file_exists($this->routesFile)) {
+            unlink($this->routesFile);
+        }
 
-        file_put_contents('/roots/app/public/content/mu-plugins/01-acorn-boot.php', $bootPlugin);
+        parent::tearDown();
     }
 }

@@ -13,6 +13,7 @@ services:
       XDEBUG_MODE: '${XDEBUG_MODE:-develop,debug}'
       XDEBUG_CONFIG: '${XDEBUG_CONFIG:-client_port=9003 client_host=host.docker.internal discover_client_host=true}'
       REPOSITORY_URL: '${REPOSITORY_URL:-https://github.com/roots/bedrock.git}'
+      COMPOSER_ROOT_VERSION: '5.0.x-dev'
     volumes:
       - ~/.ssh:/home/vscode/.ssh:ro
       - 'app:/roots/app'
