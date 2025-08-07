@@ -14,7 +14,9 @@ class RoutingTestCase extends MockeryTestCase
     use SupportsScopedFixtures;
 
     private $originalFunctionsContent;
+
     private $functionsFile = '/roots/app/public/content/themes/sage/functions.php';
+
     private $routesFile = '/roots/app/public/content/themes/sage/routes/web.php';
 
     protected function setUp(): void
@@ -42,10 +44,10 @@ PHP;
         // Backup original functions.php and add routing
         $this->originalFunctionsContent = file_get_contents($this->functionsFile);
 
-        if (!str_contains($this->originalFunctionsContent, 'withRouting')) {
+        if (! str_contains($this->originalFunctionsContent, 'withRouting')) {
             $newContent = str_replace(
                 '->boot();',
-                '->withRouting(web: __DIR__ . \'/routes/web.php\')' . "\n    ->boot();",
+                '->withRouting(web: __DIR__ . \'/routes/web.php\')'."\n    ->boot();",
                 $this->originalFunctionsContent
             );
             file_put_contents($this->functionsFile, $newContent);
