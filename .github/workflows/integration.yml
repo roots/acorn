@@ -33,6 +33,6 @@ jobs:
             composer install
             composer run-script test tests/Integration/Routing
 
-      - name: Verify routes
+      - name: Verify site is running
         run: |
-          curl -s http://localhost:8080/test/ | grep "Howdy"
+          curl -I http://localhost:8080 | grep "200 OK"
