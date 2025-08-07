@@ -2,7 +2,7 @@ name: Publish Dev Container
 
 on:
   push:
-    branches: [main, devcontainer-updates]
+    branches: [main]
     paths:
       - '.devcontainer/**'
   workflow_dispatch:
@@ -28,6 +28,5 @@ jobs:
         uses: devcontainers/ci@v0.3
         with:
           imageName: ghcr.io/roots/acorn-devcontainer
-          imageTag: ${{ github.ref_name }}
           cacheFrom: ghcr.io/roots/acorn-devcontainer
           push: always

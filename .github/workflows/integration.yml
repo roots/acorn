@@ -16,7 +16,7 @@ jobs:
         uses: devcontainers/ci@v0.3
         with:
           configFile: .devcontainer/devcontainer.json
-          cacheFrom: ghcr.io/roots/acorn-devcontainer:${{ github.ref_name }}
+          cacheFrom: ghcr.io/roots/acorn-devcontainer
           push: never
           runCmd: |
             # Wait for database to be ready
