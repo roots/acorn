@@ -123,7 +123,7 @@ trait Bootable
         $kernel->bootstrap($request);
 
         if ($this->app->handlesWordPressRequests()) {
-            $this->registerWordPressRoute();
+            $this->registerWordPressRoute(ob_get_level());
         }
 
         try {
@@ -150,9 +150,9 @@ trait Bootable
     /**
      * Register a default route for WordPress requests.
      */
-    protected function registerWordPressRoute(): void
+    protected function registerWordPressRoute(int $initialObLevel): void
     {
-        Route::any('{any?}', fn () => tap(response(''), function (Response $response) {
+        Route::any('{any?}', fn () => tap(response(''), function (Response $response) use ($initialObLevel) {
             foreach (headers_list() as $header) {
                 [$header, $value] = preg_split("/:\s{0,1}/", $header, 2);
 
@@ -169,7 +169,7 @@ trait Bootable
 
             $levels = ob_get_level();
 
-            for ($i = 0; $i < $levels; $i++) {
+            for ($i = $initialObLevel; $i < $levels; $i++) {
                 $content .= ob_get_clean();
             }
 
