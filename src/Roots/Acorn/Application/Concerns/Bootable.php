@@ -234,7 +234,7 @@ trait Bootable
 
         $response->headers->remove('cache-control');
 
-        add_action('send_headers', fn () => $response->sendHeaders(http_response_code()), 100);
+        add_action('send_headers', fn () => $response->setStatusCode(http_response_code())->sendHeaders(), 100);
 
         add_action('shutdown', function () use ($kernel, $request, $response) {
             $response->sendContent();
