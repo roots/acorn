@@ -10,6 +10,29 @@ use Roots\Acorn\Application;
 
 class AboutCommand extends BaseCommand
 {
+    /**
+     * The console command signature.
+     *
+     * @var string
+     */
+    protected $signature = 'about {--only= : The section to display}
+                {--json : Output the information as JSON}
+                {--format= : The output format (table, json)}';
+
+    /**
+     * Execute the console command.
+     *
+     * @return int
+     */
+    public function handle()
+    {
+        if ($this->option('format') === 'json') {
+            $this->input->setOption('json', true);
+        }
+
+        return parent::handle();
+    }
+
     protected function gatherApplicationInformation()
     {
         parent::gatherApplicationInformation();
