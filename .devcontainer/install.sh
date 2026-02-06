@@ -109,5 +109,5 @@ server:
 WPCLI
 
 # Install `wp dotenv` and `wp login` commands
-wp package install aaemnnosttv/wp-cli-dotenv-command 2>/dev/null
-wp package install aaemnnosttv/wp-cli-login-command 2>/dev/null
+wp package install aaemnnosttv/wp-cli-dotenv-command 2>/dev/null || true
+wp package install aaemnnosttv/wp-cli-login-command 2>/dev/null || true

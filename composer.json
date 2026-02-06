@@ -79,7 +79,7 @@
   "require-dev": {
     "laravel/pint": "^1.15",
     "mockery/mockery": "^1.6",
-    "pestphp/pest": "^2.34",
+    "pestphp/pest": "^3.0",
     "phpcompatibility/php-compatibility": "^9.3",
     "roave/security-advisories": "dev-master",
     "spatie/laravel-ignition": "^2.5",
