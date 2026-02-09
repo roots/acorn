@@ -27,6 +27,7 @@ class Kernel extends FoundationConsoleKernel
         \Illuminate\Foundation\Console\ConsoleMakeCommand::class,
         \Illuminate\Foundation\Console\EnvironmentCommand::class,
         \Illuminate\Foundation\Console\JobMakeCommand::class,
+        \Illuminate\Foundation\Console\ModelMakeCommand::class,
         \Illuminate\Foundation\Console\PackageDiscoverCommand::class,
         \Illuminate\Foundation\Console\ProviderMakeCommand::class,
         \Illuminate\Foundation\Console\RouteClearCommand::class,
