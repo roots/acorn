@@ -25,6 +25,13 @@ class AcornInstallCommand extends Command
     protected $description = 'Install Acorn into the application';
 
     /**
+     * The Acorn repository URL.
+     *
+     * @var string
+     */
+    protected $repoUrl = 'https://github.com/roots/acorn';
+
+    /**
      * Execute the console command.
      */
     public function handle(): int
@@ -119,11 +126,17 @@ class AcornInstallCommand extends Command
             label: '🎉 All done! Would you like to show love by starring Acorn on GitHub?',
             default: true,
         )) {
-            match (PHP_OS_FAMILY) {
-                'Darwin' => exec('open https://github.com/roots/acorn'),
-                'Linux' => exec('xdg-open https://github.com/roots/acorn'),
-                'Windows' => exec('start https://github.com/roots/acorn'),
+            $opened = match (PHP_OS_FAMILY) {
+                'Darwin' => shell_exec('open ' . $this->repoUrl . ' 2>/dev/null') !== null,
+                'Linux' => shell_exec('xdg-open ' . $this->repoUrl . ' 2>/dev/null') !== null,
+                'Windows' => shell_exec('start ' . $this->repoUrl . ' 2>nul') !== null,
+                default => false,
             };
+
+            if (!$opened) {
+                $this->components->info('Please visit this URL to star the repository:');
+                $this->components->info($this->repoUrl);
+            }
 
             $this->components->info('Thank you!');
         }
