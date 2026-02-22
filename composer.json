@@ -83,7 +83,7 @@
     "phpcompatibility/php-compatibility": "^9.3",
     "roave/security-advisories": "dev-master",
     "spatie/laravel-ignition": "^2.5",
-    "spatie/pest-plugin-snapshots": "^2.1",
+    "spatie/pest-plugin-snapshots": "^2.3",
     "spatie/temporary-directory": "^2.2",
     "tmarsteel/mockery-callable-mock": "^2.1",
     "wp-cli/wp-cli": "^2.10"
