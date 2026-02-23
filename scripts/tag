@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+set -e
+
+VERSION=$1
+
+if [ -z "$VERSION" ]; then
+  echo "Usage: scripts/tag <version>"
+  echo "Example: scripts/tag 5.x.x (do not include the 'v' prefix)"
+  exit 1
+fi
+
+APP_FILE="src/Roots/Acorn/Application.php"
+NEXT_DEV=$(echo "$VERSION" | awk -F. '{print $1"."$2".x-dev"}')
+
+echo "Releasing v${VERSION}..."
+
+sed -i.bak "s/public const VERSION = '.*';/public const VERSION = '${VERSION}';/" "$APP_FILE"
+rm "${APP_FILE}.bak"
+
+git add "$APP_FILE"
+git commit -m "🔖 v${VERSION}"
+git tag "v${VERSION}"
+
+echo "Bumping back to ${NEXT_DEV}..."
+
+sed -i.bak "s/public const VERSION = '.*';/public const VERSION = '${NEXT_DEV}';/" "$APP_FILE"
+rm "${APP_FILE}.bak"
+
+git add "$APP_FILE"
+git commit -m "🔧 Back to dev [ci skip]"
+
+echo ""
+echo "Done. Review the commits before pushing:"
+echo ""
+git log --oneline -3
+echo ""
+echo "Then run: git push && git push --tags"
