@@ -11,10 +11,12 @@ if [ -z "$VERSION" ]; then
 fi
 
 APP_FILE="src/Roots/Acorn/Application.php"
-NEXT_DEV=$(echo "$VERSION" | awk -F. '{print $1"."$2".x-dev"}')
+BRANCH="release-${VERSION}"
 
-echo "Releasing v${VERSION}..."
+echo "Creating release branch ${BRANCH}..."
+git checkout -b "$BRANCH"
 
+echo "Bumping version to v${VERSION}..."
 sed -i.bak "s/public const VERSION = '.*';/public const VERSION = '${VERSION}';/" "$APP_FILE"
 rm "${APP_FILE}.bak"
 
@@ -22,17 +24,11 @@ git add "$APP_FILE"
 git commit -m "🔖 v${VERSION}"
 git tag "v${VERSION}"
 
-echo "Bumping back to ${NEXT_DEV}..."
+git push --tags
 
-sed -i.bak "s/public const VERSION = '.*';/public const VERSION = '${NEXT_DEV}';/" "$APP_FILE"
-rm "${APP_FILE}.bak"
-
-git add "$APP_FILE"
-git commit -m "🔧 Back to dev [ci skip]"
+git checkout main
+git branch -D "$BRANCH"
 
 echo ""
-echo "Done. Review the commits before pushing:"
-echo ""
-git log --oneline -3
-echo ""
-echo "Then run: git push && git push --tags"
+echo "Done. Tag v${VERSION} has been pushed."
+echo "You can now create the release on GitHub."
