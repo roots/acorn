@@ -38,7 +38,6 @@ class Kernel extends FoundationConsoleKernel
         \Illuminate\Queue\Console\FailedTableCommand::class,
         \Illuminate\Queue\Console\FlushFailedCommand::class,
         \Illuminate\Queue\Console\ForgetFailedCommand::class,
-        \Illuminate\Queue\Console\ListenCommand::class,
         \Illuminate\Queue\Console\ListFailedCommand::class,
         \Illuminate\Queue\Console\MonitorCommand::class,
         \Illuminate\Queue\Console\PauseCommand::class,
