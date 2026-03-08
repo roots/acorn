@@ -89,8 +89,7 @@
     "wp-cli/wp-cli": "^2.10"
   },
   "suggest": {
-    "roots/acorn-prettify": "A collection of modules to apply theme-agnostic front-end modifications (^1.0).",
-    "spatie/laravel-ignition": "A beautiful error page for development (^2.0)."
+    "roots/acorn-prettify": "A collection of modules to apply theme-agnostic front-end modifications (^1.0)."
   },
   "config": {
     "sort-packages": true,
