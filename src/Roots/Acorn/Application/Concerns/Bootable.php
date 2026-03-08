@@ -40,7 +40,11 @@ trait Bootable
             if (class_exists('WP_CLI')) {
                 $this->bootWpCli();
             } elseif (defined('USING_ACORN_CLI') && USING_ACORN_CLI) {
-                $this->bootConsole();
+                if (did_action('wp_loaded')) {
+                    $this->bootConsole();
+                } else {
+                    add_action('wp_loaded', fn () => $this->bootConsole(), PHP_INT_MAX);
+                }
             }
 
             return $this;
