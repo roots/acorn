@@ -122,6 +122,8 @@ trait Bootable
 
         $kernel->bootstrap($request);
 
+        \Illuminate\Support\Facades\URL::forceRootUrl(home_url());
+
         if ($this->app->handlesWordPressRequests()) {
             $this->registerWordPressRoute(ob_get_level());
         }
