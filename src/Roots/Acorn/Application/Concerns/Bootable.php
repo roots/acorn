@@ -114,7 +114,16 @@ trait Bootable
     protected function bootHttp(): void
     {
         $kernel = $this->make(HttpKernelContract::class);
+
+        $_GET = stripslashes_deep($_GET);
+        $_POST = stripslashes_deep($_POST);
+        $_COOKIE = stripslashes_deep($_COOKIE);
+        $_SERVER = stripslashes_deep($_SERVER);
+        $_REQUEST = array_merge($_GET, $_POST);
+
         $request = Request::capture();
+
+        wp_magic_quotes();
 
         $this->instance('request', $request);
 
