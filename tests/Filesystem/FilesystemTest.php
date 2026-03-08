@@ -5,6 +5,14 @@ use Roots\Acorn\Tests\Test\TestCase;
 
 uses(TestCase::class);
 
+class TestableFilesystem extends Filesystem
+{
+    public function isWithinOpenBasedir($path, $openBasedir = null)
+    {
+        return parent::isWithinOpenBasedir($path, $openBasedir);
+    }
+}
+
 it('should support basic globs', function () {
     expect((new Filesystem)->glob($this->fixture('closest/*.txt')))
         ->toEqual([$this->fixture('closest/kjo.txt')]);
@@ -34,6 +42,30 @@ it('should find the closest path within the filesystem', function () {
 
     expect((new Filesystem)->closest($this->fixture('closest/a/b'), 'apray.txt'))
         ->toBeNull();
+});
+
+it('should check open_basedir boundaries correctly', function () {
+    $fs = new TestableFilesystem;
+    $restriction = '/home/user'.PATH_SEPARATOR.'/tmp';
+
+    // No restriction — everything is allowed
+    expect($fs->isWithinOpenBasedir('/any/path', ''))->toBeTrue();
+
+    // Path within allowed directory
+    expect($fs->isWithinOpenBasedir('/home/user/project', $restriction))->toBeTrue();
+    expect($fs->isWithinOpenBasedir('/tmp', $restriction))->toBeTrue();
+    expect($fs->isWithinOpenBasedir('/tmp/subdir', $restriction))->toBeTrue();
+
+    // Sibling path that shares a prefix — must NOT match
+    expect($fs->isWithinOpenBasedir('/home/user2', $restriction))->toBeFalse();
+    expect($fs->isWithinOpenBasedir('/home/user2/project', $restriction))->toBeFalse();
+
+    // Path completely outside allowed directories
+    expect($fs->isWithinOpenBasedir('/var/www', $restriction))->toBeFalse();
+    expect($fs->isWithinOpenBasedir('/home', $restriction))->toBeFalse();
+
+    // Empty entries in restriction should be ignored
+    expect($fs->isWithinOpenBasedir('/var/www', '/home/user'.PATH_SEPARATOR.PATH_SEPARATOR.'/tmp'))->toBeFalse();
 });
 
 it('should determine the relative path between two absolute paths', function () {

@@ -29,8 +29,8 @@ class Filesystem extends FilesystemBase
     {
         $currentDirectory = $path;
 
-        while ($this->isReadable($currentDirectory)) {
-            if ($this->isFile($filePath = $currentDirectory.DIRECTORY_SEPARATOR.$file)) {
+        while ($this->isWithinOpenBasedir($currentDirectory) && @$this->isReadable($currentDirectory)) {
+            if (@$this->isFile($filePath = $currentDirectory.DIRECTORY_SEPARATOR.$file)) {
                 return $filePath;
             }
 
@@ -44,6 +44,38 @@ class Filesystem extends FilesystemBase
         }
 
         return null;
+    }
+
+    /**
+     * Determine if a path is within the open_basedir restriction.
+     *
+     * @param  string  $path
+     * @param  string|null  $openBasedir
+     * @return bool
+     */
+    protected function isWithinOpenBasedir($path, $openBasedir = null)
+    {
+        $openBasedir ??= ini_get('open_basedir');
+
+        if ($openBasedir === '' || $openBasedir === false) {
+            return true;
+        }
+
+        $path = rtrim($path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+
+        foreach (explode(PATH_SEPARATOR, $openBasedir) as $allowedPath) {
+            $allowedPath = trim($allowedPath);
+
+            if ($allowedPath === '') {
+                continue;
+            }
+
+            if (str_starts_with($path, rtrim($allowedPath, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
