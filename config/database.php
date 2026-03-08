@@ -46,6 +46,7 @@ return [
         'wordpress' => [
             'driver' => 'mysql',
             'host' => DB_HOST,
+            'port' => env('DB_PORT', 3306),
             'database' => DB_NAME,
             'username' => DB_USER,
             'password' => DB_PASSWORD,
