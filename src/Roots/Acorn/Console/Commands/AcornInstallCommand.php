@@ -126,14 +126,21 @@ class AcornInstallCommand extends Command
             label: '🎉 All done! Would you like to show love by starring Acorn on GitHub?',
             default: true,
         )) {
-            $opened = match (PHP_OS_FAMILY) {
-                'Darwin' => shell_exec('open ' . $this->repoUrl . ' 2>/dev/null') !== null,
-                'Linux' => shell_exec('xdg-open ' . $this->repoUrl . ' 2>/dev/null') !== null,
-                'Windows' => shell_exec('start ' . $this->repoUrl . ' 2>nul') !== null,
-                default => false,
+            $command = match (PHP_OS_FAMILY) {
+                'Darwin' => 'open '.escapeshellarg($this->repoUrl).' 2>/dev/null',
+                'Linux' => 'xdg-open '.escapeshellarg($this->repoUrl).' 2>/dev/null',
+                'Windows' => 'cmd /c start "" "'.addcslashes($this->repoUrl, '"').'" 2>nul',
+                default => null,
             };
 
-            if (!$opened) {
+            $opened = false;
+
+            if ($command) {
+                exec($command, result_code: $code);
+                $opened = $code === 0;
+            }
+
+            if (! $opened) {
                 $this->components->info('Please visit this URL to star the repository:');
                 $this->components->info($this->repoUrl);
             }
