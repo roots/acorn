@@ -16,11 +16,11 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     strategy:
       matrix:
-        php: ['8.2']
+        php: ['8.2', '8.3', '8.4', '8.5']
 
     steps:
       - name: Checkout the project
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup the PHP ${{ matrix.php }} environment on ${{ runner.os }}
         uses: shivammathur/setup-php@v2
@@ -34,7 +34,7 @@ jobs:
         id: composercache
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v5
         with:
           path: ${{ steps.composercache.outputs.dir }}
           key: ${{ runner.os }}-${{ matrix.php }}-composer-${{ hashFiles('**/composer.json') }}
