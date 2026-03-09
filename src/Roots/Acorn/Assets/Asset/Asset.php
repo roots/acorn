@@ -92,7 +92,7 @@ class Asset implements AssetContract
     {
         $basePath = rtrim($basePath, '/\\').'/';
 
-        return (new Filesystem())->getRelativePath($basePath, $this->path());
+        return (new Filesystem)->getRelativePath($basePath, $this->path());
     }
 
     /**

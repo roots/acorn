@@ -1,0 +1,32 @@
+name: Publish Dev Container
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.devcontainer/**'
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Build and push Dev Container
+        uses: devcontainers/ci@v0.3
+        with:
+          imageName: ghcr.io/roots/acorn-devcontainer
+          cacheFrom: ghcr.io/roots/acorn-devcontainer
+          push: always

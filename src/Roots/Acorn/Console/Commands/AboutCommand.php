@@ -10,6 +10,29 @@ use Roots\Acorn\Application;
 
 class AboutCommand extends BaseCommand
 {
+    /**
+     * The console command signature.
+     *
+     * @var string
+     */
+    protected $signature = 'about {--only= : The section to display}
+                {--json : Output the information as JSON}
+                {--format= : The output format (table, json)}';
+
+    /**
+     * Execute the console command.
+     *
+     * @return int
+     */
+    public function handle()
+    {
+        if ($this->option('format') === 'json') {
+            $this->input->setOption('json', true);
+        }
+
+        return parent::handle();
+    }
+
     protected function gatherApplicationInformation()
     {
         parent::gatherApplicationInformation();
@@ -40,8 +63,8 @@ class AboutCommand extends BaseCommand
             'Debug Mode' => $this->laravel->get('config')->get('app.debug') ? '<fg=yellow;options=bold>ENABLED</>' : 'OFF',
             'Maintenance Mode' => $this->laravel->isDownForMaintenance() ? '<fg=yellow;options=bold>ENABLED</>' : 'OFF',
             'URL' => Str::of(config('app.url'))->replace(['http://', 'https://'], ''),
-            'Plugins' => get_site_transient('update_plugins') && count(get_site_transient('update_plugins')->response) ? '<fg=yellow;options=bold>UPDATES AVAILABLE</>' : '<fg=green;options=bold>UP TO DATE</>',
-            'Themes' => get_site_transient('update_themes') && count(get_site_transient('update_themes')->response) ? '<fg=yellow;options=bold>UPDATES AVAILABLE</>' : '<fg=green;options=bold>UP TO DATE</>',
+            'Plugins' => get_site_transient('update_plugins') && count(get_site_transient('update_plugins')->response ?? []) ? '<fg=yellow;options=bold>UPDATES AVAILABLE</>' : '<fg=green;options=bold>UP TO DATE</>',
+            'Themes' => get_site_transient('update_themes') && count(get_site_transient('update_themes')->response ?? []) ? '<fg=yellow;options=bold>UPDATES AVAILABLE</>' : '<fg=green;options=bold>UP TO DATE</>',
         ]);
 
         collect(static::$customDataResolvers)

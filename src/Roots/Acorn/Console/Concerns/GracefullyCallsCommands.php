@@ -59,7 +59,7 @@ trait GracefullyCallsCommands
     public function gracefulCallSilent($command, array $arguments = [])
     {
         if ($this->commandExists($command)) {
-            return $this->runCommand($command, $arguments, new NullOutput());
+            return $this->runCommand($command, $arguments, new NullOutput);
         }
 
         return 0;

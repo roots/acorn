@@ -23,7 +23,7 @@ beforeEach(function () {
         ->shouldreceive('runningInConsole')
         ->andReturn(false);
     $this->application->config = new Config(['app' => ['debug' => true]]);
-    $this->handleExceptions = new HandleExceptions();
+    $this->handleExceptions = new HandleExceptions;
 });
 
 it('registers error handler', function () {

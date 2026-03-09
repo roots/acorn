@@ -86,7 +86,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
         $factory = $this->container->make(ValidationFactory::class);
 
         if (method_exists($this, 'validator')) {
-            $validator = $this->container->call([$this, 'validator'], compact('factory'));
+            $validator = $this->container->call($this->validator(...), compact('factory'));
         } else {
             $validator = $this->createDefaultValidator($factory);
         }
@@ -166,8 +166,8 @@ class FormRequest extends Request implements ValidatesWhenResolved
         $exception = $validator->getException();
 
         throw (new $exception($validator))
-                    ->errorBag($this->errorBag)
-                    ->redirectTo($this->getRedirectUrl());
+            ->errorBag($this->errorBag)
+            ->redirectTo($this->getRedirectUrl());
     }
 
     /**
@@ -226,11 +226,11 @@ class FormRequest extends Request implements ValidatesWhenResolved
      * @param  array|null  $keys
      * @return \Illuminate\Support\ValidatedInput|array
      */
-    public function safe(array $keys = null)
+    public function safe(?array $keys = null)
     {
         return is_array($keys)
-                    ? $this->validator->safe()->only($keys)
-                    : $this->validator->safe();
+            ? $this->validator->safe()->only($keys)
+            : $this->validator->safe();
     }
 
     /**
@@ -248,7 +248,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Get custom messages for validator errors.
      *
-     * @return array
+     * @return array<string, string>
      */
     public function messages()
     {
@@ -258,7 +258,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Get custom attributes for validator errors.
      *
-     * @return array
+     * @return array<string, string>
      */
     public function attributes()
     {

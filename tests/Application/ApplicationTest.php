@@ -21,7 +21,7 @@ it('instantiates with custom paths', function () {
 });
 
 it('rejects invalid custom path types', function () {
-    $app = new Application();
+    $app = new Application;
 
     $app->usePaths([
         'app' => $this->fixture('use_paths/app'),
@@ -83,7 +83,7 @@ it('allows specific paths to be changed', function () {
 });
 
 it('goes down for maintenance when acorn maintenance file exists', function () {
-    $app = new Application();
+    $app = new Application;
 
     expect($app->isDownForMaintenance())->toBeFalse();
 
@@ -93,7 +93,7 @@ it('goes down for maintenance when acorn maintenance file exists', function () {
 });
 
 it('goes down for maintenance when wordpress maintenance file exists', function () {
-    $app = new Application();
+    $app = new Application;
 
     expect($app->isDownForMaintenance())->toBeFalse();
 
@@ -129,16 +129,16 @@ it('allows the app namespace to changed arbitrarily', function () {
 });
 
 it('makes a thing', function () {
-    $app = new Application();
+    $app = new Application;
 
-    $app->bind('config', fn () => new ConfigRepository());
+    $app->bind('config', fn () => new ConfigRepository);
 
     expect($app->make('config'))->toBeInstanceOf(ConfigRepository::class);
 });
 
 it('boots a provider', function () {
     $provider = mock(BootableServiceProvider::class)->makePartial();
-    $app = new Application();
+    $app = new Application;
 
     $provider->shouldReceive('register', 'boot')->once();
 
@@ -150,7 +150,7 @@ it('boots a provider', function () {
 it('gracefully skips a provider that fails to boot', function () {
     $handler = mock(\Illuminate\Contracts\Debug\ExceptionHandler::class);
     $manifest = mock(\Roots\Acorn\PackageManifest::class);
-    $app = new Application();
+    $app = new Application;
 
     $app['env'] = 'not-local-dev';
 
@@ -163,7 +163,7 @@ it('gracefully skips a provider that fails to boot', function () {
     {
         public function boot()
         {
-            new \kjo();
+            new \kjo;
         }
     };
 
@@ -184,7 +184,7 @@ it('gracefully skips a provider that fails to boot', function () {
 it('gracefully skips a provider that does not exist', function () {
     $handler = mock(\Illuminate\Contracts\Debug\ExceptionHandler::class);
     $manifest = mock(\Roots\Acorn\PackageManifest::class);
-    $app = new Application();
+    $app = new Application;
 
     $app['env'] = 'not-local-dev';
 
@@ -205,8 +205,74 @@ it('gracefully skips a provider that does not exist', function () {
     $app->boot();
 });
 
+it('calls registered callbacks', function () {
+    $app = new Application(temp('base_path'));
+
+    mkdir($app->storagePath('framework/cache'), 0777, true);
+
+    $app->bind('config', fn () => new ConfigRepository);
+
+    $manifest = mock(\Roots\Acorn\PackageManifest::class);
+
+    $app->singleton(\Illuminate\Foundation\PackageManifest::class, fn () => $manifest);
+
+    $manifest
+        ->shouldReceive('providers')
+        ->andReturn([]);
+
+    $callback = Mockery::mock(new class
+    {
+        public function __invoke(...$args) {}
+    });
+
+    $callback
+        ->shouldReceive('__invoke')
+        ->withArgs([$app])
+        ->once();
+
+    $app->registered($callback);
+
+    $app->registerConfiguredProviders();
+});
+
+it('calls booting callbacks', function () {
+    $app = new Application;
+
+    $callback = Mockery::mock(new class
+    {
+        public function __invoke(...$args) {}
+    });
+
+    $callback
+        ->shouldReceive('__invoke')
+        ->withArgs([$app])
+        ->once();
+
+    $app->booting($callback);
+
+    $app->boot();
+});
+
+it('calls booted callbacks', function () {
+    $app = new Application;
+
+    $callback = Mockery::mock(new class
+    {
+        public function __invoke(...$args) {}
+    });
+
+    $callback
+        ->shouldReceive('__invoke')
+        ->withArgs([$app])
+        ->once();
+
+    $app->booted($callback);
+
+    $app->boot();
+});
+
 it('uses custom aliases', function () {
-    $app = new Application();
+    $app = new Application;
 
     expect($app->getAlias(\Roots\Acorn\Application::class))->toBe('app');
     expect($app->getAlias(\Roots\Acorn\PackageManifest::class))->toBe(\Illuminate\Foundation\PackageManifest::class);

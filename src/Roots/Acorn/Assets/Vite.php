@@ -4,6 +4,8 @@ namespace Roots\Acorn\Assets;
 
 use Illuminate\Foundation\Vite as FoundationVite;
 
+use function Roots\asset;
+
 class Vite extends FoundationVite
 {
     /**
@@ -15,6 +17,6 @@ class Vite extends FoundationVite
      */
     protected function assetPath($path, $secure = null)
     {
-        return \Roots\asset($path)->uri();
+        return str_replace('/build/build/', '/build/', asset($path)->uri());
     }
 }

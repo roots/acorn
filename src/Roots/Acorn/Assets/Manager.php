@@ -7,6 +7,7 @@ use Roots\Acorn\Assets\Contracts\Manifest as ManifestContract;
 use Roots\Acorn\Assets\Exceptions\ManifestNotFoundException;
 use Roots\Acorn\Assets\Middleware\LaravelMixMiddleware;
 use Roots\Acorn\Assets\Middleware\RootsBudMiddleware;
+use Roots\Acorn\Assets\Middleware\ViteMiddleware;
 
 /**
  * Manage assets manifests
@@ -37,6 +38,7 @@ class Manager
      */
     protected $middleware = [
         RootsBudMiddleware::class,
+        ViteMiddleware::class,
         LaravelMixMiddleware::class,
     ];
 
@@ -91,6 +93,7 @@ class Manager
 
         $path = $config['path'];
         $url = $config['url'];
+
         $assets = isset($config['assets']) ? $this->getJsonManifest($config['assets']) : [];
         $bundles = isset($config['bundles']) ? $this->getJsonManifest($config['bundles']) : [];
 
@@ -104,7 +107,7 @@ class Manager
     {
         return array_reduce($this->middleware, function (array $config, $middleware): array {
             if (is_string($middleware) && class_exists($middleware)) {
-                $middleware = new $middleware();
+                $middleware = new $middleware;
             }
 
             return is_callable($middleware) ? $middleware($config) : $middleware->handle($config);

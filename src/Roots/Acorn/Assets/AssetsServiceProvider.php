@@ -2,6 +2,7 @@
 
 namespace Roots\Acorn\Assets;
 
+use Illuminate\Foundation\Vite as FoundationVite;
 use Illuminate\Support\ServiceProvider;
 use Roots\Acorn\Assets\View\BladeDirective;
 
@@ -20,6 +21,8 @@ class AssetsServiceProvider extends ServiceProvider
 
         $this->app->singleton('assets.vite', Vite::class);
 
+        $this->app->alias(Vite::class, FoundationVite::class);
+
         $this->app->singleton('assets.manifest', function ($app) {
             return $app['assets']->manifest($this->getDefaultManifest());
         });
@@ -37,7 +40,7 @@ class AssetsServiceProvider extends ServiceProvider
         if ($this->app->bound('view')) {
             $this->app->make('view')
                 ->getEngineResolver()->resolve('blade')->getCompiler()
-                ->directive('asset', new BladeDirective());
+                ->directive('asset', new BladeDirective);
         }
     }
 

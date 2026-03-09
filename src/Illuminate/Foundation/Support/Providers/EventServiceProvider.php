@@ -7,6 +7,7 @@ use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Events\DiscoverEvents;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\LazyCollection;
 use Illuminate\Support\ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -33,9 +34,16 @@ class EventServiceProvider extends ServiceProvider
     protected $observers = [];
 
     /**
+     * Indicates if events should be discovered.
+     *
+     * @var bool
+     */
+    protected static $shouldDiscoverEvents = true;
+
+    /**
      * The configured event discovery paths.
      *
-     * @var array|null
+     * @var iterable<int, string>|null
      */
     protected static $eventDiscoveryPaths;
 
@@ -116,8 +124,8 @@ class EventServiceProvider extends ServiceProvider
     protected function discoveredEvents()
     {
         return $this->shouldDiscoverEvents()
-                    ? $this->discoverEvents()
-                    : [];
+            ? $this->discoverEvents()
+            : [];
     }
 
     /**
@@ -127,7 +135,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function shouldDiscoverEvents()
     {
-        return get_class($this) === __CLASS__;
+        return get_class($this) === __CLASS__ && static::$shouldDiscoverEvents === true;
     }
 
     /**
@@ -137,22 +145,23 @@ class EventServiceProvider extends ServiceProvider
      */
     public function discoverEvents()
     {
-        return collect($this->discoverEventsWithin())
-                    ->reject(function ($directory) {
-                        return ! is_dir($directory);
-                    })
-                    ->reduce(function ($discovered, $directory) {
-                        return array_merge_recursive(
-                            $discovered,
-                            DiscoverEvents::within($directory, $this->eventDiscoveryBasePath())
-                        );
-                    }, []);
+        return (new LazyCollection($this->discoverEventsWithin()))
+            ->flatMap(function ($directory) {
+                return glob($directory, GLOB_ONLYDIR);
+            })
+            ->reject(function ($directory) {
+                return ! is_dir($directory);
+            })
+            ->pipe(fn ($directories) => DiscoverEvents::within(
+                $directories->all(),
+                $this->eventDiscoveryBasePath(),
+            ));
     }
 
     /**
      * Get the listener directories that should be used to discover events.
      *
-     * @return array
+     * @return iterable<int, string>
      */
     protected function discoverEventsWithin()
     {
@@ -162,12 +171,26 @@ class EventServiceProvider extends ServiceProvider
     }
 
     /**
-     * Set the globally configured event discovery paths.
+     * Add the given event discovery paths to the application's event discovery paths.
      *
-     * @param  array  $paths
+     * @param  string|iterable<int, string>  $paths
      * @return void
      */
-    public static function setEventDiscoveryPaths(array $paths)
+    public static function addEventDiscoveryPaths(iterable|string $paths)
+    {
+        static::$eventDiscoveryPaths = (new LazyCollection(static::$eventDiscoveryPaths))
+            ->merge(is_string($paths) ? [$paths] : $paths)
+            ->unique()
+            ->values();
+    }
+
+    /**
+     * Set the globally configured event discovery paths.
+     *
+     * @param  iterable<int, string>  $paths
+     * @return void
+     */
+    public static function setEventDiscoveryPaths(iterable $paths)
     {
         static::$eventDiscoveryPaths = $paths;
     }
@@ -180,6 +203,16 @@ class EventServiceProvider extends ServiceProvider
     protected function eventDiscoveryBasePath()
     {
         return base_path();
+    }
+
+    /**
+     * Disable event discovery for the application.
+     *
+     * @return void
+     */
+    public static function disableEventDiscovery()
+    {
+        static::$shouldDiscoverEvents = false;
     }
 
     /**

@@ -2,14 +2,21 @@
 
 namespace Roots\Acorn\Configuration;
 
+use Closure;
 use Illuminate\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Foundation\Bootstrap\RegisterProviders;
 use Illuminate\Foundation\Configuration\ApplicationBuilder as FoundationApplicationBuilder;
+use Roots\Acorn\Application;
 use Roots\Acorn\Configuration\Concerns\Paths;
 
 class ApplicationBuilder extends FoundationApplicationBuilder
 {
     use Paths;
+
+    /**
+     * The application builder configuration.
+     */
+    protected array $config = [];
 
     /**
      * Register the standard kernel classes for the application.
@@ -54,6 +61,46 @@ class ApplicationBuilder extends FoundationApplicationBuilder
     }
 
     /**
+     * Register the routing services for the application.
+     *
+     * @return $this
+     */
+    public function withRouting(?Closure $using = null,
+        array|string|null $web = null,
+        array|string|null $api = null,
+        ?string $commands = null,
+        ?string $channels = null,
+        ?string $pages = null,
+        ?string $health = null,
+        string $apiPrefix = 'api',
+        ?callable $then = null,
+        bool $wordpress = false)
+    {
+        if (! $web && file_exists($path = base_path('routes/web.php'))) {
+            $web = $path;
+        }
+
+        parent::withRouting($using, $web, $api, $commands, $channels, $pages, $health, $apiPrefix, $then);
+
+        if ($wordpress) {
+            $this->app->handleWordPressRequests();
+        }
+
+        $this->config['routing'] = [
+            'web' => $web,
+            'api' => $api,
+            'commands' => $commands,
+            'channels' => $channels,
+            'pages' => $pages,
+            'health' => $health,
+            'apiPrefix' => $apiPrefix,
+            'wordpress' => $wordpress,
+        ];
+
+        return $this;
+    }
+
+    /**
      * Register the global middleware, middleware groups, and middleware aliases for the application.
      *
      * @return $this
@@ -76,6 +123,18 @@ class ApplicationBuilder extends FoundationApplicationBuilder
             if ($priorities = $middleware->getMiddlewarePriority()) {
                 $kernel->setMiddlewarePriority($priorities);
             }
+
+            if ($priorityAppends = $middleware->getMiddlewarePriorityAppends()) {
+                foreach ($priorityAppends as $newMiddleware => $after) {
+                    $kernel->addToMiddlewarePriorityAfter($after, $newMiddleware);
+                }
+            }
+
+            if ($priorityPrepends = $middleware->getMiddlewarePriorityPrepends()) {
+                foreach ($priorityPrepends as $newMiddleware => $before) {
+                    $kernel->addToMiddlewarePriorityBefore($before, $newMiddleware);
+                }
+            }
         });
 
         return $this;
@@ -94,6 +153,11 @@ class ApplicationBuilder extends FoundationApplicationBuilder
                 ? $this->app->getBootstrapProvidersPath()
                 : null
         );
+
+        $this->config['providers'] = [
+            ...$this->config['providers'] ?? [],
+            ...$providers,
+        ];
 
         return $this;
     }
@@ -115,6 +179,6 @@ class ApplicationBuilder extends FoundationApplicationBuilder
      */
     public function boot()
     {
-        return $this->app->bootAcorn();
+        return $this->app->bootAcorn($this->config);
     }
 }

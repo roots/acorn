@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Facade;
 use Roots\Acorn\Tests\Test\TestCase;
 
 use function Roots\asset;
@@ -8,8 +9,13 @@ use function Spatie\Snapshots\assertMatchesSnapshot;
 
 uses(TestCase::class);
 
+beforeEach(function () {
+    Facade::setFacadeApplication(new \Roots\Acorn\Application);
+});
+
 it('asset() can access the default manifest', function () {
-    $app = new \Roots\Acorn\Application();
+    $app = new \Roots\Acorn\Application;
+
     $app->singleton('config', fn () => new \Illuminate\Config\Repository([
         'assets' => [
             'default' => 'app',
@@ -29,13 +35,15 @@ it('asset() can access the default manifest', function () {
             ],
         ],
     ]));
+
     $app->register(\Roots\Acorn\Assets\AssetsServiceProvider::class);
 
     assertMatchesSnapshot(asset('app.js')->uri());
 });
 
 it('asset() can access a specified manifest', function () {
-    $app = new \Roots\Acorn\Application();
+    $app = new \Roots\Acorn\Application;
+
     $app->singleton('config', fn () => new \Illuminate\Config\Repository([
         'assets' => [
             'default' => 'app',
@@ -55,13 +63,14 @@ it('asset() can access a specified manifest', function () {
             ],
         ],
     ]));
+
     $app->register(\Roots\Acorn\Assets\AssetsServiceProvider::class);
 
     assertMatchesSnapshot(asset('editor.js', 'editor')->uri());
 });
 
 it('bundle() can access the default manifest', function () {
-    $app = new \Roots\Acorn\Application();
+    $app = new \Roots\Acorn\Application;
     $app->singleton('config', fn () => new \Illuminate\Config\Repository([
         'assets' => [
             'default' => 'app',
@@ -81,13 +90,15 @@ it('bundle() can access the default manifest', function () {
             ],
         ],
     ]));
+
     $app->register(\Roots\Acorn\Assets\AssetsServiceProvider::class);
 
     assertMatchesSnapshot(bundle('app')->js()->toJson());
 });
 
 it('bundle() can access a specified manifest', function () {
-    $app = new \Roots\Acorn\Application();
+    $app = new \Roots\Acorn\Application;
+
     $app->singleton('config', fn () => new \Illuminate\Config\Repository([
         'assets' => [
             'default' => 'app',
@@ -107,6 +118,7 @@ it('bundle() can access a specified manifest', function () {
             ],
         ],
     ]));
+
     $app->register(\Roots\Acorn\Assets\AssetsServiceProvider::class);
 
     assertMatchesSnapshot(bundle('editor', 'editor')->js()->toJson());

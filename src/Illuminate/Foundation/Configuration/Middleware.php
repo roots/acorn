@@ -16,6 +16,7 @@ use Illuminate\Http\Middleware\TrustProxies;
 use Illuminate\Routing\Middleware\ValidateSignature;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 class Middleware
 {
@@ -144,6 +145,20 @@ class Middleware
      * @var array
      */
     protected $priority = [];
+
+    /**
+     * The middleware to prepend to the middleware priority definition.
+     *
+     * @var array
+     */
+    protected $prependPriority = [];
+
+    /**
+     * The middleware to append to the middleware priority definition.
+     *
+     * @var array
+     */
+    protected $appendPriority = [];
 
     /**
      * Prepend middleware to the application's global middleware stack.
@@ -303,7 +318,6 @@ class Middleware
     /**
      * Modify the middleware in the "web" group.
      *
-     * @param  string  $group
      * @param  array|string  $append
      * @param  array|string  $prepend
      * @param  array|string  $remove
@@ -318,7 +332,6 @@ class Middleware
     /**
      * Modify the middleware in the "api" group.
      *
-     * @param  string  $group
      * @param  array|string  $append
      * @param  array|string  $prepend
      * @param  array|string  $remove
@@ -403,6 +416,34 @@ class Middleware
     }
 
     /**
+     * Prepend middleware to the priority middleware.
+     *
+     * @param  array|string  $before
+     * @param  string  $prepend
+     * @return $this
+     */
+    public function prependToPriorityList($before, $prepend)
+    {
+        $this->prependPriority[$prepend] = $before;
+
+        return $this;
+    }
+
+    /**
+     * Append middleware to the priority middleware.
+     *
+     * @param  array|string  $after
+     * @param  string  $append
+     * @return $this
+     */
+    public function appendToPriorityList($after, $append)
+    {
+        $this->appendPriority[$append] = $after;
+
+        return $this;
+    }
+
+    /**
      * Get the global middleware.
      *
      * @return array
@@ -410,6 +451,8 @@ class Middleware
     public function getGlobalMiddleware()
     {
         $middleware = $this->global ?: array_values(array_filter([
+            \Illuminate\Http\Middleware\ValidatePathEncoding::class,
+            \Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks::class,
             $this->trustHosts ? \Illuminate\Http\Middleware\TrustHosts::class : null,
             \Illuminate\Http\Middleware\TrustProxies::class,
             \Illuminate\Http\Middleware\HandleCors::class,
@@ -420,9 +463,7 @@ class Middleware
         ]));
 
         $middleware = array_map(function ($middleware) {
-            return isset($this->replacements[$middleware])
-                ? $this->replacements[$middleware]
-                : $middleware;
+            return $this->replacements[$middleware] ?? $middleware;
         }, $middleware);
 
         return array_values(array_filter(
@@ -514,11 +555,11 @@ class Middleware
     /**
      * Configure where users are redirected by the authentication and guest middleware.
      *
-     * @param  callable|string  $guests
-     * @param  callable|string  $users
+     * @param  callable|string|null  $guests
+     * @param  callable|string|null  $users
      * @return $this
      */
-    public function redirectTo(callable|string $guests = null, callable|string $users = null)
+    public function redirectTo(callable|string|null $guests = null, callable|string|null $users = null)
     {
         $guests = is_string($guests) ? fn () => $guests : $guests;
         $users = is_string($users) ? fn () => $users : $users;
@@ -583,7 +624,7 @@ class Middleware
      */
     public function convertEmptyStringsToNull(array $except = [])
     {
-        collect($except)->each(fn (Closure $callback) => ConvertEmptyStringsToNull::skipWhen($callback));
+        (new Collection($except))->each(fn (Closure $callback) => ConvertEmptyStringsToNull::skipWhen($callback));
 
         return $this;
     }
@@ -596,7 +637,7 @@ class Middleware
      */
     public function trimStrings(array $except = [])
     {
-        [$skipWhen, $except] = collect($except)->partition(fn ($value) => $value instanceof Closure);
+        [$skipWhen, $except] = (new Collection($except))->partition(fn ($value) => $value instanceof Closure);
 
         $skipWhen->each(fn (Closure $callback) => TrimStrings::skipWhen($callback));
 
@@ -608,15 +649,15 @@ class Middleware
     /**
      * Indicate that the trusted host middleware should be enabled.
      *
-     * @param  array<int, string>|null  $at
+     * @param  array<int, string>|(callable(): array<int, string>)|null  $at
      * @param  bool  $subdomains
      * @return $this
      */
-    public function trustHosts(array $at = null, bool $subdomains = true)
+    public function trustHosts(array|callable|null $at = null, bool $subdomains = true)
     {
         $this->trustHosts = true;
 
-        if (is_array($at)) {
+        if (! is_null($at)) {
             TrustHosts::at($at, $subdomains);
         }
 
@@ -630,7 +671,7 @@ class Middleware
      * @param  int|null  $headers
      * @return $this
      */
-    public function trustProxies(array|string $at = null, int $headers = null)
+    public function trustProxies(array|string|null $at = null, ?int $headers = null)
     {
         if (! is_null($at)) {
             TrustProxies::at($at);
@@ -768,5 +809,25 @@ class Middleware
     public function getMiddlewarePriority()
     {
         return $this->priority;
+    }
+
+    /**
+     * Get the middleware to prepend to the middleware priority definition.
+     *
+     * @return array
+     */
+    public function getMiddlewarePriorityPrepends()
+    {
+        return $this->prependPriority;
+    }
+
+    /**
+     * Get the middleware to append to the middleware priority definition.
+     *
+     * @return array
+     */
+    public function getMiddlewarePriorityAppends()
+    {
+        return $this->appendPriority;
     }
 }

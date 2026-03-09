@@ -15,7 +15,7 @@ class ComposerScripts extends FoundationComposerScripts
      */
     protected static function clearCompiled()
     {
-        $console = new Console(new Filesystem(), getcwd());
+        $console = new Console(new Filesystem, getcwd());
 
         $console->configClear();
         $console->clearCompiled();

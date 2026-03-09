@@ -9,7 +9,5 @@ namespace Illuminate\View {
      *
      * @codeCoverageIgnore
      */
-    class View
-    {
-    }
+    class View {}
 }

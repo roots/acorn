@@ -36,7 +36,7 @@ class WhoopsHandler extends FoundationWhoopsHandler
      */
     public function forDebug()
     {
-        return tap(new PrettyPageHandler(), function ($handler) {
+        return tap(new PrettyPageHandler, function ($handler) {
             $handler->handleUnconditionally(true);
 
             $this->registerApplicationPaths($handler)

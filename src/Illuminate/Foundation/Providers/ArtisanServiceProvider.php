@@ -7,6 +7,7 @@ use Illuminate\Cache\Console\CacheTableCommand;
 use Illuminate\Cache\Console\ClearCommand as CacheClearCommand;
 use Illuminate\Cache\Console\ForgetCommand as CacheForgetCommand;
 use Illuminate\Cache\Console\PruneStaleTagsCommand;
+use Illuminate\Concurrency\Console\InvokeSerializedClosureCommand;
 use Illuminate\Console\Scheduling\ScheduleClearCacheCommand;
 use Illuminate\Console\Scheduling\ScheduleFinishCommand;
 use Illuminate\Console\Scheduling\ScheduleInterruptCommand;
@@ -38,6 +39,7 @@ use Illuminate\Foundation\Console\ClearCompiledCommand;
 use Illuminate\Foundation\Console\ComponentMakeCommand;
 use Illuminate\Foundation\Console\ConfigCacheCommand;
 use Illuminate\Foundation\Console\ConfigClearCommand;
+use Illuminate\Foundation\Console\ConfigMakeCommand;
 use Illuminate\Foundation\Console\ConfigPublishCommand;
 use Illuminate\Foundation\Console\ConfigShowCommand;
 use Illuminate\Foundation\Console\ConsoleMakeCommand;
@@ -55,6 +57,7 @@ use Illuminate\Foundation\Console\EventMakeCommand;
 use Illuminate\Foundation\Console\ExceptionMakeCommand;
 use Illuminate\Foundation\Console\InterfaceMakeCommand;
 use Illuminate\Foundation\Console\JobMakeCommand;
+use Illuminate\Foundation\Console\JobMiddlewareMakeCommand;
 use Illuminate\Foundation\Console\KeyGenerateCommand;
 use Illuminate\Foundation\Console\LangPublishCommand;
 use Illuminate\Foundation\Console\ListenerMakeCommand;
@@ -67,6 +70,7 @@ use Illuminate\Foundation\Console\OptimizeCommand;
 use Illuminate\Foundation\Console\PackageDiscoverCommand;
 use Illuminate\Foundation\Console\PolicyMakeCommand;
 use Illuminate\Foundation\Console\ProviderMakeCommand;
+use Illuminate\Foundation\Console\ReloadCommand;
 use Illuminate\Foundation\Console\RequestMakeCommand;
 use Illuminate\Foundation\Console\ResourceMakeCommand;
 use Illuminate\Foundation\Console\RouteCacheCommand;
@@ -94,9 +98,11 @@ use Illuminate\Queue\Console\ForgetFailedCommand as ForgetFailedQueueCommand;
 use Illuminate\Queue\Console\ListenCommand as QueueListenCommand;
 use Illuminate\Queue\Console\ListFailedCommand as ListFailedQueueCommand;
 use Illuminate\Queue\Console\MonitorCommand as QueueMonitorCommand;
+use Illuminate\Queue\Console\PauseCommand as QueuePauseCommand;
 use Illuminate\Queue\Console\PruneBatchesCommand as QueuePruneBatchesCommand;
 use Illuminate\Queue\Console\PruneFailedJobsCommand as QueuePruneFailedJobsCommand;
 use Illuminate\Queue\Console\RestartCommand as QueueRestartCommand;
+use Illuminate\Queue\Console\ResumeCommand as QueueResumeCommand;
 use Illuminate\Queue\Console\RetryBatchCommand as QueueRetryBatchCommand;
 use Illuminate\Queue\Console\RetryCommand as QueueRetryCommand;
 use Illuminate\Queue\Console\TableCommand;
@@ -135,6 +141,7 @@ class ArtisanServiceProvider extends ServiceProvider implements DeferrableProvid
         'EventCache' => EventCacheCommand::class,
         'EventClear' => EventClearCommand::class,
         'EventList' => EventListCommand::class,
+        'InvokeSerializedClosure' => InvokeSerializedClosureCommand::class,
         'KeyGenerate' => KeyGenerateCommand::class,
         'Optimize' => OptimizeCommand::class,
         'OptimizeClear' => OptimizeClearCommand::class,
@@ -146,12 +153,15 @@ class ArtisanServiceProvider extends ServiceProvider implements DeferrableProvid
         'QueueForget' => ForgetFailedQueueCommand::class,
         'QueueListen' => QueueListenCommand::class,
         'QueueMonitor' => QueueMonitorCommand::class,
+        'QueuePause' => QueuePauseCommand::class,
         'QueuePruneBatches' => QueuePruneBatchesCommand::class,
         'QueuePruneFailedJobs' => QueuePruneFailedJobsCommand::class,
         'QueueRestart' => QueueRestartCommand::class,
+        'QueueResume' => QueueResumeCommand::class,
         'QueueRetry' => QueueRetryCommand::class,
         'QueueRetryBatch' => QueueRetryBatchCommand::class,
         'QueueWork' => QueueWorkCommand::class,
+        'Reload' => ReloadCommand::class,
         'RouteCache' => RouteCacheCommand::class,
         'RouteClear' => RouteClearCommand::class,
         'RouteList' => RouteListCommand::class,
@@ -186,6 +196,7 @@ class ArtisanServiceProvider extends ServiceProvider implements DeferrableProvid
         'ChannelMake' => ChannelMakeCommand::class,
         'ClassMake' => ClassMakeCommand::class,
         'ComponentMake' => ComponentMakeCommand::class,
+        'ConfigMake' => ConfigMakeCommand::class,
         'ConfigPublish' => ConfigPublishCommand::class,
         'ConsoleMake' => ConsoleMakeCommand::class,
         'ControllerMake' => ControllerMakeCommand::class,
@@ -197,6 +208,7 @@ class ArtisanServiceProvider extends ServiceProvider implements DeferrableProvid
         'FactoryMake' => FactoryMakeCommand::class,
         'InterfaceMake' => InterfaceMakeCommand::class,
         'JobMake' => JobMakeCommand::class,
+        'JobMiddlewareMake' => JobMiddlewareMakeCommand::class,
         'LangPublish' => LangPublishCommand::class,
         'ListenerMake' => ListenerMakeCommand::class,
         'MailMake' => MailMakeCommand::class,
@@ -246,7 +258,6 @@ class ArtisanServiceProvider extends ServiceProvider implements DeferrableProvid
     /**
      * Register the given commands.
      *
-     * @param  array  $commands
      * @return void
      */
     protected function registerCommands(array $commands)
@@ -389,9 +400,21 @@ class ArtisanServiceProvider extends ServiceProvider implements DeferrableProvid
      *
      * @return void
      */
+    protected function registerConfigMakeCommand()
+    {
+        $this->app->singleton(ConfigMakeCommand::class, function ($app) {
+            return new ConfigMakeCommand($app['files']);
+        });
+    }
+
+    /**
+     * Register the command.
+     *
+     * @return void
+     */
     protected function registerConfigPublishCommand()
     {
-        $this->app->singleton(ConfigPublishCommand::class, function ($app) {
+        $this->app->singleton(ConfigPublishCommand::class, function () {
             return new ConfigPublishCommand;
         });
     }
@@ -501,6 +524,18 @@ class ArtisanServiceProvider extends ServiceProvider implements DeferrableProvid
     {
         $this->app->singleton(JobMakeCommand::class, function ($app) {
             return new JobMakeCommand($app['files']);
+        });
+    }
+
+    /**
+     * Register the command.
+     *
+     * @return void
+     */
+    protected function registerJobMiddlewareMakeCommand()
+    {
+        $this->app->singleton(JobMiddlewareMakeCommand::class, function ($app) {
+            return new JobMiddlewareMakeCommand($app['files']);
         });
     }
 

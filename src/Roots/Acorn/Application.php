@@ -9,7 +9,6 @@ use Illuminate\Foundation\PackageManifest as FoundationPackageManifest;
 use Illuminate\Foundation\ProviderRepository;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
 use Roots\Acorn\Application\Concerns\Bootable;
 use Roots\Acorn\Configuration\ApplicationBuilder;
 use Roots\Acorn\Exceptions\SkipProviderException;
@@ -37,6 +36,11 @@ class Application extends FoundationApplication
      * @var string
      */
     protected $resourcePath;
+
+    /**
+     * Indicates if the application handles WordPress requests.
+     */
+    protected bool $handleWordPressRequests = false;
 
     /**
      * Create a new Application instance.
@@ -75,12 +79,26 @@ class Application extends FoundationApplication
             ->withEvents()
             ->withCommands()
             ->withProviders()
-            ->withRouting(
-                web: $basePath.'/routes/web.php',
-                api: $basePath.'/routes/api.php',
-            )
             ->withMiddleware()
             ->withExceptions();
+    }
+
+    /**
+     * Handle WordPress routes using the request handler.
+     */
+    public function handleWordPressRequests(): self
+    {
+        $this->handleWordPressRequests = true;
+
+        return $this;
+    }
+
+    /**
+     * Determine if the application handles WordPress requests.
+     */
+    public function handlesWordPressRequests(): bool
+    {
+        return $this->handleWordPressRequests;
     }
 
     /**
@@ -140,9 +158,7 @@ class Application extends FoundationApplication
                 throw new Exception("The {$pathType} path type is not supported.");
             }
 
-            $this->{$supportedPaths[$pathType]} = Str::startsWith($path, $this->absoluteCachePathPrefixes)
-                ? $path
-                : $this->basePath($path);
+            $this->{$supportedPaths[$pathType]} = $path;
         }
 
         $this->bindPathsInContainer();
@@ -235,16 +251,21 @@ class Application extends FoundationApplication
     protected function registerPackageManifest()
     {
         $this->singleton(FoundationPackageManifest::class, function () {
-            $files = new Filesystem();
+            $files = new Filesystem;
+
+            $closestComposer = $files->closest(WP_CONTENT_DIR, 'composer.json');
+            $contentRoot = $closestComposer ? dirname($closestComposer) : null;
+
+            $composerPaths = apply_filters('acorn/composer_paths', array_filter([
+                $this->basePath(),
+                $contentRoot,
+                get_template_directory(),
+                get_stylesheet_directory(),
+            ]));
 
             $composerPaths = collect(get_option('active_plugins'))
                 ->map(fn ($plugin) => WP_PLUGIN_DIR.DIRECTORY_SEPARATOR.dirname($plugin))
-                ->merge([
-                    $this->basePath(),
-                    dirname(WP_CONTENT_DIR, 2),
-                    get_template_directory(),
-                    get_stylesheet_directory(),
-                ])
+                ->merge((array) $composerPaths)
                 ->map(fn ($path) => rtrim($files->normalizePath($path), '/'))
                 ->unique()
                 ->filter(
@@ -311,8 +332,10 @@ class Application extends FoundationApplication
 
         $providers->splice(1, 0, [$this->make(PackageManifest::class)->providers()]);
 
-        (new ProviderRepository($this, new Filesystem(), $this->getCachedServicesPath()))
+        (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPath()))
             ->load($providers->collapse()->toArray());
+
+        $this->fireAppCallbacks($this->registeredCallbacks);
     }
 
     /**
@@ -348,7 +371,7 @@ class Application extends FoundationApplication
             $error = get_class($e);
             $message = [
                 BindingResolutionException::class => "Skipping provider [{$providerName}] because it requires a dependency that cannot be found.",
-            ][$error] ?? "Skipping provider [{$providerName}] because it encountered an error [{$error}].";
+            ][$error] ?? "Skipping provider [{$providerName}] because it encountered an error [{$error}]: {$e->getMessage()}";
 
             $e = new SkipProviderException($message, 0, $e);
         }
@@ -406,7 +429,7 @@ class Application extends FoundationApplication
      */
     protected function getAppComposer(): string
     {
-        return (new Filesystem())->closest($this->path(), 'composer.json') ?? $this->basePath('composer.json');
+        return (new Filesystem)->closest($this->path(), 'composer.json') ?? $this->basePath('composer.json');
     }
 
     /**

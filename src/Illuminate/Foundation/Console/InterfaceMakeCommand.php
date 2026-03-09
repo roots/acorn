@@ -48,7 +48,11 @@ class InterfaceMakeCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace;
+        return match (true) {
+            is_dir(app_path('Contracts')) => $rootNamespace.'\\Contracts',
+            is_dir(app_path('Interfaces')) => $rootNamespace.'\\Interfaces',
+            default => $rootNamespace,
+        };
     }
 
     /**

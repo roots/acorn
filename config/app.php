@@ -3,8 +3,6 @@
 use Illuminate\Support\Facades\Facade;
 use Roots\Acorn\ServiceProvider;
 
-use function Roots\env;
-
 return [
 
     /*
@@ -74,7 +72,7 @@ return [
     |
     */
 
-    'timezone' => get_option('timezone_string') ?: env('APP_TIMEZONE', 'UTC'),
+    'timezone' => 'UTC',
 
     /*
     |--------------------------------------------------------------------------

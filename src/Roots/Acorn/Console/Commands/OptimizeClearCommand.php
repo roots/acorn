@@ -16,12 +16,12 @@ class OptimizeClearCommand extends FoundationOptimizeClearCommand
      */
     public function handle()
     {
-        $this->gracefulCall('view:clear');
-        $this->gracefulCall('cache:clear');
-        $this->gracefulCall('route:clear');
-        $this->gracefulCall('config:clear');
-        $this->gracefulCall('clear-compiled');
+        $this->components->info('Clearing cached bootstrap files.');
 
-        $this->info('Caches cleared successfully!');
+        foreach ($this->getOptimizeClearTasks() as $description => $command) {
+            $this->components->task($description, fn () => $this->gracefulCallSilent($command) == 0);
+        }
+
+        $this->newLine();
     }
 }
