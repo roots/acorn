@@ -57,6 +57,7 @@ class AcornServiceProvider extends ServiceProvider
             $this->registerPostInitEvent();
         }
 
+        $this->configureMultisite();
         $this->poweredBy();
     }
 
@@ -124,6 +125,32 @@ class AcornServiceProvider extends ServiceProvider
         );
 
         return array_unique(array_merge($this->configs, array_values($configs)));
+    }
+
+    /**
+     * Configure cache and session isolation for multisite.
+     *
+     * @return void
+     */
+    protected function configureMultisite()
+    {
+        if (! function_exists('is_multisite') || ! is_multisite()) {
+            return;
+        }
+
+        $config = $this->app->make('config');
+        $basePrefix = $config->get('cache.prefix', '');
+        $baseCookie = $config->get('session.cookie', 'wordpress_session');
+
+        $applyBlogConfig = function () use ($config, $basePrefix, $baseCookie) {
+            $blogId = get_current_blog_id();
+            $config->set('cache.prefix', "{$basePrefix}blog_{$blogId}_");
+            $config->set('session.cookie', "{$baseCookie}_{$blogId}");
+        };
+
+        $applyBlogConfig();
+
+        add_action('switch_blog', $applyBlogConfig);
     }
 
     /**
