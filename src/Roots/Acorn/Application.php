@@ -253,14 +253,19 @@ class Application extends FoundationApplication
         $this->singleton(FoundationPackageManifest::class, function () {
             $files = new Filesystem;
 
+            $closestComposer = $files->closest(WP_CONTENT_DIR, 'composer.json');
+            $contentRoot = $closestComposer ? dirname($closestComposer) : null;
+
+            $composerPaths = apply_filters('acorn/composer_paths', array_filter([
+                $this->basePath(),
+                $contentRoot,
+                get_template_directory(),
+                get_stylesheet_directory(),
+            ]));
+
             $composerPaths = collect(get_option('active_plugins'))
                 ->map(fn ($plugin) => WP_PLUGIN_DIR.DIRECTORY_SEPARATOR.dirname($plugin))
-                ->merge([
-                    $this->basePath(),
-                    dirname(WP_CONTENT_DIR, 2),
-                    get_template_directory(),
-                    get_stylesheet_directory(),
-                ])
+                ->merge((array) $composerPaths)
                 ->map(fn ($path) => rtrim($files->normalizePath($path), '/'))
                 ->unique()
                 ->filter(

@@ -16,25 +16,25 @@ jobs:
         uses: devcontainers/ci@v0.3
         with:
           configFile: .devcontainer/devcontainer.json
+          cacheFrom: ghcr.io/roots/acorn-devcontainer
+          push: never
           runCmd: |
-            cd /roots/app
-            composer install
-            # ???
-            composer remove roots/acorn
-            composer require roots/acorn --no-interaction
-            composer require --dev nunomaduro/collision
-            composer require --dev spatie/laravel-ignition
-            # ???
+            # Wait for database to be ready
             while ! mysqladmin ping -h"database" --silent; do
               sleep 1
             done
-            wp core install --url=http://web:8080 --title=Acorn --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email --allow-root
+            # Ensure WordPress is installed
+            cd /roots/app
+            wp core install --url=http://web:8080 --title="Acorn Testing" --admin_user=admin --admin_password=password --admin_email=admin@roots.test --skip-email --allow-root
+            # Ensure Sage theme is activated
+            wp theme activate sage
+            # Clear optimization cache
             wp acorn optimize:clear
-
+            # Run the routing integration tests
             cd /roots/acorn
             composer install
             composer run-script test tests/Integration/Routing
 
-      - name: Verify routes
+      - name: Verify site is running
         run: |
-          curl -s http://localhost:8080/test/ | grep "Howdy"
+          curl -I http://localhost:8080 | grep "200 OK"

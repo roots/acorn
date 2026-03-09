@@ -47,6 +47,7 @@
     "ext-mbstring": "*",
     "dragonmantank/cron-expression": "^3.4",
     "guzzlehttp/guzzle": "^7.8",
+    "illuminate/auth": "^12.0",
     "illuminate/cache": "^12.0",
     "illuminate/config": "^12.0",
     "illuminate/console": "^12.0",
@@ -67,7 +68,7 @@
     "illuminate/validation": "^12.0",
     "illuminate/view": "^12.0",
     "laravel/prompts": "^0.3.0",
-    "laravel/serializable-closure": "^1.3",
+    "laravel/serializable-closure": "^1.3|^2.0",
     "league/flysystem": "^3.26",
     "ramsey/uuid": "^4.7",
     "roots/support": "^1.0",
@@ -78,18 +79,17 @@
   "require-dev": {
     "laravel/pint": "^1.15",
     "mockery/mockery": "^1.6",
-    "pestphp/pest": "^2.34",
+    "pestphp/pest": "^3.0",
     "phpcompatibility/php-compatibility": "^9.3",
     "roave/security-advisories": "dev-master",
     "spatie/laravel-ignition": "^2.5",
-    "spatie/pest-plugin-snapshots": "^2.1",
+    "spatie/pest-plugin-snapshots": "^2.3",
     "spatie/temporary-directory": "^2.2",
     "tmarsteel/mockery-callable-mock": "^2.1",
     "wp-cli/wp-cli": "^2.10"
   },
   "suggest": {
-    "roots/acorn-prettify": "A collection of modules to apply theme-agnostic front-end modifications (^1.0).",
-    "spatie/laravel-ignition": "A beautiful error page for development (^2.0)."
+    "roots/acorn-prettify": "A collection of modules to apply theme-agnostic front-end modifications (^1.0)."
   },
   "config": {
     "sort-packages": true,

@@ -1,0 +1,69 @@
+name: Update Laravel Foundation
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-foundation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: curl, phar
+
+      - name: Run update script
+        run: php scripts/update-foundation
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+            if [ -f scripts/.laravel-version ]; then
+              echo "version=$(cat scripts/.laravel-version)" >> "$GITHUB_OUTPUT"
+            else
+              echo "version=latest" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
+      - name: Create pull request
+        if: steps.changes.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.changes.outputs.version }}"
+          BRANCH="update/foundation-${VERSION}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git checkout -b "$BRANCH"
+          git add src/Illuminate/Foundation/
+          git commit -m "📦️ Update Foundation to Laravel ${VERSION}"
+          git push --force -u origin "$BRANCH"
+
+          EXISTING_PR=$(gh pr list --head "$BRANCH" --json number --jq '.[0].number')
+          if [ -n "$EXISTING_PR" ]; then
+            echo "PR #${EXISTING_PR} already exists for ${BRANCH}, updated with force push."
+          else
+            gh pr create \
+              --title "📦️ Update Foundation to Laravel ${VERSION}" \
+              --body "This is an automated PR to update \`Illuminate\Foundation\` to Laravel \`${VERSION}\`.
+
+          Please review the changes and ensure compatibility with Acorn before merging." \
+              --label "dependencies"
+          fi

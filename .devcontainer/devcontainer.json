@@ -13,14 +13,11 @@
             "userGid": "1000",
             "upgradePackages": "true"
         },
-        "ghcr.io/devcontainers/features/sshd:1": {},
-        "ghcr.io/devcontainers/features/git:1": {
-            "version": "latest"
-        }
+        "ghcr.io/devcontainers/features/sshd:1": {}
     },
     "initializeCommand": "[ ! -f '.devcontainer/.env' ] && cp '.devcontainer/config/app/.env.example' '.devcontainer/.env' || true",
-    "onCreateCommand": "sudo chmod +x ./${localWorkspaceFolderBasename}/.devcontainer/install.sh && ./${localWorkspaceFolderBasename}/.devcontainer/install.sh",
-    "postCreateCommand": "sudo chmod +x ./${localWorkspaceFolderBasename}/.devcontainer/setup.sh && ./${localWorkspaceFolderBasename}/.devcontainer/setup.sh",
+    "onCreateCommand": "chmod +x ./${localWorkspaceFolderBasename}/.devcontainer/install.sh && ./${localWorkspaceFolderBasename}/.devcontainer/install.sh",
+    "postCreateCommand": "chmod +x ./${localWorkspaceFolderBasename}/.devcontainer/setup.sh && ./${localWorkspaceFolderBasename}/.devcontainer/setup.sh",
     "forwardPorts": [],
     "containerEnv": {
         "APP_SERVICE": "acorn.test",

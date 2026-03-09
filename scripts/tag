@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+set -e
+
+VERSION=$1
+
+if [ -z "$VERSION" ]; then
+  echo "Usage: scripts/tag <version>"
+  echo "Example: scripts/tag 5.x.x (do not include the 'v' prefix)"
+  exit 1
+fi
+
+APP_FILE="src/Roots/Acorn/Application.php"
+BRANCH="release-${VERSION}"
+
+echo "Creating release branch ${BRANCH}..."
+git checkout -b "$BRANCH"
+
+echo "Bumping version to v${VERSION}..."
+sed -i.bak "s/public const VERSION = '.*';/public const VERSION = '${VERSION}';/" "$APP_FILE"
+rm "${APP_FILE}.bak"
+
+git add "$APP_FILE"
+git commit -m "🔖 v${VERSION}"
+git tag "v${VERSION}"
+
+git push --tags
+
+git checkout main
+git branch -D "$BRANCH"
+
+echo ""
+echo "Done. Tag v${VERSION} has been pushed."
+echo "You can now create the release on GitHub."

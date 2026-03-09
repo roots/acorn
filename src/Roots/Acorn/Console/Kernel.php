@@ -27,6 +27,7 @@ class Kernel extends FoundationConsoleKernel
         \Illuminate\Foundation\Console\ConsoleMakeCommand::class,
         \Illuminate\Foundation\Console\EnvironmentCommand::class,
         \Illuminate\Foundation\Console\JobMakeCommand::class,
+        \Illuminate\Foundation\Console\ModelMakeCommand::class,
         \Illuminate\Foundation\Console\PackageDiscoverCommand::class,
         \Illuminate\Foundation\Console\ProviderMakeCommand::class,
         \Illuminate\Foundation\Console\RouteClearCommand::class,
@@ -34,10 +35,24 @@ class Kernel extends FoundationConsoleKernel
         \Illuminate\Foundation\Console\ViewCacheCommand::class,
         \Illuminate\Foundation\Console\ViewClearCommand::class,
         \Illuminate\Queue\Console\BatchesTableCommand::class,
-        \Illuminate\Queue\Console\FailedTableCommand::class,
-        \Illuminate\Queue\Console\TableCommand::class,
-        \Illuminate\Queue\Console\WorkCommand::class,
         \Illuminate\Queue\Console\ClearCommand::class,
+        \Illuminate\Queue\Console\FailedTableCommand::class,
+        \Illuminate\Queue\Console\FlushFailedCommand::class,
+        \Illuminate\Queue\Console\ForgetFailedCommand::class,
+        \Illuminate\Queue\Console\ListFailedCommand::class,
+        \Illuminate\Queue\Console\MonitorCommand::class,
+        \Illuminate\Queue\Console\PauseCommand::class,
+        \Illuminate\Queue\Console\PruneBatchesCommand::class,
+        \Illuminate\Queue\Console\PruneFailedJobsCommand::class,
+        \Illuminate\Queue\Console\RestartCommand::class,
+        \Illuminate\Queue\Console\ResumeCommand::class,
+        \Illuminate\Queue\Console\RetryBatchCommand::class,
+        \Illuminate\Queue\Console\RetryCommand::class,
+        \Illuminate\Queue\Console\TableCommand::class,
+        \Illuminate\Queue\Console\ListenCommand::class,
+        \Illuminate\Queue\Console\WorkCommand::class,
+        \Illuminate\Console\Scheduling\ScheduleClearCacheCommand::class,
+        \Illuminate\Console\Scheduling\ScheduleFinishCommand::class,
         \Illuminate\Console\Scheduling\ScheduleListCommand::class,
         \Illuminate\Console\Scheduling\ScheduleRunCommand::class,
         \Illuminate\Console\Scheduling\ScheduleWorkCommand::class,
@@ -64,7 +79,7 @@ class Kernel extends FoundationConsoleKernel
      * @var string[]
      */
     protected $bootstrappers = [
-        \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
+        \Roots\Acorn\Bootstrap\LoadEnvironmentVariables::class,
         \Roots\Acorn\Bootstrap\LoadConfiguration::class,
         \Roots\Acorn\Bootstrap\HandleExceptions::class,
         \Roots\Acorn\Bootstrap\RegisterFacades::class,
@@ -84,8 +99,7 @@ class Kernel extends FoundationConsoleKernel
             define('ARTISAN_BINARY', dirname(__DIR__, 4).'/bin/acorn');
         }
 
-        $this->app = $app;
-        $this->events = $events;
+        parent::__construct($app, $events);
     }
 
     /**
