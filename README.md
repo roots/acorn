@@ -38,6 +38,7 @@ We're dedicated to pushing modern WordPress development forward through our open
 
 ## Supported Laravel components
 
+* `illuminate/auth`
 * `illuminate/bus`
 * `illuminate/cache`
 * `illuminate/collections`
@@ -46,6 +47,7 @@ We're dedicated to pushing modern WordPress development forward through our open
 * `illuminate/console`
 * `illuminate/container`
 * `illuminate/contracts`
+* `illuminate/cookie`
 * `illuminate/database`
 * `illuminate/encryption`
 * `illuminate/events`
@@ -54,6 +56,7 @@ We're dedicated to pushing modern WordPress development forward through our open
 * `illuminate/http`
 * `illuminate/log`
 * `illuminate/macroable`
+* `illuminate/pagination`
 * `illuminate/pipeline`
 * `illuminate/queue`
 * `illuminate/routing`
@@ -65,14 +68,10 @@ We're dedicated to pushing modern WordPress development forward through our open
 <details>
   <summary><b>Unsupported components</b></summary>
 
-  * `illuminate/auth`
   * `illuminate/broadcasting`
-  * `illuminate/cookie`
   * `illuminate/mail`
   * `illuminate/notifications`
-  * `illuminate/pagination` ([Available via Log1x/pagi](https://github.com/Log1x/pagi))
   * `illuminate/redis`
-  * `illuminate/testing`
   * `illuminate/translation`
   
 </details>
