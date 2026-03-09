@@ -1,4 +1,4 @@
-ARG PHP_IMAGE=8-fpm-bookworm
+ARG PHP_IMAGE=8.5-fpm-bookworm
 FROM php:${PHP_IMAGE}
 
 LABEL maintainer="Roots Team"
@@ -8,38 +8,31 @@ ENV TZ=UTC
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# Install dependencies
-RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get -y install --no-install-recommends \
-      jq \
-      mariadb-client \
-      vim \
-      zip \
-    && apt-get -y autoremove && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
-
-# Install PHP extensions
+# Install system dependencies
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends \
       ghostscript \
-      libfreetype6-dev \
-      libjpeg-dev \
-      libmagickwand-dev \
-      libpng-dev \
-      libzip-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j "$(nproc)" \
+      jq \
+      mariadb-client \
+      vim \
+      wget \
+    && apt-get -y autoremove && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
+
+# Install PHP extensions
+ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+RUN install-php-extensions \
       bcmath \
       exif \
       gd \
+      imagick \
       mysqli \
       opcache \
       pdo \
       pdo_mysql \
+      redis \
       zip \
-    && pecl install imagick-3.7.0 && docker-php-ext-enable imagick \
-    && pecl install -o -f redis && docker-php-ext-enable redis \
-    && pecl install xdebug-3.3.1 && docker-php-ext-enable xdebug \
-    && apt-get -y autoremove && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
+    && if [ -z "$CI" ]; then install-php-extensions xdebug; fi
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \

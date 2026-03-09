@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 set_time_limit(0);
@@ -46,9 +46,16 @@ function getVersion(): string
 
     if ($version === $current && ! in_array('--force', $_SERVER['argv'])) {
         echo "Laravel is already on the latest version ({$current}).".PHP_EOL;
+
+        if (getenv('CI')) {
+            exit(0);
+        }
+
         echo 'Use --force to force update.'.PHP_EOL;
         exit(1);
     }
+
+    file_put_contents(__DIR__.'/.laravel-version', $version);
 
     return $version;
 }

@@ -36,7 +36,6 @@ class AliasLoader
      * Create a new AliasLoader instance.
      *
      * @param  array  $aliases
-     * @return void
      */
     private function __construct($aliases)
     {
@@ -104,9 +103,16 @@ class AliasLoader
             return $path;
         }
 
-        file_put_contents($path, $this->formatFacadeStub(
+        $stub = $this->formatFacadeStub(
             $alias, file_get_contents(__DIR__.'/stubs/facade.stub')
-        ));
+        );
+
+        // Atomic write to prevent race conditions...
+        $tempPath = tempnam(dirname($path), 'facade-');
+
+        file_put_contents($tempPath, $stub);
+
+        rename($tempPath, $path);
 
         return $path;
     }
@@ -164,7 +170,7 @@ class AliasLoader
      */
     protected function prependToLoaderStack()
     {
-        spl_autoload_register([$this, 'load'], true, true);
+        spl_autoload_register($this->load(...), true, true);
     }
 
     /**

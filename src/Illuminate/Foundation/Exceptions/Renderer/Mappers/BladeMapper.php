@@ -2,6 +2,7 @@
 
 namespace Illuminate\Foundation\Exceptions\Renderer\Mappers;
 
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -63,7 +64,6 @@ class BladeMapper
      *
      * @param  \Illuminate\Contracts\View\Factory  $factory
      * @param  \Illuminate\View\Compilers\BladeCompiler  $bladeCompiler
-     * @return void
      */
     public function __construct(Factory $factory, BladeCompiler $bladeCompiler)
     {
@@ -87,7 +87,7 @@ class BladeMapper
             $exception = $previous;
         }
 
-        $trace = Collection::make($exception->getTrace())
+        $trace = (new Collection($exception->getTrace()))
             ->map(function ($frame) {
                 if ($originalPath = $this->findCompiledView((string) Arr::get($frame, 'file', ''))) {
                     $frame['file'] = $originalPath;
@@ -124,14 +124,11 @@ class BladeMapper
 
         if (! $compilerEngineReflection->hasProperty('lastCompiled') && $compilerEngineReflection->hasProperty('engine')) {
             $compilerEngine = $compilerEngineReflection->getProperty('engine');
-            $compilerEngine->setAccessible(true);
             $compilerEngine = $compilerEngine->getValue($bladeCompilerEngine);
             $lastCompiled = new ReflectionProperty($compilerEngine, 'lastCompiled');
-            $lastCompiled->setAccessible(true);
             $lastCompiled = $lastCompiled->getValue($compilerEngine);
         } else {
             $lastCompiled = $compilerEngineReflection->getProperty('lastCompiled');
-            $lastCompiled->setAccessible(true);
             $lastCompiled = $lastCompiled->getValue($bladeCompilerEngine);
         }
 

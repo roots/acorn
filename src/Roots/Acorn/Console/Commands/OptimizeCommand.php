@@ -18,12 +18,9 @@ class OptimizeCommand extends FoundationOptimizeCommand
     {
         $this->components->info('Caching framework bootstrap, configuration, and metadata.');
 
-        collect([
-            'config' => fn () => $this->gracefulCallSilent('config:cache') == 0,
-            'events' => fn () => $this->gracefulCallSilent('event:cache') == 0,
-            'routes' => fn () => $this->gracefulCallSilent('route:cache') == 0,
-            'views' => fn () => $this->gracefulCallSilent('view:cache') == 0,
-        ])->each(fn ($task, $description) => $this->components->task($description, $task));
+        foreach ($this->getOptimizeTasks() as $description => $command) {
+            $this->components->task($description, fn () => $this->gracefulCallSilent($command) == 0);
+        }
 
         $this->newLine();
     }

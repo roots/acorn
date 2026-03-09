@@ -2,15 +2,12 @@
 
 namespace Roots\Acorn\Configuration\Concerns;
 
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Env;
 use Illuminate\Support\Str;
 use Roots\Acorn\Filesystem\Filesystem;
 
 trait Paths
 {
-    protected Application $app;
-
     /**
      * Infer the application's base directory from the environment.
      *
@@ -75,7 +72,7 @@ trait Paths
                 ?? (defined("ACORN_{$key}_PATH") ? constant("ACORN_{$key}_PATH") : $this->findPath($path));
         }
 
-        return Str::startsWith($env, $this->app->absoluteCachePathPrefixes)
+        return Str::startsWith($env, ['/', '\\'])
             ? $env
             : $this->app->basePath($env);
     }

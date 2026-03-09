@@ -5,6 +5,7 @@ namespace Illuminate\Foundation\Testing\Concerns;
 use Closure;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\Testing\Fakes\ExceptionHandlerFake;
+use Illuminate\Support\Traits\ReflectsClosures;
 use Illuminate\Testing\Assert;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\Console\Application as ConsoleApplication;
@@ -13,6 +14,8 @@ use Throwable;
 
 trait InteractsWithExceptionHandling
 {
+    use ReflectsClosures;
+
     /**
      * The original exception handler.
      *
@@ -41,7 +44,7 @@ trait InteractsWithExceptionHandling
     /**
      * Only handle the given exceptions via the exception handler.
      *
-     * @param  array  $exceptions
+     * @param  list<class-string<\Throwable>>  $exceptions
      * @return $this
      */
     protected function handleExceptions(array $exceptions)
@@ -62,7 +65,7 @@ trait InteractsWithExceptionHandling
     /**
      * Disable exception handling for the test.
      *
-     * @param  array  $except
+     * @param  list<class-string<\Throwable>>  $except
      * @return $this
      */
     protected function withoutExceptionHandling(array $except = [])
@@ -84,7 +87,7 @@ trait InteractsWithExceptionHandling
              * Create a new class instance.
              *
              * @param  \Illuminate\Contracts\Debug\ExceptionHandler  $originalHandler
-             * @param  array  $except
+             * @param  list<class-string<\Throwable>>  $except
              * @return void
              */
             public function __construct($originalHandler, $except = [])
@@ -110,7 +113,7 @@ trait InteractsWithExceptionHandling
              * Determine if the exception should be reported.
              *
              * @param  \Throwable  $e
-             * @return bool
+             * @return false
              */
             public function shouldReport(Throwable $e)
             {
@@ -169,18 +172,22 @@ trait InteractsWithExceptionHandling
      * Assert that the given callback throws an exception with the given message when invoked.
      *
      * @param  \Closure  $test
-     * @param  class-string<\Throwable>  $expectedClass
+     * @param  (\Closure(\Throwable): bool)|class-string<\Throwable>  $expectedClass
      * @param  string|null  $expectedMessage
      * @return $this
      */
-    protected function assertThrows(Closure $test, string $expectedClass = Throwable::class, ?string $expectedMessage = null)
+    protected function assertThrows(Closure $test, string|Closure $expectedClass = Throwable::class, ?string $expectedMessage = null)
     {
+        [$expectedClass, $expectedClassCallback] = $expectedClass instanceof Closure
+            ? [$this->firstClosureParameterType($expectedClass), $expectedClass]
+            : [$expectedClass, null];
+
         try {
             $test();
 
             $thrown = false;
         } catch (Throwable $exception) {
-            $thrown = $exception instanceof $expectedClass;
+            $thrown = $exception instanceof $expectedClass && ($expectedClassCallback === null || $expectedClassCallback($exception));
 
             $actualMessage = $exception->getMessage();
         }
@@ -203,6 +210,33 @@ trait InteractsWithExceptionHandling
                 Assert::assertStringContainsString($expectedMessage, $actualMessage);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * Assert that the given callback does not throw an exception.
+     *
+     * @param  \Closure  $test
+     * @return $this
+     */
+    protected function assertDoesntThrow(Closure $test)
+    {
+        try {
+            $test();
+
+            $thrown = false;
+        } catch (Throwable $exception) {
+            $thrown = true;
+
+            $exceptionClass = get_class($exception);
+            $exceptionMessage = $exception->getMessage();
+        }
+
+        Assert::assertTrue(
+            ! $thrown,
+            sprintf('Unexpected exception of type %s with message %s was thrown.', $exceptionClass ?? null, $exceptionMessage ?? null)
+        );
 
         return $this;
     }
