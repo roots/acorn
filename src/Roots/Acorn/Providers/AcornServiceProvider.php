@@ -186,22 +186,28 @@ class AcornServiceProvider extends ServiceProvider
         });
 
         $events = $this->app->make('events');
+        $switchedJobs = [];
 
-        $events->listen(JobProcessing::class, function (JobProcessing $event) {
+        $events->listen(JobProcessing::class, function (JobProcessing $event) use (&$switchedJobs) {
             $payload = $event->job->payload();
 
             if (isset($payload['blogId'])) {
                 switch_to_blog((int) $payload['blogId']);
+                $switchedJobs[spl_object_id($event->job)] = true;
             }
         });
 
-        $events->listen(JobProcessed::class, function () {
-            restore_current_blog();
-        });
+        $restore = function ($event) use (&$switchedJobs) {
+            $id = spl_object_id($event->job);
 
-        $events->listen(JobExceptionOccurred::class, function () {
-            restore_current_blog();
-        });
+            if (isset($switchedJobs[$id])) {
+                restore_current_blog();
+                unset($switchedJobs[$id]);
+            }
+        };
+
+        $events->listen(JobProcessed::class, $restore);
+        $events->listen(JobExceptionOccurred::class, $restore);
     }
 
     /**
