@@ -149,8 +149,10 @@ it('should switch blog context when processing a queued job', function () {
     $container->instance('events', new Dispatcher($container));
     invokeConfigureMultisite($provider);
 
-    $mockJob = new class {
-        public function payload() {
+    $mockJob = new class
+    {
+        public function payload()
+        {
             return ['blogId' => 2];
         }
     };
@@ -172,8 +174,10 @@ it('should restore blog context after job exception', function () {
     $container->instance('events', new Dispatcher($container));
     invokeConfigureMultisite($provider);
 
-    $mockJob = new class {
-        public function payload() {
+    $mockJob = new class
+    {
+        public function payload()
+        {
             return ['blogId' => 5];
         }
     };
@@ -193,8 +197,10 @@ it('should not switch blog for jobs without blogId', function () {
     $container->instance('events', new Dispatcher($container));
     invokeConfigureMultisite($provider);
 
-    $mockJob = new class {
-        public function payload() {
+    $mockJob = new class
+    {
+        public function payload()
+        {
             return [];
         }
     };
