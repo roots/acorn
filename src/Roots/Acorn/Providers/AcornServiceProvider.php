@@ -11,6 +11,10 @@ use Illuminate\Filesystem\FilesystemServiceProvider;
 use Illuminate\Hashing\HashServiceProvider;
 use Illuminate\Log\LogServiceProvider;
 use Illuminate\Mail\MailServiceProvider;
+use Illuminate\Queue\Events\JobExceptionOccurred;
+use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Queue\Events\JobProcessing;
+use Illuminate\Queue\Queue;
 use Illuminate\Queue\QueueServiceProvider;
 use Illuminate\Session\SessionServiceProvider;
 use Illuminate\Support\ServiceProvider;
@@ -140,7 +144,7 @@ class AcornServiceProvider extends ServiceProvider
     }
 
     /**
-     * Configure cache and session isolation for multisite.
+     * Configure cache, session, and queue isolation for multisite.
      *
      * @return void
      */
@@ -163,6 +167,41 @@ class AcornServiceProvider extends ServiceProvider
         $applyBlogConfig();
 
         add_action('switch_blog', $applyBlogConfig);
+
+        $this->configureMultisiteQueue();
+    }
+
+    /**
+     * Configure queue isolation for multisite.
+     *
+     * Injects the current blog ID into every queued job payload and
+     * switches to the correct blog context before the job is processed.
+     *
+     * @return void
+     */
+    protected function configureMultisiteQueue()
+    {
+        Queue::createPayloadUsing(function ($connection, $queue, $payload) {
+            return ['blogId' => get_current_blog_id()];
+        });
+
+        $events = $this->app->make('events');
+
+        $events->listen(JobProcessing::class, function (JobProcessing $event) {
+            $payload = $event->job->payload();
+
+            if (isset($payload['blogId'])) {
+                switch_to_blog((int) $payload['blogId']);
+            }
+        });
+
+        $events->listen(JobProcessed::class, function () {
+            restore_current_blog();
+        });
+
+        $events->listen(JobExceptionOccurred::class, function () {
+            restore_current_blog();
+        });
     }
 
     /**
