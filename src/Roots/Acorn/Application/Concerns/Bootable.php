@@ -37,7 +37,7 @@ trait Bootable
         if ($this->runningInConsole()) {
             $this->enableHttpsInConsole();
 
-            if (class_exists('WP_CLI')) {
+            if (defined('WP_CLI') && WP_CLI) {
                 $this->bootWpCli();
             } elseif (defined('USING_ACORN_CLI') && USING_ACORN_CLI) {
                 if (did_action('wp_loaded')) {
