@@ -16,6 +16,7 @@ beforeEach(function () {
     $this->stub('is_multisite', fn () => $this->isMultisite);
     $this->stub('get_current_blog_id', fn () => $this->blogId);
     $this->stub('switch_to_blog', function ($id) {
+        $this->blogIdStack[] = $this->blogId;
         $this->blogId = $id;
         do_action('switch_blog');
     });
@@ -197,6 +198,11 @@ it('should not switch blog for jobs without blogId', function () {
     $container->instance('events', new Dispatcher($container));
     invokeConfigureMultisite($provider);
 
+    // Simulate an outer switch_to_blog(3) that happened before the job
+    switch_to_blog(3);
+    expect($this->blogId)->toBe(3);
+    expect($this->blogIdStack)->toBe([1]);
+
     $mockJob = new class
     {
         public function payload()
@@ -205,6 +211,98 @@ it('should not switch blog for jobs without blogId', function () {
         }
     };
 
+    // Process a legacy job without blogId — should not touch the stack
     $container->make('events')->dispatch(new JobProcessing('sync', $mockJob));
+    expect($this->blogId)->toBe(3);
+    expect($this->blogIdStack)->toBe([1]);
+
+    $container->make('events')->dispatch(new JobProcessed('sync', $mockJob));
+    expect($this->blogId)->toBe(3);
+    expect($this->blogIdStack)->toBe([1]);
+
+    // The outer context should still be restorable
+    restore_current_blog();
+    expect($this->blogId)->toBe(1);
+});
+
+it('should handle nested job processing correctly', function () {
+    $this->isMultisite = true;
+    $this->blogId = 1;
+
+    [$provider, $container] = createProviderWithConfig();
+    $container->instance('events', new Dispatcher($container));
+    invokeConfigureMultisite($provider);
+
+    $outerJob = new class
+    {
+        public function payload()
+        {
+            return ['blogId' => 2];
+        }
+    };
+
+    $innerJob = new class
+    {
+        public function payload()
+        {
+            return ['blogId' => 3];
+        }
+    };
+
+    // Outer job starts — switches to blog 2
+    $container->make('events')->dispatch(new JobProcessing('sync', $outerJob));
+    expect($this->blogId)->toBe(2);
+
+    // Inner job starts — switches to blog 3
+    $container->make('events')->dispatch(new JobProcessing('sync', $innerJob));
+    expect($this->blogId)->toBe(3);
+
+    // Inner job finishes — restores to blog 2
+    $container->make('events')->dispatch(new JobProcessed('sync', $innerJob));
+    expect($this->blogId)->toBe(2);
+
+    // Outer job finishes — restores to blog 1
+    $container->make('events')->dispatch(new JobProcessed('sync', $outerJob));
+    expect($this->blogId)->toBe(1);
+});
+
+it('should not consume outer restore when inner job has no blogId', function () {
+    $this->isMultisite = true;
+    $this->blogId = 1;
+
+    [$provider, $container] = createProviderWithConfig();
+    $container->instance('events', new Dispatcher($container));
+    invokeConfigureMultisite($provider);
+
+    $outerJob = new class
+    {
+        public function payload()
+        {
+            return ['blogId' => 2];
+        }
+    };
+
+    $innerJob = new class
+    {
+        public function payload()
+        {
+            return [];
+        }
+    };
+
+    // Outer job starts — switches to blog 2
+    $container->make('events')->dispatch(new JobProcessing('sync', $outerJob));
+    expect($this->blogId)->toBe(2);
+
+    // Inner job without blogId starts — no switch
+    $container->make('events')->dispatch(new JobProcessing('sync', $innerJob));
+    expect($this->blogId)->toBe(2);
+
+    // Inner job finishes — should NOT restore since it never switched
+    $container->make('events')->dispatch(new JobProcessed('sync', $innerJob));
+    expect($this->blogId)->toBe(2);
+
+    // Outer job finishes — restores to blog 1
+    $container->make('events')->dispatch(new JobProcessed('sync', $outerJob));
     expect($this->blogId)->toBe(1);
 });
