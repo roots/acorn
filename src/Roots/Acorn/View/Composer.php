@@ -21,14 +21,14 @@ abstract class Composer
     /**
      * The current view instance.
      *
-     * @var \Illuminate\View\View
+     * @var View
      */
     protected $view;
 
     /**
      * The current view data.
      *
-     * @var \Illuminate\Support\Fluent
+     * @var Fluent
      */
     protected $data;
 

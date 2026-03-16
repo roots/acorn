@@ -2,6 +2,8 @@
 
 namespace Roots\Acorn\Console\Concerns;
 
+use Illuminate\Contracts\Foundation\Application;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -11,22 +13,22 @@ trait GracefullyCallsCommands
     /**
      * Get the Laravel application instance.
      *
-     * @return \Illuminate\Contracts\Foundation\Application
+     * @return Application
      */
     abstract public function getLaravel();
 
     /**
      * Resolve the console command instance for the given command.
      *
-     * @param  \Symfony\Component\Console\Command\Command|string  $command
-     * @return \Symfony\Component\Console\Command\Command
+     * @param  Command|string  $command
+     * @return Command
      */
     abstract protected function resolveCommand($command);
 
     /**
      * Run the given the console command.
      *
-     * @param  \Symfony\Component\Console\Command\Command|string  $command
+     * @param  Command|string  $command
      * @return int
      */
     abstract protected function runCommand($command, array $arguments, OutputInterface $output);
@@ -36,7 +38,7 @@ trait GracefullyCallsCommands
      *
      * Silently fail if command does not exist.
      *
-     * @param  \Symfony\Component\Console\Command\Command|string  $command
+     * @param  Command|string  $command
      * @return int
      */
     public function gracefulCall($command, array $arguments = [])
@@ -53,7 +55,7 @@ trait GracefullyCallsCommands
      *
      * Silently fail if command does not exist.
      *
-     * @param  \Symfony\Component\Console\Command\Command|string  $command
+     * @param  Command|string  $command
      * @return int
      */
     public function gracefulCallSilent($command, array $arguments = [])
@@ -68,7 +70,7 @@ trait GracefullyCallsCommands
     /**
      * Check whether a command exists.
      *
-     * @param  \Symfony\Component\Console\Command\Command|string  $command
+     * @param  Command|string  $command
      * @return bool
      */
     protected function commandExists($command)

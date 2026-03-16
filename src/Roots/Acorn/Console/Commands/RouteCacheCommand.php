@@ -3,6 +3,7 @@
 namespace Roots\Acorn\Console\Commands;
 
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
+use Illuminate\Contracts\Foundation\Application;
 use Roots\Acorn\Console\Concerns\GetsFreshApplication;
 
 class RouteCacheCommand extends \Illuminate\Foundation\Console\RouteCacheCommand
@@ -14,7 +15,7 @@ class RouteCacheCommand extends \Illuminate\Foundation\Console\RouteCacheCommand
     /**
      * Get a fresh application instance.
      *
-     * @return \Illuminate\Contracts\Foundation\Application
+     * @return Application
      */
     protected function getFreshApplication()
     {

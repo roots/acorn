@@ -52,7 +52,7 @@ class AcornInitCommand extends Command
     /**
      * Application instance.
      *
-     * @var \Illuminate\Contracts\Foundation\Application
+     * @var Application
      */
     protected $app;
 
@@ -89,7 +89,7 @@ class AcornInitCommand extends Command
      *
      * @return void
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function handle()
     {

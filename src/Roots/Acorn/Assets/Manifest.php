@@ -77,7 +77,7 @@ class Manifest implements ManifestContract
      *
      * @param  string  $key
      *
-     * @throws \Roots\Acorn\Assets\Exceptions\BundleNotFoundException
+     * @throws BundleNotFoundException
      */
     public function bundle($key): BundleContract
     {

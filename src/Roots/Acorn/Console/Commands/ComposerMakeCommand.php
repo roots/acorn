@@ -2,6 +2,7 @@
 
 namespace Roots\Acorn\Console\Commands;
 
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Symfony\Component\Console\Input\InputOption;
 
 class ComposerMakeCommand extends GeneratorCommand
@@ -61,7 +62,7 @@ class ComposerMakeCommand extends GeneratorCommand
      * @param  string  $name
      * @return string
      *
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws FileNotFoundException
      */
     protected function buildClass($name)
     {

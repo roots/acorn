@@ -2,6 +2,7 @@
 
 namespace Roots\Acorn\Console\Concerns;
 
+use Illuminate\Contracts\Console\Kernel;
 use Roots\Acorn\Application;
 
 trait GetsFreshApplication
@@ -44,7 +45,7 @@ trait GetsFreshApplication
     {
         $app = $this->getFreshApplication();
 
-        $app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+        $app->make(Kernel::class)->bootstrap();
 
         return $app->make('config')->all();
     }

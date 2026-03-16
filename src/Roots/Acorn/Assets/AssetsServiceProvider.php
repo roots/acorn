@@ -27,7 +27,7 @@ class AssetsServiceProvider extends ServiceProvider
             return $app['assets']->manifest($this->getDefaultManifest());
         });
 
-        $this->app->alias('assets.manifest', \Roots\Acorn\Assets\Manifest::class);
+        $this->app->alias('assets.manifest', Manifest::class);
     }
 
     /**

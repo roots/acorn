@@ -64,7 +64,7 @@ class Application extends FoundationApplication
     /**
      * Begin configuring a new Laravel application instance.
      *
-     * @return \Roots\Acorn\Configuration\ApplicationBuilder
+     * @return ApplicationBuilder
      */
     public static function configure(?string $basePath = null)
     {
@@ -341,9 +341,9 @@ class Application extends FoundationApplication
     /**
      * Register a service provider with the application.
      *
-     * @param  \Illuminate\Support\ServiceProvider|string  $provider
+     * @param  ServiceProvider|string  $provider
      * @param  bool  $force
-     * @return \Illuminate\Support\ServiceProvider
+     * @return ServiceProvider
      */
     public function register($provider, $force = false)
     {
@@ -361,7 +361,7 @@ class Application extends FoundationApplication
     /**
      * Skip booting service provider and log error.
      *
-     * @param  \Illuminate\Support\ServiceProvider|string  $provider
+     * @param  ServiceProvider|string  $provider
      */
     protected function skipProvider($provider, Throwable $e): ServiceProvider
     {
@@ -397,7 +397,7 @@ class Application extends FoundationApplication
      *
      * @return string
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function getNamespace()
     {

@@ -3,6 +3,7 @@
 namespace Roots\Acorn\Console\Commands;
 
 use Illuminate\Console\GeneratorCommand as GeneratorCommandBase;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 
 abstract class GeneratorCommand extends GeneratorCommandBase
 {
@@ -37,7 +38,7 @@ abstract class GeneratorCommand extends GeneratorCommandBase
      * @param  string  $name
      * @return string
      *
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws FileNotFoundException
      */
     protected function buildClass($name)
     {

@@ -2,7 +2,13 @@
 
 namespace Roots\Acorn\Http;
 
+use Illuminate\Foundation\Bootstrap\BootProviders;
+use Illuminate\Foundation\Bootstrap\RegisterProviders;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Roots\Acorn\Bootstrap\HandleExceptions;
+use Roots\Acorn\Bootstrap\LoadConfiguration;
+use Roots\Acorn\Bootstrap\LoadEnvironmentVariables;
+use Roots\Acorn\Bootstrap\RegisterFacades;
 
 class Kernel extends HttpKernel
 {
@@ -12,11 +18,11 @@ class Kernel extends HttpKernel
      * @var string[]
      */
     protected $bootstrappers = [
-        \Roots\Acorn\Bootstrap\LoadEnvironmentVariables::class,
-        \Roots\Acorn\Bootstrap\LoadConfiguration::class,
-        \Roots\Acorn\Bootstrap\HandleExceptions::class,
-        \Roots\Acorn\Bootstrap\RegisterFacades::class,
-        \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
-        \Illuminate\Foundation\Bootstrap\BootProviders::class,
+        LoadEnvironmentVariables::class,
+        LoadConfiguration::class,
+        HandleExceptions::class,
+        RegisterFacades::class,
+        RegisterProviders::class,
+        BootProviders::class,
     ];
 }

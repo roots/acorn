@@ -3,11 +3,14 @@
 namespace Roots\Acorn\Configuration;
 
 use Closure;
+use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Foundation\Bootstrap\RegisterProviders;
 use Illuminate\Foundation\Configuration\ApplicationBuilder as FoundationApplicationBuilder;
 use Roots\Acorn\Application;
 use Roots\Acorn\Configuration\Concerns\Paths;
+use Roots\Acorn\Exceptions\Handler;
 
 class ApplicationBuilder extends FoundationApplicationBuilder
 {
@@ -26,7 +29,7 @@ class ApplicationBuilder extends FoundationApplicationBuilder
     public function withKernels()
     {
         $this->app->singleton(
-            \Illuminate\Contracts\Http\Kernel::class,
+            Kernel::class,
             \Roots\Acorn\Http\Kernel::class
         );
 
@@ -46,14 +49,14 @@ class ApplicationBuilder extends FoundationApplicationBuilder
     public function withExceptions(?callable $using = null)
     {
         $this->app->singleton(
-            \Illuminate\Contracts\Debug\ExceptionHandler::class,
-            \Roots\Acorn\Exceptions\Handler::class,
+            ExceptionHandler::class,
+            Handler::class,
         );
 
         $using ??= fn () => true;
 
         $this->app->afterResolving(
-            \Roots\Acorn\Exceptions\Handler::class,
+            Handler::class,
             fn ($handler) => $using(new Exceptions($handler)),
         );
 
@@ -165,7 +168,7 @@ class ApplicationBuilder extends FoundationApplicationBuilder
     /**
      * Get the application instance.
      *
-     * @return \Roots\Acorn\Application
+     * @return Application
      */
     public function create()
     {
@@ -175,7 +178,7 @@ class ApplicationBuilder extends FoundationApplicationBuilder
     /**
      * Boot the application.
      *
-     * @return \Roots\Acorn\Application
+     * @return Application
      */
     public function boot()
     {

@@ -3,7 +3,10 @@
 namespace Roots;
 
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\Factory as ViewFactory;
+use Illuminate\View\View;
 use Roots\Acorn\Application;
 use Roots\Acorn\Assets\Bundle;
 use Roots\Acorn\Assets\Contracts\Asset;
@@ -47,9 +50,9 @@ function bootloader(?ApplicationContract $app = null): Application
  * Get the evaluated view contents for the given view or file.
  *
  * @param  string|null  $view
- * @param  \Illuminate\Contracts\Support\Arrayable|array  $data
+ * @param  Arrayable|array  $data
  * @param  array  $mergeData
- * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
+ * @return View|Factory
  *
  * @copyright Taylor Otwell
  *

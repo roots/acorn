@@ -1,12 +1,14 @@
 <?php
 
+use Roots\Acorn\Providers\AcornServiceProvider;
+use Roots\Acorn\ServiceProvider;
 use Roots\Acorn\Tests\Test\Stubs\BootableServiceProvider;
 use Roots\Acorn\Tests\Test\TestCase;
 
 uses(TestCase::class);
 
 it('dedupes registered providers', function () {
-    $providers = \Roots\Acorn\ServiceProvider::defaultProviders()->merge([
+    $providers = ServiceProvider::defaultProviders()->merge([
         BootableServiceProvider::class,
         BootableServiceProvider::class,
     ]);
@@ -15,12 +17,12 @@ it('dedupes registered providers', function () {
 });
 
 it('replaces default providers', function () {
-    $providers = \Roots\Acorn\ServiceProvider::defaultProviders()->replace([
-        \Roots\Acorn\Providers\AcornServiceProvider::class => BootableServiceProvider::class,
+    $providers = ServiceProvider::defaultProviders()->replace([
+        AcornServiceProvider::class => BootableServiceProvider::class,
     ]);
 
     expect($providers->toArray())
         ->toContain(BootableServiceProvider::class)
         ->not()
-        ->toContain(\Roots\Acorn\Providers\AcornServiceProvider::class);
+        ->toContain(AcornServiceProvider::class);
 });

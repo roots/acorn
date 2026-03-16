@@ -2,9 +2,71 @@
 
 namespace Roots\Acorn\Console;
 
+use Illuminate\Cache\Console\ClearCommand;
+use Illuminate\Cache\Console\ForgetCommand;
+use Illuminate\Console\Scheduling\ScheduleClearCacheCommand;
+use Illuminate\Console\Scheduling\ScheduleFinishCommand;
+use Illuminate\Console\Scheduling\ScheduleInterruptCommand;
+use Illuminate\Console\Scheduling\ScheduleListCommand;
+use Illuminate\Console\Scheduling\ScheduleRunCommand;
+use Illuminate\Console\Scheduling\ScheduleTestCommand;
+use Illuminate\Console\Scheduling\ScheduleWorkCommand;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Database\Console\DbCommand;
+use Illuminate\Database\Console\Seeds\SeedCommand;
+use Illuminate\Database\Console\Seeds\SeederMakeCommand;
+use Illuminate\Database\Console\TableCommand;
+use Illuminate\Database\Console\WipeCommand;
+use Illuminate\Foundation\Bootstrap\BootProviders;
+use Illuminate\Foundation\Bootstrap\RegisterProviders;
+use Illuminate\Foundation\Bootstrap\SetRequestForConsole;
+use Illuminate\Foundation\Console\ClearCompiledCommand;
+use Illuminate\Foundation\Console\ComponentMakeCommand;
+use Illuminate\Foundation\Console\ConfigClearCommand;
+use Illuminate\Foundation\Console\ConsoleMakeCommand;
+use Illuminate\Foundation\Console\EnvironmentCommand;
+use Illuminate\Foundation\Console\JobMakeCommand;
 use Illuminate\Foundation\Console\Kernel as FoundationConsoleKernel;
+use Illuminate\Foundation\Console\ModelMakeCommand;
+use Illuminate\Foundation\Console\PackageDiscoverCommand;
+use Illuminate\Foundation\Console\ProviderMakeCommand;
+use Illuminate\Foundation\Console\RouteClearCommand;
+use Illuminate\Foundation\Console\RouteListCommand;
+use Illuminate\Foundation\Console\ViewCacheCommand;
+use Illuminate\Foundation\Console\ViewClearCommand;
+use Illuminate\Queue\Console\BatchesTableCommand;
+use Illuminate\Queue\Console\FailedTableCommand;
+use Illuminate\Queue\Console\FlushFailedCommand;
+use Illuminate\Queue\Console\ForgetFailedCommand;
+use Illuminate\Queue\Console\ListenCommand;
+use Illuminate\Queue\Console\ListFailedCommand;
+use Illuminate\Queue\Console\MonitorCommand;
+use Illuminate\Queue\Console\PauseCommand;
+use Illuminate\Queue\Console\PruneBatchesCommand;
+use Illuminate\Queue\Console\PruneFailedJobsCommand;
+use Illuminate\Queue\Console\RestartCommand;
+use Illuminate\Queue\Console\ResumeCommand;
+use Illuminate\Queue\Console\RetryBatchCommand;
+use Illuminate\Queue\Console\RetryCommand;
+use Illuminate\Queue\Console\WorkCommand;
+use Illuminate\Routing\Console\ControllerMakeCommand;
+use Illuminate\Routing\Console\MiddlewareMakeCommand;
+use Roots\Acorn\Bootstrap\HandleExceptions;
+use Roots\Acorn\Bootstrap\LoadConfiguration;
+use Roots\Acorn\Bootstrap\LoadEnvironmentVariables;
+use Roots\Acorn\Bootstrap\RegisterFacades;
+use Roots\Acorn\Console\Commands\AboutCommand;
+use Roots\Acorn\Console\Commands\AcornInitCommand;
+use Roots\Acorn\Console\Commands\AcornInstallCommand;
+use Roots\Acorn\Console\Commands\ComposerMakeCommand;
+use Roots\Acorn\Console\Commands\ConfigCacheCommand;
+use Roots\Acorn\Console\Commands\KeyGenerateCommand;
+use Roots\Acorn\Console\Commands\OptimizeClearCommand;
+use Roots\Acorn\Console\Commands\OptimizeCommand;
+use Roots\Acorn\Console\Commands\RouteCacheCommand;
+use Roots\Acorn\Console\Commands\SummaryCommand;
+use Roots\Acorn\Console\Commands\VendorPublishCommand;
 
 class Kernel extends FoundationConsoleKernel
 {
@@ -14,63 +76,63 @@ class Kernel extends FoundationConsoleKernel
      * @var array
      */
     protected $commands = [
-        \Illuminate\Cache\Console\ClearCommand::class,
-        \Illuminate\Cache\Console\ForgetCommand::class,
-        \Illuminate\Database\Console\DbCommand::class,
-        \Illuminate\Database\Console\Seeds\SeedCommand::class,
-        \Illuminate\Database\Console\Seeds\SeederMakeCommand::class,
-        \Illuminate\Database\Console\TableCommand::class,
-        \Illuminate\Database\Console\WipeCommand::class,
-        \Illuminate\Foundation\Console\ClearCompiledCommand::class,
-        \Illuminate\Foundation\Console\ComponentMakeCommand::class,
-        \Illuminate\Foundation\Console\ConfigClearCommand::class,
-        \Illuminate\Foundation\Console\ConsoleMakeCommand::class,
-        \Illuminate\Foundation\Console\EnvironmentCommand::class,
-        \Illuminate\Foundation\Console\JobMakeCommand::class,
-        \Illuminate\Foundation\Console\ModelMakeCommand::class,
-        \Illuminate\Foundation\Console\PackageDiscoverCommand::class,
-        \Illuminate\Foundation\Console\ProviderMakeCommand::class,
-        \Illuminate\Foundation\Console\RouteClearCommand::class,
-        \Illuminate\Foundation\Console\RouteListCommand::class,
-        \Illuminate\Foundation\Console\ViewCacheCommand::class,
-        \Illuminate\Foundation\Console\ViewClearCommand::class,
-        \Illuminate\Queue\Console\BatchesTableCommand::class,
+        ClearCommand::class,
+        ForgetCommand::class,
+        DbCommand::class,
+        SeedCommand::class,
+        SeederMakeCommand::class,
+        TableCommand::class,
+        WipeCommand::class,
+        ClearCompiledCommand::class,
+        ComponentMakeCommand::class,
+        ConfigClearCommand::class,
+        ConsoleMakeCommand::class,
+        EnvironmentCommand::class,
+        JobMakeCommand::class,
+        ModelMakeCommand::class,
+        PackageDiscoverCommand::class,
+        ProviderMakeCommand::class,
+        RouteClearCommand::class,
+        RouteListCommand::class,
+        ViewCacheCommand::class,
+        ViewClearCommand::class,
+        BatchesTableCommand::class,
         \Illuminate\Queue\Console\ClearCommand::class,
-        \Illuminate\Queue\Console\FailedTableCommand::class,
-        \Illuminate\Queue\Console\FlushFailedCommand::class,
-        \Illuminate\Queue\Console\ForgetFailedCommand::class,
-        \Illuminate\Queue\Console\ListFailedCommand::class,
-        \Illuminate\Queue\Console\MonitorCommand::class,
-        \Illuminate\Queue\Console\PauseCommand::class,
-        \Illuminate\Queue\Console\PruneBatchesCommand::class,
-        \Illuminate\Queue\Console\PruneFailedJobsCommand::class,
-        \Illuminate\Queue\Console\RestartCommand::class,
-        \Illuminate\Queue\Console\ResumeCommand::class,
-        \Illuminate\Queue\Console\RetryBatchCommand::class,
-        \Illuminate\Queue\Console\RetryCommand::class,
+        FailedTableCommand::class,
+        FlushFailedCommand::class,
+        ForgetFailedCommand::class,
+        ListFailedCommand::class,
+        MonitorCommand::class,
+        PauseCommand::class,
+        PruneBatchesCommand::class,
+        PruneFailedJobsCommand::class,
+        RestartCommand::class,
+        ResumeCommand::class,
+        RetryBatchCommand::class,
+        RetryCommand::class,
         \Illuminate\Queue\Console\TableCommand::class,
-        \Illuminate\Queue\Console\ListenCommand::class,
-        \Illuminate\Queue\Console\WorkCommand::class,
-        \Illuminate\Console\Scheduling\ScheduleClearCacheCommand::class,
-        \Illuminate\Console\Scheduling\ScheduleFinishCommand::class,
-        \Illuminate\Console\Scheduling\ScheduleListCommand::class,
-        \Illuminate\Console\Scheduling\ScheduleRunCommand::class,
-        \Illuminate\Console\Scheduling\ScheduleWorkCommand::class,
-        \Illuminate\Console\Scheduling\ScheduleTestCommand::class,
-        \Illuminate\Console\Scheduling\ScheduleInterruptCommand::class,
-        \Illuminate\Routing\Console\ControllerMakeCommand::class,
-        \Illuminate\Routing\Console\MiddlewareMakeCommand::class,
-        \Roots\Acorn\Console\Commands\AboutCommand::class,
-        \Roots\Acorn\Console\Commands\AcornInitCommand::class,
-        \Roots\Acorn\Console\Commands\AcornInstallCommand::class,
-        \Roots\Acorn\Console\Commands\ComposerMakeCommand::class,
-        \Roots\Acorn\Console\Commands\ConfigCacheCommand::class,
-        \Roots\Acorn\Console\Commands\KeyGenerateCommand::class,
-        \Roots\Acorn\Console\Commands\OptimizeClearCommand::class,
-        \Roots\Acorn\Console\Commands\OptimizeCommand::class,
-        \Roots\Acorn\Console\Commands\RouteCacheCommand::class,
-        \Roots\Acorn\Console\Commands\SummaryCommand::class,
-        \Roots\Acorn\Console\Commands\VendorPublishCommand::class,
+        ListenCommand::class,
+        WorkCommand::class,
+        ScheduleClearCacheCommand::class,
+        ScheduleFinishCommand::class,
+        ScheduleListCommand::class,
+        ScheduleRunCommand::class,
+        ScheduleWorkCommand::class,
+        ScheduleTestCommand::class,
+        ScheduleInterruptCommand::class,
+        ControllerMakeCommand::class,
+        MiddlewareMakeCommand::class,
+        AboutCommand::class,
+        AcornInitCommand::class,
+        AcornInstallCommand::class,
+        ComposerMakeCommand::class,
+        ConfigCacheCommand::class,
+        KeyGenerateCommand::class,
+        OptimizeClearCommand::class,
+        OptimizeCommand::class,
+        RouteCacheCommand::class,
+        SummaryCommand::class,
+        VendorPublishCommand::class,
     ];
 
     /**
@@ -79,13 +141,13 @@ class Kernel extends FoundationConsoleKernel
      * @var string[]
      */
     protected $bootstrappers = [
-        \Roots\Acorn\Bootstrap\LoadEnvironmentVariables::class,
-        \Roots\Acorn\Bootstrap\LoadConfiguration::class,
-        \Roots\Acorn\Bootstrap\HandleExceptions::class,
-        \Roots\Acorn\Bootstrap\RegisterFacades::class,
-        \Illuminate\Foundation\Bootstrap\SetRequestForConsole::class,
-        \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
-        \Illuminate\Foundation\Bootstrap\BootProviders::class,
+        LoadEnvironmentVariables::class,
+        LoadConfiguration::class,
+        HandleExceptions::class,
+        RegisterFacades::class,
+        SetRequestForConsole::class,
+        RegisterProviders::class,
+        BootProviders::class,
     ];
 
     /**

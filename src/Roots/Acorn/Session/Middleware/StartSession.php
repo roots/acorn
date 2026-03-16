@@ -2,6 +2,7 @@
 
 namespace Roots\Acorn\Session\Middleware;
 
+use Illuminate\Http\Request;
 use Illuminate\Session\Middleware\StartSession as BaseStartSession;
 
 class StartSession extends BaseStartSession
@@ -13,7 +14,7 @@ class StartSession extends BaseStartSession
      * shutdown hook so that flash data remains available during template
      * rendering (which occurs after the middleware stack completes).
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @return void
      */
     protected function saveSession($request)

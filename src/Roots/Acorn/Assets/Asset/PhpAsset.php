@@ -57,7 +57,7 @@ class PhpAsset extends Asset
     /**
      * Assert that the asset exists.
      *
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws FileNotFoundException
      */
     protected function assertExists()
     {

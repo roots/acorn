@@ -1,5 +1,6 @@
 <?php
 
+use Dotenv\Dotenv;
 use Illuminate\Contracts\Foundation\Application;
 use Roots\Acorn\Bootstrap\LoadEnvironmentVariables;
 use Roots\Acorn\Tests\Test\TestCase;
@@ -14,7 +15,7 @@ class TestableLoadEnvironmentVariables extends LoadEnvironmentVariables
     {
         $this->dotenvLoaded = true;
 
-        $dotenv = Mockery::mock(\Dotenv\Dotenv::class);
+        $dotenv = Mockery::mock(Dotenv::class);
         $dotenv->shouldReceive('safeLoad')->once();
 
         return $dotenv;
