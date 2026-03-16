@@ -91,7 +91,7 @@ else
   && composer require -d /roots/app $(cat "${WORKSPACE_FOLDER}/composer.json" | jq '.name' | tr -d '"') --no-interaction -W --ignore-platform-reqs
 fi
 
-composer remove -d /roots/app wpackagist-theme/twentytwentyfive
+composer remove -d /roots/app wp-theme/twentytwentyfive
 composer require -d /roots/app roots/acorn-prettify -W
 
 # Set filesystem permissions
