@@ -11,6 +11,10 @@ use Illuminate\Filesystem\FilesystemServiceProvider;
 use Illuminate\Hashing\HashServiceProvider;
 use Illuminate\Log\LogServiceProvider;
 use Illuminate\Mail\MailServiceProvider;
+use Illuminate\Queue\Events\JobExceptionOccurred;
+use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Queue\Events\JobProcessing;
+use Illuminate\Queue\Queue;
 use Illuminate\Queue\QueueServiceProvider;
 use Illuminate\Session\SessionServiceProvider;
 use Illuminate\Support\ServiceProvider;
@@ -69,6 +73,7 @@ class AcornServiceProvider extends ServiceProvider
             $this->registerPostInitEvent();
         }
 
+        $this->configureMultisite();
         $this->poweredBy();
     }
 
@@ -136,6 +141,73 @@ class AcornServiceProvider extends ServiceProvider
         );
 
         return array_unique(array_merge($this->configs, array_values($configs)));
+    }
+
+    /**
+     * Configure cache, session, and queue isolation for multisite.
+     *
+     * @return void
+     */
+    protected function configureMultisite()
+    {
+        if (! function_exists('is_multisite') || ! is_multisite()) {
+            return;
+        }
+
+        $config = $this->app->make('config');
+        $basePrefix = $config->get('cache.prefix', '');
+        $baseCookie = $config->get('session.cookie', 'wordpress_session');
+
+        $applyBlogConfig = function () use ($config, $basePrefix, $baseCookie) {
+            $blogId = get_current_blog_id();
+            $config->set('cache.prefix', "{$basePrefix}blog_{$blogId}_");
+            $config->set('session.cookie', "{$baseCookie}_{$blogId}");
+        };
+
+        $applyBlogConfig();
+
+        add_action('switch_blog', $applyBlogConfig);
+
+        $this->configureMultisiteQueue();
+    }
+
+    /**
+     * Configure queue isolation for multisite.
+     *
+     * Injects the current blog ID into every queued job payload and
+     * switches to the correct blog context before the job is processed.
+     *
+     * @return void
+     */
+    protected function configureMultisiteQueue()
+    {
+        Queue::createPayloadUsing(function ($connection, $queue, $payload) {
+            return ['blogId' => get_current_blog_id()];
+        });
+
+        $events = $this->app->make('events');
+        $switchedJobs = [];
+
+        $events->listen(JobProcessing::class, function (JobProcessing $event) use (&$switchedJobs) {
+            $payload = $event->job->payload();
+
+            if (isset($payload['blogId'])) {
+                switch_to_blog((int) $payload['blogId']);
+                $switchedJobs[spl_object_id($event->job)] = true;
+            }
+        });
+
+        $restore = function ($event) use (&$switchedJobs) {
+            $id = spl_object_id($event->job);
+
+            if (isset($switchedJobs[$id])) {
+                restore_current_blog();
+                unset($switchedJobs[$id]);
+            }
+        };
+
+        $events->listen(JobProcessed::class, $restore);
+        $events->listen(JobExceptionOccurred::class, $restore);
     }
 
     /**
