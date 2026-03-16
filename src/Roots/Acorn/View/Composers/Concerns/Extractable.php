@@ -99,7 +99,7 @@ trait Extractable
     /**
      * Create an invokable, toStringable variable for the given class method.
      *
-     * @return \Illuminate\View\InvokableComponentVariable
+     * @return InvokableComponentVariable
      */
     protected function createInvokableVariable(string $method)
     {

@@ -2,7 +2,24 @@
 
 namespace Roots\Acorn\Configuration;
 
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Foundation\Configuration\Middleware as FoundationMiddleware;
+use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
+use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
+use Illuminate\Http\Middleware\HandleCors;
+use Illuminate\Http\Middleware\SetCacheHeaders;
+use Illuminate\Http\Middleware\TrustHosts;
+use Illuminate\Http\Middleware\TrustProxies;
+use Illuminate\Http\Middleware\ValidatePostSize;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Routing\Middleware\ThrottleRequestsWithRedis;
+use Illuminate\Routing\Middleware\ValidateSignature;
+use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
+use Roots\Acorn\Session\Middleware\StartSession;
+use Spark\Http\Middleware\VerifyBillableIsSubscribed;
 
 class Middleware extends FoundationMiddleware
 {
@@ -24,11 +41,11 @@ class Middleware extends FoundationMiddleware
     public function getGlobalMiddleware()
     {
         $middleware = $this->global ?: array_values(array_filter([
-            $this->trustHosts ? \Illuminate\Http\Middleware\TrustHosts::class : null,
-            \Illuminate\Http\Middleware\TrustProxies::class,
-            \Illuminate\Http\Middleware\HandleCors::class,
-            \Illuminate\Http\Middleware\ValidatePostSize::class,
-            \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+            $this->trustHosts ? TrustHosts::class : null,
+            TrustProxies::class,
+            HandleCors::class,
+            ValidatePostSize::class,
+            ConvertEmptyStringsToNull::class,
         ]));
 
         $middleware = array_map(function ($middleware) {
@@ -65,18 +82,18 @@ class Middleware extends FoundationMiddleware
         $middleware = [
             'web' => array_values(array_filter([
                 // \Illuminate\Cookie\Middleware\EncryptCookies::class,
-                \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-                \Roots\Acorn\Session\Middleware\StartSession::class,
-                \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+                AddQueuedCookiesToResponse::class,
+                StartSession::class,
+                ShareErrorsFromSession::class,
                 // \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
-                \Illuminate\Routing\Middleware\SubstituteBindings::class,
+                SubstituteBindings::class,
                 $this->authenticatedSessions ? 'auth.session' : null,
             ])),
 
             'api' => array_values(array_filter([
-                $this->statefulApi ? \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class : null,
+                $this->statefulApi ? EnsureFrontendRequestsAreStateful::class : null,
                 $this->apiLimiter ? 'throttle:'.$this->apiLimiter : null,
-                \Illuminate\Routing\Middleware\SubstituteBindings::class,
+                SubstituteBindings::class,
             ])),
         ];
 
@@ -123,21 +140,21 @@ class Middleware extends FoundationMiddleware
         $aliases = [
             // 'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
             // 'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-            'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
-            'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
+            'auth.session' => AuthenticateSession::class,
+            'cache.headers' => SetCacheHeaders::class,
             // 'can' => \Illuminate\Auth\Middleware\Authorize::class,
             // 'guest' => \Illuminate\Auth\Middleware\RedirectIfAuthenticated::class,
             // 'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
-            'precognitive' => \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
-            'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
+            'precognitive' => HandlePrecognitiveRequests::class,
+            'signed' => ValidateSignature::class,
             'throttle' => $this->throttleWithRedis
-                ? \Illuminate\Routing\Middleware\ThrottleRequestsWithRedis::class
-                : \Illuminate\Routing\Middleware\ThrottleRequests::class,
+                ? ThrottleRequestsWithRedis::class
+                : ThrottleRequests::class,
             // 'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         ];
 
-        if (class_exists(\Spark\Http\Middleware\VerifyBillableIsSubscribed::class)) {
-            $aliases['subscribed'] = \Spark\Http\Middleware\VerifyBillableIsSubscribed::class;
+        if (class_exists(VerifyBillableIsSubscribed::class)) {
+            $aliases['subscribed'] = VerifyBillableIsSubscribed::class;
         }
 
         return $aliases;

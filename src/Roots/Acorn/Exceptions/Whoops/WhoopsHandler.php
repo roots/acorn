@@ -32,7 +32,7 @@ class WhoopsHandler extends FoundationWhoopsHandler
     /**
      * Create a new Whoops handler for debug mode.
      *
-     * @return \Whoops\Handler\PrettyPageHandler
+     * @return PrettyPageHandler
      */
     public function forDebug()
     {
@@ -49,7 +49,7 @@ class WhoopsHandler extends FoundationWhoopsHandler
     /**
      * Registers WordPress context with the handler
      *
-     * @param  \Whoops\Handler\PrettyPageHandler  $handler
+     * @param  PrettyPageHandler  $handler
      * @return static
      */
     protected function registerWordPressData($handler)
@@ -97,7 +97,7 @@ class WhoopsHandler extends FoundationWhoopsHandler
     /**
      * Register the blacklist with the handler.
      *
-     * @param  \Whoops\Handler\PrettyPageHandler  $handler
+     * @param  PrettyPageHandler  $handler
      * @return static
      */
     protected function registerBlacklist($handler)

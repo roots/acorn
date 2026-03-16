@@ -2,9 +2,18 @@
 
 namespace Roots\Acorn;
 
+use Illuminate\Database\MigrationServiceProvider;
+use Illuminate\Foundation\Providers\ComposerServiceProvider;
+use Illuminate\Foundation\Providers\ConsoleSupportServiceProvider;
+use Illuminate\Foundation\Providers\FoundationServiceProvider;
 use Illuminate\Support\Collection;
 use Illuminate\Support\DefaultProviders as DefaultProvidersBase;
 use Illuminate\Support\Str;
+use Illuminate\View\ViewServiceProvider;
+use Roots\Acorn\Assets\AssetsServiceProvider;
+use Roots\Acorn\Filesystem\FilesystemServiceProvider;
+use Roots\Acorn\Providers\AcornServiceProvider;
+use Roots\Acorn\Providers\QueueServiceProvider;
 
 class DefaultProviders extends DefaultProvidersBase
 {
@@ -12,28 +21,28 @@ class DefaultProviders extends DefaultProvidersBase
      * The Acorn providers.
      */
     protected array $acornProviders = [
-        \Roots\Acorn\Assets\AssetsServiceProvider::class,
-        \Roots\Acorn\Filesystem\FilesystemServiceProvider::class,
-        \Roots\Acorn\Providers\AcornServiceProvider::class,
-        \Roots\Acorn\Providers\QueueServiceProvider::class,
-        \Roots\Acorn\View\ViewServiceProvider::class,
+        AssetsServiceProvider::class,
+        FilesystemServiceProvider::class,
+        AcornServiceProvider::class,
+        QueueServiceProvider::class,
+        View\ViewServiceProvider::class,
     ];
 
     /**
      * The additional framework providers.
      */
     protected array $additionalProviders = [
-        \Illuminate\Foundation\Providers\FoundationServiceProvider::class,
-        \Illuminate\Foundation\Providers\ComposerServiceProvider::class,
-        \Illuminate\Database\MigrationServiceProvider::class,
+        FoundationServiceProvider::class,
+        ComposerServiceProvider::class,
+        MigrationServiceProvider::class,
     ];
 
     /**
      * The disallowed providers.
      */
     protected array $disallowedProviders = [
-        \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
-        \Illuminate\View\ViewServiceProvider::class,
+        ConsoleSupportServiceProvider::class,
+        ViewServiceProvider::class,
     ];
 
     /**

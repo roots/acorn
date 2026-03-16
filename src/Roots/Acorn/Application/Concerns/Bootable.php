@@ -8,7 +8,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\StringInput;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Throwable;
 use WP_CLI;
 
@@ -63,8 +67,8 @@ trait Bootable
         $kernel = $this->make(ConsoleKernelContract::class);
 
         $status = $kernel->handle(
-            $input = new \Symfony\Component\Console\Input\ArgvInput,
-            new \Symfony\Component\Console\Output\ConsoleOutput
+            $input = new ArgvInput,
+            new ConsoleOutput
         );
 
         $kernel->terminate($input, $status);
@@ -102,8 +106,8 @@ trait Bootable
             $command = str_replace('\\', '\\\\', $command);
 
             $status = $kernel->handle(
-                $input = new \Symfony\Component\Console\Input\StringInput($command),
-                new \Symfony\Component\Console\Output\ConsoleOutput
+                $input = new StringInput($command),
+                new ConsoleOutput
             );
 
             $kernel->terminate($input, $status);
@@ -135,7 +139,7 @@ trait Bootable
 
         $kernel->bootstrap($request);
 
-        \Illuminate\Support\Facades\URL::forceRootUrl(home_url());
+        URL::forceRootUrl(home_url());
 
         if ($this->app->handlesWordPressRequests()) {
             $this->registerWordPressRoute(ob_get_level());
@@ -199,7 +203,7 @@ trait Bootable
      * Register the request handler.
      */
     protected function registerRequestHandler(
-        \Illuminate\Http\Request $request,
+        Request $request,
         ?\Illuminate\Routing\Route $route
     ): void {
         $path = Str::finish($request->getBaseUrl(), $request->getPathInfo());

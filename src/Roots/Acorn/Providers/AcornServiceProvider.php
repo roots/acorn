@@ -2,8 +2,20 @@
 
 namespace Roots\Acorn\Providers;
 
+use Illuminate\Auth\AuthServiceProvider;
+use Illuminate\Broadcasting\BroadcastServiceProvider;
+use Illuminate\Cache\CacheServiceProvider;
 use Illuminate\Console\Events\CommandFinished;
+use Illuminate\Database\DatabaseServiceProvider;
+use Illuminate\Filesystem\FilesystemServiceProvider;
+use Illuminate\Hashing\HashServiceProvider;
+use Illuminate\Log\LogServiceProvider;
+use Illuminate\Mail\MailServiceProvider;
+use Illuminate\Queue\QueueServiceProvider;
+use Illuminate\Session\SessionServiceProvider;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\View\ViewServiceProvider;
+use Roots\Acorn\Assets\AssetsServiceProvider;
 use Roots\Acorn\Filesystem\Filesystem;
 
 class AcornServiceProvider extends ServiceProvider
@@ -21,18 +33,18 @@ class AcornServiceProvider extends ServiceProvider
      * @var string[]
      */
     protected $providerConfigs = [
-        \Illuminate\Auth\AuthServiceProvider::class => 'auth',
-        \Illuminate\Broadcasting\BroadcastServiceProvider::class => 'broadcasting',
-        \Illuminate\Cache\CacheServiceProvider::class => 'cache',
-        \Illuminate\Database\DatabaseServiceProvider::class => 'database',
-        \Illuminate\Filesystem\FilesystemServiceProvider::class => 'filesystems',
-        \Illuminate\Hashing\HashServiceProvider::class => 'hashing',
-        \Illuminate\Log\LogServiceProvider::class => 'logging',
-        \Illuminate\Mail\MailServiceProvider::class => 'mail',
-        \Illuminate\Queue\QueueServiceProvider::class => 'queue',
-        \Illuminate\Session\SessionServiceProvider::class => 'session',
-        \Illuminate\View\ViewServiceProvider::class => 'view',
-        \Roots\Acorn\Assets\AssetsServiceProvider::class => 'assets',
+        AuthServiceProvider::class => 'auth',
+        BroadcastServiceProvider::class => 'broadcasting',
+        CacheServiceProvider::class => 'cache',
+        DatabaseServiceProvider::class => 'database',
+        FilesystemServiceProvider::class => 'filesystems',
+        HashServiceProvider::class => 'hashing',
+        LogServiceProvider::class => 'logging',
+        MailServiceProvider::class => 'mail',
+        QueueServiceProvider::class => 'queue',
+        SessionServiceProvider::class => 'session',
+        ViewServiceProvider::class => 'view',
+        AssetsServiceProvider::class => 'assets',
     ];
 
     /**

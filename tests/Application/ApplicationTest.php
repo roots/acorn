@@ -1,7 +1,10 @@
 <?php
 
 use Illuminate\Config\Repository as ConfigRepository;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Roots\Acorn\Application;
+use Roots\Acorn\Exceptions\SkipProviderException;
+use Roots\Acorn\PackageManifest;
 use Roots\Acorn\Tests\Test\Stubs\BootableServiceProvider;
 use Roots\Acorn\Tests\Test\TestCase;
 
@@ -148,14 +151,14 @@ it('boots a provider', function () {
 });
 
 it('gracefully skips a provider that fails to boot', function () {
-    $handler = mock(\Illuminate\Contracts\Debug\ExceptionHandler::class);
-    $manifest = mock(\Roots\Acorn\PackageManifest::class);
+    $handler = mock(ExceptionHandler::class);
+    $manifest = mock(PackageManifest::class);
     $app = new Application;
 
     $app['env'] = 'not-local-dev';
 
-    $app->singleton(\Illuminate\Contracts\Debug\ExceptionHandler::class, fn () => $handler);
-    $app->singleton(\Illuminate\Foundation\PackageManifest::class, fn () => $manifest);
+    $app->singleton(ExceptionHandler::class, fn () => $handler);
+    $app->singleton(Illuminate\Foundation\PackageManifest::class, fn () => $manifest);
 
     // the core of this test is to make sure that when a class or function is called that
     // does not exist, things don't blow up.
@@ -163,13 +166,13 @@ it('gracefully skips a provider that fails to boot', function () {
     {
         public function boot()
         {
-            new \kjo;
+            new kjo;
         }
     };
 
     $handler
         ->shouldReceive('report')
-        ->withArgs(fn (\Roots\Acorn\Exceptions\SkipProviderException $e) => expect($e->getMessage())->toContain('Skipping provider') || true)
+        ->withArgs(fn (SkipProviderException $e) => expect($e->getMessage())->toContain('Skipping provider') || true)
         ->once();
 
     $manifest
@@ -182,18 +185,18 @@ it('gracefully skips a provider that fails to boot', function () {
 });
 
 it('gracefully skips a provider that does not exist', function () {
-    $handler = mock(\Illuminate\Contracts\Debug\ExceptionHandler::class);
-    $manifest = mock(\Roots\Acorn\PackageManifest::class);
+    $handler = mock(ExceptionHandler::class);
+    $manifest = mock(PackageManifest::class);
     $app = new Application;
 
     $app['env'] = 'not-local-dev';
 
-    $app->singleton(\Illuminate\Contracts\Debug\ExceptionHandler::class, fn () => $handler);
-    $app->singleton(\Illuminate\Foundation\PackageManifest::class, fn () => $manifest);
+    $app->singleton(ExceptionHandler::class, fn () => $handler);
+    $app->singleton(Illuminate\Foundation\PackageManifest::class, fn () => $manifest);
 
     $handler
         ->shouldReceive('report')
-        ->withArgs(fn (\Roots\Acorn\Exceptions\SkipProviderException $e) => expect($e->getMessage())->toContain('Skipping provider') || true)
+        ->withArgs(fn (SkipProviderException $e) => expect($e->getMessage())->toContain('Skipping provider') || true)
         ->once();
 
     $manifest
@@ -212,9 +215,9 @@ it('calls registered callbacks', function () {
 
     $app->bind('config', fn () => new ConfigRepository);
 
-    $manifest = mock(\Roots\Acorn\PackageManifest::class);
+    $manifest = mock(PackageManifest::class);
 
-    $app->singleton(\Illuminate\Foundation\PackageManifest::class, fn () => $manifest);
+    $app->singleton(Illuminate\Foundation\PackageManifest::class, fn () => $manifest);
 
     $manifest
         ->shouldReceive('providers')
@@ -274,6 +277,6 @@ it('calls booted callbacks', function () {
 it('uses custom aliases', function () {
     $app = new Application;
 
-    expect($app->getAlias(\Roots\Acorn\Application::class))->toBe('app');
-    expect($app->getAlias(\Roots\Acorn\PackageManifest::class))->toBe(\Illuminate\Foundation\PackageManifest::class);
+    expect($app->getAlias(Application::class))->toBe('app');
+    expect($app->getAlias(PackageManifest::class))->toBe(Illuminate\Foundation\PackageManifest::class);
 });

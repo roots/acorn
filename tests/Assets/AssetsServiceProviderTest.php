@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Config\Repository;
+use Roots\Acorn\Application;
+use Roots\Acorn\Assets\AssetsServiceProvider;
 use Roots\Acorn\Assets\Contracts\Manifest as ManifestContract;
 use Roots\Acorn\Assets\Manager;
 use Roots\Acorn\Tests\Test\TestCase;
@@ -9,16 +12,16 @@ use function Spatie\Snapshots\assertMatchesSnapshot;
 uses(TestCase::class);
 
 it('registers an asset manager', function () {
-    $app = new \Roots\Acorn\Application;
-    $app->singleton('config', fn () => new \Illuminate\Config\Repository);
-    $app->register(\Roots\Acorn\Assets\AssetsServiceProvider::class);
+    $app = new Application;
+    $app->singleton('config', fn () => new Repository);
+    $app->register(AssetsServiceProvider::class);
 
     expect($app->make('assets'))->toBeInstanceOf(Manager::class);
 });
 
 it('registers a default manifest', function () {
-    $app = new \Roots\Acorn\Application;
-    $app->singleton('config', fn () => new \Illuminate\Config\Repository([
+    $app = new Application;
+    $app->singleton('config', fn () => new Repository([
         'assets' => [
             'default' => 'app',
             'manifests' => [
@@ -31,7 +34,7 @@ it('registers a default manifest', function () {
             ],
         ],
     ]));
-    $app->register(\Roots\Acorn\Assets\AssetsServiceProvider::class);
+    $app->register(AssetsServiceProvider::class);
 
     expect($app->make('assets.manifest'))->toBeInstanceOf(ManifestContract::class);
     assertMatchesSnapshot($app->make('assets.manifest')->asset('app.js')->uri());
