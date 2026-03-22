@@ -82,8 +82,6 @@
     "mockery/mockery": "^1.6",
     "pestphp/pest": "^4.0",
     "phpcompatibility/php-compatibility": "^9.3",
-    "roave/security-advisories": "dev-master",
-    "spatie/laravel-ignition": "^2.5",
     "spatie/pest-plugin-snapshots": "^2.3",
     "spatie/temporary-directory": "^2.2",
     "tmarsteel/mockery-callable-mock": "^2.1",
