@@ -123,6 +123,12 @@ trait Bootable
     {
         $kernel = $this->make(HttpKernelContract::class);
 
+        $originalGet = $_GET;
+        $originalPost = $_POST;
+        $originalCookie = $_COOKIE;
+        $originalServer = $_SERVER;
+        $originalRequest = $_REQUEST;
+
         $_GET = stripslashes_deep($_GET);
         $_POST = stripslashes_deep($_POST);
         $_COOKIE = stripslashes_deep($_COOKIE);
@@ -131,7 +137,11 @@ trait Bootable
 
         $request = Request::capture();
 
-        wp_magic_quotes();
+        $_GET = $originalGet;
+        $_POST = $originalPost;
+        $_COOKIE = $originalCookie;
+        $_SERVER = $originalServer;
+        $_REQUEST = $originalRequest;
 
         $this->instance('request', $request);
 
