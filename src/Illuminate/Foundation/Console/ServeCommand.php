@@ -95,7 +95,7 @@ class ServeCommand extends Command
 
     /** {@inheritdoc} */
     #[\Override]
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $this->phpServerWorkers = transform((int) env('PHP_CLI_SERVER_WORKERS', 1), function (int $workers) {
             if ($workers < 2) {
@@ -133,7 +133,7 @@ class ServeCommand extends Command
 
         $environmentLastModified = $hasEnvironment
             ? filemtime($environmentFile)
-            : now()->addDays(30)->getTimestamp();
+            : Carbon::now()->addDays(30)->getTimestamp();
 
         $process = $this->startProcess($hasEnvironment);
 
@@ -408,6 +408,8 @@ class ServeCommand extends Command
      *
      * @param  string  $line
      * @return int
+     *
+     * @throws \InvalidArgumentException
      */
     public static function getRequestPortFromLine($line)
     {
