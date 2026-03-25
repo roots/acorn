@@ -85,7 +85,7 @@ class Middleware extends FoundationMiddleware
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,
                 ShareErrorsFromSession::class,
-                // \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+                // \Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class,
                 SubstituteBindings::class,
                 $this->authenticatedSessions ? 'auth.session' : null,
             ])),

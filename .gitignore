@@ -3,4 +3,5 @@
 phpunit.xml
 /composer.lock
 /coverage
+/scripts/.laravel-version
 /vendor
