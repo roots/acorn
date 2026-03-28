@@ -107,11 +107,10 @@ class Filesystem extends FilesystemBase
         $targetFile = array_pop($targetDirs);
 
         foreach ($sourceDirs as $i => $dir) {
-            if (isset($targetDirs[$i]) && $dir === $targetDirs[$i]) {
-                unset($sourceDirs[$i], $targetDirs[$i]);
-            } else {
+            if (! isset($targetDirs[$i]) || $dir !== $targetDirs[$i]) {
                 break;
             }
+            unset($sourceDirs[$i], $targetDirs[$i]);
         }
 
         $targetDirs[] = $targetFile;
