@@ -20,7 +20,7 @@ function-name = { enabled = false } # test helpers use camelCase
 kan-defect = { enabled = false }
 literal-named-argument = { enabled = false } # too noisy with dirname(), apply_filters(), etc.
 no-assign-in-condition = { enabled = false } # common pattern: if ($x = $this->method())
-no-else-clause = { enabled = true }
+no-else-clause = { enabled = false }
 no-empty = { enabled = false }
 no-debug-symbols = { enabled = false } # Debugger.php is intentionally a debug tool
 no-empty-catch-clause = { enabled = false } # sometimes intentional
