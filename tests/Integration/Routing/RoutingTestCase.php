@@ -27,7 +27,7 @@ class RoutingTestCase extends MockeryTestCase
         // Ensure Sage routes directory exists
         $routesDir = dirname($this->routesFile);
         if (! is_dir($routesDir)) {
-            mkdir($routesDir, 0777, true);
+            mkdir($routesDir, 0o777, true);
         }
 
         // Create test routes file

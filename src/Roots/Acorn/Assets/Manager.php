@@ -83,7 +83,7 @@ class Manager
      */
     protected function resolve(string $name, ?array $config): ManifestContract
     {
-        $config = $config ?? $this->getConfig($name);
+        $config ??= $this->getConfig($name);
 
         if (isset($config['handler'])) {
             return new $config['handler']($config);

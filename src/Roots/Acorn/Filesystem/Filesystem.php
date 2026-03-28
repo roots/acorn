@@ -121,7 +121,7 @@ class Filesystem extends FilesystemBase
         || $path[0] === '/'
         || ($colonPos = strpos($path, ':')) !== false
         && ($colonPos < ($slashPos = strpos($path, '/')) || $slashPos === false)
-            ? "./$path"
+            ? "./{$path}"
             : $path;
     }
 }

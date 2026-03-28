@@ -111,9 +111,9 @@ class AcornInitCommand extends Command
         ));
 
         foreach ($paths as $key) {
-            if ($this->initPath($key, $path = $this->paths[$key])) {
-                $this->line("<info>Initialized</info> <comment>[{$this->basePath}/{$path}]</comment>");
-            }
+            if (!($this->initPath($key, $path = $this->paths[$key]))) { continue; }
+
+$this->line("<info>Initialized</info> <comment>[{$this->basePath}/{$path}]</comment>");
         }
     }
 
@@ -159,7 +159,7 @@ class AcornInitCommand extends Command
      */
     protected function createPath($path)
     {
-        $this->files->ensureDirectoryExists("{$this->basePath}/{$path}", 0755, true);
+        $this->files->ensureDirectoryExists("{$this->basePath}/{$path}", 0o755, true);
 
         if ($this->files->isDirectory($from = __DIR__ . "/stubs/paths/{$path}")) {
             return $this->files->copyDirectory($from, "{$this->basePath}/{$path}");

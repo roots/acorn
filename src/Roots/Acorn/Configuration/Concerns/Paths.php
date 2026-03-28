@@ -123,7 +123,7 @@ trait Paths
             'framework/sessions',
             'logs',
         ] as $directory) {
-            $files->ensureDirectoryExists("{$path}/{$directory}", 0755, true);
+            $files->ensureDirectoryExists("{$path}/{$directory}", 0o755, true);
         }
 
         return $path;

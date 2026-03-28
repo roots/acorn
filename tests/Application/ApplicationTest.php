@@ -206,7 +206,7 @@ it('gracefully skips a provider that does not exist', function () {
 it('calls registered callbacks', function () {
     $app = new Application(temp('base_path'));
 
-    mkdir($app->storagePath('framework/cache'), 0777, true);
+    mkdir($app->storagePath('framework/cache'), 0o777, true);
 
     $app->bind('config', fn () => new ConfigRepository());
 

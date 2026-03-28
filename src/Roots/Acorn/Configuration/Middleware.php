@@ -103,9 +103,9 @@ class Middleware extends FoundationMiddleware
 
         foreach ($middleware as $group => $groupedMiddleware) {
             foreach ($groupedMiddleware as $index => $groupMiddleware) {
-                if (isset($this->groupReplacements[$group][$groupMiddleware])) {
-                    $middleware[$group][$index] = $this->groupReplacements[$group][$groupMiddleware];
-                }
+                if (!(isset($this->groupReplacements[$group][$groupMiddleware]))) { continue; }
+
+$middleware[$group][$index] = $this->groupReplacements[$group][$groupMiddleware];
             }
         }
 
