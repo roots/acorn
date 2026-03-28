@@ -78,7 +78,7 @@ class AcornInstallCommand extends Command
 
         $script = 'Roots\\Acorn\\ComposerScripts::postAutoloadDump';
 
-        if (in_array($script, $configuration['scripts']['post-autoload-dump'] ?? [])) {
+        if (in_array($script, $configuration['scripts']['post-autoload-dump'] ?? [], true)) {
             return;
         }
 

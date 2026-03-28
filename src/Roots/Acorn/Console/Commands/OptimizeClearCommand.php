@@ -19,7 +19,7 @@ class OptimizeClearCommand extends FoundationOptimizeClearCommand
         $this->components->info('Clearing cached bootstrap files.');
 
         foreach ($this->getOptimizeClearTasks() as $description => $command) {
-            $this->components->task($description, fn () => $this->gracefulCallSilent($command) == 0);
+            $this->components->task($description, fn () => $this->gracefulCallSilent($command) === 0);
         }
 
         $this->newLine();

@@ -76,7 +76,7 @@ class PackageManifest extends FoundationPackageManifest
 
                 $packages[] = json_decode($this->files->get("{$composerPath}/composer.json"), true);
 
-                $ignoreAll = in_array('*', $ignore = $this->packagesToIgnore());
+                $ignoreAll = in_array('*', $ignore = $this->packagesToIgnore(), true);
 
                 return collect($packages)
                     ->mapWithKeys(fn ($package) => [
@@ -86,7 +86,7 @@ class PackageManifest extends FoundationPackageManifest
                     ->each(function ($configuration) use (&$ignore) {
                         $ignore = array_merge($ignore, $configuration['dont-discover'] ?? []);
                     })
-                    ->reject(fn ($configuration, $package) => $ignoreAll || in_array($package, $ignore))
+                    ->reject(fn ($configuration, $package) => $ignoreAll || in_array($package, $ignore, true))
                     ->filter()
                     ->merge($all)
                     ->all();

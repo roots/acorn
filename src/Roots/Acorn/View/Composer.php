@@ -127,7 +127,7 @@ abstract class Composer
      */
     protected function shouldIgnore($name)
     {
-        return str_starts_with($name, '__') || in_array($name, $this->ignoredMethods());
+        return str_starts_with($name, '__') || in_array($name, $this->ignoredMethods(), true);
     }
 
     /**
