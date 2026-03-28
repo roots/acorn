@@ -13,15 +13,30 @@ sort-uses = true
 integrations = ["laravel"]
 
 [linter.rules]
+cyclomatic-complexity = { threshold = 30 }
+excessive-parameter-list = { enabled = false } # withPaths() uses named params by design
+file-name = { enabled = false } # test files commonly define helper classes inline
+function-name = { enabled = false } # test helpers use camelCase
+kan-defect = { enabled = false }
+literal-named-argument = { enabled = false } # too noisy with dirname(), apply_filters(), etc.
+no-assign-in-condition = { enabled = false } # common pattern: if ($x = $this->method())
 no-else-clause = { enabled = true }
 no-empty = { enabled = false }
+no-debug-symbols = { enabled = false } # Debugger.php is intentionally a debug tool
+no-empty-catch-clause = { enabled = false } # sometimes intentional
 no-empty-comment = { enabled = false } # we use empty comments to keep callback bodies expanded for readability
+no-error-control-operator = { enabled = false } # sometimes necessary for filesystem operations
 no-eval = { enabled = true }
 no-global = { enabled = false } # unavoidable in WordPress ($GLOBALS['wpdb'], etc.)
+no-isset = { enabled = false } # isset() is the correct way to check array key existence
+no-multi-assignments = { enabled = false }
 no-redundant-nullsafe = { enabled = false } # WordPress functions often return false instead of null
+no-request-variable = { enabled = false } # Acorn intentionally manipulates $_REQUEST for WordPress compatibility
 no-redundant-parentheses = { enabled = true }
 no-redundant-use = { enabled = true }
 no-shorthand-ternary = { enabled = false }
 prefer-arrow-function = { enabled = false } # arrow functions should be a stylistic choice
+prefer-first-class-callable = { enabled = false } # not always clearer
 prefer-static-closure = { enabled = false }
+strict-types = { enabled = false }
 too-many-methods = { threshold = 25 }
