@@ -41,7 +41,7 @@ it('handles non-existent routes with 404', function () {
         'http_errors' => false,
     ]);
 
-    $response = $client->request('GET', 'http://web:8080/non-existent-'.time());
+    $response = $client->request('GET', 'http://web:8080/non-existent-' . time());
     expect($response->getStatusCode())->toBe(404);
     expect((string) $response->getBody())->toContain('Not Found');
     expect((string) $response->getBody())->toHaveBodyClass('error404');

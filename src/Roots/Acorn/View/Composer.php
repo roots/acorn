@@ -93,18 +93,10 @@ abstract class Composer
         [$with, $override] = [$this->with(), $this->override()];
 
         if (! $with && ! $override) {
-            return array_merge(
-                $this->extractPublicProperties(),
-                $this->extractPublicMethods(),
-                $this->view->getData()
-            );
+            return array_merge($this->extractPublicProperties(), $this->extractPublicMethods(), $this->view->getData());
         }
 
-        return array_merge(
-            $with,
-            $this->view->getData(),
-            $override
-        );
+        return array_merge($with, $this->view->getData(), $override);
     }
 
     /**
@@ -135,8 +127,7 @@ abstract class Composer
      */
     protected function shouldIgnore($name)
     {
-        return str_starts_with($name, '__') ||
-            in_array($name, $this->ignoredMethods());
+        return str_starts_with($name, '__') || in_array($name, $this->ignoredMethods(), true);
     }
 
     /**

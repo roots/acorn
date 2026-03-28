@@ -18,7 +18,7 @@ class HandleExceptions extends FoundationHandleExceptionsBootstrapper
      */
     public function bootstrap(Application $app)
     {
-        self::$reservedMemory = str_repeat('x', 32768);
+        self::$reservedMemory = str_repeat('x', 32_768);
 
         static::$app = $app;
 
@@ -73,8 +73,7 @@ class HandleExceptions extends FoundationHandleExceptionsBootstrapper
      */
     protected function hasHandler()
     {
-        return ! static::$app->runningInConsole()
-            && is_readable(WP_CONTENT_DIR.'/fatal-error-handler.php');
+        return ! static::$app->runningInConsole() && is_readable(WP_CONTENT_DIR . '/fatal-error-handler.php');
     }
 
     /**

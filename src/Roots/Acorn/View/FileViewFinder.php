@@ -48,10 +48,10 @@ class FileViewFinder extends FileViewFinderBase
         }
 
         $view = ltrim($view, '/\\');
-        $namespace = $namespace ?? null;
+        $namespace ??= null;
 
         if ($namespace) {
-            $view = "{$namespace}::$view";
+            $view = "{$namespace}::{$view}";
         }
 
         return $view;

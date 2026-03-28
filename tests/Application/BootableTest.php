@@ -8,9 +8,7 @@ uses(TestCase::class);
 it('does not boot WP-CLI when WP_CLI constant is not defined', function () {
     expect(class_exists('WP_CLI'))->toBeTrue();
 
-    $app = Mockery::mock(BootableTestApp::class)
-        ->makePartial()
-        ->shouldAllowMockingProtectedMethods();
+    $app = Mockery::mock(BootableTestApp::class)->makePartial()->shouldAllowMockingProtectedMethods();
 
     $app->shouldReceive('isBooted')->andReturn(false);
     $app->shouldReceive('runningInConsole')->andReturn(true);

@@ -28,15 +28,9 @@ class ApplicationBuilder extends FoundationApplicationBuilder
      */
     public function withKernels()
     {
-        $this->app->singleton(
-            Kernel::class,
-            \Roots\Acorn\Http\Kernel::class
-        );
+        $this->app->singleton(Kernel::class, \Roots\Acorn\Http\Kernel::class);
 
-        $this->app->singleton(
-            \Illuminate\Contracts\Console\Kernel::class,
-            \Roots\Acorn\Console\Kernel::class
-        );
+        $this->app->singleton(\Illuminate\Contracts\Console\Kernel::class, \Roots\Acorn\Console\Kernel::class);
 
         return $this;
     }
@@ -48,17 +42,11 @@ class ApplicationBuilder extends FoundationApplicationBuilder
      */
     public function withExceptions(?callable $using = null)
     {
-        $this->app->singleton(
-            ExceptionHandler::class,
-            Handler::class,
-        );
+        $this->app->singleton(ExceptionHandler::class, Handler::class);
 
         $using ??= fn () => true;
 
-        $this->app->afterResolving(
-            Handler::class,
-            fn ($handler) => $using(new Exceptions($handler)),
-        );
+        $this->app->afterResolving(Handler::class, fn ($handler) => $using(new Exceptions($handler)));
 
         return $this;
     }
@@ -68,7 +56,8 @@ class ApplicationBuilder extends FoundationApplicationBuilder
      *
      * @return $this
      */
-    public function withRouting(?Closure $using = null,
+    public function withRouting(
+        ?Closure $using = null,
         array|string|null $web = null,
         array|string|null $api = null,
         ?string $commands = null,
@@ -77,8 +66,8 @@ class ApplicationBuilder extends FoundationApplicationBuilder
         ?string $health = null,
         string $apiPrefix = 'api',
         ?callable $then = null,
-        bool $wordpress = false)
-    {
+        bool $wordpress = false,
+    ) {
         if (! $web && file_exists($path = base_path('routes/web.php'))) {
             $web = $path;
         }
@@ -111,7 +100,7 @@ class ApplicationBuilder extends FoundationApplicationBuilder
     public function withMiddleware(?callable $callback = null)
     {
         $this->app->afterResolving(HttpKernel::class, function ($kernel) use ($callback) {
-            $middleware = new Middleware;
+            $middleware = new Middleware();
 
             if (! is_null($callback)) {
                 $callback($middleware);
@@ -150,15 +139,10 @@ class ApplicationBuilder extends FoundationApplicationBuilder
      */
     public function withProviders(array $providers = [], bool $withBootstrapProviders = true)
     {
-        RegisterProviders::merge(
-            $providers,
-            $withBootstrapProviders
-                ? $this->app->getBootstrapProvidersPath()
-                : null
-        );
+        RegisterProviders::merge($providers, $withBootstrapProviders ? $this->app->getBootstrapProvidersPath() : null);
 
         $this->config['providers'] = [
-            ...$this->config['providers'] ?? [],
+            ...($this->config['providers'] ?? []),
             ...$providers,
         ];
 

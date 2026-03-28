@@ -14,7 +14,10 @@ use function Spatie\Snapshots\assertMatchesSnapshot;
 uses(TestCase::class);
 
 beforeEach(function () {
-    $manifest = json_decode(file_get_contents($this->fixture('asset_types/public/manifest.json')), JSON_OBJECT_AS_ARRAY);
+    $manifest = json_decode(
+        file_get_contents($this->fixture('asset_types/public/manifest.json')),
+        JSON_OBJECT_AS_ARRAY,
+    );
     $this->assets = new Manifest($this->fixture('asset_types'), 'https://k.jo', $manifest);
 });
 

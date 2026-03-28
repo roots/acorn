@@ -19,7 +19,7 @@ class LoadEnvironmentVariables extends FoundationLoadEnvironmentVariables
 
         $this->checkForSpecificEnvironmentFile($app);
 
-        if (! is_file($app->environmentPath().'/'.$app->environmentFile())) {
+        if (! is_file($app->environmentPath() . '/' . $app->environmentFile())) {
             return;
         }
 

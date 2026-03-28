@@ -97,7 +97,7 @@ class Console extends Composer
      */
     protected function findWpCli()
     {
-        if ($this->files->exists($this->workingPath.'/wp-cli.phar')) {
+        if ($this->files->exists($this->workingPath . '/wp-cli.phar')) {
             return [$this->phpBinary(), 'wp-cli.phar'];
         }
 

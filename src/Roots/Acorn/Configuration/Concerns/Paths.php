@@ -17,15 +17,11 @@ trait Paths
     {
         return match (true) {
             isset($_ENV['APP_BASE_PATH']) => $_ENV['APP_BASE_PATH'],
-
             defined('ACORN_BASEPATH') => constant('ACORN_BASEPATH'),
-
             is_file($composerPath = get_theme_file_path('composer.json')) => dirname($composerPath),
-
             is_dir($appPath = get_theme_file_path('app')) => dirname($appPath),
-
-            optional($vendorPath = (new Filesystem)->closest(dirname(__DIR__, 6), 'composer.json'), 'is_file') => dirname($vendorPath),
-
+            optional($vendorPath = (new Filesystem())->closest(dirname(__DIR__, 6), 'composer.json'), 'is_file')
+                => dirname($vendorPath),
             default => dirname(__DIR__, 5),
         };
     }
@@ -35,10 +31,19 @@ trait Paths
      *
      * @return $this
      */
-    public function withPaths(?string $app = null, ?string $config = null, ?string $storage = null, ?string $resources = null, ?string $public = null, ?string $bootstrap = null, ?string $lang = null, ?string $database = null)
-    {
+    public function withPaths(
+        ?string $app = null,
+        ?string $config = null,
+        ?string $storage = null,
+        ?string $resources = null,
+        ?string $public = null,
+        ?string $bootstrap = null,
+        ?string $lang = null,
+        ?string $database = null,
+    ) {
         $this->app->usePaths(
-            array_filter(compact('app', 'config', 'storage', 'resources', 'public', 'bootstrap', 'lang', 'database')) + $this->defaultPaths()
+            array_filter(compact('app', 'config', 'storage', 'resources', 'public', 'bootstrap', 'lang', 'database'))
+            + $this->defaultPaths(),
         );
 
         return $this;
@@ -68,13 +73,10 @@ trait Paths
         $key = strtoupper($path);
 
         if (is_null($env = Env::get("ACORN_{$key}_PATH"))) {
-            return $default
-                ?? (defined("ACORN_{$key}_PATH") ? constant("ACORN_{$key}_PATH") : $this->findPath($path));
+            return $default ?? (defined("ACORN_{$key}_PATH") ? constant("ACORN_{$key}_PATH") : $this->findPath($path));
         }
 
-        return Str::startsWith($env, ['/', '\\'])
-            ? $env
-            : $this->app->basePath($env);
+        return Str::startsWith($env, ['/', '\\']) ? $env : $this->app->basePath($env);
     }
 
     /**
@@ -93,7 +95,7 @@ trait Paths
         ];
 
         return collect($searchPaths)
-            ->filter(fn ($path) => (is_string($path) && is_dir($path)))
+            ->filter(fn ($path) => is_string($path) && is_dir($path))
             ->whenEmpty(fn ($paths) => $paths->add($this->fallbackPath($path)))
             ->unique()
             ->first();
@@ -104,9 +106,7 @@ trait Paths
      */
     protected function fallbackPath(string $path): string
     {
-        return $path === 'storage'
-            ? $this->fallbackStoragePath()
-            : $this->app->basePath($path);
+        return $path === 'storage' ? $this->fallbackStoragePath() : $this->app->basePath($path);
     }
 
     /**
@@ -114,7 +114,7 @@ trait Paths
      */
     protected function fallbackStoragePath(): string
     {
-        $files = new Filesystem;
+        $files = new Filesystem();
         $path = Str::finish(WP_CONTENT_DIR, '/cache/acorn');
 
         foreach ([
@@ -123,7 +123,7 @@ trait Paths
             'framework/sessions',
             'logs',
         ] as $directory) {
-            $files->ensureDirectoryExists("{$path}/{$directory}", 0755, true);
+            $files->ensureDirectoryExists("{$path}/{$directory}", 0o755, true);
         }
 
         return $path;

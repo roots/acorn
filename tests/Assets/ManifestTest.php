@@ -11,7 +11,7 @@ it('can get an asset', function () {
     $manifest = new Manifest(
         $this->fixture('bud_single_runtime'),
         'https://k.jo',
-        json_decode(file_get_contents($this->fixture('bud_single_runtime/public/manifest.json')), JSON_OBJECT_AS_ARRAY)
+        json_decode(file_get_contents($this->fixture('bud_single_runtime/public/manifest.json')), JSON_OBJECT_AS_ARRAY),
     );
 
     expect($manifest->asset('app.js'))->toBeInstanceOf(AssetContract::class);
@@ -22,7 +22,10 @@ it('can get a bundle', function () {
         $this->fixture('bud_single_runtime'),
         'https://k.jo',
         [],
-        json_decode(file_get_contents($this->fixture('bud_single_runtime/public/entrypoints.json')), JSON_OBJECT_AS_ARRAY)
+        json_decode(
+            file_get_contents($this->fixture('bud_single_runtime/public/entrypoints.json')),
+            JSON_OBJECT_AS_ARRAY,
+        ),
     );
 
     expect($manifest->bundle('app'))->toBeInstanceOf(BundleContract::class);

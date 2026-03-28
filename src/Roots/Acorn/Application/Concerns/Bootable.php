@@ -66,10 +66,7 @@ trait Bootable
     {
         $kernel = $this->make(ConsoleKernelContract::class);
 
-        $status = $kernel->handle(
-            $input = new ArgvInput,
-            new ConsoleOutput
-        );
+        $status = $kernel->handle($input = new ArgvInput(), new ConsoleOutput());
 
         $kernel->terminate($input, $status);
 
@@ -99,16 +96,13 @@ trait Bootable
                 $command .= " --{$key}";
 
                 if ($value !== true) {
-                    $command .= '='.escapeshellarg($value);
+                    $command .= '=' . escapeshellarg($value);
                 }
             }
 
             $command = str_replace('\\', '\\\\', $command);
 
-            $status = $kernel->handle(
-                $input = new StringInput($command),
-                new ConsoleOutput
-            );
+            $status = $kernel->handle($input = new StringInput($command), new ConsoleOutput());
 
             $kernel->terminate($input, $status);
 
@@ -169,7 +163,10 @@ trait Bootable
      */
     protected function enableHttpsInConsole(): void
     {
-        $enable = apply_filters('acorn/enable_https_in_console', parse_url(get_option('home'), PHP_URL_SCHEME) === 'https');
+        $enable = apply_filters(
+            'acorn/enable_https_in_console',
+            parse_url(get_option('home'), PHP_URL_SCHEME) === 'https',
+        );
 
         if ($enable) {
             $_SERVER['HTTPS'] = 'on';
@@ -212,10 +209,8 @@ trait Bootable
     /**
      * Register the request handler.
      */
-    protected function registerRequestHandler(
-        Request $request,
-        ?\Illuminate\Routing\Route $route
-    ): void {
+    protected function registerRequestHandler(Request $request, ?\Illuminate\Routing\Route $route): void
+    {
         $path = Str::finish($request->getBaseUrl(), $request->getPathInfo());
 
         $except = collect([
@@ -223,22 +218,27 @@ trait Bootable
             wp_login_url(),
             wp_registration_url(),
             rest_url(),
-        ])->map(fn ($url) => parse_url($url, PHP_URL_PATH))->unique()->filter();
+        ])
+            ->map(fn ($url) => parse_url($url, PHP_URL_PATH))
+            ->unique()
+            ->filter();
 
-        if (
-            Str::startsWith($path, $except->all()) ||
-            Str::endsWith($path, '.php')
-        ) {
+        if (Str::startsWith($path, $except->all()) || Str::endsWith($path, '.php')) {
             return;
         }
 
-        add_filter('do_parse_request', function ($condition, $wp, $params) use ($route) {
-            if (! $route) {
-                return $condition;
-            }
+        add_filter(
+            'do_parse_request',
+            function ($condition, $wp, $params) use ($route) {
+                if (! $route) {
+                    return $condition;
+                }
 
-            return apply_filters('acorn/router/do_parse_request', $condition, $wp, $params);
-        }, 100, 3);
+                return apply_filters('acorn/router/do_parse_request', $condition, $wp, $params);
+            },
+            100,
+            3,
+        );
 
         if ($route->getName() !== 'wordpress') {
             add_action('parse_request', fn () => $this->handleRequest($request));
@@ -246,10 +246,7 @@ trait Bootable
             return;
         }
 
-        if (
-            ! $this->app->handlesWordPressRequests() ||
-            redirect_canonical(null, false)
-        ) {
+        if (! $this->app->handlesWordPressRequests() || redirect_canonical(null, false)) {
             return;
         }
 
@@ -265,22 +262,26 @@ trait Bootable
 
         add_action('send_headers', fn () => $response->setStatusCode(http_response_code())->sendHeaders(), 100);
 
-        add_action('shutdown', function () use ($kernel, $request, $response) {
-            $response->sendContent();
+        add_action(
+            'shutdown',
+            function () use ($kernel, $request, $response) {
+                $response->sendContent();
 
-            if (function_exists('fastcgi_finish_request')) {
-                fastcgi_finish_request();
-            } elseif (function_exists('litespeed_finish_request')) {
-                litespeed_finish_request();
-            } elseif (! in_array(PHP_SAPI, ['cli', 'phpdbg', 'embed'], true)) {
-                Response::closeOutputBuffers(0, true);
-                flush();
-            }
+                if (function_exists('fastcgi_finish_request')) {
+                    fastcgi_finish_request();
+                } elseif (function_exists('litespeed_finish_request')) {
+                    litespeed_finish_request();
+                } elseif (! in_array(PHP_SAPI, ['cli', 'phpdbg', 'embed'], true)) {
+                    Response::closeOutputBuffers(0, true);
+                    flush();
+                }
 
-            $kernel->terminate($request, $response);
+                $kernel->terminate($request, $response);
 
-            exit((int) $response->isServerError());
-        }, 100);
+                exit((int) $response->isServerError());
+            },
+            100,
+        );
     }
 
     /**

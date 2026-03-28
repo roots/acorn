@@ -22,7 +22,7 @@ class RegisterFacades
 
         AliasLoader::getInstance(array_merge(
             $app->make('config')->get('app.aliases', []),
-            $app->make(PackageManifest::class)->aliases()
+            $app->make(PackageManifest::class)->aliases(),
         ))->register();
     }
 }

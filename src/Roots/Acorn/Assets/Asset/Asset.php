@@ -90,9 +90,9 @@ class Asset implements AssetContract
      */
     public function relativePath(string $basePath): string
     {
-        $basePath = rtrim($basePath, '/\\').'/';
+        $basePath = rtrim($basePath, '/\\') . '/';
 
-        return (new Filesystem)->getRelativePath($basePath, $this->path());
+        return (new Filesystem())->getRelativePath($basePath, $this->path());
     }
 
     /**

@@ -60,21 +60,33 @@ class AboutCommand extends BaseCommand
             'WordPress' => $this->formatVersion(get_bloginfo('version')),
             'WP-CLI' => $this->formatVersion(defined('WP_CLI_VERSION') ? WP_CLI_VERSION : null),
             'Environment' => $this->laravel->environment(),
-            'Debug Mode' => $this->laravel->get('config')->get('app.debug') ? '<fg=yellow;options=bold>ENABLED</>' : 'OFF',
+            'Debug Mode' => $this->laravel->get('config')->get('app.debug')
+                ? '<fg=yellow;options=bold>ENABLED</>'
+                : 'OFF',
             'Maintenance Mode' => $this->laravel->isDownForMaintenance() ? '<fg=yellow;options=bold>ENABLED</>' : 'OFF',
             'URL' => Str::of(config('app.url'))->replace(['http://', 'https://'], ''),
-            'Plugins' => get_site_transient('update_plugins') && count(get_site_transient('update_plugins')->response ?? []) ? '<fg=yellow;options=bold>UPDATES AVAILABLE</>' : '<fg=green;options=bold>UP TO DATE</>',
-            'Themes' => get_site_transient('update_themes') && count(get_site_transient('update_themes')->response ?? []) ? '<fg=yellow;options=bold>UPDATES AVAILABLE</>' : '<fg=green;options=bold>UP TO DATE</>',
+            'Plugins' => get_site_transient('update_plugins')
+            && count(get_site_transient('update_plugins')->response ?? [])
+                ? '<fg=yellow;options=bold>UPDATES AVAILABLE</>'
+                : '<fg=green;options=bold>UP TO DATE</>',
+            'Themes' => get_site_transient('update_themes')
+            && count(get_site_transient('update_themes')->response ?? [])
+                ? '<fg=yellow;options=bold>UPDATES AVAILABLE</>'
+                : '<fg=green;options=bold>UP TO DATE</>',
         ]);
 
         collect(static::$customDataResolvers)
             ->filter('is_callable')
-            ->filter(fn ($resolver) => (new ReflectionFunction($resolver))->getClosureUsedVariables()['section'] === 'Environment')
+            ->filter(
+                fn ($resolver) => (
+                    (new ReflectionFunction($resolver))->getClosureUsedVariables()['section'] === 'Environment'
+                ),
+            )
             ->each->__invoke();
     }
 
     protected function formatVersion($version)
     {
-        return $version ? ('v'.ltrim($version, 'vV')) : '<fg=yellow;options=bold>-</>';
+        return $version ? 'v' . ltrim($version, 'vV') : '<fg=yellow;options=bold>-</>';
     }
 }

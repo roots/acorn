@@ -45,15 +45,15 @@ class RootsBudMiddleware
      */
     protected function getBudDevUri(string $path): ?string
     {
-        if (! $path = realpath("{$path}/hmr.json")) {
+        if (! ($path = realpath("{$path}/hmr.json"))) {
             return null;
         }
 
-        if (! $devOriginHeader = $this->getDevOriginHeader()) {
+        if (! ($devOriginHeader = $this->getDevOriginHeader())) {
             return null;
         }
 
-        if (! $dev = optional(json_decode(file_get_contents($path)))->dev) {
+        if (! ($dev = optional(json_decode(file_get_contents($path)))->dev)) {
             return null;
         }
 
@@ -71,8 +71,12 @@ class RootsBudMiddleware
      */
     protected function getDevOriginHeader()
     {
-        return $this->devOrigin
-            ?: filter_input(INPUT_ENV, 'HTTP_X_BUD_DEV_ORIGIN', FILTER_SANITIZE_URL)
-            ?: filter_input(INPUT_SERVER, 'HTTP_X_BUD_DEV_ORIGIN', FILTER_SANITIZE_URL);
+        return (
+            $this->devOrigin ?: filter_input(INPUT_ENV, 'HTTP_X_BUD_DEV_ORIGIN', FILTER_SANITIZE_URL) ?: filter_input(
+                INPUT_SERVER,
+                'HTTP_X_BUD_DEV_ORIGIN',
+                FILTER_SANITIZE_URL,
+            )
+        );
     }
 }

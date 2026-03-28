@@ -16,7 +16,7 @@ trait FiltersEnqueues
      */
     public function filterScriptLoaderTag($tag, $handle, $src)
     {
-        if (! $extension = pathinfo(parse_url($src, PHP_URL_PATH), PATHINFO_EXTENSION)) {
+        if (! ($extension = pathinfo(parse_url($src, PHP_URL_PATH), PATHINFO_EXTENSION))) {
             return $tag;
         }
 

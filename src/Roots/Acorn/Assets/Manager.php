@@ -83,7 +83,7 @@ class Manager
      */
     protected function resolve(string $name, ?array $config): ManifestContract
     {
-        $config = $config ?? $this->getConfig($name);
+        $config ??= $this->getConfig($name);
 
         if (isset($config['handler'])) {
             return new $config['handler']($config);
@@ -105,13 +105,17 @@ class Manager
      */
     protected function pipeline(array $config): array
     {
-        return array_reduce($this->middleware, function (array $config, $middleware): array {
-            if (is_string($middleware) && class_exists($middleware)) {
-                $middleware = new $middleware;
-            }
+        return array_reduce(
+            $this->middleware,
+            function (array $config, $middleware): array {
+                if (is_string($middleware) && class_exists($middleware)) {
+                    $middleware = new $middleware();
+                }
 
-            return is_callable($middleware) ? $middleware($config) : $middleware->handle($config);
-        }, $config);
+                return is_callable($middleware) ? $middleware($config) : $middleware->handle($config);
+            },
+            $config,
+        );
     }
 
     /**

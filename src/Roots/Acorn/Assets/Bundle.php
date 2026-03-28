@@ -81,10 +81,9 @@ class Bundle implements BundleContract
             return collect($styles);
         }
 
-        collect($styles)
-            ->each(function ($src, $handle) use ($callable) {
-                $callable("{$this->id}/{$handle}", $this->getUrl($src));
-            });
+        collect($styles)->each(function ($src, $handle) use ($callable) {
+            $callable("{$this->id}/{$handle}", $this->getUrl($src));
+        });
 
         return $this;
     }
@@ -104,11 +103,9 @@ class Bundle implements BundleContract
             return collect($scripts);
         }
 
-        collect($scripts)
-            ->reject('runtime')
-            ->each(function ($src, $handle) use ($callable) {
-                $callable("{$this->id}/{$handle}", $this->getUrl($src), $this->dependencies());
-            });
+        collect($scripts)->reject('runtime')->each(function ($src, $handle) use ($callable) {
+            $callable("{$this->id}/{$handle}", $this->getUrl($src), $this->dependencies());
+        });
 
         return $this;
     }
@@ -176,9 +173,7 @@ class Bundle implements BundleContract
     protected function setRuntime()
     {
         if (Arr::isAssoc($this->bundle['js'])) {
-            $this->runtime = $this->bundle['js']['runtime']
-                ?? $this->bundle['js']["runtime~{$this->id}"]
-                ?? null;
+            $this->runtime = $this->bundle['js']['runtime'] ?? $this->bundle['js']["runtime~{$this->id}"] ?? null;
 
             unset($this->bundle['js']['runtime'], $this->bundle['js']["runtime~{$this->id}"]);
 

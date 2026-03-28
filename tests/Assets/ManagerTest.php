@@ -11,7 +11,7 @@ use function Spatie\Snapshots\assertMatchesSnapshot;
 uses(TestCase::class);
 
 it('creates a manifest', function () {
-    $assets = new Manager;
+    $assets = new Manager();
 
     $manifest = $assets->manifest('theme', [
         'path' => $this->fixture('bud_single_runtime'),
@@ -23,13 +23,9 @@ it('creates a manifest', function () {
 });
 
 it('registers a manifest', function () {
-    $assets = new Manager;
+    $assets = new Manager();
 
-    $assets->register('theme', new Manifest(
-        $this->fixture('bud_single_runtime'),
-        'https://k.jo',
-        [],
-    ));
+    $assets->register('theme', new Manifest($this->fixture('bud_single_runtime'), 'https://k.jo', []));
 
     expect($assets->manifest('theme'))->toBeInstanceOf(ManifestContract::class);
 });
@@ -40,7 +36,7 @@ it('throws an error if an assets manifest does not exist', function () {
             'theme' => [
                 'path' => $this->fixture('bud_single_runtime'),
                 'url' => 'https://k.jo',
-                'assets' => __DIR__.'/does/not/exist/manifest.json',
+                'assets' => __DIR__ . '/does/not/exist/manifest.json',
             ],
         ],
     ]);
@@ -91,7 +87,7 @@ it('throws an error if a bundles manifest does not exist', function () {
             'theme' => [
                 'path' => $this->fixture('bud_single_runtime'),
                 'url' => 'https://k.jo',
-                'bundles' => __DIR__.'/does/not/exist/entrypoints.json',
+                'bundles' => __DIR__ . '/does/not/exist/entrypoints.json',
             ],
         ],
     ]);

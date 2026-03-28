@@ -23,7 +23,7 @@ class AssetFactory
             $type = pathinfo($path, PATHINFO_EXTENSION);
         }
 
-        if (method_exists(self::class, $method = 'create'.ucfirst(strtolower($type)).'Asset')) {
+        if (method_exists(self::class, $method = 'create' . ucfirst(strtolower($type)) . 'Asset')) {
             return self::{$method}($path, $uri);
         }
 

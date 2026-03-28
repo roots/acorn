@@ -42,8 +42,7 @@ function bundle(string $bundle, ?string $manifest = null): Bundle
  */
 function bootloader(?ApplicationContract $app = null): Application
 {
-    return Application::configure()
-        ->boot();
+    return Application::configure()->boot();
 }
 
 /**

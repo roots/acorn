@@ -24,18 +24,20 @@ function createStartSessionFixtures(): array
     $manager = Mockery::mock(SessionManager::class);
     $manager->shouldReceive('shouldBlock')->andReturn(false);
     $manager->shouldReceive('driver')->andReturn($store);
-    $manager->shouldReceive('getSessionConfig')->andReturn([
-        'driver' => 'file',
-        'lifetime' => 120,
-        'lottery' => [0, 100],
-        'path' => '/',
-        'domain' => null,
-        'secure' => false,
-        'http_only' => true,
-        'same_site' => 'lax',
-        'partitioned' => false,
-        'expire_on_close' => false,
-    ]);
+    $manager
+        ->shouldReceive('getSessionConfig')
+        ->andReturn([
+            'driver' => 'file',
+            'lifetime' => 120,
+            'lottery' => [0, 100],
+            'path' => '/',
+            'domain' => null,
+            'secure' => false,
+            'http_only' => true,
+            'same_site' => 'lax',
+            'partitioned' => false,
+            'expire_on_close' => false,
+        ]);
 
     return [$manager, $store];
 }
