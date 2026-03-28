@@ -1,3 +1,5 @@
+php-version = "8.3"
+
 [source]
 paths = ["src/", "tests/"]
 excludes = ["src/Illuminate/"]
