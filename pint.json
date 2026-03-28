@@ -1,6 +1,0 @@
-{
-    "exclude": [
-        "src/Illuminate",
-        "tests/Assets/__fixtures__"
-    ]
-}
