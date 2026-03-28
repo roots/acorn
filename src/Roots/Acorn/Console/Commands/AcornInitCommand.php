@@ -111,9 +111,11 @@ class AcornInitCommand extends Command
         ));
 
         foreach ($paths as $key) {
-            if (!($this->initPath($key, $path = $this->paths[$key]))) { continue; }
+            if (! $this->initPath($key, $path = $this->paths[$key])) {
+                continue;
+            }
 
-$this->line("<info>Initialized</info> <comment>[{$this->basePath}/{$path}]</comment>");
+            $this->line("<info>Initialized</info> <comment>[{$this->basePath}/{$path}]</comment>");
         }
     }
 
