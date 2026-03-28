@@ -1,0 +1,26 @@
+[source]
+paths = ["src/", "tests/"]
+excludes = ["src/Illuminate/"]
+
+[formatter]
+print-width = 120
+null-type-hint = "question"
+space-before-arrow-function-parameter-list-parenthesis = true
+space-after-logical-not-unary-prefix-operator = true
+sort-uses = true
+
+[linter]
+integrations = ["laravel"]
+
+[linter.rules]
+no-else-clause = { enabled = true }
+no-empty = { enabled = false }
+no-empty-comment = { enabled = false } # we use empty comments to keep callback bodies expanded for readability
+no-eval = { enabled = true }
+no-global = { enabled = false } # unavoidable in WordPress ($GLOBALS['wpdb'], etc.)
+no-redundant-nullsafe = { enabled = false } # WordPress functions often return false instead of null
+no-redundant-parentheses = { enabled = true }
+no-redundant-use = { enabled = true }
+no-shorthand-ternary = { enabled = false }
+prefer-arrow-function = { enabled = false } # arrow functions should be a stylistic choice
+too-many-methods = { threshold = 25 }

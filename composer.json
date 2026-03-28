@@ -78,7 +78,7 @@
     "vlucas/phpdotenv": "^5.6"
   },
   "require-dev": {
-    "laravel/pint": "^1.15",
+    "carthage-software/mago": "^1.16",
     "mockery/mockery": "^1.6",
     "pestphp/pest": "^4.0",
     "phpcompatibility/php-compatibility": "^9.3",
@@ -99,8 +99,9 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "scripts": {
-    "lint": "pint --test",
-    "lint:fix": "pint",
+    "format": "mago format --check",
+    "format:fix": "mago format",
+    "lint": "mago lint",
     "test": "pest",
     "coverage": "XDEBUG_MODE=coverage pest --coverage --coverage-html=coverage"
   }
