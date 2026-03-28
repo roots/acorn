@@ -23,4 +23,5 @@ no-redundant-parentheses = { enabled = true }
 no-redundant-use = { enabled = true }
 no-shorthand-ternary = { enabled = false }
 prefer-arrow-function = { enabled = false } # arrow functions should be a stylistic choice
+prefer-static-closure = { enabled = false }
 too-many-methods = { threshold = 25 }
