@@ -79,7 +79,7 @@ class AboutCommand extends BaseCommand
             ->filter('is_callable')
             ->filter(
                 fn ($resolver) => (
-                    new ReflectionFunction($resolver)->getClosureUsedVariables()['section'] === 'Environment'
+                    (new ReflectionFunction($resolver))->getClosureUsedVariables()['section'] === 'Environment'
                 ),
             )
             ->each->__invoke();

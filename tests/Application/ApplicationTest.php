@@ -14,7 +14,7 @@ use function Roots\Acorn\Tests\temp;
 uses(TestCase::class);
 
 it('instantiates with custom paths', function () {
-    $app = new Application()->usePaths([
+    $app = (new Application())->usePaths([
         'app' => $this->fixture('use_paths/app'),
         'config' => $this->fixture('use_paths/config'),
     ]);
@@ -106,7 +106,7 @@ it('goes down for maintenance when wordpress maintenance file exists', function 
 });
 
 it('throws an exception if app namespace cannot be determined', function () {
-    new Application($this->fixture('get_namespace/a_bedrock_site/a_random_library'))->getNamespace();
+    (new Application($this->fixture('get_namespace/a_bedrock_site/a_random_library')))->getNamespace();
 })->throws(RuntimeException::class);
 
 it('determines namespace based on app composer.json', function () {

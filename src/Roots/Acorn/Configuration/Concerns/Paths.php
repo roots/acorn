@@ -20,7 +20,7 @@ trait Paths
             defined('ACORN_BASEPATH') => constant('ACORN_BASEPATH'),
             is_file($composerPath = get_theme_file_path('composer.json')) => dirname($composerPath),
             is_dir($appPath = get_theme_file_path('app')) => dirname($appPath),
-            optional($vendorPath = new Filesystem()->closest(dirname(__DIR__, 6), 'composer.json'), 'is_file')
+            optional($vendorPath = (new Filesystem())->closest(dirname(__DIR__, 6), 'composer.json'), 'is_file')
                 => dirname($vendorPath),
             default => dirname(__DIR__, 5),
         };

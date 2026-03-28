@@ -88,7 +88,7 @@ trait Enqueuable
      */
     public function editorStyles()
     {
-        $relativePath = new Filesystem()->getRelativePath(Str::finish(get_theme_file_path(), '/'), $this->path);
+        $relativePath = (new Filesystem())->getRelativePath(Str::finish(get_theme_file_path(), '/'), $this->path);
 
         $this->css(function ($handle, $src) use ($relativePath) {
             if (! Str::startsWith($src, $this->uri)) {

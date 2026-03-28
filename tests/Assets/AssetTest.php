@@ -74,7 +74,7 @@ it('can require_once a php asset', function () {
 });
 
 it('can fail to include a php asset', function () {
-    new PhpAsset(temp('does/not/exist.php'), 'https://kjo.kjo/')->include();
+    (new PhpAsset(temp('does/not/exist.php'), 'https://kjo.kjo/'))->include();
 })->throws(FileNotFoundException::class);
 
 it('can get a relative path', function () {

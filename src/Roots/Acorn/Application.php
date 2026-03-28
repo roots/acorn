@@ -73,7 +73,7 @@ class Application extends FoundationApplication
             default => ApplicationBuilder::inferBasePath(),
         };
 
-        return new ApplicationBuilder(new static($basePath))
+        return (new ApplicationBuilder(new static($basePath)))
             ->withPaths()
             ->withKernels()
             ->withEvents()
@@ -106,7 +106,7 @@ class Application extends FoundationApplication
      */
     public function environmentPath(): string
     {
-        return is_file($envPath = new Filesystem()->closest($this->basePath(), '.env') ?? '')
+        return is_file($envPath = (new Filesystem())->closest($this->basePath(), '.env') ?? '')
             ? dirname($envPath)
             : $this->basePath();
     }
@@ -332,7 +332,7 @@ class Application extends FoundationApplication
 
         $providers->splice(1, 0, [$this->make(PackageManifest::class)->providers()]);
 
-        new ProviderRepository($this, new Filesystem(), $this->getCachedServicesPath())->load(
+        (new ProviderRepository($this, new Filesystem(), $this->getCachedServicesPath()))->load(
             $providers->collapse()->toArray(),
         );
 
@@ -435,7 +435,7 @@ class Application extends FoundationApplication
      */
     protected function getAppComposer(): string
     {
-        return new Filesystem()->closest($this->path(), 'composer.json') ?? $this->basePath('composer.json');
+        return (new Filesystem())->closest($this->path(), 'composer.json') ?? $this->basePath('composer.json');
     }
 
     /**

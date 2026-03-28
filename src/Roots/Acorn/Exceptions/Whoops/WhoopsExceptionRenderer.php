@@ -14,6 +14,6 @@ class WhoopsExceptionRenderer extends FoundationWhoopsExceptionRenderer
      */
     protected function whoopsHandler()
     {
-        return new WhoopsHandler()->forDebug();
+        return (new WhoopsHandler())->forDebug();
     }
 }
