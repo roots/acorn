@@ -19,9 +19,9 @@ trait FiltersTemplates
         $templates = $this->sageFinder->locate($files);
 
         if (
-            ! function_exists('wp_is_block_theme') ||
-            ! wp_is_block_theme() ||
-            ! current_theme_supports('block-templates')
+            ! function_exists('wp_is_block_theme')
+            || ! wp_is_block_theme()
+            || ! current_theme_supports('block-templates')
         ) {
             return [...$templates, ...$files];
         }
@@ -29,10 +29,7 @@ trait FiltersTemplates
         $pages = [];
 
         if ($template = get_page_template_slug()) {
-            $pages = array_filter(
-                $templates,
-                fn ($file) => str_contains($file, $template)
-            );
+            $pages = array_filter($templates, fn ($file) => str_contains($file, $template));
 
             $templates = array_diff($templates, $pages);
         }
@@ -55,8 +52,7 @@ trait FiltersTemplates
      */
     public function filterTemplateInclude($file)
     {
-        $view = $this->fileFinder
-            ->getPossibleViewNameFromPath($file = realpath($file));
+        $view = $this->fileFinder->getPossibleViewNameFromPath($file = realpath($file));
 
         $view = trim($view, '\\/.');
 
@@ -64,13 +60,13 @@ trait FiltersTemplates
         $data = array_reduce(
             get_body_class(),
             fn ($data, $class) => apply_filters("sage/template/{$class}/data", $data, $view, $file),
-            []
+            [],
         );
 
         $this->app['sage.view'] = $this->view->exists($view) ? $view : $file;
         $this->app['sage.data'] = $data;
 
-        return get_template_directory().'/index.php';
+        return get_template_directory() . '/index.php';
     }
 
     /**
@@ -111,9 +107,10 @@ trait FiltersTemplates
         $templates = [];
 
         foreach (array_reverse($this->fileFinder->getPaths()) as $path) {
-            foreach (
-                array_filter($this->files->allFiles($path), fn ($file) => $file->getExtension() === 'php') as $fullPath
-            ) {
+            foreach (array_filter(
+                $this->files->allFiles($path),
+                fn ($file) => $file->getExtension() === 'php',
+            ) as $fullPath) {
                 if (! preg_match('|Template Name:(.*)$|mi', file_get_contents($fullPath), $header)) {
                     continue;
                 }

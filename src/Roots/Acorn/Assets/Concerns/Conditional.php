@@ -19,9 +19,7 @@ trait Conditional
      */
     public function when($conditional, ...$args)
     {
-        $this->conditional = is_callable($conditional)
-            ? call_user_func($conditional, $args)
-            : $conditional;
+        $this->conditional = is_callable($conditional) ? call_user_func($conditional, $args) : $conditional;
 
         return $this;
     }

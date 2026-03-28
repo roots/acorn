@@ -51,7 +51,7 @@ class TextAsset extends Asset
         }
 
         if (! strstr($mediatype, 'charset')) {
-            $mediatype .= ';charset='.($charset ?: $this->charset());
+            $mediatype .= ';charset=' . ($charset ?: $this->charset());
         }
 
         $percents = [];

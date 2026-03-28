@@ -57,7 +57,7 @@ class Sage
         ViewFinder $sageFinder,
         FileViewFinder $fileFinder,
         ViewFactory $view,
-        ContainerContract $app
+        ContainerContract $app,
     ) {
         $this->app = $app;
         $this->files = $files;
@@ -73,8 +73,6 @@ class Sage
      */
     public function filter($filter)
     {
-        return method_exists($this, $filter) ?
-            [$this, $filter] :
-            [$this, 'filter'.Str::studly($filter)];
+        return method_exists($this, $filter) ? [$this, $filter] : [$this, 'filter' . Str::studly($filter)];
     }
 }

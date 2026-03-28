@@ -47,26 +47,30 @@ class SageServiceProvider extends ServiceProvider
         add_filter('theme_templates', $sage->filter('theme_templates'), 100, 4);
         add_filter('script_loader_tag', $sage->filter('script_loader_tag'), 100, 3);
 
-        add_filters([
-            'index_template_hierarchy',
-            '404_template_hierarchy',
-            'archive_template_hierarchy',
-            'author_template_hierarchy',
-            'category_template_hierarchy',
-            'tag_template_hierarchy',
-            'taxonomy_template_hierarchy',
-            'date_template_hierarchy',
-            'home_template_hierarchy',
-            'frontpage_template_hierarchy',
-            'page_template_hierarchy',
-            'paged_template_hierarchy',
-            'search_template_hierarchy',
-            'single_template_hierarchy',
-            'singular_template_hierarchy',
-            'attachment_template_hierarchy',
-            'privacypolicy_template_hierarchy',
-            'embed_template_hierarchy',
-        ], $sage->filter('template_hierarchy'), 10);
+        add_filters(
+            [
+                'index_template_hierarchy',
+                '404_template_hierarchy',
+                'archive_template_hierarchy',
+                'author_template_hierarchy',
+                'category_template_hierarchy',
+                'tag_template_hierarchy',
+                'taxonomy_template_hierarchy',
+                'date_template_hierarchy',
+                'home_template_hierarchy',
+                'frontpage_template_hierarchy',
+                'page_template_hierarchy',
+                'paged_template_hierarchy',
+                'search_template_hierarchy',
+                'single_template_hierarchy',
+                'singular_template_hierarchy',
+                'attachment_template_hierarchy',
+                'privacypolicy_template_hierarchy',
+                'embed_template_hierarchy',
+            ],
+            $sage->filter('template_hierarchy'),
+            10,
+        );
     }
 
     /**

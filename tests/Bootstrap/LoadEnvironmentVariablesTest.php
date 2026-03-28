@@ -36,7 +36,7 @@ function createEnvAppMock(string $envPath, string $envFile = '.env', bool $cache
 it('should skip loading when env file does not exist', function () {
     $app = createEnvAppMock($this->fixture('env/without-file'));
 
-    $loader = new TestableLoadEnvironmentVariables;
+    $loader = new TestableLoadEnvironmentVariables();
     $loader->bootstrap($app);
 
     expect($loader->dotenvLoaded)->toBeFalse();
@@ -45,7 +45,7 @@ it('should skip loading when env file does not exist', function () {
 it('should load env file when it exists', function () {
     $app = createEnvAppMock($this->fixture('env/with-file'));
 
-    $loader = new TestableLoadEnvironmentVariables;
+    $loader = new TestableLoadEnvironmentVariables();
     $loader->bootstrap($app);
 
     expect($loader->dotenvLoaded)->toBeTrue();
@@ -54,7 +54,7 @@ it('should load env file when it exists', function () {
 it('should skip loading when configuration is cached', function () {
     $app = createEnvAppMock($this->fixture('env/with-file'), cached: true);
 
-    $loader = new TestableLoadEnvironmentVariables;
+    $loader = new TestableLoadEnvironmentVariables();
     $loader->bootstrap($app);
 
     expect($loader->dotenvLoaded)->toBeFalse();

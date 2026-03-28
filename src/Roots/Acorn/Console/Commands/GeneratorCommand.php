@@ -27,9 +27,7 @@ abstract class GeneratorCommand extends GeneratorCommandBase
      */
     protected function getNameInput()
     {
-        return trim(
-            is_array($name = $this->argument('name')) ? end($name) : $name
-        );
+        return trim(is_array($name = $this->argument('name')) ? end($name) : $name);
     }
 
     /**
@@ -44,10 +42,7 @@ abstract class GeneratorCommand extends GeneratorCommandBase
     {
         $stub = $this->files->get($this->getStub());
 
-        return $this
-            ->replaceIlluminate($stub)
-            ->replaceNamespace($stub, $name)
-            ->replaceClass($stub, $name);
+        return $this->replaceIlluminate($stub)->replaceNamespace($stub, $name)->replaceClass($stub, $name);
     }
 
     /**
@@ -58,11 +53,7 @@ abstract class GeneratorCommand extends GeneratorCommandBase
      */
     protected function replaceIlluminate(&$stub)
     {
-        $stub = str_replace(
-            'Illuminate\\Support\\',
-            'Roots\\Acorn\\',
-            $stub
-        );
+        $stub = str_replace('Illuminate\\Support\\', 'Roots\\Acorn\\', $stub);
 
         return $this;
     }

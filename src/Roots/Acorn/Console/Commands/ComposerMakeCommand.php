@@ -42,7 +42,7 @@ class ComposerMakeCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__.'/stubs/composer.stub';
+        return __DIR__ . '/stubs/composer.stub';
     }
 
     /**
@@ -53,7 +53,7 @@ class ComposerMakeCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace.'\View\Composers';
+        return $rootNamespace . '\View\Composers';
     }
 
     /**

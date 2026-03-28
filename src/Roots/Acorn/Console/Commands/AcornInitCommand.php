@@ -14,10 +14,10 @@ class AcornInitCommand extends Command
      * @var string
      */
     protected $signature = <<<'SIGNATURE'
-    acorn:init
-    {path?* : Application path to initialize in the base directory}
-    {--base= : Application base directory}
-    SIGNATURE;
+        acorn:init
+        {path?* : Application path to initialize in the base directory}
+        {--base= : Application base directory}
+        SIGNATURE;
 
     /**
      * The console command description.
@@ -100,12 +100,14 @@ class AcornInitCommand extends Command
         }
 
         if ($this->basePath === dirname(__DIR__, 5)) {
-            throw new Exception("The {$this->basePath} directory is invalid. Specify an alternative using <comment>--base</comment> option.");
+            throw new Exception(
+                "The {$this->basePath} directory is invalid. Specify an alternative using <comment>--base</comment> option.",
+            );
         }
 
         $paths = array_map('strtolower', array_intersect(
             $this->argument('path') ?: $this->defaultPaths(),
-            array_keys($this->paths)
+            array_keys($this->paths),
         ));
 
         foreach ($paths as $key) {
@@ -142,7 +144,7 @@ class AcornInitCommand extends Command
             $this->app->usePaths([$key => $path]);
         }
 
-        if (method_exists($this->app, $method = 'use'.ucfirst($key))) {
+        if (method_exists($this->app, $method = 'use' . ucfirst($key))) {
             $this->app->{$method}($path);
         }
 
@@ -159,7 +161,7 @@ class AcornInitCommand extends Command
     {
         $this->files->ensureDirectoryExists("{$this->basePath}/{$path}", 0755, true);
 
-        if ($this->files->isDirectory($from = __DIR__."/stubs/paths/{$path}")) {
+        if ($this->files->isDirectory($from = __DIR__ . "/stubs/paths/{$path}")) {
             return $this->files->copyDirectory($from, "{$this->basePath}/{$path}");
         }
 

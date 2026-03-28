@@ -68,9 +68,7 @@ class SummaryCommand extends ListCommand
      */
     protected function title(OutputInterface $output)
     {
-        $output->write(
-            "\n  <fg=blue;options=bold>{$this->getApplication()->getVersion()}</>\n\n"
-        );
+        $output->write("\n  <fg=blue;options=bold>{$this->getApplication()->getVersion()}</>\n\n");
 
         return $this;
     }
@@ -105,7 +103,9 @@ class SummaryCommand extends ListCommand
                 $this->width = max($this->width, mb_strlen($name));
 
                 return isset($nameParts[1]) ? $nameParts[0] : '';
-            })->sortKeys()->each(function ($commands) use ($output) {
+            })
+            ->sortKeys()
+            ->each(function ($commands) use ($output) {
                 $output->write("\n");
 
                 $commands = $commands->toArray();
@@ -117,7 +117,7 @@ class SummaryCommand extends ListCommand
                         "  <fg=blue>%s</>%s%s\n",
                         $command->getName(),
                         str_repeat(' ', $this->width - mb_strlen($command->getName()) + 1),
-                        $command->getDescription()
+                        $command->getDescription(),
                     ));
                 }
             });

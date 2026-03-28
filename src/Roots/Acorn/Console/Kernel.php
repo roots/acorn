@@ -158,7 +158,7 @@ class Kernel extends FoundationConsoleKernel
     public function __construct(Application $app, Dispatcher $events)
     {
         if (! defined('ARTISAN_BINARY')) {
-            define('ARTISAN_BINARY', dirname(__DIR__, 4).'/bin/acorn');
+            define('ARTISAN_BINARY', dirname(__DIR__, 4) . '/bin/acorn');
         }
 
         parent::__construct($app, $events);

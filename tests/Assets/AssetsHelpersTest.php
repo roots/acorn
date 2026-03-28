@@ -13,31 +13,34 @@ use function Spatie\Snapshots\assertMatchesSnapshot;
 uses(TestCase::class);
 
 beforeEach(function () {
-    Facade::setFacadeApplication(new Application);
+    Facade::setFacadeApplication(new Application());
 });
 
 it('asset() can access the default manifest', function () {
-    $app = new Application;
+    $app = new Application();
 
-    $app->singleton('config', fn () => new Repository([
-        'assets' => [
-            'default' => 'app',
-            'manifests' => [
-                'app' => [
-                    'path' => $this->fixture('bud_single_runtime/public/app'),
-                    'url' => 'https://k.jo/app',
-                    'assets' => $this->fixture('bud_multi_compiler/public/app/manifest.json'),
-                    'bundles' => $this->fixture('bud_multi_compiler/public/app/entrypoints.json'),
-                ],
-                'editor' => [
-                    'path' => $this->fixture('bud_single_runtime/public/editor'),
-                    'url' => 'https://k.jo/editor',
-                    'assets' => $this->fixture('bud_multi_compiler/public/editor/manifest.json'),
-                    'bundles' => $this->fixture('bud_multi_compiler/public/editor/entrypoints.json'),
+    $app->singleton(
+        'config',
+        fn () => new Repository([
+            'assets' => [
+                'default' => 'app',
+                'manifests' => [
+                    'app' => [
+                        'path' => $this->fixture('bud_single_runtime/public/app'),
+                        'url' => 'https://k.jo/app',
+                        'assets' => $this->fixture('bud_multi_compiler/public/app/manifest.json'),
+                        'bundles' => $this->fixture('bud_multi_compiler/public/app/entrypoints.json'),
+                    ],
+                    'editor' => [
+                        'path' => $this->fixture('bud_single_runtime/public/editor'),
+                        'url' => 'https://k.jo/editor',
+                        'assets' => $this->fixture('bud_multi_compiler/public/editor/manifest.json'),
+                        'bundles' => $this->fixture('bud_multi_compiler/public/editor/entrypoints.json'),
+                    ],
                 ],
             ],
-        ],
-    ]));
+        ]),
+    );
 
     $app->register(AssetsServiceProvider::class);
 
@@ -45,27 +48,30 @@ it('asset() can access the default manifest', function () {
 });
 
 it('asset() can access a specified manifest', function () {
-    $app = new Application;
+    $app = new Application();
 
-    $app->singleton('config', fn () => new Repository([
-        'assets' => [
-            'default' => 'app',
-            'manifests' => [
-                'app' => [
-                    'path' => $this->fixture('bud_single_runtime/public/app'),
-                    'url' => 'https://k.jo/app',
-                    'assets' => $this->fixture('bud_multi_compiler/public/app/manifest.json'),
-                    'bundles' => $this->fixture('bud_multi_compiler/public/app/entrypoints.json'),
-                ],
-                'editor' => [
-                    'path' => $this->fixture('bud_single_runtime/public/editor'),
-                    'url' => 'https://k.jo/editor',
-                    'assets' => $this->fixture('bud_multi_compiler/public/editor/manifest.json'),
-                    'bundles' => $this->fixture('bud_multi_compiler/public/editor/entrypoints.json'),
+    $app->singleton(
+        'config',
+        fn () => new Repository([
+            'assets' => [
+                'default' => 'app',
+                'manifests' => [
+                    'app' => [
+                        'path' => $this->fixture('bud_single_runtime/public/app'),
+                        'url' => 'https://k.jo/app',
+                        'assets' => $this->fixture('bud_multi_compiler/public/app/manifest.json'),
+                        'bundles' => $this->fixture('bud_multi_compiler/public/app/entrypoints.json'),
+                    ],
+                    'editor' => [
+                        'path' => $this->fixture('bud_single_runtime/public/editor'),
+                        'url' => 'https://k.jo/editor',
+                        'assets' => $this->fixture('bud_multi_compiler/public/editor/manifest.json'),
+                        'bundles' => $this->fixture('bud_multi_compiler/public/editor/entrypoints.json'),
+                    ],
                 ],
             ],
-        ],
-    ]));
+        ]),
+    );
 
     $app->register(AssetsServiceProvider::class);
 
@@ -73,26 +79,29 @@ it('asset() can access a specified manifest', function () {
 });
 
 it('bundle() can access the default manifest', function () {
-    $app = new Application;
-    $app->singleton('config', fn () => new Repository([
-        'assets' => [
-            'default' => 'app',
-            'manifests' => [
-                'app' => [
-                    'path' => $this->fixture('bud_single_runtime/public/app'),
-                    'url' => 'https://k.jo/app',
-                    'assets' => $this->fixture('bud_multi_compiler/public/app/manifest.json'),
-                    'bundles' => $this->fixture('bud_multi_compiler/public/app/entrypoints.json'),
-                ],
-                'editor' => [
-                    'path' => $this->fixture('bud_single_runtime/public/editor'),
-                    'url' => 'https://k.jo/editor',
-                    'assets' => $this->fixture('bud_multi_compiler/public/editor/manifest.json'),
-                    'bundles' => $this->fixture('bud_multi_compiler/public/editor/entrypoints.json'),
+    $app = new Application();
+    $app->singleton(
+        'config',
+        fn () => new Repository([
+            'assets' => [
+                'default' => 'app',
+                'manifests' => [
+                    'app' => [
+                        'path' => $this->fixture('bud_single_runtime/public/app'),
+                        'url' => 'https://k.jo/app',
+                        'assets' => $this->fixture('bud_multi_compiler/public/app/manifest.json'),
+                        'bundles' => $this->fixture('bud_multi_compiler/public/app/entrypoints.json'),
+                    ],
+                    'editor' => [
+                        'path' => $this->fixture('bud_single_runtime/public/editor'),
+                        'url' => 'https://k.jo/editor',
+                        'assets' => $this->fixture('bud_multi_compiler/public/editor/manifest.json'),
+                        'bundles' => $this->fixture('bud_multi_compiler/public/editor/entrypoints.json'),
+                    ],
                 ],
             ],
-        ],
-    ]));
+        ]),
+    );
 
     $app->register(AssetsServiceProvider::class);
 
@@ -100,27 +109,30 @@ it('bundle() can access the default manifest', function () {
 });
 
 it('bundle() can access a specified manifest', function () {
-    $app = new Application;
+    $app = new Application();
 
-    $app->singleton('config', fn () => new Repository([
-        'assets' => [
-            'default' => 'app',
-            'manifests' => [
-                'app' => [
-                    'path' => $this->fixture('bud_single_runtime/public/app'),
-                    'url' => 'https://k.jo/app',
-                    'assets' => $this->fixture('bud_multi_compiler/public/app/manifest.json'),
-                    'bundles' => $this->fixture('bud_multi_compiler/public/app/entrypoints.json'),
-                ],
-                'editor' => [
-                    'path' => $this->fixture('bud_single_runtime/public/editor'),
-                    'url' => 'https://k.jo/editor',
-                    'assets' => $this->fixture('bud_multi_compiler/public/editor/manifest.json'),
-                    'bundles' => $this->fixture('bud_multi_compiler/public/editor/entrypoints.json'),
+    $app->singleton(
+        'config',
+        fn () => new Repository([
+            'assets' => [
+                'default' => 'app',
+                'manifests' => [
+                    'app' => [
+                        'path' => $this->fixture('bud_single_runtime/public/app'),
+                        'url' => 'https://k.jo/app',
+                        'assets' => $this->fixture('bud_multi_compiler/public/app/manifest.json'),
+                        'bundles' => $this->fixture('bud_multi_compiler/public/app/entrypoints.json'),
+                    ],
+                    'editor' => [
+                        'path' => $this->fixture('bud_single_runtime/public/editor'),
+                        'url' => 'https://k.jo/editor',
+                        'assets' => $this->fixture('bud_multi_compiler/public/editor/manifest.json'),
+                        'bundles' => $this->fixture('bud_multi_compiler/public/editor/entrypoints.json'),
+                    ],
                 ],
             ],
-        ],
-    ]));
+        ]),
+    );
 
     $app->register(AssetsServiceProvider::class);
 

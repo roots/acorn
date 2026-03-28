@@ -61,32 +61,38 @@ class PackageManifest extends FoundationPackageManifest
      */
     public function build()
     {
-        $packages = array_reduce($this->composerPaths, function ($all, $composerPath) {
-            $packages = [];
+        $packages = array_reduce(
+            $this->composerPaths,
+            function ($all, $composerPath) {
+                $packages = [];
 
-            $path = "{$composerPath}/vendor/composer/installed.json";
+                $path = "{$composerPath}/vendor/composer/installed.json";
 
-            if ($this->files->exists($path)) {
-                $installed = json_decode($this->files->get($path), true);
+                if ($this->files->exists($path)) {
+                    $installed = json_decode($this->files->get($path), true);
 
-                $packages = $installed['packages'] ?? $installed;
-            }
+                    $packages = $installed['packages'] ?? $installed;
+                }
 
-            $packages[] = json_decode($this->files->get("{$composerPath}/composer.json"), true);
+                $packages[] = json_decode($this->files->get("{$composerPath}/composer.json"), true);
 
-            $ignoreAll = in_array('*', $ignore = $this->packagesToIgnore());
+                $ignoreAll = in_array('*', $ignore = $this->packagesToIgnore());
 
-            return collect($packages)->mapWithKeys(fn ($package) => [
-                $this->format($package['name'] ?? basename($composerPath), dirname($path, 2)) => $package['extra']['acorn'] ?? $package['extra']['laravel'] ?? [],
-            ])
-                ->each(function ($configuration) use (&$ignore) {
-                    $ignore = array_merge($ignore, $configuration['dont-discover'] ?? []);
-                })
-                ->reject(fn ($configuration, $package) => $ignoreAll || in_array($package, $ignore))
-                ->filter()
-                ->merge($all)
-                ->all();
-        }, []);
+                return collect($packages)
+                    ->mapWithKeys(fn ($package) => [
+                        $this->format($package['name'] ?? basename($composerPath), dirname($path, 2)) =>
+                            $package['extra']['acorn'] ?? $package['extra']['laravel'] ?? [],
+                    ])
+                    ->each(function ($configuration) use (&$ignore) {
+                        $ignore = array_merge($ignore, $configuration['dont-discover'] ?? []);
+                    })
+                    ->reject(fn ($configuration, $package) => $ignoreAll || in_array($package, $ignore))
+                    ->filter()
+                    ->merge($all)
+                    ->all();
+            },
+            [],
+        );
 
         $this->write($packages);
     }
@@ -100,7 +106,7 @@ class PackageManifest extends FoundationPackageManifest
      */
     protected function format($package, $vendorPath = null)
     {
-        return str_replace($vendorPath.'/', '', $package);
+        return str_replace($vendorPath . '/', '', $package);
     }
 
     /**
@@ -110,20 +116,24 @@ class PackageManifest extends FoundationPackageManifest
      */
     protected function packagesToIgnore()
     {
-        return array_reduce($this->composerPaths, function ($ignore, $composerPath) {
-            $path = "{$composerPath}/composer.json";
+        return array_reduce(
+            $this->composerPaths,
+            function ($ignore, $composerPath) {
+                $path = "{$composerPath}/composer.json";
 
-            if (! $this->files->exists($path)) {
-                return $ignore;
-            }
+                if (! $this->files->exists($path)) {
+                    return $ignore;
+                }
 
-            $package = json_decode($this->files->get($path), true);
+                $package = json_decode($this->files->get($path), true);
 
-            return array_merge(
-                $ignore,
-                $package['extra']['laravel']['dont-discover'] ?? [],
-                $package['extra']['acorn']['dont-discover'] ?? []
-            );
-        }, []);
+                return array_merge(
+                    $ignore,
+                    $package['extra']['laravel']['dont-discover'] ?? [],
+                    $package['extra']['acorn']['dont-discover'] ?? [],
+                );
+            },
+            [],
+        );
     }
 }

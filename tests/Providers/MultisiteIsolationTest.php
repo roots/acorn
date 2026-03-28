@@ -42,12 +42,15 @@ function invokeConfigureMultisite(AcornServiceProvider $provider): void
 
 function createProviderWithConfig(array $config = []): array
 {
-    $container = new Container;
+    $container = new Container();
 
-    $container->instance('config', new Repository(array_merge([
-        'cache' => ['prefix' => 'acorn_cache_'],
-        'session' => ['cookie' => 'acorn_session'],
-    ], $config)));
+    $container->instance(
+        'config',
+        new Repository(array_merge([
+            'cache' => ['prefix' => 'acorn_cache_'],
+            'session' => ['cookie' => 'acorn_session'],
+        ], $config)),
+    );
 
     $container->instance('events', new Dispatcher($container));
 
@@ -63,8 +66,7 @@ it('should prefix cache keys per blog on multisite', function () {
     [$provider, $container] = createProviderWithConfig();
     invokeConfigureMultisite($provider);
 
-    expect($container->make('config')->get('cache.prefix'))
-        ->toBe('acorn_cache_blog_3_');
+    expect($container->make('config')->get('cache.prefix'))->toBe('acorn_cache_blog_3_');
 });
 
 it('should set unique session cookie per blog on multisite', function () {
@@ -74,8 +76,7 @@ it('should set unique session cookie per blog on multisite', function () {
     [$provider, $container] = createProviderWithConfig();
     invokeConfigureMultisite($provider);
 
-    expect($container->make('config')->get('session.cookie'))
-        ->toBe('acorn_session_5');
+    expect($container->make('config')->get('session.cookie'))->toBe('acorn_session_5');
 });
 
 it('should not modify config on single-site', function () {
@@ -150,8 +151,7 @@ it('should switch blog context when processing a queued job', function () {
     $container->instance('events', new Dispatcher($container));
     invokeConfigureMultisite($provider);
 
-    $mockJob = new class
-    {
+    $mockJob = new class {
         public function payload()
         {
             return ['blogId' => 2];
@@ -175,8 +175,7 @@ it('should restore blog context after job exception', function () {
     $container->instance('events', new Dispatcher($container));
     invokeConfigureMultisite($provider);
 
-    $mockJob = new class
-    {
+    $mockJob = new class {
         public function payload()
         {
             return ['blogId' => 5];
@@ -203,8 +202,7 @@ it('should not switch blog for jobs without blogId', function () {
     expect($this->blogId)->toBe(3);
     expect($this->blogIdStack)->toBe([1]);
 
-    $mockJob = new class
-    {
+    $mockJob = new class {
         public function payload()
         {
             return [];
@@ -233,16 +231,14 @@ it('should handle nested job processing correctly', function () {
     $container->instance('events', new Dispatcher($container));
     invokeConfigureMultisite($provider);
 
-    $outerJob = new class
-    {
+    $outerJob = new class {
         public function payload()
         {
             return ['blogId' => 2];
         }
     };
 
-    $innerJob = new class
-    {
+    $innerJob = new class {
         public function payload()
         {
             return ['blogId' => 3];
@@ -274,16 +270,14 @@ it('should not consume outer restore when inner job has no blogId', function () 
     $container->instance('events', new Dispatcher($container));
     invokeConfigureMultisite($provider);
 
-    $outerJob = new class
-    {
+    $outerJob = new class {
         public function payload()
         {
             return ['blogId' => 2];
         }
     };
 
-    $innerJob = new class
-    {
+    $innerJob = new class {
         public function payload()
         {
             return [];

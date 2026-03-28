@@ -17,12 +17,12 @@ trait SupportsGlobalStubs
     protected function stub(string $fn, ?callable $callable = null): MockeryCallableMock
     {
         $script = <<<'DECLARE_FUNCTION'
-        if (! function_exists('%1$s')) {
-            function %1$s (...$args) {
-                return call_user_func_array(%2$s::$globals['%1$s'], $args);
+            if (! function_exists('%1$s')) {
+                function %1$s (...$args) {
+                    return call_user_func_array(%2$s::$globals['%1$s'], $args);
+                }
             }
-        }
-        DECLARE_FUNCTION;
+            DECLARE_FUNCTION;
 
         eval(sprintf($script, $fn, __CLASS__));
 
@@ -40,7 +40,6 @@ trait SupportsGlobalStubs
         $stubs = [];
 
         foreach ($callables as $fn => $callable) {
-
             if (is_int($fn) && is_string($callable)) {
                 $fn = $callable;
                 $callable = null;

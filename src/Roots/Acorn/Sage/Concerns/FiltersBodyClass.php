@@ -22,7 +22,9 @@ trait FiltersBodyClass
             }
         }
 
-        return $classes->map(fn ($class) => preg_replace(['/-blade(-php)?$/', '/^page-template-views/'], '', $class)
-        )->filter()->all();
+        return $classes
+            ->map(fn ($class) => preg_replace(['/-blade(-php)?$/', '/^page-template-views/'], '', $class))
+            ->filter()
+            ->all();
     }
 }

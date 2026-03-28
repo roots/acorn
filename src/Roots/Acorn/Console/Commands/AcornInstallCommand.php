@@ -52,10 +52,10 @@ class AcornInstallCommand extends Command
             return;
         }
 
-        if ($this->option('autoload') || confirm(
-            label: 'Would you like to install the Acorn autoload dump script?',
-            default: true,
-        )) {
+        if (
+            $this->option('autoload')
+            || confirm(label: 'Would you like to install the Acorn autoload dump script?', default: true)
+        ) {
             $this->installAutoloadDump();
         }
     }
@@ -90,10 +90,7 @@ class AcornInstallCommand extends Command
             ->append(PHP_EOL)
             ->toString();
 
-        file_put_contents(
-            $composer,
-            $configuration,
-        );
+        file_put_contents($composer, $configuration);
     }
 
     /**
@@ -105,10 +102,7 @@ class AcornInstallCommand extends Command
             return;
         }
 
-        if ($this->option('init') || confirm(
-            label: 'Would you like to initialize Acorn?',
-            default: true,
-        )) {
+        if ($this->option('init') || confirm(label: 'Would you like to initialize Acorn?', default: true)) {
             $this->callSilent('acorn:init', ['--base' => $this->getLaravel()->basePath()]);
         }
     }
@@ -122,14 +116,11 @@ class AcornInstallCommand extends Command
             return;
         }
 
-        if (confirm(
-            label: '🎉 All done! Would you like to show love by starring Acorn on GitHub?',
-            default: true,
-        )) {
+        if (confirm(label: '🎉 All done! Would you like to show love by starring Acorn on GitHub?', default: true)) {
             $command = match (PHP_OS_FAMILY) {
-                'Darwin' => 'open '.escapeshellarg($this->repoUrl).' 2>/dev/null',
-                'Linux' => 'xdg-open '.escapeshellarg($this->repoUrl).' 2>/dev/null',
-                'Windows' => 'cmd /c start "" "'.addcslashes($this->repoUrl, '"').'" 2>nul',
+                'Darwin' => 'open ' . escapeshellarg($this->repoUrl) . ' 2>/dev/null',
+                'Linux' => 'xdg-open ' . escapeshellarg($this->repoUrl) . ' 2>/dev/null',
+                'Windows' => 'cmd /c start "" "' . addcslashes($this->repoUrl, '"') . '" 2>nul',
                 default => null,
             };
 

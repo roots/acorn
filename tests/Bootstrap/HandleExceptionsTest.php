@@ -11,8 +11,8 @@ use function Roots\Acorn\Tests\mock;
 uses(TestCase::class);
 
 beforeEach(function () {
-    $this->container = Application::setInstance(new Application);
-    $this->config = new Config;
+    $this->container = Application::setInstance(new Application());
+    $this->config = new Config();
 
     $this->config->set('app.debug', true);
 
@@ -20,7 +20,7 @@ beforeEach(function () {
 
     $this->container->bootstrapWith([]);
 
-    $this->handleExceptions = new HandleExceptions;
+    $this->handleExceptions = new HandleExceptions();
 
     with(new ReflectionClass($this->handleExceptions), function ($reflection) {
         $property = tap($reflection->getProperty('app'))->setAccessible(true);
@@ -32,18 +32,20 @@ it('does not throw an exception for deprecation notices', function () {
     $logger = mock(LogManager::class);
     $this->container->instance(LogManager::class, $logger);
     $logger->shouldReceive('channel')->with('deprecations')->andReturnSelf();
-    $logger->shouldReceive('warning')->with(sprintf(
-        '%s in %s on line %s',
-        'kjo(): Passing null to parameter #2 ($kjo) of type Kjo is deprecated',
-        '/acorn/path/to/file.php',
-        17
-    ));
+    $logger
+        ->shouldReceive('warning')
+        ->with(sprintf(
+            '%s in %s on line %s',
+            'kjo(): Passing null to parameter #2 ($kjo) of type Kjo is deprecated',
+            '/acorn/path/to/file.php',
+            17,
+        ));
 
     $this->handleExceptions->handleError(
         E_USER_DEPRECATED,
         'kjo(): Passing null to parameter #2 ($kjo) of type Kjo is deprecated',
         '/acorn/path/to/file.php',
-        17
+        17,
     );
 })->expectNotToPerformAssertions();
 
@@ -52,13 +54,10 @@ it('handles a warning', function () {
     $logger->shouldReceive();
     $this->container->instance(LogManager::class, $logger);
 
-    $this->handleExceptions->handleError(
-        E_USER_WARNING,
-        'warning message',
-        '/acorn/path/to/file.php',
-        5
-    );
-})->skip('This test is broken at the moment but this works as expected in manual testing')->throws(ErrorException::class);
+    $this->handleExceptions->handleError(E_USER_WARNING, 'warning message', '/acorn/path/to/file.php', 5);
+})
+    ->skip('This test is broken at the moment but this works as expected in manual testing')
+    ->throws(ErrorException::class);
 
 it('escapes an error exception for non-deprecation error', function () {
     $logger = mock(LogManager::class);
@@ -67,12 +66,7 @@ it('escapes an error exception for non-deprecation error', function () {
 
     add_filter('acorn/throw_error_exception', '__return_false');
 
-    $this->handleExceptions->handleError(
-        E_USER_WARNING,
-        'warning message',
-        '/acorn/path/to/file.php',
-        5
-    );
+    $this->handleExceptions->handleError(E_USER_WARNING, 'warning message', '/acorn/path/to/file.php', 5);
 
     $this->expectNotToPerformAssertions();
 });

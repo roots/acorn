@@ -73,8 +73,7 @@ class HandleExceptions extends FoundationHandleExceptionsBootstrapper
      */
     protected function hasHandler()
     {
-        return ! static::$app->runningInConsole()
-            && is_readable(WP_CONTENT_DIR.'/fatal-error-handler.php');
+        return ! static::$app->runningInConsole() && is_readable(WP_CONTENT_DIR . '/fatal-error-handler.php');
     }
 
     /**

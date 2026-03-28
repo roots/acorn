@@ -44,7 +44,7 @@ trait SupportsWordPressStubs
         return array_reduce(
             $this->filters[$key] ?? [],
             fn ($value, $callable) => call_user_func_array($callable, array_merge([$value], $args)),
-            $initial
+            $initial,
         );
     }
 

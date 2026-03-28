@@ -54,12 +54,11 @@ class ViewFinder
             return array_merge(...array_map([$this, 'locate'], $file));
         }
 
-        return $this->getRelativeViewPaths()
-            ->flatMap(
-                fn ($viewPath) => collect($this->finder->getPossibleViewFilesFromPath($file))
-                    ->merge([$file])
-                    ->map(fn ($file) => "{$viewPath}/{$file}")
-            )
+        return $this
+            ->getRelativeViewPaths()
+            ->flatMap(fn ($viewPath) => collect($this->finder->getPossibleViewFilesFromPath($file))
+                ->merge([$file])
+                ->map(fn ($file) => "{$viewPath}/{$file}"))
             ->unique()
             ->map(fn ($file) => trim($file, '\\/'))
             ->toArray();
@@ -92,7 +91,9 @@ class ViewFinder
      */
     protected function getRelativeViewPaths()
     {
-        return collect($this->finder->getPaths())
-            ->map(fn ($viewsPath) => $this->files->getRelativePath("{$this->path}/", $viewsPath));
+        return collect($this->finder->getPaths())->map(fn ($viewsPath) => $this->files->getRelativePath(
+            "{$this->path}/",
+            $viewsPath,
+        ));
     }
 }

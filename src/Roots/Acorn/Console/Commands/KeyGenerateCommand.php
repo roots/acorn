@@ -40,8 +40,8 @@ class KeyGenerateCommand extends FoundationKeyGenerateCommand
     {
         $replaced = preg_replace(
             $this->keyReplacementPattern(),
-            'APP_KEY='.$key,
-            $input = file_get_contents($envFile)
+            'APP_KEY=' . $key,
+            $input = file_get_contents($envFile),
         );
 
         if ($replaced === $input || $replaced === null) {
@@ -53,6 +53,6 @@ class KeyGenerateCommand extends FoundationKeyGenerateCommand
 
     protected function prepend($envFile, $key): bool
     {
-        return File::prepend($envFile, 'APP_KEY='.$key.PHP_EOL) !== false;
+        return File::prepend($envFile, 'APP_KEY=' . $key . PHP_EOL) !== false;
     }
 }

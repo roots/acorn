@@ -30,7 +30,7 @@ class Filesystem extends FilesystemBase
         $currentDirectory = $path;
 
         while ($this->isWithinOpenBasedir($currentDirectory) && @$this->isReadable($currentDirectory)) {
-            if (@$this->isFile($filePath = $currentDirectory.DIRECTORY_SEPARATOR.$file)) {
+            if (@$this->isFile($filePath = $currentDirectory . DIRECTORY_SEPARATOR . $file)) {
                 return $filePath;
             }
 
@@ -61,7 +61,7 @@ class Filesystem extends FilesystemBase
             return true;
         }
 
-        $path = rtrim($path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+        $path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
         foreach (explode(PATH_SEPARATOR, $openBasedir) as $allowedPath) {
             $allowedPath = trim($allowedPath);
@@ -70,7 +70,7 @@ class Filesystem extends FilesystemBase
                 continue;
             }
 
-            if (str_starts_with($path, rtrim($allowedPath, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR)) {
+            if (str_starts_with($path, rtrim($allowedPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR)) {
                 return true;
             }
         }
@@ -115,11 +115,13 @@ class Filesystem extends FilesystemBase
         }
 
         $targetDirs[] = $targetFile;
-        $path = str_repeat('../', count($sourceDirs)).implode('/', $targetDirs);
+        $path = str_repeat('../', count($sourceDirs)) . implode('/', $targetDirs);
 
-        return $path === '' || $path[0] === '/'
-            || ($colonPos = strpos($path, ':')) !== false && ($colonPos < ($slashPos = strpos($path, '/'))
-            || $slashPos === false)
-            ? "./$path" : $path;
+        return $path === ''
+        || $path[0] === '/'
+        || ($colonPos = strpos($path, ':')) !== false
+        && ($colonPos < ($slashPos = strpos($path, '/')) || $slashPos === false)
+            ? "./$path"
+            : $path;
     }
 }

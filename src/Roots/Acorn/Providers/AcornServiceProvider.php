@@ -117,9 +117,7 @@ class AcornServiceProvider extends ServiceProvider
         foreach ($this->filterPublishableConfigs() as $config) {
             $path = dirname(__DIR__, 4);
 
-            $file = file_exists($stub = "{$path}/config-stubs/{$config}.php")
-                ? $stub
-                : "{$path}/config/{$config}.php";
+            $file = file_exists($stub = "{$path}/config-stubs/{$config}.php") ? $stub : "{$path}/config/{$config}.php";
 
             $this->publishes([
                 $file => config_path("{$config}.php"),
@@ -137,7 +135,7 @@ class AcornServiceProvider extends ServiceProvider
         $configs = array_filter(
             $this->providerConfigs,
             fn ($provider) => class_exists($provider) && $this->app->getProviders($provider),
-            ARRAY_FILTER_USE_KEY
+            ARRAY_FILTER_USE_KEY,
         );
 
         return array_unique(array_merge($this->configs, array_values($configs)));
@@ -217,18 +215,20 @@ class AcornServiceProvider extends ServiceProvider
      */
     protected function registerPostInitEvent()
     {
-        $this->app->make('events')->listen(function (CommandFinished $event) {
-            if ($event->command !== 'acorn:init') {
-                return;
-            }
+        $this->app
+            ->make('events')
+            ->listen(function (CommandFinished $event) {
+                if ($event->command !== 'acorn:init') {
+                    return;
+                }
 
-            if (! is_dir(base_path('storage'))) {
-                return;
-            }
+                if (! is_dir(base_path('storage'))) {
+                    return;
+                }
 
-            $files = new Filesystem;
+                $files = new Filesystem();
 
-            $files->deleteDirectory(WP_CONTENT_DIR.'/cache/acorn');
-        });
+                $files->deleteDirectory(WP_CONTENT_DIR . '/cache/acorn');
+            });
     }
 }

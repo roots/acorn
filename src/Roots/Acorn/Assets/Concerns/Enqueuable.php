@@ -88,10 +88,7 @@ trait Enqueuable
      */
     public function editorStyles()
     {
-        $relativePath = (new Filesystem)->getRelativePath(
-            Str::finish(get_theme_file_path(), '/'),
-            $this->path
-        );
+        $relativePath = new Filesystem()->getRelativePath(Str::finish(get_theme_file_path(), '/'), $this->path);
 
         $this->css(function ($handle, $src) use ($relativePath) {
             if (! Str::startsWith($src, $this->uri)) {
@@ -155,7 +152,7 @@ trait Enqueuable
      */
     public function inlineRuntime()
     {
-        if (! $runtime = $this->runtime()) {
+        if (! ($runtime = $this->runtime())) {
             return $this;
         }
 
@@ -181,15 +178,11 @@ trait Enqueuable
      */
     public function inline($contents, $position = 'after')
     {
-        if (! $handles = array_keys($this->js()->keys()->toArray())) {
+        if (! ($handles = array_keys($this->js()->keys()->toArray()))) {
             return $this;
         }
 
-        $handle = "{$this->id}/".(
-            $position === 'after'
-                ? array_pop($handles)
-                : array_shift($handles)
-        );
+        $handle = "{$this->id}/" . ($position === 'after' ? array_pop($handles) : array_shift($handles));
 
         wp_add_inline_script($handle, $contents, $position);
 
@@ -205,7 +198,7 @@ trait Enqueuable
      */
     public function localize($name, $object)
     {
-        if (! $handles = $this->js()->keys()->toArray()) {
+        if (! ($handles = $this->js()->keys()->toArray())) {
             return $this;
         }
 

@@ -32,12 +32,12 @@ class RoutingTestCase extends MockeryTestCase
 
         // Create test routes file
         $webRoutes = <<<'PHP'
-<?php
+            <?php
 
-use Illuminate\Support\Facades\Route;
+            use Illuminate\Support\Facades\Route;
 
-Route::get('/test', fn() => 'Howdy')->name('test');
-PHP;
+            Route::get('/test', fn() => 'Howdy')->name('test');
+            PHP;
 
         file_put_contents($this->routesFile, $webRoutes);
 
@@ -47,8 +47,8 @@ PHP;
         if (! str_contains($this->originalFunctionsContent, 'withRouting')) {
             $newContent = str_replace(
                 '->boot();',
-                '->withRouting(web: __DIR__ . \'/routes/web.php\')'."\n    ->boot();",
-                $this->originalFunctionsContent
+                '->withRouting(web: __DIR__ . \'/routes/web.php\')' . "\n    ->boot();",
+                $this->originalFunctionsContent,
             );
             file_put_contents($this->functionsFile, $newContent);
         }

@@ -61,7 +61,7 @@ trait GracefullyCallsCommands
     public function gracefulCallSilent($command, array $arguments = [])
     {
         if ($this->commandExists($command)) {
-            return $this->runCommand($command, $arguments, new NullOutput);
+            return $this->runCommand($command, $arguments, new NullOutput());
         }
 
         return 0;
@@ -78,7 +78,10 @@ trait GracefullyCallsCommands
         try {
             $this->resolveCommand($command);
         } catch (CommandNotFoundException $e) {
-            $this->getLaravel()->make('log')->debug("Command [{$command}] not found. Skipping.");
+            $this
+                ->getLaravel()
+                ->make('log')
+                ->debug("Command [{$command}] not found. Skipping.");
 
             return false;
         }
