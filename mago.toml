@@ -26,7 +26,7 @@ no-debug-symbols = { enabled = false } # Debugger.php is intentionally a debug t
 no-empty-catch-clause = { enabled = false } # sometimes intentional
 no-empty-comment = { enabled = false } # we use empty comments to keep callback bodies expanded for readability
 no-error-control-operator = { enabled = false } # sometimes necessary for filesystem operations
-no-eval = { enabled = true }
+no-eval = { enabled = false } # used intentionally in test stubs
 no-global = { enabled = false } # unavoidable in WordPress ($GLOBALS['wpdb'], etc.)
 no-isset = { enabled = false } # isset() is the correct way to check array key existence
 no-multi-assignments = { enabled = false }
