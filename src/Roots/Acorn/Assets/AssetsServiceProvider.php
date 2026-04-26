@@ -19,7 +19,9 @@ class AssetsServiceProvider extends ServiceProvider
             return new Manager($this->app->make('config')->get('assets'));
         });
 
-        $this->app->singleton('assets.vite', Vite::class);
+        $this->app->singleton(Vite::class);
+
+        $this->app->alias(Vite::class, 'assets.vite');
 
         $this->app->alias(Vite::class, FoundationVite::class);
 
