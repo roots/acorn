@@ -128,11 +128,7 @@ it('can inline a single runtime', function () {
         'wp_enqueue_script',
     ]);
 
-    $this
-        ->stub('wp_enqueue_script')
-        ->shouldBeCalled()
-        ->zeroOrMoreTimes()
-        ->withAnyArgs();
+    $this->stub('wp_enqueue_script')->shouldBeCalled()->zeroOrMoreTimes()->withAnyArgs();
 
     $app->enqueueJs();
 });
@@ -145,17 +141,9 @@ it('can inline multiple runtimes', function () {
     $app = new Bundle('app', $manifest['app'], $this->fixture('bud_multi_runtime'), 'https://k.jo');
     $editor = new Bundle('editor', $manifest['editor'], $this->fixture('bud_multi_runtime'), 'https://k.jo');
 
-    $this
-        ->stub('wp_add_inline_script')
-        ->shouldBeCalled()
-        ->twice()
-        ->withAnyArgs();
+    $this->stub('wp_add_inline_script')->shouldBeCalled()->twice()->withAnyArgs();
 
-    $this
-        ->stub('wp_enqueue_script')
-        ->shouldBeCalled()
-        ->twice()
-        ->withAnyArgs();
+    $this->stub('wp_enqueue_script')->shouldBeCalled()->twice()->withAnyArgs();
 
     $app->enqueueJs();
     $editor->enqueueJs();
@@ -169,17 +157,9 @@ it('does not inline duplicate single runtimes', function () {
     $app = new Bundle('app', $manifest['app'], $this->fixture('bud_single_runtime'), 'https://k.jo');
     $editor = new Bundle('editor', $manifest['editor'], $this->fixture('bud_single_runtime'), 'https://k.jo');
 
-    $this
-        ->stub('wp_add_inline_script')
-        ->shouldBeCalled()
-        ->once()
-        ->withAnyArgs();
+    $this->stub('wp_add_inline_script')->shouldBeCalled()->once()->withAnyArgs();
 
-    $this
-        ->stub('wp_enqueue_script')
-        ->shouldBeCalled()
-        ->twice()
-        ->withAnyArgs();
+    $this->stub('wp_enqueue_script')->shouldBeCalled()->twice()->withAnyArgs();
 
     $app->enqueueJs();
     $editor->enqueueJs();

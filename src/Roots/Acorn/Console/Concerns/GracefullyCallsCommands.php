@@ -78,10 +78,7 @@ trait GracefullyCallsCommands
         try {
             $this->resolveCommand($command);
         } catch (CommandNotFoundException $e) {
-            $this
-                ->getLaravel()
-                ->make('log')
-                ->debug("Command [{$command}] not found. Skipping.");
+            $this->getLaravel()->make('log')->debug("Command [{$command}] not found. Skipping.");
 
             return false;
         }

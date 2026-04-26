@@ -131,11 +131,7 @@ class ViewServiceProvider extends ViewServiceProviderBase
      */
     public function attachDirectives()
     {
-        $blade = $this
-            ->view()
-            ->getEngineResolver()
-            ->resolve('blade')
-            ->getCompiler();
+        $blade = $this->view()->getEngineResolver()->resolve('blade')->getCompiler();
         $directives = $this->app['config']['view.directives'];
 
         foreach ($directives as $name => $handler) {
@@ -157,11 +153,7 @@ class ViewServiceProvider extends ViewServiceProviderBase
         $components = $this->app->config['view.components'];
 
         if (is_array($components) && Arr::isAssoc($components)) {
-            $blade = $this
-                ->view()
-                ->getEngineResolver()
-                ->resolve('blade')
-                ->getCompiler();
+            $blade = $this->view()->getEngineResolver()->resolve('blade')->getCompiler();
 
             foreach ($components as $alias => $view) {
                 $blade->component($view, $alias);
