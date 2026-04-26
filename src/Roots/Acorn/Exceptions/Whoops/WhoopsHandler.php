@@ -76,11 +76,7 @@ class WhoopsHandler extends FoundationWhoopsHandler
                     return [];
                 }
 
-                return Collection::make(get_object_vars($wp_query))
-                    ->forget('posts')
-                    ->forget('post')
-                    ->filter()
-                    ->all();
+                return Collection::make(get_object_vars($wp_query))->forget('posts')->forget('post')->filter()->all();
             })
             ->addDataTableCallback(sprintf('%s Data', WP_Post::class), function () {
                 $post = get_post();

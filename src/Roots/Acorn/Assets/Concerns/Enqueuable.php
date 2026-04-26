@@ -95,11 +95,7 @@ trait Enqueuable
                 return add_editor_style($src);
             }
 
-            $style = Str::of($src)
-                ->after($this->uri)
-                ->ltrim('/')
-                ->start("{$relativePath}/")
-                ->toString();
+            $style = Str::of($src)->after($this->uri)->ltrim('/')->start("{$relativePath}/")->toString();
 
             add_editor_style($style);
         });

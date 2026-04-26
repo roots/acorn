@@ -19,10 +19,7 @@ beforeAll(function () {
 beforeEach(function () {
     /** @var MockInterface|ApplicationContract */
     $this->application = mock(ApplicationContract::class);
-    $this->application
-        ->shouldIgnoreMissing()
-        ->shouldreceive('runningInConsole')
-        ->andReturn(false);
+    $this->application->shouldIgnoreMissing()->shouldreceive('runningInConsole')->andReturn(false);
     $this->application->config = new Config(['app' => ['debug' => true]]);
     $this->handleExceptions = new HandleExceptions();
 });

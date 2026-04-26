@@ -20,17 +20,9 @@ it('supports bud v6: build', function () {
         'https://k.jo/public',
     );
 
-    $this
-        ->stub('wp_add_inline_script')
-        ->shouldBeCalled()
-        ->once()
-        ->withAnyArgs();
+    $this->stub('wp_add_inline_script')->shouldBeCalled()->once()->withAnyArgs();
 
-    $this
-        ->stub('wp_enqueue_script')
-        ->shouldBeCalled()
-        ->times(4)
-        ->withAnyArgs();
+    $this->stub('wp_enqueue_script')->shouldBeCalled()->times(4)->withAnyArgs();
 
     $app->enqueueJs();
     $editor->enqueueJs();
@@ -54,17 +46,9 @@ it('supports bud v6: build --esm', function () {
         'https://k.jo/public',
     );
 
-    $this
-        ->stub('wp_add_inline_script')
-        ->shouldBeCalled()
-        ->once()
-        ->withAnyArgs();
+    $this->stub('wp_add_inline_script')->shouldBeCalled()->once()->withAnyArgs();
 
-    $this
-        ->stub('wp_enqueue_script')
-        ->shouldBeCalled()
-        ->times(4)
-        ->withAnyArgs();
+    $this->stub('wp_enqueue_script')->shouldBeCalled()->times(4)->withAnyArgs();
 
     $app->enqueueJs();
     $editor->enqueueJs();
@@ -90,11 +74,7 @@ it('supports bud v6: dev', function () {
 
     $this->stub('wp_add_inline_script')->shouldBeCalled()->never();
 
-    $this
-        ->stub('wp_enqueue_script')
-        ->shouldBeCalled()
-        ->times(2)
-        ->withAnyArgs();
+    $this->stub('wp_enqueue_script')->shouldBeCalled()->times(2)->withAnyArgs();
 
     $app->enqueueJs();
     $editor->enqueueJs();
@@ -120,11 +100,7 @@ it('supports bud v6: dev --esm', function () {
 
     $this->stub('wp_add_inline_script')->shouldBeCalled()->never();
 
-    $this
-        ->stub('wp_enqueue_script')
-        ->shouldBeCalled()
-        ->times(2)
-        ->withAnyArgs();
+    $this->stub('wp_enqueue_script')->shouldBeCalled()->times(2)->withAnyArgs();
 
     $app->enqueueJs();
     $editor->enqueueJs();
