@@ -67,3 +67,5 @@ jobs:
           Please review the changes and ensure compatibility with Acorn before merging." \
               --label "dependencies"
           fi
+
+          gh workflow run main.yml --ref "$BRANCH"
