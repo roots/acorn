@@ -3,9 +3,13 @@
 namespace Illuminate\Foundation;
 
 use Illuminate\Database\Migrations\Migrator;
+use Illuminate\Foundation\Bootstrap\BootProviders;
 use Illuminate\Foundation\Bootstrap\HandleExceptions;
 use Illuminate\Foundation\Bootstrap\LoadConfiguration;
-use Illuminate\Queue\Worker;
+use Illuminate\Foundation\Cloud\Events;
+use Illuminate\Foundation\Cloud\FailedJobProvider;
+use Illuminate\Foundation\Cloud\QueueConnector;
+use Illuminate\Queue\Connectors\SqsConnector;
 use Monolog\Formatter\JsonFormatter;
 use Monolog\Handler\SocketHandler;
 use PDO;
@@ -35,6 +39,9 @@ class Cloud
             HandleExceptions::class => function () use ($app) {
                 static::configureCloudLogging($app);
             },
+            BootProviders::class => function () use ($app) {
+                static::bootManagedQueues($app);
+            },
             default => fn () => true,
         })();
     }
@@ -51,18 +58,26 @@ class Cloud
         $disks = json_decode($_SERVER['LARAVEL_CLOUD_DISK_CONFIG'], true);
 
         foreach ($disks as $disk) {
-            $app['config']->set('filesystems.disks.'.$disk['disk'], [
-                'driver' => 's3',
-                'key' => $disk['access_key_id'],
-                'secret' => $disk['access_key_secret'],
-                'bucket' => $disk['bucket'],
-                'url' => $disk['url'],
-                'endpoint' => $disk['endpoint'],
-                'region' => 'auto',
-                'use_path_style_endpoint' => false,
-                'throw' => false,
-                'report' => false,
-            ]);
+            if ($disk['scoped_disk'] ?? false) {
+                $app['config']->set('filesystems.disks.'.$disk['disk'], [
+                    'driver' => 'scoped',
+                    'disk' => $disk['scoped_disk'],
+                    'prefix' => $disk['prefix'] ?? '',
+                ]);
+            } else {
+                $app['config']->set('filesystems.disks.'.$disk['disk'], [
+                    'driver' => 's3',
+                    'key' => $disk['access_key_id'],
+                    'secret' => $disk['access_key_secret'],
+                    'bucket' => $disk['bucket'],
+                    'url' => $disk['url'],
+                    'endpoint' => $disk['endpoint'],
+                    'region' => 'auto',
+                    'use_path_style_endpoint' => false,
+                    'throw' => false,
+                    'report' => false,
+                ]);
+            }
 
             if ($disk['is_default'] ?? false) {
                 $app['config']->set('filesystems.default', $disk['disk']);
@@ -119,21 +134,37 @@ class Cloud
      */
     public static function configureManagedQueues(Application $app): void
     {
-        if ((int) ($_SERVER['LARAVEL_CLOUD_MANAGED_QUEUES'] ?? 0) === 1) {
-            Worker::$restartable = false;
-
-            $app['config']->set(
-                'queue.connections.sqs.credentials',
-                'ecs'
-            );
-
-            if (isset($_SERVER['LARAVEL_CLOUD_REGION'])) {
-                $app['config']->set(
-                    'queue.connections.sqs.region',
-                    $_SERVER['LARAVEL_CLOUD_REGION']
-                );
-            }
+        if (! Cloud::managedQueuesAreActive()) {
+            return;
         }
+
+        $app['config']->set('queue.connections.sqs.credentials', 'ecs');
+
+        if (isset($_SERVER['LARAVEL_CLOUD_REGION'])) {
+            $app['config']->set('queue.connections.sqs.region', $_SERVER['LARAVEL_CLOUD_REGION']);
+        }
+    }
+
+    /**
+     * Boot managed queues if applicable.
+     */
+    public static function bootManagedQueues(Application $app): void
+    {
+        if (! Cloud::managedQueuesAreActive()) {
+            return;
+        }
+
+        $app->singleton(Events::class, fn () => new Events(Cloud::socket()));
+        $app->bind(QueueConnector::class, fn ($app) => new QueueConnector(new SqsConnector, $app));
+
+        $app['queue']->addConnector('sqs', $app->factory(QueueConnector::class));
+
+        $failer = $app['queue.failer'];
+        unset($app['queue.failer']);
+
+        $app->singleton('queue.failer', fn ($app) => new FailedJobProvider(
+            $failer, $app[Events::class], $app['encrypter'],
+        ));
     }
 
     /**
@@ -154,11 +185,27 @@ class Cloud
                 'includeStacktraces' => true,
             ],
             'with' => [
-                'connectionString' => $_ENV['LARAVEL_CLOUD_LOG_SOCKET'] ??
-                                      $_SERVER['LARAVEL_CLOUD_LOG_SOCKET'] ??
-                                      'unix:///tmp/cloud-init.sock',
+                'connectionString' => Cloud::socket(),
                 'persistent' => true,
             ],
         ]);
+    }
+
+    /**
+     * The cloud socket address.
+     */
+    protected static function socket(): string
+    {
+        return $_ENV['LARAVEL_CLOUD_LOG_SOCKET'] ??
+            $_SERVER['LARAVEL_CLOUD_LOG_SOCKET'] ??
+                'unix:///tmp/cloud-init.sock';
+    }
+
+    /**
+     * Determine if managed queues are active.
+     */
+    protected static function managedQueuesAreActive(): bool
+    {
+        return ($_SERVER['LARAVEL_CLOUD_MANAGED_QUEUES'] ?? null) === '1';
     }
 }
