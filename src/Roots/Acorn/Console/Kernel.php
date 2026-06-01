@@ -33,6 +33,8 @@ use Illuminate\Foundation\Console\PackageDiscoverCommand;
 use Illuminate\Foundation\Console\ProviderMakeCommand;
 use Illuminate\Foundation\Console\RouteClearCommand;
 use Illuminate\Foundation\Console\RouteListCommand;
+use Illuminate\Foundation\Console\StorageLinkCommand;
+use Illuminate\Foundation\Console\StorageUnlinkCommand;
 use Illuminate\Foundation\Console\ViewCacheCommand;
 use Illuminate\Foundation\Console\ViewClearCommand;
 use Illuminate\Queue\Console\BatchesTableCommand;
@@ -94,6 +96,8 @@ class Kernel extends FoundationConsoleKernel
         ProviderMakeCommand::class,
         RouteClearCommand::class,
         RouteListCommand::class,
+        StorageLinkCommand::class,
+        StorageUnlinkCommand::class,
         ViewCacheCommand::class,
         ViewClearCommand::class,
         BatchesTableCommand::class,
