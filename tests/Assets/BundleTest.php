@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Collection;
 use Roots\Acorn\Assets\Bundle;
+use Roots\Acorn\Tests\Test\Drivers\ObjectDriver;
 use Roots\Acorn\Tests\Test\TestCase;
 
 use function Spatie\Snapshots\assertMatchesJsonSnapshot;
@@ -44,7 +45,7 @@ it('can enqueue css', function () {
     );
     $app = new Bundle('app', $manifest['app'], $this->fixture('bud_single_runtime'), 'https://k.jo');
 
-    $this->stub('wp_enqueue_style', fn (...$args) => assertMatchesSnapshot($args));
+    $this->stub('wp_enqueue_style', fn (...$args) => assertMatchesSnapshot($args, new ObjectDriver()));
 
     $app->enqueueCss();
 });
