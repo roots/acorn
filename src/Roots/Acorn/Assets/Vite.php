@@ -36,7 +36,7 @@ class Vite extends FoundationVite
      * @param  string  $base  The base URL to use for the rewrite.
      * @return string  The rewritten URI.
      */
-    private function rewriteHost(string $uri, string $base): string
+    protected function rewriteHost(string $uri, string $base): string
     {
         $home = parse_url($base);
         $parts = parse_url($uri);
