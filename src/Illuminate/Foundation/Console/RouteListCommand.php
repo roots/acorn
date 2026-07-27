@@ -236,6 +236,8 @@ class RouteListCommand extends Command
      *
      * @param  \Illuminate\Routing\Route  $route
      * @return string|null
+     *
+     * @throws \ReflectionException
      */
     protected function getClosurePath(Route $route)
     {
@@ -392,7 +394,7 @@ class RouteListCommand extends Command
         $routes = $routes->map(
             fn ($route) => array_merge($route, [
                 'action' => $this->formatActionForCli($route),
-                'method' => $route['method'] == 'GET|HEAD|POST|PUT|PATCH|DELETE|OPTIONS' ? 'ANY' : $route['method'],
+                'method' => $route['method'] === 'GET|HEAD|POST|PUT|PATCH|DELETE|OPTIONS' ? 'ANY' : $route['method'],
                 'uri' => $route['domain'] ? ($route['domain'].'/'.ltrim($route['uri'], '/')) : $route['uri'],
             ]),
         );
