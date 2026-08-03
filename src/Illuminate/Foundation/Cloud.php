@@ -132,6 +132,8 @@ class Cloud
 
     /**
      * Configure managed queues if applicable.
+     *
+     * @throws \JsonException
      */
     public static function configureManagedQueues(Application $app): void
     {
@@ -184,7 +186,7 @@ class Cloud
             'includeStacktraces' => true,
         ]);
 
-        $app['config']->set('logging.channels.laravel-cloud-socket', [
+        $channel = [
             'driver' => 'monolog',
             'level' => $_ENV['LOG_LEVEL'] ?? $_SERVER['LOG_LEVEL'] ?? 'debug',
             'handler' => SocketHandler::class,
@@ -196,7 +198,13 @@ class Cloud
                 'connectionString' => Cloud::socket(),
                 'persistent' => true,
             ],
-        ]);
+        ];
+
+        $app['config']->set('logging.channels.laravel-cloud-socket', $channel);
+
+        if (! $app['config']->has('logging.channels.cloud')) {
+            $app['config']->set('logging.channels.cloud', $channel);
+        }
     }
 
     /**
