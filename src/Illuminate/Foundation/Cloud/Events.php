@@ -2,7 +2,6 @@
 
 namespace Illuminate\Foundation\Cloud;
 
-use Illuminate\Foundation\Cloud;
 use RuntimeException;
 use Throwable;
 
@@ -55,8 +54,6 @@ class Events
 
     /**
      * Write the payload to the socket.
-     *
-     * @param  list<array<string, mixed>>  $payloads
      */
     protected function write(string $payload): void
     {
@@ -101,6 +98,8 @@ class Events
      * Format the payload.
      *
      * @param  list<array<string, mixed>>  $payloads
+     *
+     * @throws \JsonException
      */
     protected function format(array $payloads): string
     {
