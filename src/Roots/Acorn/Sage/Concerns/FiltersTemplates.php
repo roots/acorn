@@ -43,6 +43,60 @@ trait FiltersTemplates
     }
 
     /**
+     * Restore Blade views that WordPress refused to locate.
+     *
+     * WordPress' `locate_template()` rejects any template name containing `..`
+     * unless it resolves inside the theme directory (see
+     * `_wp_is_template_path_allowed()`, shipped in the 7.1.2 security release
+     * and backported to older branches). Blade views that live outside the
+     * theme (e.g. Radicle, or a Bedrock project with views at the project root)
+     * are emitted as `../` relative paths and would otherwise be silently
+     * skipped, leaving WordPress to fall back to the theme's `index.php` shim,
+     * which then renders itself recursively.
+     *
+     * Walk the hierarchy in order and accept the first existing candidate that
+     * either resolves inside a registered view path (a Blade view) or is the
+     * template WordPress already located.
+     *
+     * Filter: {type}_template
+     *
+     * @param  string  $template
+     * @param  string  $type
+     * @param  string[]  $templates
+     * @return string
+     */
+    public function filterTemplate($template, $type, $templates)
+    {
+        if ($template === ABSPATH.WPINC.'/template-canvas.php') {
+            return $template;
+        }
+
+        $located = $template ? realpath($template) : false;
+        $viewPaths = array_map(fn ($path) => trailingslashit(wp_normalize_path(realpath($path) ?: $path)), $this->fileFinder->getPaths());
+        $directories = array_unique([get_stylesheet_directory(), get_template_directory()]);
+
+        foreach ($templates as $name) {
+            foreach ($directories as $directory) {
+                $path = realpath("{$directory}/{$name}");
+
+                if ($path === false) {
+                    continue;
+                }
+
+                if ($path === $located) {
+                    return $template;
+                }
+
+                if (Str::startsWith(wp_normalize_path($path), $viewPaths)) {
+                    return $path;
+                }
+            }
+        }
+
+        return $template;
+    }
+
+    /**
      * Include compiled Blade view with data attached.
      *
      * Filter: template_include
