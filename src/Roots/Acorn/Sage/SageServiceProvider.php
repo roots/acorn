@@ -74,12 +74,7 @@ class SageServiceProvider extends ServiceProvider
             10,
         );
 
-        add_filters(
-            array_map(fn ($type) => "{$type}_template", $types),
-            $sage->filter('template'),
-            10,
-            3,
-        );
+        add_filters(array_map(fn ($type) => "{$type}_template", $types), $sage->filter('template'), 10, 3);
     }
 
     /**

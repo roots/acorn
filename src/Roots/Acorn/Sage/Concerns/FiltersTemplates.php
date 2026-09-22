@@ -67,13 +67,17 @@ trait FiltersTemplates
      */
     public function filterTemplate($template, $type, $templates)
     {
-        if ($template === ABSPATH.WPINC.'/template-canvas.php') {
+        if ($template === ABSPATH . WPINC . '/template-canvas.php') {
             return $template;
         }
 
         $located = $template ? realpath($template) : false;
-        $viewPaths = array_map(fn ($path) => trailingslashit(wp_normalize_path(realpath($path) ?: $path)), $this->fileFinder->getPaths());
         $directories = array_unique([get_stylesheet_directory(), get_template_directory()]);
+        $viewPaths = [];
+
+        foreach ($this->fileFinder->getPaths() as $path) {
+            $viewPaths[] = trailingslashit(wp_normalize_path(realpath($path) ?: $path));
+        }
 
         foreach ($templates as $name) {
             foreach ($directories as $directory) {
