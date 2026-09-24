@@ -3,6 +3,7 @@
 namespace Roots\Acorn\Sage;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Roots\Acorn\Filesystem\Filesystem;
 use Roots\Acorn\View\FileViewFinder;
 
@@ -62,6 +63,47 @@ class ViewFinder
             ->unique()
             ->map(fn ($file) => trim($file, '\\/'))
             ->toArray();
+    }
+
+    /**
+     * Resolve the first Blade view in a template hierarchy, stopping at the
+     * template WordPress already located.
+     *
+     * A candidate only counts as a Blade view when it resolves inside one of
+     * the registered view paths, so `..` segments never escape them.
+     *
+     * @param  string[]  $templates
+     * @param  string|false  $located
+     * @return string|null
+     */
+    public function resolve($templates, $located = false)
+    {
+        $directories = array_unique([get_stylesheet_directory(), get_template_directory()]);
+        $viewPaths = [];
+
+        foreach ($this->finder->getPaths() as $path) {
+            $viewPaths[] = trailingslashit(wp_normalize_path(realpath($path) ?: $path));
+        }
+
+        foreach ($templates as $name) {
+            foreach ($directories as $directory) {
+                $path = realpath("{$directory}/{$name}");
+
+                if ($path === false) {
+                    continue;
+                }
+
+                if ($path === $located) {
+                    return null;
+                }
+
+                if (Str::startsWith(wp_normalize_path($path), $viewPaths)) {
+                    return $path;
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
