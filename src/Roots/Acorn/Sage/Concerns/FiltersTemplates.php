@@ -56,7 +56,8 @@ trait FiltersTemplates
      *
      * Walk the hierarchy in order and accept the first existing candidate that
      * either resolves inside a registered view path (a Blade view) or is the
-     * template WordPress already located.
+     * template WordPress already located. When WordPress picked a block
+     * template instead, defer to {@see filterBlockTemplate()}.
      *
      * Filter: {type}_template
      *
@@ -68,36 +69,69 @@ trait FiltersTemplates
     public function filterTemplate($template, $type, $templates)
     {
         if ($template === ABSPATH . WPINC . '/template-canvas.php') {
+            return $this->filterBlockTemplate($template, $templates);
+        }
+
+        return $this->sageFinder->resolve($templates, $template ? realpath($template) : false) ?? $template;
+    }
+
+    /**
+     * Prefer a Blade view over a less specific block template.
+     *
+     * `locate_block_template()` only considers block templates at least as
+     * specific as the PHP template WordPress located. Because WordPress no
+     * longer locates Blade views outside the theme, it falls through to the
+     * theme's `index.php` and a block template of any specificity wins, e.g.
+     * `templates/index.html` over `home.blade.php`. Restore the Blade view when
+     * one sits higher in the hierarchy than the block template WordPress chose.
+     *
+     * @param  string  $template
+     * @param  string[]  $templates
+     * @return string
+     */
+    protected function filterBlockTemplate($template, $templates)
+    {
+        global $_wp_current_template_id;
+
+        if (! $_wp_current_template_id) {
             return $template;
         }
 
-        $located = $template ? realpath($template) : false;
-        $directories = array_unique([get_stylesheet_directory(), get_template_directory()]);
-        $viewPaths = [];
+        $slug = Str::after($_wp_current_template_id, '//');
+        $position = array_search($slug, array_map('_strip_template_file_suffix', $templates), true);
 
-        foreach ($this->fileFinder->getPaths() as $path) {
-            $viewPaths[] = trailingslashit(wp_normalize_path(realpath($path) ?: $path));
+        if ($position === false) {
+            return $template;
         }
 
-        foreach ($templates as $name) {
-            foreach ($directories as $directory) {
-                $path = realpath("{$directory}/{$name}");
+        $view = $this->sageFinder->resolve(array_slice($templates, 0, $position));
 
-                if ($path === false) {
-                    continue;
-                }
-
-                if ($path === $located) {
-                    return $template;
-                }
-
-                if (Str::startsWith(wp_normalize_path($path), $viewPaths)) {
-                    return $path;
-                }
-            }
+        if (! $view) {
+            return $template;
         }
 
-        return $template;
+        $this->discardBlockTemplate();
+
+        return $view;
+    }
+
+    /**
+     * Undo the state `locate_block_template()` prepared for `template-canvas.php`.
+     *
+     * @return void
+     */
+    protected function discardBlockTemplate()
+    {
+        global $_wp_current_template_id, $_wp_current_template_content;
+
+        $_wp_current_template_id = null;
+        $_wp_current_template_content = null;
+
+        remove_action('wp_head', '_block_template_viewport_meta_tag', 0);
+
+        if (remove_action('wp_head', '_block_template_render_title_tag', 1)) {
+            add_action('wp_head', '_wp_render_title_tag', 1);
+        }
     }
 
     /**
