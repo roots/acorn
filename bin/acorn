@@ -16,13 +16,26 @@ define('USING_ACORN_CLI', true);
 
     $composerPath = (new Roots\Acorn\Filesystem\Filesystem)->closest(dirname($autoloadPath, 2), 'composer.json');
 
-    $rootPath = dirname($composerPath);
+    $composer = $composerPath ? json_decode(file_get_contents($composerPath), true) : [];
 
-    $composer = json_decode(file_get_contents($composerPath), true);
+    $wordpressPath = null;
+
+    if ($installDir = $composer['extra']['wordpress-install-dir'] ?? null) {
+        $wordpressPath = dirname($composerPath) . "/{$installDir}";
+    } elseif ($corePackage = Composer\InstalledVersions::getInstalledPackagesByType('wordpress-core')[0] ?? null) {
+        // The install dir may be set by a Composer plugin at install time, without being written to composer.json.
+        $wordpressPath = Composer\InstalledVersions::getInstallPath($corePackage);
+    }
+
+    if (! $wordpressPath || ! is_file("{$wordpressPath}/wp-blog-header.php")) {
+        fwrite(STDERR, "Unable to locate WordPress. Set `extra.wordpress-install-dir` in composer.json.\n");
+
+        exit(1);
+    }
 
     define('WP_USE_THEMES', false);
 
-    require_once "{$rootPath}/{$composer['extra']['wordpress-install-dir']}/wp-blog-header.php";
+    require_once "{$wordpressPath}/wp-blog-header.php";
 
     Roots\Acorn\Application::configure()->boot();
 })();
