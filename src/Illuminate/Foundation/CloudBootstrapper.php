@@ -10,15 +10,19 @@ use Illuminate\Foundation\Cloud\Events;
 use Illuminate\Foundation\Cloud\FailedJobProvider;
 use Illuminate\Foundation\Cloud\QueueConnector;
 use Illuminate\Queue\Connectors\SqsConnector;
+use Illuminate\Support\Arr;
+use Illuminate\Support\ConfigurationUrlParser;
+use Illuminate\Support\Env;
+use Illuminate\Support\Str;
 use Monolog\Handler\SocketHandler;
 use PDO;
 
-class Cloud
+class CloudBootstrapper
 {
     /**
      * Handle a bootstrapper that is bootstrapping.
      */
-    public static function bootstrapperBootstrapping(Application $app, string $bootstrapper): void
+    public static function bootstrapping(Application $app, string $bootstrapper): void
     {
         (match ($bootstrapper) {
             BootProviders::class => function () use ($app) {
@@ -31,17 +35,19 @@ class Cloud
     /**
      * Handle a bootstrapper that has bootstrapped.
      */
-    public static function bootstrapperBootstrapped(Application $app, string $bootstrapper): void
+    public static function bootstrapped(Application $app, string $bootstrapper): void
     {
         (match ($bootstrapper) {
             LoadConfiguration::class => function () use ($app) {
                 static::configureDisks($app);
-                static::configureUnpooledPostgresConnection($app);
-                static::ensureMigrationsUseUnpooledConnection($app);
+                static::configureReadReplicaConnection($app);
+                static::configurePostgresConnections($app);
                 static::configureManagedQueues($app);
+                static::configureQueueCredentialCaching($app);
             },
             HandleExceptions::class => function () use ($app) {
                 static::configureCloudLogging($app);
+                static::registerEvents($app);
             },
             default => fn () => true,
         })();
@@ -55,6 +61,8 @@ class Cloud
         if (! isset($_SERVER['LARAVEL_CLOUD_DISK_CONFIG'])) {
             return;
         }
+
+        $defaultDisk = Env::get('FILESYSTEM_DISK');
 
         $disks = json_decode($_SERVER['LARAVEL_CLOUD_DISK_CONFIG'], true);
 
@@ -80,10 +88,81 @@ class Cloud
                 ]);
             }
 
-            if ($disk['is_default'] ?? false) {
+            if (($disk['is_default'] ?? false) &&
+                (blank($defaultDisk) || $defaultDisk === $disk['disk'])) {
                 $app['config']->set('filesystems.default', $disk['disk']);
             }
         }
+    }
+
+    /**
+     * Configure the Laravel Cloud read replica if applicable.
+     */
+    public static function configureReadReplicaConnection(Application $app): void
+    {
+        if (! isset($_SERVER['DB_READ_HOST'])) {
+            return;
+        }
+
+        $connection = $app['config']->get('database.default');
+
+        $app['config']->set("database.connections.{$connection}.read.host", $_SERVER['DB_READ_HOST']);
+    }
+
+    /**
+     * Configure Laravel Postgres connections, opting into native pooling with DB_POOLING.
+     */
+    public static function configurePostgresConnections(Application $app): void
+    {
+        if (is_null($pooled = Env::get('DB_POOLING'))) {
+            static::configureUnpooledPostgresConnection($app);
+            static::ensureMigrationsUseUnpooledConnection($app);
+
+            return;
+        }
+
+        $connections = $app['config']->get('database.connections', []);
+
+        foreach ($connections as $name => $config) {
+            if ($name === 'pgsql-unpooled') {
+                continue;
+            }
+
+            $config = (new ConfigurationUrlParser)->parseConfiguration($config);
+
+            $host = $config['host'] ?? null;
+
+            if (($config['driver'] ?? null) !== 'pgsql' ||
+                ! is_string($host) || ! str_ends_with($host, '.pg.laravel.cloud')) {
+                continue;
+            }
+
+            [$endpoint, $domain] = explode('.', $host, 2);
+
+            $endpoint = Str::chopEnd($endpoint, '-pooler');
+
+            $config['direct'] = array_replace([
+                'host' => "{$endpoint}.{$domain}",
+            ], $config['direct'] ?? []);
+
+            // Keep the legacy connection and opt-out independent of the pooler...
+            $direct = Arr::except(array_replace($config, $config['direct']), [
+                'read', 'write', 'direct', 'pooled', 'connect_via_database', 'connect_via_port',
+            ]);
+
+            $direct['options'][PDO::ATTR_EMULATE_PREPARES] = $config['direct']['options'][PDO::ATTR_EMULATE_PREPARES] ?? false;
+
+            if ($name === 'pgsql') {
+                $connections['pgsql-unpooled'] ??= $direct;
+            }
+
+            $config['host'] = "{$endpoint}-pooler.{$domain}";
+            $config['pooled'] = true;
+
+            $connections[$name] = $pooled ? $config : $direct + ['pooled' => false];
+        }
+
+        $app['config']->set('database.connections', $connections);
     }
 
     /**
@@ -132,6 +211,8 @@ class Cloud
 
     /**
      * Configure managed queues if applicable.
+     *
+     * @throws \JsonException
      */
     public static function configureManagedQueues(Application $app): void
     {
@@ -150,7 +231,31 @@ class Cloud
             'delete_after_processing' => env('CLOUD_QUEUE_OVERFLOW_DELETE_AFTER_PROCESSING', true),
         ];
 
+        $config['connection']['credential_cache'] ??= [
+            'enabled' => env('CLOUD_QUEUE_CREDENTIAL_CACHE_ENABLED', false),
+            'store' => env('CLOUD_QUEUE_CREDENTIAL_CACHE_STORE'),
+            'fallback_store' => env('CLOUD_QUEUE_CREDENTIAL_CACHE_FALLBACK_STORE', 'file'),
+        ];
+
         $app['config']->set('queue.connections.cloud', $config);
+    }
+
+    /**
+     * Share cached AWS credentials across processes for all SQS queue connections.
+     *
+     * Avoids Pod Identity Agent rate limiting.
+     */
+    public static function configureQueueCredentialCaching(Application $app): void
+    {
+        foreach ($app['config']->get('queue.connections', []) as $name => $connection) {
+            if (($connection['driver'] ?? null) === 'sqs' && ! isset($connection['credential_cache'])) {
+                $app['config']->set("queue.connections.{$name}.credential_cache", [
+                    'enabled' => env('CLOUD_QUEUE_CREDENTIAL_CACHE_ENABLED', false),
+                    'store' => env('CLOUD_QUEUE_CREDENTIAL_CACHE_STORE'),
+                    'fallback_store' => env('CLOUD_QUEUE_CREDENTIAL_CACHE_FALLBACK_STORE', 'file'),
+                ]);
+            }
+        }
     }
 
     /**
@@ -162,7 +267,6 @@ class Cloud
             return;
         }
 
-        $app->singleton(Events::class, fn () => new Events(Cloud::socket()));
         $app->bind(QueueConnector::class, fn ($app) => new QueueConnector(new SqsConnector, $app));
 
         $app['queue']->addConnector('cloud', $app->factory(QueueConnector::class));
@@ -184,7 +288,7 @@ class Cloud
             'includeStacktraces' => true,
         ]);
 
-        $app['config']->set('logging.channels.laravel-cloud-socket', [
+        $channel = [
             'driver' => 'monolog',
             'level' => $_ENV['LOG_LEVEL'] ?? $_SERVER['LOG_LEVEL'] ?? 'debug',
             'handler' => SocketHandler::class,
@@ -193,10 +297,25 @@ class Cloud
                 'includeStacktraces' => true,
             ],
             'with' => [
-                'connectionString' => Cloud::socket(),
+                'connectionString' => CloudBootstrapper::socket(),
                 'persistent' => true,
+                'timeout' => 2.0,
             ],
-        ]);
+        ];
+
+        $app['config']->set('logging.channels.laravel-cloud-socket', $channel);
+
+        if (! $app['config']->has('logging.channels.cloud')) {
+            $app['config']->set('logging.channels.cloud', $channel);
+        }
+    }
+
+    /**
+     * Register the events system for Laravel Cloud.
+     */
+    public static function registerEvents(Application $app): void
+    {
+        $app->singleton(Events::class, fn () => new Events(CloudBootstrapper::socket()));
     }
 
     /**
