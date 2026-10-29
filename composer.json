@@ -71,6 +71,7 @@
     "laravel/prompts": "^0.3.0",
     "laravel/serializable-closure": "^2.0",
     "league/flysystem": "^3.26",
+    "league/uri": "^7.5.1",
     "ramsey/uuid": "^4.7",
     "roots/support": "^1.0",
     "symfony/error-handler": "^7.0 | ^8.0",
