@@ -45,6 +45,8 @@ use Illuminate\Foundation\Console\ConfigMakeCommand;
 use Illuminate\Foundation\Console\ConfigPublishCommand;
 use Illuminate\Foundation\Console\ConfigShowCommand;
 use Illuminate\Foundation\Console\ConsoleMakeCommand;
+use Illuminate\Foundation\Console\DevCommand;
+use Illuminate\Foundation\Console\DevListCommand;
 use Illuminate\Foundation\Console\DocsCommand;
 use Illuminate\Foundation\Console\DownCommand;
 use Illuminate\Foundation\Console\EnumMakeCommand;
@@ -91,6 +93,7 @@ use Illuminate\Foundation\Console\VendorPublishCommand;
 use Illuminate\Foundation\Console\ViewCacheCommand;
 use Illuminate\Foundation\Console\ViewClearCommand;
 use Illuminate\Foundation\Console\ViewMakeCommand;
+use Illuminate\Foundation\DevCommands;
 use Illuminate\Notifications\Console\NotificationTableCommand;
 use Illuminate\Queue\Console\BatchesTableCommand;
 use Illuminate\Queue\Console\ClearCommand as QueueClearCommand;
@@ -111,6 +114,7 @@ use Illuminate\Queue\Console\TableCommand;
 use Illuminate\Queue\Console\WorkCommand as QueueWorkCommand;
 use Illuminate\Routing\Console\ControllerMakeCommand;
 use Illuminate\Routing\Console\MiddlewareMakeCommand;
+use Illuminate\Session\Console\SessionGarbageCollectCommand;
 use Illuminate\Session\Console\SessionTableCommand;
 use Illuminate\Support\ServiceProvider;
 
@@ -178,6 +182,7 @@ class ArtisanServiceProvider extends ServiceProvider implements DeferrableProvid
         'ScheduleInterrupt' => ScheduleInterruptCommand::class,
         'SchedulePause' => SchedulePauseCommand::class,
         'ScheduleResume' => ScheduleResumeCommand::class,
+        'SessionGarbageCollect' => SessionGarbageCollectCommand::class,
         'ShowModel' => ShowModelCommand::class,
         'StorageLink' => StorageLinkCommand::class,
         'StorageUnlink' => StorageUnlinkCommand::class,
@@ -204,6 +209,8 @@ class ArtisanServiceProvider extends ServiceProvider implements DeferrableProvid
         'ConfigPublish' => ConfigPublishCommand::class,
         'ConsoleMake' => ConsoleMakeCommand::class,
         'ControllerMake' => ControllerMakeCommand::class,
+        'Dev' => DevCommand::class,
+        'DevList' => DevListCommand::class,
         'Docs' => DocsCommand::class,
         'EnumMake' => EnumMakeCommand::class,
         'EventGenerate' => EventGenerateCommand::class,
@@ -257,6 +264,16 @@ class ArtisanServiceProvider extends ServiceProvider implements DeferrableProvid
                 && ! $this->app->runningUnitTests()
                 && extension_loaded('pcntl');
         });
+    }
+
+    /**
+     * Bootstrap the application services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        DevCommands::registerDefaults();
     }
 
     /**
