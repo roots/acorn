@@ -80,7 +80,7 @@
   "require-dev": {
     "carthage-software/mago": "^1.29.0",
     "mockery/mockery": "^1.6",
-    "pestphp/pest": "^4.0",
+    "pestphp/pest": "^5.0",
     "phpcompatibility/php-compatibility": "^9.3",
     "spatie/pest-plugin-snapshots": "^2.3",
     "spatie/temporary-directory": "^2.2",
