@@ -21,7 +21,7 @@ beforeEach(function () {
     $this->defaultPaths = fn () => (new ApplicationBuilder(new Application($this->base)))->defaultPaths();
 
     // Constants can't be undefined between tests, so resolve them in a separate process.
-    $this->resolveWithConstant = function (string $constant, array $env = []) {
+    $this->resolveWithConstant = function (string $constant, array $env = [], ?string $storage = null) {
         $process = new Process(
             [
                 PHP_BINARY,
@@ -30,6 +30,7 @@ beforeEach(function () {
                 __DIR__ . '/__fixtures__/bootstrap_path_constant.php',
                 $this->base,
                 $constant,
+                ...array_filter([$storage]),
             ],
             env: $env + ['ACORN_BOOTSTRAP_PATH' => false, 'ACORN_DATABASE_PATH' => false],
         );
@@ -86,4 +87,52 @@ it('applies ACORN_BOOTSTRAP_PATH to the application', function () {
     (new ApplicationBuilder($app))->withPaths();
 
     expect($app->bootstrapPath())->toBe('/custom/bootstrap');
+});
+
+it('derives the bootstrap path from a storage path passed to withPaths', function () {
+    $storage = temp('paths_custom_storage/' . uniqid());
+
+    $app = new Application($this->base);
+
+    (new ApplicationBuilder($app))
+        ->withPaths()
+        ->withPaths(storage: $storage);
+
+    expect($app->bootstrapPath())->toBe("{$storage}/framework")->and(is_dir("{$storage}/framework/cache"))->toBeTrue();
+});
+
+it('prefers an explicit bootstrap path over the storage passed to withPaths', function () {
+    $storage = temp('paths_custom_storage/' . uniqid());
+
+    $app = new Application($this->base);
+
+    (new ApplicationBuilder($app))->withPaths(storage: $storage, bootstrap: '/explicit/bootstrap');
+
+    expect($app->bootstrapPath())->toBe('/explicit/bootstrap')->and(is_dir("{$storage}/framework"))->toBeFalse();
+});
+
+it('prefers the ACORN_BOOTSTRAP_PATH environment variable over the storage passed to withPaths', function () {
+    $_ENV['ACORN_BOOTSTRAP_PATH'] = $bootstrap = temp('paths_env_bootstrap/' . uniqid());
+
+    $storage = temp('paths_custom_storage/' . uniqid());
+
+    $app = new Application($this->base);
+
+    (new ApplicationBuilder($app))->withPaths(storage: $storage);
+
+    expect($app->bootstrapPath())
+        ->toBe($bootstrap)
+        ->and(is_dir("{$bootstrap}/cache"))
+        ->toBeFalse()
+        ->and(is_dir("{$storage}/framework"))
+        ->toBeFalse();
+});
+
+it('prefers the ACORN_BOOTSTRAP_PATH constant over the storage passed to withPaths', function () {
+    $storage = temp('paths_custom_storage/' . uniqid());
+
+    expect(($this->resolveWithConstant)('/constant/bootstrap', storage: $storage))
+        ->toBe('/constant/bootstrap')
+        ->and(is_dir("{$storage}/framework"))
+        ->toBeFalse();
 });
