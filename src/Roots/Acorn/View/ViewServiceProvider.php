@@ -117,7 +117,15 @@ class ViewServiceProvider extends ViewServiceProviderBase
                 . "\n<?php /**PATH {$path} ENDPATH**/ ?>";
 
             if (! file_exists($loader = "{$compiledPath}/{$id}-loader.{$compiledExtension}")) {
-                file_put_contents($loader, $content);
+                $files = $app['files'];
+
+                if (! $files->exists($compiledPath)) {
+                    $files->makeDirectory($compiledPath, 0o777, true, true);
+                }
+
+                if ($files->isWritable($compiledPath)) {
+                    $files->replace($loader, $content);
+                }
             }
 
             return $loader;
