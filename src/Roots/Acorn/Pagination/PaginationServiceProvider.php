@@ -27,8 +27,8 @@ class PaginationServiceProvider extends PaginationServiceProviderBase
         PaginatorBase::currentPageResolver(function ($pageName = 'page') {
             $page = $this->app['request']->input($pageName);
 
-            if (blank($page) && $pageName !== 'page') {
-                $page = $this->queryVar($pageName);
+            if (blank($page) && $pageName === 'paged') {
+                $page = $this->pagedQueryVar();
             }
 
             if (filter_var($page, FILTER_VALIDATE_INT) !== false && (int) $page >= 1) {
@@ -62,7 +62,7 @@ class PaginationServiceProvider extends PaginationServiceProviderBase
         $views = $this->viewsPath();
 
         $blade->precompiler(function (string $value) use ($blade, $views) {
-            if (! str_starts_with((string) $blade->getPath(), $views)) {
+            if (! str_starts_with((string) $blade->getPath(), $views) || ! str_contains($value, '$paginator')) {
                 return $value;
             }
 
@@ -81,18 +81,17 @@ class PaginationServiceProvider extends PaginationServiceProviderBase
     }
 
     /**
-     * Get a WordPress query var.
+     * Get WordPress's `paged` query var.
      *
      * With pretty permalinks, WordPress moves `?paged=2` into the path
      * (`/page/2/`), so it's only available from the parsed query.
-     * `page` is skipped since WordPress uses it to split singular posts.
      */
-    protected function queryVar(string $name): mixed
+    protected function pagedQueryVar(): mixed
     {
         if (! function_exists('get_query_var') || ! isset($GLOBALS['wp_query'])) {
             return null;
         }
 
-        return get_query_var($name);
+        return get_query_var('paged');
     }
 }

@@ -17,19 +17,32 @@ trait FollowsPermalinkStructure
     {
         $path = parent::path();
 
-        if (! is_string($path) || str_contains($path, '?') || ! $this->followsPermalinkStructure()) {
+        if (! is_string($path) || ! $this->followsPermalinkStructure($path)) {
             return $path;
         }
 
-        return user_trailingslashit($path);
+        $slashed = user_trailingslashit($path);
+
+        return str_ends_with($slashed, '/') ? $slashed : $path;
     }
 
     /**
-     * Determine if the paginator should follow the WordPress permalink structure.
+     * Determine if the path should follow the WordPress permalink structure.
+     *
+     * Only front-end permalinks are changed. Admin, AJAX, REST, and file
+     * paths like `wp-login.php` are left alone, as are Laravel routes.
      */
-    protected function followsPermalinkStructure(): bool
+    protected function followsPermalinkStructure(string $path): bool
     {
         if (! function_exists('user_trailingslashit') || ! isset($GLOBALS['wp_rewrite'])) {
+            return false;
+        }
+
+        if (str_contains($path, '?') || str_contains(basename((string) parse_url($path, PHP_URL_PATH)), '.')) {
+            return false;
+        }
+
+        if (function_exists('is_admin') && is_admin() || defined('REST_REQUEST') && REST_REQUEST) {
             return false;
         }
 

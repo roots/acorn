@@ -78,9 +78,15 @@ beforeEach(function () {
         return file_get_contents($blade->getCompiledPath($path));
     };
 
-    $this->usePermalinks = function (): void {
-        $this->stub('user_trailingslashit', fn ($path) => rtrim($path, '/') . '/');
-        $GLOBALS['wp_rewrite'] = new stdClass();
+    $this->stub('is_admin', fn () => false);
+    $this->stub('user_trailingslashit', function ($path) {
+        $path = rtrim($path, '/\\');
+
+        return $GLOBALS['wp_rewrite']->use_trailing_slashes ? "{$path}/" : $path;
+    });
+
+    $this->usePermalinks = function (bool $trailingSlashes = true): void {
+        $GLOBALS['wp_rewrite'] = (object) ['use_trailing_slashes' => $trailingSlashes];
     };
 });
 
@@ -154,11 +160,17 @@ it('compiles __() to trans() in pagination views', function () {
     expect(($this->compile)('pagination::tailwind'))
         ->toContain("trans('pagination.previous')")
         ->toContain("trans('Go to page :page', ['page' => \$page])")
-        ->not->toMatch('/(?<![\w$>:\\\\])__\(/');
+        ->not->toContain("__('");
 });
 
 it('leaves __() alone in other views', function () {
     expect(($this->compile)('greeting'))->toContain("__('Hello', 'sage')");
+});
+
+it('leaves __() alone in strings compiled after a pagination view', function () {
+    ($this->compile)('pagination::tailwind');
+
+    expect($this->app['blade.compiler']->compileString("{{ __('Hello', 'sage') }}"))->toContain("__('Hello', 'sage')");
 });
 
 it('resolves the current page from the request', function () {
@@ -176,13 +188,13 @@ it('resolves the current page from the WordPress query', function () {
     expect(Paginator::resolveCurrentPage('paged'))->toBe(2);
 });
 
-it("doesn't resolve the current page from WordPress's page query var", function () {
+it('only resolves the current page from the paged query var', function () {
     $this->stub('get_query_var', fn () => '2');
     $GLOBALS['wp_query'] = new stdClass();
 
     $this->app->instance('request', Request::create('http://example.test/hello-world/2/'));
 
-    expect(Paginator::resolveCurrentPage())->toBe(1);
+    expect(Paginator::resolveCurrentPage())->toBe(1)->and(Paginator::resolveCurrentPage('cpage'))->toBe(1);
 });
 
 it('prefers the request over the WordPress query', function () {
@@ -247,4 +259,36 @@ it('leaves page links alone when the path has a query string', function () {
 
 it('leaves page links alone outside of WordPress', function () {
     expect(makePaginator('length aware')->url(2))->toBe('http://example.test/category/news?page=2');
+});
+
+it('leaves page links alone for files', function (string $url) {
+    ($this->usePermalinks)();
+
+    $this->app->instance('request', Request::create($url));
+
+    expect(makePaginator('length aware')->url(2))->toBe(strtok($url, '?') . '?page=2');
+})->with([
+    'http://example.test/wp-admin/admin-ajax.php?action=list',
+    'http://example.test/wp-login.php',
+    'http://example.test/sitemap.xml',
+]);
+
+it('leaves page links alone on admin requests', function () {
+    ($this->usePermalinks)();
+    $this->stub('is_admin', fn () => true);
+
+    $this->app->instance('request', Request::create('http://example.test/wp-admin/'));
+
+    expect(makePaginator('length aware')->url(2))->toBe('http://example.test/wp-admin?page=2');
+});
+
+it("doesn't remove slashes when permalinks don't end with one", function () {
+    ($this->usePermalinks)(false);
+
+    expect(makePaginator('length aware')->withPath('/')->url(2))
+        ->toBe('/?page=2')
+        ->and(makePaginator('length aware')->withPath('/blog/')->url(2))
+        ->toBe('/blog/?page=2')
+        ->and(makePaginator('length aware')->url(2))
+        ->toBe('http://example.test/category/news?page=2');
 });
