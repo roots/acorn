@@ -60,7 +60,7 @@ trait Paths
             $paths[$path] = $this->normalizeApplicationPath($path);
         }
 
-        $paths['bootstrap'] = $this->normalizeApplicationPath($path, "{$paths['storage']}/framework");
+        $paths['bootstrap'] = $this->normalizeApplicationPath('bootstrap', "{$paths['storage']}/framework");
 
         return $paths;
     }
@@ -72,11 +72,15 @@ trait Paths
     {
         $key = strtoupper($path);
 
-        if (is_null($env = Env::get("ACORN_{$key}_PATH"))) {
-            return $default ?? (defined("ACORN_{$key}_PATH") ? constant("ACORN_{$key}_PATH") : $this->findPath($path));
+        if (! is_null($env = Env::get("ACORN_{$key}_PATH"))) {
+            return Str::startsWith($env, ['/', '\\']) ? $env : $this->app->basePath($env);
         }
 
-        return Str::startsWith($env, ['/', '\\']) ? $env : $this->app->basePath($env);
+        if (defined("ACORN_{$key}_PATH")) {
+            return constant("ACORN_{$key}_PATH");
+        }
+
+        return $default ?? $this->findPath($path);
     }
 
     /**
