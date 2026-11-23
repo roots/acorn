@@ -35,6 +35,29 @@ it('does not intercept WordPress admin routes', function () {
     expect($response->getHeader('Location')[0])->toContain('wp-login.php');
 });
 
+it('does not intercept WordPress signup and activation with a custom home route', function (string $path) {
+    $this->withRoutes(<<<'PHP'
+        <?php
+
+        use Illuminate\Support\Facades\Route;
+
+        Route::get('/', fn() => 'Custom home')->name('home');
+        PHP);
+
+    $client = new Client([
+        'verify' => false,
+        'allow_redirects' => false,
+    ]);
+
+    $response = $client->request('GET', "http://web:8080{$path}");
+    expect($response->getStatusCode())->toBe(302);
+    expect($response->getHeader('Location')[0])->toContain('wp-login.php');
+    expect((string) $response->getBody())->not->toContain('Custom home');
+})->with([
+    '/wp/wp-activate.php?key=test',
+    '/wp/wp-signup.php',
+]);
+
 it('handles non-existent routes with 404', function () {
     $client = new Client([
         'verify' => false,

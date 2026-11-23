@@ -217,6 +217,8 @@ trait Bootable
             admin_url(),
             wp_login_url(),
             wp_registration_url(),
+            site_url('wp-activate.php'),
+            site_url('wp-signup.php'),
             rest_url(),
         ])
             ->map(fn ($url) => parse_url($url, PHP_URL_PATH))
