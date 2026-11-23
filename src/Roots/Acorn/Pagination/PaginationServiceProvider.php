@@ -2,8 +2,10 @@
 
 namespace Roots\Acorn\Pagination;
 
+use Illuminate\Pagination\CursorPaginator as CursorPaginatorBase;
+use Illuminate\Pagination\LengthAwarePaginator as LengthAwarePaginatorBase;
 use Illuminate\Pagination\PaginationServiceProvider as PaginationServiceProviderBase;
-use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\Paginator as PaginatorBase;
 use Illuminate\View\Compilers\BladeCompiler;
 use ReflectionClass;
 
@@ -18,10 +20,14 @@ class PaginationServiceProvider extends PaginationServiceProviderBase
     {
         parent::register();
 
-        Paginator::currentPageResolver(function ($pageName = 'page') {
+        $this->app->bind(LengthAwarePaginatorBase::class, LengthAwarePaginator::class);
+        $this->app->bind(PaginatorBase::class, Paginator::class);
+        $this->app->bind(CursorPaginatorBase::class, CursorPaginator::class);
+
+        PaginatorBase::currentPageResolver(function ($pageName = 'page') {
             $page = $this->app['request']->input($pageName);
 
-            if (blank($page)) {
+            if (blank($page) && $pageName !== 'page') {
                 $page = $this->queryVar($pageName);
             }
 
@@ -79,6 +85,7 @@ class PaginationServiceProvider extends PaginationServiceProviderBase
      *
      * With pretty permalinks, WordPress moves `?paged=2` into the path
      * (`/page/2/`), so it's only available from the parsed query.
+     * `page` is skipped since WordPress uses it to split singular posts.
      */
     protected function queryVar(string $name): mixed
     {

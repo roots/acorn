@@ -1,13 +1,21 @@
 <?php
 
 use Illuminate\Config\Repository;
+use Illuminate\Container\Container;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Cursor;
+use Illuminate\Pagination\CursorPaginator as CursorPaginatorBase;
+use Illuminate\Pagination\LengthAwarePaginator as LengthAwarePaginatorBase;
 use Illuminate\Pagination\PaginationServiceProvider as PaginationServiceProviderBase;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Routing\Route;
 use Roots\Acorn\Application;
+use Roots\Acorn\Pagination\CursorPaginator;
+use Roots\Acorn\Pagination\LengthAwarePaginator;
 use Roots\Acorn\Pagination\PaginationServiceProvider;
+use Roots\Acorn\Pagination\Paginator as AcornPaginator;
 use Roots\Acorn\ServiceProvider;
 use Roots\Acorn\Tests\Test\TestCase;
 use Roots\Acorn\View\ViewServiceProvider;
@@ -69,11 +77,51 @@ beforeEach(function () {
 
         return file_get_contents($blade->getCompiledPath($path));
     };
+
+    $this->usePermalinks = function (): void {
+        $this->stub('user_trailingslashit', fn ($path) => rtrim($path, '/') . '/');
+        $GLOBALS['wp_rewrite'] = new stdClass();
+    };
 });
 
 afterEach(function () {
-    unset($GLOBALS['wp_query']);
+    unset($GLOBALS['wp_query'], $GLOBALS['wp_rewrite']);
 });
+
+/**
+ * Make a paginator the way Eloquent and the query builder do.
+ */
+function makePaginator(string $type): LengthAwarePaginatorBase|Paginator|CursorPaginatorBase
+{
+    $options = ['path' => Paginator::resolveCurrentPath()];
+
+    return match ($type) {
+        'length aware' => Container::getInstance()->makeWith(LengthAwarePaginatorBase::class, [
+            'items' => [1, 2, 3],
+            'total' => 9,
+            'perPage' => 3,
+            'currentPage' => 1,
+            'options' => $options,
+        ]),
+        'simple' => Container::getInstance()->makeWith(Paginator::class, [
+            'items' => [1, 2, 3, 4],
+            'perPage' => 3,
+            'currentPage' => 1,
+            'options' => $options,
+        ]),
+        'cursor' => Container::getInstance()->makeWith(CursorPaginatorBase::class, [
+            'items' => [1, 2, 3],
+            'perPage' => 3,
+            'cursor' => null,
+            'options' => $options,
+        ]),
+    };
+}
+
+function paginatorUrl(LengthAwarePaginatorBase|Paginator|CursorPaginatorBase $paginator): string
+{
+    return $paginator instanceof CursorPaginatorBase ? $paginator->url(new Cursor(['id' => 3])) : $paginator->url(2);
+}
 
 it("replaces Laravel's pagination provider", function () {
     expect(ServiceProvider::defaultProviders()->toArray())
@@ -125,7 +173,16 @@ it('resolves the current page from the WordPress query', function () {
 
     $this->app->instance('request', Request::create('http://example.test/category/news/page/2/'));
 
-    expect(Paginator::resolveCurrentPage('paged'))->toBe(2)->and(Paginator::resolveCurrentPage())->toBe(1);
+    expect(Paginator::resolveCurrentPage('paged'))->toBe(2);
+});
+
+it("doesn't resolve the current page from WordPress's page query var", function () {
+    $this->stub('get_query_var', fn () => '2');
+    $GLOBALS['wp_query'] = new stdClass();
+
+    $this->app->instance('request', Request::create('http://example.test/hello-world/2/'));
+
+    expect(Paginator::resolveCurrentPage())->toBe(1);
 });
 
 it('prefers the request over the WordPress query', function () {
@@ -145,4 +202,49 @@ it('ignores invalid page numbers', function (string $page) {
 
 it('resolves the current path from the request', function () {
     expect(Paginator::resolveCurrentPath())->toBe('http://example.test/category/news');
+});
+
+it('resolves Acorn paginators from the container', function (string $type, string $class) {
+    expect(makePaginator($type))->toBeInstanceOf($class);
+})->with([
+    ['length aware', LengthAwarePaginator::class],
+    ['simple',       AcornPaginator::class],
+    ['cursor',       CursorPaginator::class],
+]);
+
+it('adds a trailing slash to page links on WordPress requests', function (string $type) {
+    ($this->usePermalinks)();
+
+    expect(paginatorUrl(makePaginator($type)))->toStartWith('http://example.test/category/news/?');
+})->with(['length aware', 'simple', 'cursor']);
+
+it('adds a trailing slash to page links on the WordPress route', function () {
+    ($this->usePermalinks)();
+
+    $request = Request::create('http://example.test/category/news/');
+    $request->setRouteResolver(fn () => (new Route('GET', '{any?}', fn () => null))->name('wordpress'));
+    $this->app->instance('request', $request);
+
+    expect(makePaginator('length aware')->url(2))->toBe('http://example.test/category/news/?page=2');
+});
+
+it('leaves page links alone on Laravel routes', function () {
+    ($this->usePermalinks)();
+
+    $request = Request::create('http://example.test/welcome/');
+    $request->setRouteResolver(fn () => (new Route('GET', 'welcome', fn () => null))->name('welcome'));
+    $this->app->instance('request', $request);
+
+    expect(makePaginator('length aware')->url(2))->toBe('http://example.test/welcome?page=2');
+});
+
+it('leaves page links alone when the path has a query string', function () {
+    ($this->usePermalinks)();
+
+    expect(makePaginator('length aware')->withPath('http://example.test/?p=1')->url(2))
+        ->toBe('http://example.test/?p=1&page=2');
+});
+
+it('leaves page links alone outside of WordPress', function () {
+    expect(makePaginator('length aware')->url(2))->toBe('http://example.test/category/news?page=2');
 });
