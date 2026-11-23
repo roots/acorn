@@ -59,6 +59,14 @@ class RoutingTestCase extends MockeryTestCase
         }
     }
 
+    /**
+     * Replace the test routes file.
+     */
+    protected function withRoutes(string $routes): void
+    {
+        file_put_contents($this->routesFile, $routes);
+    }
+
     protected function tearDown(): void
     {
         // Restore original functions.php
