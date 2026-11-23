@@ -11,6 +11,7 @@ use Illuminate\Console\Scheduling\ScheduleListCommand;
 use Illuminate\Console\Scheduling\ScheduleRunCommand;
 use Illuminate\Console\Scheduling\ScheduleTestCommand;
 use Illuminate\Console\Scheduling\ScheduleWorkCommand;
+use Illuminate\Console\Signals;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Console\DbCommand;
@@ -168,6 +169,10 @@ class Kernel extends FoundationConsoleKernel
         }
 
         parent::__construct($app, $events);
+
+        Signals::resolveAvailabilityUsing(
+            fn () => $this->app->runningInConsole() && ! $this->app->runningUnitTests() && extension_loaded('pcntl'),
+        );
     }
 
     /**
