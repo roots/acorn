@@ -134,11 +134,29 @@ class AcornServiceProvider extends ServiceProvider
     {
         $configs = array_filter(
             $this->providerConfigs,
-            fn ($provider) => class_exists($provider) && $this->app->getProviders($provider),
+            fn ($provider) => class_exists($provider) && $this->providerIsRegistered($provider),
             ARRAY_FILTER_USE_KEY,
         );
 
         return array_unique(array_merge($this->configs, array_values($configs)));
+    }
+
+    /**
+     * Determine if a provider is registered, including deferred providers that haven't loaded yet.
+     */
+    protected function providerIsRegistered(string $provider): bool
+    {
+        if ($this->app->getProviders($provider)) {
+            return true;
+        }
+
+        foreach ($this->app->getDeferredServices() as $deferred) {
+            if (is_a($deferred, $provider, true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
