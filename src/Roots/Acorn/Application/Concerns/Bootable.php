@@ -143,9 +143,7 @@ trait Bootable
 
         $kernel->bootstrap($request);
 
-        do_action('acorn/before_force_root_url');
-        URL::forceRootUrl(home_url());
-        do_action('acorn/after_force_root_url');
+        URL::useOrigin(apply_filters('acorn/root_url', home_url(), $request));
 
         if ($this->app->handlesWordPressRequests()) {
             $this->registerWordPressRoute(ob_get_level());
