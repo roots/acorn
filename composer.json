@@ -46,7 +46,6 @@
     "ext-json": "*",
     "ext-mbstring": "*",
     "dragonmantank/cron-expression": "^3.4",
-    "guzzlehttp/guzzle": "^7.8",
     "illuminate/auth": "^13.43.0",
     "illuminate/cache": "^13.43.0",
     "illuminate/config": "^13.43.0",
@@ -80,6 +79,7 @@
   },
   "require-dev": {
     "carthage-software/mago": "^1.29.0",
+    "guzzlehttp/guzzle": "^7.8.2 || ^8.0",
     "mockery/mockery": "^1.6",
     "pestphp/pest": "^4.0 || ^5.0",
     "phpcompatibility/php-compatibility": "^9.3",
