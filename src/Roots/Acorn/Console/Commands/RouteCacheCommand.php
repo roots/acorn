@@ -2,8 +2,10 @@
 
 namespace Roots\Acorn\Console\Commands;
 
+use Illuminate\Container\Container;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Support\Facades\Facade;
 use Roots\Acorn\Console\Concerns\GetsFreshApplication;
 
 class RouteCacheCommand extends \Illuminate\Foundation\Console\RouteCacheCommand
@@ -21,6 +23,11 @@ class RouteCacheCommand extends \Illuminate\Foundation\Console\RouteCacheCommand
     {
         return tap($this->parentGetFreshApplication(), function ($app) {
             $app->make(ConsoleKernelContract::class)->bootstrap();
+
+            Facade::clearResolvedInstances();
+
+            Facade::setFacadeApplication($this->laravel);
+            Container::setInstance($this->laravel);
         });
     }
 }

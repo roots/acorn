@@ -16,6 +16,7 @@ use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Routing\Middleware\ThrottleRequestsWithRedis;
 use Illuminate\Routing\Middleware\ValidateSignature;
 use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\Support\Arr;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 use Roots\Acorn\Session\Middleware\StartSession;
@@ -48,9 +49,9 @@ class Middleware extends FoundationMiddleware
             ConvertEmptyStringsToNull::class,
         ]));
 
-        $middleware = array_map(function ($middleware) {
-            return isset($this->replacements[$middleware]) ? $this->replacements[$middleware] : $middleware;
-        }, $middleware);
+        $middleware = Arr::flatten(array_map(function ($middleware) {
+            return $this->replacements[$middleware] ?? $middleware;
+        }, $middleware));
 
         return array_values(array_filter(array_diff(
             array_unique(array_merge($this->prepends, $middleware, $this->appends)),
@@ -102,13 +103,9 @@ class Middleware extends FoundationMiddleware
         $middleware = array_merge($middleware, $this->groups);
 
         foreach ($middleware as $group => $groupedMiddleware) {
-            foreach ($groupedMiddleware as $index => $groupMiddleware) {
-                if (! isset($this->groupReplacements[$group][$groupMiddleware])) {
-                    continue;
-                }
-
-                $middleware[$group][$index] = $this->groupReplacements[$group][$groupMiddleware];
-            }
+            $middleware[$group] = Arr::flatten(array_map(function ($groupMiddleware) use ($group) {
+                return $this->groupReplacements[$group][$groupMiddleware] ?? $groupMiddleware;
+            }, $groupedMiddleware));
         }
 
         foreach ($this->groupRemovals as $group => $removals) {
