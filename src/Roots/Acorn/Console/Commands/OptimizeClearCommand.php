@@ -10,18 +10,15 @@ class OptimizeClearCommand extends FoundationOptimizeClearCommand
     use GracefullyCallsCommands;
 
     /**
-     * Execute the console command.
+     * Call another console command without output.
      *
-     * @return void
+     * Silently skip the command if it does not exist.
+     *
+     * @param  \Symfony\Component\Console\Command\Command|string  $command
+     * @return int
      */
-    public function handle()
+    public function callSilent($command, array $arguments = [])
     {
-        $this->components->info('Clearing cached bootstrap files.');
-
-        foreach ($this->getOptimizeClearTasks() as $description => $command) {
-            $this->components->task($description, fn () => $this->gracefulCallSilent($command) === 0);
-        }
-
-        $this->newLine();
+        return $this->gracefulCallSilent($command, $arguments);
     }
 }
