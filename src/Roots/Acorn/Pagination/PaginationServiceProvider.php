@@ -73,6 +73,8 @@ class PaginationServiceProvider extends PaginationServiceProviderBase
         $paths = $this->paginationViewPaths();
 
         $blade->precompiler(function (string $value) use ($blade, $paths) {
+            // The compiler keeps the last compiled path, so strings compiled after
+            // a pagination view would match it too without the `$paginator` check.
             if (! Str::startsWith((string) $blade->getPath(), $paths) || ! str_contains($value, '$paginator')) {
                 return $value;
             }

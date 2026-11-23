@@ -80,6 +80,10 @@ beforeEach(function () {
 
     $this->stub('is_admin', fn () => false);
     $this->stub('user_trailingslashit', function ($path) {
+        if (! isset($GLOBALS['wp_rewrite'])) {
+            throw new RuntimeException('$wp_rewrite is not set.');
+        }
+
         $path = rtrim($path, '/\\');
 
         return $GLOBALS['wp_rewrite']->use_trailing_slashes ? "{$path}/" : $path;
@@ -303,6 +307,25 @@ it('leaves page links alone on admin requests', function () {
     $this->app->instance('request', Request::create('http://example.test/wp-admin/'));
 
     expect(makePaginator('length aware')->url(2))->toBe('http://example.test/wp-admin?page=2');
+});
+
+it('leaves page links alone on REST requests', function () {
+    $url = fn (string ...$args) => (new Process([
+        PHP_BINARY,
+        '-d',
+        'display_errors=stderr',
+        __DIR__ . '/__fixtures__/paginator_url.php',
+        temp('pagination/' . uniqid()),
+        'http://example.test/wp-json/acme/v1/items',
+        ...$args,
+    ]))
+        ->mustRun()
+        ->getOutput();
+
+    expect($url())
+        ->toBe('http://example.test/wp-json/acme/v1/items/?page=2')
+        ->and($url('rest'))
+        ->toBe('http://example.test/wp-json/acme/v1/items?page=2');
 });
 
 it("doesn't remove slashes when permalinks don't end with one", function () {

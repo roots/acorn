@@ -1,1 +1,1 @@
-{{ __('Hello', 'sage') }}
+{{ __('Hello', 'sage') }} {{ $paginator->total() }}
