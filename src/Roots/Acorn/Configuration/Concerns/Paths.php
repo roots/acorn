@@ -41,12 +41,42 @@ trait Paths
         ?string $lang = null,
         ?string $database = null,
     ) {
-        $this->app->usePaths(
-            array_filter(compact('app', 'config', 'storage', 'resources', 'public', 'bootstrap', 'lang', 'database'))
-            + $this->defaultPaths(),
-        );
+        $paths = array_filter(compact(
+            'app',
+            'config',
+            'storage',
+            'resources',
+            'public',
+            'bootstrap',
+            'lang',
+            'database',
+        ));
+
+        $defaults = $this->defaultPaths();
+
+        if (isset($paths['storage']) && ! isset($paths['bootstrap'])) {
+            $defaults['bootstrap'] = $this->storageBootstrapPath($paths['storage']);
+        }
+
+        $this->app->usePaths($paths + $defaults);
 
         return $this;
+    }
+
+    /**
+     * Resolve the bootstrap path for a storage path passed to `withPaths()`.
+     */
+    protected function storageBootstrapPath(string $storage): string
+    {
+        $default = rtrim($storage, '\\/') . '/framework';
+
+        $path = $this->normalizeApplicationPath('bootstrap', $default);
+
+        if ($path === $default && ! is_dir("{$path}/cache")) {
+            (new Filesystem())->makeDirectory("{$path}/cache", 0o755, true, true);
+        }
+
+        return $path;
     }
 
     /**
