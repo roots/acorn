@@ -54,6 +54,7 @@ use Illuminate\Queue\Console\RetryCommand;
 use Illuminate\Queue\Console\WorkCommand;
 use Illuminate\Routing\Console\ControllerMakeCommand;
 use Illuminate\Routing\Console\MiddlewareMakeCommand;
+use Illuminate\Session\Console\SessionGarbageCollectCommand;
 use Roots\Acorn\Bootstrap\HandleExceptions;
 use Roots\Acorn\Bootstrap\LoadConfiguration;
 use Roots\Acorn\Bootstrap\LoadEnvironmentVariables;
@@ -124,6 +125,7 @@ class Kernel extends FoundationConsoleKernel
         ScheduleWorkCommand::class,
         ScheduleTestCommand::class,
         ScheduleInterruptCommand::class,
+        SessionGarbageCollectCommand::class,
         ControllerMakeCommand::class,
         MiddlewareMakeCommand::class,
         AboutCommand::class,
