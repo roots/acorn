@@ -46,7 +46,7 @@ class HandleExceptions extends FoundationHandleExceptionsBootstrapper
     public function handleError($level, $message, $file = '', $line = 0, $context = [])
     {
         try {
-            parent::handleError($level, $message, $file, $line, $context);
+            return parent::handleError($level, $message, $file, $line, $context);
         } catch (Throwable $e) {
             if (! apply_filters('acorn/throw_error_exception', true, $e)) {
                 return false;

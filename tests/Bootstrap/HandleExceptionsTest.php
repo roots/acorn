@@ -70,3 +70,18 @@ it('escapes an error exception for non-deprecation error', function () {
 
     $this->expectNotToPerformAssertions();
 });
+
+it('returns false for errors excluded from error reporting', function () {
+    $level = error_reporting(E_ALL & ~E_USER_WARNING);
+
+    try {
+        expect($this->handleExceptions->handleError(
+            E_USER_WARNING,
+            'warning message',
+            '/acorn/path/to/file.php',
+            5,
+        ))->toBeFalse();
+    } finally {
+        error_reporting($level);
+    }
+});
