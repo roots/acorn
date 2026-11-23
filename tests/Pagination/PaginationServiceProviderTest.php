@@ -156,6 +156,29 @@ it("renders Laravel's pagination views with WordPress's __()", function (string 
         ->not->toContain('pagination.previous');
 })->with(paginationViews());
 
+it("renders Livewire's pagination views with WordPress's __()", function () {
+    $process = renderLinks('livewire::tailwind', 'http://example.test/category/news/');
+
+    expect($process->getErrorOutput())
+        ->toBe('')
+        ->and($process->getOutput())
+        ->toContain('aria-label="Go to page 2"')
+        ->toContain('Next &raquo;')
+        ->not->toContain('pagination.next');
+});
+
+it("translates the previous and next labels in a paginator's JSON links", function () {
+    $process = renderLinks('json', 'http://example.test/category/news/?page=2');
+    $links = json_decode($process->getOutput(), true);
+
+    expect($process->getErrorOutput())
+        ->toBe('')
+        ->and(array_column($links, 'label'))
+        ->toBe(['&laquo; Previous', '1', '2', '3', 'Next &raquo;'])
+        ->and(array_keys($links[0]))
+        ->toBe(['url', 'label', 'page', 'active']);
+});
+
 it('compiles __() to trans() in pagination views', function () {
     expect(($this->compile)('pagination::tailwind'))
         ->toContain("trans('pagination.previous')")

@@ -6,11 +6,22 @@ use Illuminate\Pagination\CursorPaginator as CursorPaginatorBase;
 use Illuminate\Pagination\LengthAwarePaginator as LengthAwarePaginatorBase;
 use Illuminate\Pagination\PaginationServiceProvider as PaginationServiceProviderBase;
 use Illuminate\Pagination\Paginator as PaginatorBase;
+use Illuminate\Support\Str;
 use Illuminate\View\Compilers\BladeCompiler;
 use ReflectionClass;
 
 class PaginationServiceProvider extends PaginationServiceProviderBase
 {
+    /**
+     * The pagination views to compile with Laravel's translator, keyed by the class next to them.
+     *
+     * @var array<class-string, string>
+     */
+    protected array $paginationViews = [
+        PaginationServiceProviderBase::class => 'resources/views',
+        'Livewire\Features\SupportPagination\SupportPagination' => 'views',
+    ];
+
     /**
      * Register the service provider.
      *
@@ -52,17 +63,17 @@ class PaginationServiceProvider extends PaginationServiceProviderBase
     }
 
     /**
-     * Compile `__()` in Laravel's pagination views to `trans()`.
+     * Compile `__()` in bundled pagination views to `trans()`.
      *
      * WordPress defines its own `__()` before Laravel's helpers load,
      * so the bundled views would call WordPress's version instead.
      */
     protected function useLaravelTranslator(BladeCompiler $blade): void
     {
-        $views = $this->viewsPath();
+        $paths = $this->paginationViewPaths();
 
-        $blade->precompiler(function (string $value) use ($blade, $views) {
-            if (! str_starts_with((string) $blade->getPath(), $views) || ! str_contains($value, '$paginator')) {
+        $blade->precompiler(function (string $value) use ($blade, $paths) {
+            if (! Str::startsWith((string) $blade->getPath(), $paths) || ! str_contains($value, '$paginator')) {
                 return $value;
             }
 
@@ -71,13 +82,17 @@ class PaginationServiceProvider extends PaginationServiceProviderBase
     }
 
     /**
-     * Get the path to Laravel's bundled pagination views.
+     * Get the paths to the bundled pagination views that are installed.
+     *
+     * @return list<string>
      */
-    protected function viewsPath(): string
+    protected function paginationViewPaths(): array
     {
-        $file = (new ReflectionClass(PaginationServiceProviderBase::class))->getFileName();
-
-        return dirname($file) . '/resources/views/';
+        return collect($this->paginationViews)
+            ->filter(fn ($path, $class) => class_exists($class))
+            ->map(fn ($path, $class) => dirname((new ReflectionClass($class))->getFileName()) . "/{$path}/")
+            ->values()
+            ->all();
     }
 
     /**
