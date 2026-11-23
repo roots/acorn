@@ -5,6 +5,8 @@ namespace Roots\Acorn\View;
 use Illuminate\Contracts\View\Engine;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\View\Compilers\BladeCompiler;
+use Illuminate\View\DynamicComponent;
 use Illuminate\View\Engines\CompilerEngine;
 use Illuminate\View\View;
 use Illuminate\View\ViewServiceProvider as ViewServiceProviderBase;
@@ -74,6 +76,58 @@ class ViewServiceProvider extends ViewServiceProviderBase
         });
 
         $this->app->alias('view.finder', FileViewFinder::class);
+    }
+
+    /**
+     * Register the Blade compiler implementation.
+     *
+     * @return void
+     */
+    public function registerBladeCompiler()
+    {
+        $this->app->singleton('blade.compiler', function ($app) {
+            return tap(
+                new BladeCompiler(
+                    $app['files'],
+                    $app['config']['view.compiled'],
+                    $app['config']->get('view.relative_hash', false) ? $this->relativeHashPath() : '',
+                    $app['config']->get('view.cache', true),
+                    $app['config']->get('view.compiled_extension', 'php'),
+                    $app['config']->get('view.check_cache_timestamps', true),
+                ),
+                function ($blade) {
+                    $blade->component('dynamic-component', DynamicComponent::class);
+                },
+            );
+        });
+    }
+
+    /**
+     * Get the directory that relative view hashes start from.
+     *
+     * When the base path is inside the content directory, like a theme, the
+     * content directory is used so views from different themes and plugins
+     * don't collide when they share a compiled path.
+     */
+    protected function relativeHashPath(): string
+    {
+        $base = realpath($this->app->basePath()) ?: $this->app->basePath();
+
+        if (! ($content = $this->contentPath())) {
+            return $base;
+        }
+
+        $content = rtrim(realpath($content) ?: $content, '\\/');
+
+        return str_starts_with($base, $content . DIRECTORY_SEPARATOR) ? $content : $base;
+    }
+
+    /**
+     * Get the WordPress content directory.
+     */
+    protected function contentPath(): ?string
+    {
+        return defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : null;
     }
 
     /**
