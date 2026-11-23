@@ -80,3 +80,10 @@ it('returns the loader path without writing when the compiled directory is not w
         ->and(glob(sys_get_temp_dir() . '/*-loader.php*') ?: [])
         ->toBe($tempFiles);
 });
+
+it('creates separate loaders for plain PHP views with the same filename', function () {
+    $first = $this->app['view']->make('plain.first.index')->makeLoader();
+    $second = $this->app['view']->make('plain.second.index')->makeLoader();
+
+    expect($first)->not->toBe($second)->and($first)->toBeFile()->and($second)->toBeFile();
+});

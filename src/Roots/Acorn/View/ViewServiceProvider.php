@@ -108,9 +108,12 @@ class ViewServiceProvider extends ViewServiceProviderBase
         View::macro('makeLoader', function () use ($app) {
             $view = $this->getName();
             $path = $this->getPath();
-            $id = md5($this->getCompiled());
             $compiledPath = $app['config']['view.compiled'];
             $compiledExtension = $app['config']->get('view.compiled_extension', 'php');
+
+            // Use the compiled filename instead of its full path so loaders cached
+            // with `view:cache` still match when the compiled directory moves.
+            $id = md5($this->getEngine() instanceof CompilerEngine ? basename($this->getCompiled()) : $path);
 
             $content =
                 "<?= \\Roots\\view('{$view}', \$data ?? get_defined_vars())->render(); ?>"

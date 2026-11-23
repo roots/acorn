@@ -36,7 +36,6 @@ use Illuminate\Foundation\Console\RouteClearCommand;
 use Illuminate\Foundation\Console\RouteListCommand;
 use Illuminate\Foundation\Console\StorageLinkCommand;
 use Illuminate\Foundation\Console\StorageUnlinkCommand;
-use Illuminate\Foundation\Console\ViewCacheCommand;
 use Illuminate\Foundation\Console\ViewClearCommand;
 use Illuminate\Queue\Console\BatchesTableCommand;
 use Illuminate\Queue\Console\FailedTableCommand;
@@ -71,6 +70,7 @@ use Roots\Acorn\Console\Commands\OptimizeCommand;
 use Roots\Acorn\Console\Commands\RouteCacheCommand;
 use Roots\Acorn\Console\Commands\SummaryCommand;
 use Roots\Acorn\Console\Commands\VendorPublishCommand;
+use Roots\Acorn\Console\Commands\ViewCacheCommand;
 
 class Kernel extends FoundationConsoleKernel
 {
@@ -100,7 +100,6 @@ class Kernel extends FoundationConsoleKernel
         RouteListCommand::class,
         StorageLinkCommand::class,
         StorageUnlinkCommand::class,
-        ViewCacheCommand::class,
         ViewClearCommand::class,
         BatchesTableCommand::class,
         \Illuminate\Queue\Console\ClearCommand::class,
@@ -140,6 +139,7 @@ class Kernel extends FoundationConsoleKernel
         RouteCacheCommand::class,
         SummaryCommand::class,
         VendorPublishCommand::class,
+        ViewCacheCommand::class,
     ];
 
     /**
