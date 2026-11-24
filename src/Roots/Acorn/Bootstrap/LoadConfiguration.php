@@ -39,5 +39,7 @@ class LoadConfiguration extends FoundationLoadConfiguration
         // values that were loaded. We will pass a callback which will be used to get
         // the environment in a web context where an "--env" switch is not present.
         $app->detectEnvironment(fn () => $config->get('app.env', 'production'));
+
+        $app->resolveEnvironmentUsing($app->environment(...));
     }
 }
