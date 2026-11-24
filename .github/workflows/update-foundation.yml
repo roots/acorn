@@ -2,16 +2,26 @@ name: Update Laravel Foundation
 
 on:
   schedule:
-    - cron: '0 9 * * 1'
+    - cron: '17 9 * * 3'
   workflow_dispatch:
 
-permissions:
-  contents: write
-  pull-requests: write
+permissions: {}
+
+concurrency:
+  group: update-foundation
+  cancel-in-progress: false
 
 jobs:
   update-foundation:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    env:
+      BRANCH: update/foundation
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Checkout repository
@@ -23,49 +33,120 @@ jobs:
           php-version: '8.2'
           extensions: curl, phar
 
+      - name: Find open pull request
+        id: pr
+        run: |
+          NUMBER=$(gh pr list --head "$BRANCH" --state open --json number,isCrossRepository \
+            --jq '[.[] | select(.isCrossRepository | not)][0].number // empty')
+
+          echo "number=${NUMBER}" >> "$GITHUB_OUTPUT"
+
+      - name: Switch to update branch
+        env:
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        run: |
+          if [ -n "$PR_NUMBER" ]; then
+            git fetch --depth=1 origin "+refs/heads/${BRANCH}:refs/remotes/origin/${BRANCH}"
+            git checkout -B "$BRANCH" "origin/${BRANCH}"
+          else
+            git fetch --depth=1 origin "+refs/heads/main:refs/remotes/origin/main"
+            git checkout -B "$BRANCH" origin/main
+          fi
+
       - name: Run update script
         run: php scripts/update-foundation
 
+      - name: Validate version
+        id: version
+        run: |
+          if [ ! -f scripts/.laravel-version ]; then
+            echo "synced=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          VERSION=$(cat scripts/.laravel-version)
+
+          if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Unexpected Laravel version: ${VERSION}"
+            exit 1
+          fi
+
+          echo "synced=true" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Raise illuminate/* minimums
+        if: steps.version.outputs.synced == 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          # shellcheck disable=SC2016 # PHP code, not shell
+          php -r '
+            [$major, $minor, $patch] = explode(".", ltrim(getenv("VERSION"), "v"));
+            $json = file_get_contents("composer.json");
+
+            $json = preg_replace_callback(
+                "/\"(illuminate\/[a-z-]+)\": \"\^(\d+)\.(\d+)\.(\d+)\"/",
+                function ($m) use ($major, $minor, $patch) {
+                    $current = "{$m[2]}.{$m[3]}.{$m[4]}";
+                    $new = "{$major}.{$minor}.{$patch}";
+
+                    if ($m[2] !== $major || version_compare($new, $current, "<=")) {
+                        return $m[0];
+                    }
+
+                    return "\"{$m[1]}\": \"^{$new}\"";
+                },
+                $json,
+            );
+
+            if ($json === null) {
+                exit(1);
+            }
+
+            file_put_contents("composer.json", $json);
+          '
+
       - name: Check for changes
         id: changes
+        if: steps.version.outputs.synced == 'true'
         run: |
           if git diff --quiet; then
             echo "has_changes=false" >> "$GITHUB_OUTPUT"
           else
             echo "has_changes=true" >> "$GITHUB_OUTPUT"
-            if [ -f scripts/.laravel-version ]; then
-              echo "version=$(cat scripts/.laravel-version)" >> "$GITHUB_OUTPUT"
-            else
-              echo "version=latest" >> "$GITHUB_OUTPUT"
-            fi
           fi
 
-      - name: Create pull request
+      - name: Commit and push
         if: steps.changes.outputs.has_changes == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
-          VERSION="${{ steps.changes.outputs.version }}"
-          BRANCH="update/foundation-${VERSION}"
-
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git checkout -b "$BRANCH"
-          git add src/Illuminate/Foundation/
+          git add src/Illuminate/Foundation/ composer.json
           git commit -m "📦️ Update Foundation to Laravel ${VERSION}"
-          git push --force -u origin "$BRANCH"
 
-          EXISTING_PR=$(gh pr list --head "$BRANCH" --json number --jq '.[0].number')
-          if [ -n "$EXISTING_PR" ]; then
-            echo "PR #${EXISTING_PR} already exists for ${BRANCH}, updated with force push."
+          if [ -n "$PR_NUMBER" ]; then
+            git push origin "$BRANCH"
           else
-            gh pr create \
-              --title "📦️ Update Foundation to Laravel ${VERSION}" \
-              --body "This is an automated PR to update \`Illuminate\Foundation\` to Laravel \`${VERSION}\`.
-
-          Please review the changes and ensure compatibility with Acorn before merging." \
-              --label "dependencies"
+            git push --force -u origin "$BRANCH"
           fi
 
-          gh workflow run main.yml --ref "$BRANCH"
+      - name: Create or update pull request
+        if: steps.changes.outputs.has_changes == 'true'
+        env:
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          TITLE="📦️ Update Foundation to Laravel ${VERSION}"
+          BODY="This is an automated PR to update \`Illuminate\Foundation\` to Laravel \`${VERSION}\` and raise the \`illuminate/*\` minimums to match (same major version only).
+
+          Approve the workflow runs to start CI, sync Acorn's overrides with any upstream changes, and ensure compatibility with Acorn before merging."
+
+          if [ -n "$PR_NUMBER" ]; then
+            gh pr edit "$PR_NUMBER" --title "$TITLE" --body "$BODY"
+          else
+            gh pr create --base main --head "$BRANCH" --title "$TITLE" --body "$BODY" --label "dependencies"
+          fi
