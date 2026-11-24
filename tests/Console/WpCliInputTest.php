@@ -7,7 +7,7 @@ use Roots\Acorn\Application;
 use Roots\Acorn\Console\Kernel;
 use Roots\Acorn\Console\WpCliInput;
 use Roots\Acorn\Tests\Test\TestCase;
-use Symfony\Component\Console\Input\StringInput;
+use Symfony\Component\Console\Input\ArgvInput;
 
 use function Roots\Acorn\Tests\temp;
 
@@ -76,11 +76,16 @@ it('leaves --format alone when the kernel cannot find commands', function () {
     expect($input->getParameterOption('--format'))->toBe('json');
 });
 
-it('builds the input from WP-CLI arguments', function (array $args, array $options, string $expected) {
-    expect((string) (new WpCliInput($this->kernel))->make($args, $options))->toBe((string) new StringInput($expected));
+it('builds the input from WP-CLI arguments', function (array $args, array $options, array $expected) {
+    expect((string) (new WpCliInput($this->kernel))->make($args, $options))
+        ->toBe((string) new ArgvInput(['wp acorn', ...$expected]));
 })->with([
-    'arguments' => [['make:model', 'Post Type'], [], "'make:model' 'Post Type'"],
-    'options' => [['neither'], ['method' => 'GET POST', 'force' => true], "'neither' --method='GET POST' --force"],
-    'no interaction' => [['neither'], ['interaction' => false], "'neither' --no-interaction"],
-    'backslashes' => [['make:model', 'App\Models\Post'], [], "'make:model' 'App\\\\Models\\\\Post'"],
+    'arguments' => [['make:model', 'Post Type'], [], ['make:model', 'Post Type']],
+    'options' => [['neither'], ['method' => 'GET POST', 'force' => true], ['neither', '--method=GET POST', '--force']],
+    'no interaction' => [['neither'], ['interaction' => false], ['neither', '--no-interaction']],
+    'backslashes' => [['make:model', 'App\Models\Post'], [], ['make:model', 'App\Models\Post']],
+    'quotes' => [['help', "it's"], ['method' => "Don't"], ['help', "it's", "--method=Don't"]],
+    'negated options' => [['neither'], ['ansi' => false], ['neither', '--no-ansi']],
+    'short options' => [['neither'], ['n' => true, 'f' => 'x'], ['neither', '-n', '-f', 'x']],
+    'repeated options' => [['neither'], ['tag' => ['a', 'b']], ['neither', '--tag=a', '--tag=b']],
 ]);

@@ -3,7 +3,7 @@
 namespace Roots\Acorn\Console;
 
 use Illuminate\Contracts\Console\Kernel;
-use Symfony\Component\Console\Input\StringInput;
+use Symfony\Component\Console\Input\ArgvInput;
 use Throwable;
 
 /**
@@ -22,28 +22,41 @@ class WpCliInput
 
     /**
      * Build the console input for a `wp acorn` command.
+     *
+     * The arguments are passed as tokens, so they're never re-parsed as a shell string.
      */
-    public function make(array $args, array $options): StringInput
+    public function make(array $args, array $options): ArgvInput
     {
-        $command = implode(' ', array_map(fn ($arg) => escapeshellarg($arg), $args));
+        $tokens = array_values($args);
 
-        $options = $this->restoreJsonOption($command, $options);
-
-        foreach ($options as $key => $value) {
-            if ($key === 'interaction' && $value === false) {
-                $command .= ' --no-interaction';
-
-                continue;
-            }
-
-            $command .= " --{$key}";
-
-            if ($value !== true) {
-                $command .= '=' . escapeshellarg($value);
-            }
+        foreach ($this->restoreJsonOption($args, $options) as $key => $value) {
+            array_push($tokens, ...$this->optionTokens((string) $key, $value));
         }
 
-        return $this->input($command);
+        return new ArgvInput(['wp acorn', ...$tokens]);
+    }
+
+    /**
+     * Get the tokens for an option parsed by WP-CLI.
+     *
+     * WP-CLI parses `--no-{key}` as `false`. As of WP-CLI 3.0, it parses `-x` as an option
+     * and collects repeated options into an array.
+     */
+    protected function optionTokens(string $key, mixed $value): array
+    {
+        if (is_array($value)) {
+            return array_merge(...array_map(fn ($item) => $this->optionTokens($key, $item), array_values($value)));
+        }
+
+        if ($value === false) {
+            return ["--no-{$key}"];
+        }
+
+        if (strlen($key) === 1) {
+            return $value === true ? ["-{$key}"] : ["-{$key}", (string) $value];
+        }
+
+        return $value === true ? ["--{$key}"] : ["--{$key}=" . $value];
     }
 
     /**
@@ -51,14 +64,14 @@ class WpCliInput
      *
      * Only commands with a `--json` option and no `--format` option are changed.
      */
-    protected function restoreJsonOption(string $command, array $options): array
+    protected function restoreJsonOption(array $args, array $options): array
     {
         if (($options['format'] ?? null) !== 'json' || ! method_exists($this->kernel, 'findCommand')) {
             return $options;
         }
 
         try {
-            $name = $this->input($command)->getFirstArgument();
+            $name = (new ArgvInput(['wp acorn', ...array_values($args)]))->getFirstArgument();
 
             $definition = $name ? $this->kernel->findCommand($name)?->getDefinition() : null;
         } catch (Throwable) {
@@ -72,13 +85,5 @@ class WpCliInput
         unset($options['format']);
 
         return [...$options, 'json' => true];
-    }
-
-    /**
-     * Create the console input for the given command string.
-     */
-    protected function input(string $command): StringInput
-    {
-        return new StringInput(str_replace('\\', '\\\\', $command));
     }
 }
