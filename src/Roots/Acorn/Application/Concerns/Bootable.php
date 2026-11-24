@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
+use Roots\Acorn\Console\WpCliInput;
 use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Throwable;
 use WP_CLI;
@@ -82,27 +82,7 @@ trait Bootable
         $kernel->bootstrap();
 
         WP_CLI::add_command('acorn', function ($args, $options) use ($kernel) {
-            $escaped = array_map(fn ($arg) => escapeshellarg($arg), $args);
-
-            $command = implode(' ', $escaped);
-
-            foreach ($options as $key => $value) {
-                if ($key === 'interaction' && $value === false) {
-                    $command .= ' --no-interaction';
-
-                    continue;
-                }
-
-                $command .= " --{$key}";
-
-                if ($value !== true) {
-                    $command .= '=' . escapeshellarg($value);
-                }
-            }
-
-            $command = str_replace('\\', '\\\\', $command);
-
-            $status = $kernel->handle($input = new StringInput($command), new ConsoleOutput());
+            $status = $kernel->handle($input = (new WpCliInput($kernel))->make($args, $options), new ConsoleOutput());
 
             $kernel->terminate($input, $status);
 
