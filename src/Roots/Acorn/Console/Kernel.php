@@ -8,6 +8,8 @@ use Illuminate\Console\Scheduling\ScheduleClearCacheCommand;
 use Illuminate\Console\Scheduling\ScheduleFinishCommand;
 use Illuminate\Console\Scheduling\ScheduleInterruptCommand;
 use Illuminate\Console\Scheduling\ScheduleListCommand;
+use Illuminate\Console\Scheduling\SchedulePauseCommand;
+use Illuminate\Console\Scheduling\ScheduleResumeCommand;
 use Illuminate\Console\Scheduling\ScheduleRunCommand;
 use Illuminate\Console\Scheduling\ScheduleTestCommand;
 use Illuminate\Console\Scheduling\ScheduleWorkCommand;
@@ -125,6 +127,8 @@ class Kernel extends FoundationConsoleKernel
         ScheduleWorkCommand::class,
         ScheduleTestCommand::class,
         ScheduleInterruptCommand::class,
+        SchedulePauseCommand::class,
+        ScheduleResumeCommand::class,
         SessionGarbageCollectCommand::class,
         ControllerMakeCommand::class,
         MiddlewareMakeCommand::class,
