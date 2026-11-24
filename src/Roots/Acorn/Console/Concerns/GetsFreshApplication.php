@@ -14,7 +14,7 @@ trait GetsFreshApplication
      */
     protected function getFreshApplication()
     {
-        $application = get_class($app = Application::getInstance());
+        $application = get_class($app = $this->laravel);
 
         $config = $app->getBootConfiguration();
 
@@ -33,7 +33,7 @@ trait GetsFreshApplication
                 apiPrefix: $routing['apiPrefix'] ?? 'api',
                 wordpress: $routing['wordpress'] ?? false,
             )
-            ->boot();
+            ->create();
     }
 
     /**
