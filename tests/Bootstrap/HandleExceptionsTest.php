@@ -1,10 +1,12 @@
 <?php
 
 use Illuminate\Config\Repository as Config;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Log\LogManager;
 use Roots\Acorn\Application;
 use Roots\Acorn\Bootstrap\HandleExceptions;
 use Roots\Acorn\Tests\Test\TestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 use function Roots\Acorn\Tests\mock;
 
@@ -84,4 +86,38 @@ it('returns false for errors excluded from error reporting', function () {
     } finally {
         error_reporting($level);
     }
+});
+
+it('discards all output buffers before rendering an exception', function () {
+    $start = ob_get_level();
+    $level = null;
+
+    $response = mock(Response::class);
+    $response
+        ->shouldReceive('send')
+        ->andReturnUsing(function () use (&$level, $response) {
+            $level = ob_get_level();
+
+            return $response;
+        });
+
+    $handler = mock(ExceptionHandler::class);
+    $handler->shouldReceive('render')->andReturn($response);
+
+    $this->container->instance(ExceptionHandler::class, $handler);
+    $this->container->instance('request', new stdClass());
+
+    ob_start();
+    ob_start();
+    ob_start();
+
+    try {
+        (fn ($e) => $this->renderHttpResponse($e))->call($this->handleExceptions, new Exception());
+    } finally {
+        while (ob_get_level() < $start) {
+            ob_start();
+        }
+    }
+
+    expect($level)->toBe(0);
 });
