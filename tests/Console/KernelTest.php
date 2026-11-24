@@ -1,7 +1,10 @@
 <?php
 
+use Illuminate\Console\Scheduling\SchedulePauseCommand;
+use Illuminate\Console\Scheduling\ScheduleResumeCommand;
 use Illuminate\Console\Signals;
 use Illuminate\Events\Dispatcher;
+use Illuminate\Filesystem\Filesystem;
 use Roots\Acorn\Application;
 use Roots\Acorn\Console\Kernel;
 use Roots\Acorn\Tests\Test\TestCase;
@@ -42,4 +45,17 @@ it('disables signals when running unit tests', function () {
     new Kernel($this->app, new Dispatcher($this->app));
 
     expect(($this->signalsEnabled)())->toBeFalse();
+});
+
+it('registers schedule:pause and schedule:resume', function () {
+    $this->app->instance('files', new Filesystem());
+
+    $kernel = new Kernel($this->app, new Dispatcher($this->app));
+
+    expect($kernel->findCommand('schedule:pause'))
+        ->toBeInstanceOf(SchedulePauseCommand::class)
+        ->and($kernel->findCommand('schedule:resume'))
+        ->toBeInstanceOf(ScheduleResumeCommand::class)
+        ->and($kernel->findCommand('schedule:continue'))
+        ->toBeInstanceOf(ScheduleResumeCommand::class);
 });
