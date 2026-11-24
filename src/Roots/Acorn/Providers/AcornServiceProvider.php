@@ -171,13 +171,36 @@ class AcornServiceProvider extends ServiceProvider
         }
 
         $config = $this->app->make('config');
-        $basePrefix = $config->get('cache.prefix', '');
-        $baseCookie = $config->get('session.cookie', 'wordpress_session');
 
-        $applyBlogConfig = function () use ($config, $basePrefix, $baseCookie) {
+        // A cached config already contains the values applied for the site it was cached from.
+        $cached = method_exists($this->app, 'configurationIsCached') && $this->app->configurationIsCached();
+        $base = fn ($value, $suffix) => $cached ? preg_replace($suffix, '', (string) $value) : (string) $value;
+
+        $basePrefix = $base($config->get('cache.prefix', ''), '/blog_\d+_$/');
+        $baseCookie = $base($config->get('session.cookie', 'wordpress_session'), '/_\d+$/');
+        $basePaths = array_map(fn ($path) => $base(
+            rtrim($path, '/\\'),
+            '#/blog_\d+$#',
+        ), $this->multisiteFileCachePaths($config->get('cache.stores', [])));
+        $currentBlogId = null;
+
+        $applyBlogConfig = function () use ($config, $basePrefix, $baseCookie, $basePaths, &$currentBlogId) {
             $blogId = get_current_blog_id();
+
+            if ($blogId === $currentBlogId) {
+                return;
+            }
+
+            $currentBlogId = $blogId;
+
             $config->set('cache.prefix', "{$basePrefix}blog_{$blogId}_");
             $config->set('session.cookie', "{$baseCookie}_{$blogId}");
+
+            foreach ($basePaths as $key => $path) {
+                $config->set($key, "{$path}/blog_{$blogId}");
+            }
+
+            $this->refreshCacheStores();
         };
 
         $applyBlogConfig();
@@ -185,6 +208,56 @@ class AcornServiceProvider extends ServiceProvider
         add_action('switch_blog', $applyBlogConfig);
 
         $this->configureMultisiteQueue();
+    }
+
+    /**
+     * Get the base paths of file cache stores to isolate per site.
+     *
+     * Stores with `per_site` set to false are shared across the network.
+     */
+    protected function multisiteFileCachePaths(array $stores): array
+    {
+        $paths = [];
+
+        foreach ($stores as $name => $store) {
+            if (($store['driver'] ?? null) !== 'file' || ! ($store['per_site'] ?? true)) {
+                continue;
+            }
+
+            foreach (['path', 'lock_path'] as $key) {
+                if (empty($store[$key])) {
+                    continue;
+                }
+
+                $paths["cache.stores.{$name}.{$key}"] = $store[$key];
+            }
+        }
+
+        return $paths;
+    }
+
+    /**
+     * Rebuild resolved cache stores so they use the current site's prefix and path.
+     */
+    protected function refreshCacheStores(): void
+    {
+        if (! $this->app->resolved('cache')) {
+            return;
+        }
+
+        $stores = array_keys(array_filter(
+            $this->app['config']->get('cache.stores', []),
+            fn ($store) => ! in_array($store['driver'] ?? null, ['array', 'null'], true),
+        ));
+
+        $this->app['cache']->forgetDriver($stores);
+
+        foreach ($stores as $store) {
+            $this->app->forgetInstance("cache.__memoized:{$store}");
+        }
+
+        $this->app->forgetInstance('cache.store');
+        $this->app->forgetInstance('cache.psr6');
     }
 
     /**

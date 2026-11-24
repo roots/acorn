@@ -1,14 +1,18 @@
 <?php
 
+use Illuminate\Cache\CacheManager;
 use Illuminate\Config\Repository;
 use Illuminate\Container\Container;
 use Illuminate\Events\Dispatcher;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Queue\Events\JobExceptionOccurred;
 use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Queue\Queue;
 use Roots\Acorn\Providers\AcornServiceProvider;
 use Roots\Acorn\Tests\Test\TestCase;
+
+use function Roots\Acorn\Tests\temp;
 
 uses(TestCase::class);
 
@@ -124,6 +128,32 @@ it('should update config when blog is switched', function () {
 
     expect($container->make('config')->get('cache.prefix'))->toBe('acorn_cache_blog_4_');
     expect($container->make('config')->get('session.cookie'))->toBe('acorn_session_4');
+});
+
+it('should isolate the file cache between blogs', function () {
+    $this->isMultisite = true;
+    $this->blogId = 1;
+
+    [$provider, $container] = createProviderWithConfig([
+        'cache' => [
+            'default' => 'file',
+            'prefix' => 'acorn_cache_',
+            'stores' => ['file' => ['driver' => 'file', 'path' => temp('multisite_cache/' . uniqid())]],
+        ],
+    ]);
+    $container->instance('files', new Filesystem());
+    $container->singleton('cache', fn ($container) => new CacheManager($container));
+
+    invokeConfigureMultisite($provider);
+    $container->make('cache')->put('key', 'blog 1');
+
+    switch_to_blog(2);
+
+    expect($container->make('cache')->get('key'))->toBeNull();
+
+    restore_current_blog();
+
+    expect($container->make('cache')->get('key'))->toBe('blog 1');
 });
 
 it('should inject blogId into queue job payloads', function () {
