@@ -116,6 +116,51 @@ jobs:
             echo "has_changes=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Check upstream config changes
+        if: steps.changes.outputs.has_changes == 'true'
+        timeout-minutes: 5
+        continue-on-error: true
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          NOTE: ${{ runner.temp }}/config-note.md
+        run: |
+          set -o pipefail
+
+          # Acorn's config/ follows Laravel's, so list upstream config changes since main's Foundation version.
+          changes() {
+            timeout 120 git fetch --depth=1 origin "+refs/heads/main:refs/remotes/origin/main" &&
+            OLD=$(git show origin/main:src/Illuminate/Foundation/Application.php | grep -oE "VERSION = '[0-9]+\.[0-9]+\.[0-9]+'" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+') &&
+            [ -n "$OLD" ] || return 1
+
+            TMP=$(mktemp -d) &&
+            git -C "$TMP" init -q &&
+            timeout 120 git -C "$TMP" fetch -q --depth=1 --no-tags https://github.com/laravel/framework.git \
+              "+refs/tags/v${OLD}:refs/old" "+refs/tags/${VERSION}:refs/new" &&
+            DIFF=$(git -C "$TMP" diff --name-only refs/old refs/new -- config/) &&
+            FILES=$(printf '%s\n' "$DIFF" | grep -E '^config/[A-Za-z0-9_.-]+$' || true) &&
+            SINCE=$(git -C "$TMP" log -1 --format=%cs refs/old) &&
+            UNTIL=$(git -C "$TMP" log -1 --format=%cs refs/new) || return 1
+
+            MAJOR="${VERSION%%.*}"
+            SKELETON="https://github.com/laravel/laravel/commits/${MAJOR#v}.x/config?since=${SINCE}&until=${UNTIL}"
+
+            if [ -z "$FILES" ]; then
+              echo "No upstream config changes in laravel/framework since \`v${OLD}\`. Also check [laravel/laravel](${SKELETON})."
+              return
+            fi
+
+            echo "Upstream config changes since \`v${OLD}\` (Acorn's config intentionally differs in places, so only port what applies):"
+            # shellcheck disable=SC2016 # literal backticks for Markdown
+            echo "- [laravel/framework](https://github.com/laravel/framework/compare/v${OLD}...${VERSION}): $(echo "$FILES" | sed 's/.*/`&`/' | paste -sd, - | sed 's/,/, /g')"
+            echo "- [laravel/laravel](${SKELETON})"
+          }
+
+          if ! changes > "$NOTE"; then
+            echo "Couldn't check upstream config changes." > "$NOTE"
+          fi
+
+          cat "$NOTE"
+
       - name: Commit and push
         if: steps.changes.outputs.has_changes == 'true'
         env:
@@ -139,11 +184,14 @@ jobs:
         env:
           PR_NUMBER: ${{ steps.pr.outputs.number }}
           VERSION: ${{ steps.version.outputs.version }}
+          NOTE: ${{ runner.temp }}/config-note.md
         run: |
           TITLE="📦️ Update Foundation to Laravel ${VERSION}"
           BODY="This is an automated PR to update \`Illuminate\Foundation\` to Laravel \`${VERSION}\` and raise the \`illuminate/*\` minimums to match (same major version only).
 
-          Approve the workflow runs to start CI, sync Acorn's overrides with any upstream changes, and ensure compatibility with Acorn before merging."
+          Approve the workflow runs to start CI, sync Acorn's overrides with any upstream changes, and ensure compatibility with Acorn before merging.
+
+          $(cat "$NOTE" 2>/dev/null || true)"
 
           if [ -n "$PR_NUMBER" ]; then
             gh pr edit "$PR_NUMBER" --title "$TITLE" --body "$BODY"
