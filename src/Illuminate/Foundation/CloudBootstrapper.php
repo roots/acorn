@@ -16,6 +16,7 @@ use Illuminate\Foundation\Cloud\Events;
 use Illuminate\Foundation\Cloud\ExceptionReporter;
 use Illuminate\Foundation\Cloud\FailedJobProvider;
 use Illuminate\Foundation\Cloud\JsonFormatter;
+use Illuminate\Foundation\Cloud\LineFormatter;
 use Illuminate\Foundation\Cloud\QueueConnector;
 use Illuminate\Foundation\Cloud\SocketHandler;
 use Illuminate\Foundation\Exceptions\Renderer\Mappers\BladeMapper;
@@ -303,12 +304,14 @@ class CloudBootstrapper
             'includeStacktraces' => true,
         ]);
 
+        $useLineFormatter = ($_ENV['LARAVEL_CLOUD_LOG_FORMAT'] ?? $_SERVER['LARAVEL_CLOUD_LOG_FORMAT'] ?? null) === 'line';
+
         $channel = [
             'driver' => 'monolog',
             'level' => $_ENV['LOG_LEVEL'] ?? $_SERVER['LOG_LEVEL'] ?? 'debug',
             'handler' => SocketHandler::class,
-            'formatter' => JsonFormatter::class,
-            'formatter_with' => [
+            'formatter' => $useLineFormatter ? LineFormatter::class : JsonFormatter::class,
+            'formatter_with' => $useLineFormatter ? [] : [
                 'includeStacktraces' => true,
             ],
             'with' => [
@@ -435,7 +438,7 @@ class CloudBootstrapper
     /**
      * The cloud socket address.
      */
-    protected static function socket(): string
+    public static function socket(): string
     {
         return $_ENV['LARAVEL_CLOUD_LOG_SOCKET'] ??
             $_SERVER['LARAVEL_CLOUD_LOG_SOCKET'] ??
