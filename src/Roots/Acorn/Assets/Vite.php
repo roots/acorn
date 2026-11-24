@@ -23,6 +23,14 @@ class Vite extends FoundationVite
             return $uri;
         }
 
+        $networkHost = parse_url(network_home_url(), PHP_URL_HOST);
+        $assetHost = parse_url($uri, PHP_URL_HOST);
+
+        // Leave CDN or other foreign hosts untouched.
+        if (! $networkHost || ! $assetHost || strcasecmp($assetHost, $networkHost) !== 0) {
+            return $uri;
+        }
+
         return $this->rewriteHost($uri, home_url());
     }
 
@@ -30,7 +38,7 @@ class Vite extends FoundationVite
      * Swap the scheme/host/port of a URI to match home_url(), preserving the
      * original path/query/fragment.
      *
-     * Assumes assets are served from the same origin as the site.
+     * Only called for assets served from the main site host.
      *
      * @param  string  $uri  The URI to rewrite.
      * @param  string  $base  The base URL to use for the rewrite.

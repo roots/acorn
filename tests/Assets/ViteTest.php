@@ -13,10 +13,11 @@ beforeEach(function () {
     Facade::setFacadeApplication(new Application());
 });
 
-it('Vite::assetPath() returns the asset URI unchanged on single-site', function () {
-    $this->stub('is_multisite', fn () => false);
-    $this->stub('home_url', fn () => 'https://example.com');
-
+/**
+ * Resolve Vite::assetPath() for a manifest served from the given URL.
+ */
+function viteAssetPath(array $paths, string $manifestUrl): string
+{
     $app = new Application();
     $app->singleton(
         'config',
@@ -25,10 +26,10 @@ it('Vite::assetPath() returns the asset URI unchanged on single-site', function 
                 'default' => 'app',
                 'manifests' => [
                     'app' => [
-                        'path' => $this->fixture('bud_single_runtime/public/app'),
-                        'url' => 'https://k.jo/app',
-                        'assets' => $this->fixture('bud_multi_compiler/public/app/manifest.json'),
-                        'bundles' => $this->fixture('bud_multi_compiler/public/app/entrypoints.json'),
+                        'path' => $paths['path'],
+                        'url' => $manifestUrl,
+                        'assets' => $paths['assets'],
+                        'bundles' => $paths['bundles'],
                     ],
                 ],
             ],
@@ -37,65 +38,43 @@ it('Vite::assetPath() returns the asset URI unchanged on single-site', function 
     $app->register(AssetsServiceProvider::class);
 
     $vite = $app->make(Vite::class);
-    $method = new ReflectionMethod($vite, 'assetPath');
 
-    expect($method->invoke($vite, 'app.js'))->toBe('https://k.jo/app/public/app.9876543210.js');
-});
+    return (new ReflectionMethod($vite, 'assetPath'))->invoke($vite, 'app.js');
+}
 
-it('Vite::assetPath() rewrites the host for subdomain multisite', function () {
-    $this->stub('is_multisite', fn () => true);
-    $this->stub('home_url', fn () => 'https://sub.example.com');
+it('Vite::assetPath() resolves the host for :dataset', function (bool $multisite, string $homeUrl, string $manifestUrl, string $expected) {
+    $this->stub('is_multisite', fn () => $multisite);
+    $this->stub('home_url', fn () => $homeUrl);
+    $this->stub('network_home_url', fn () => 'https://example.com');
 
-    $app = new Application();
-    $app->singleton(
-        'config',
-        fn () => new Repository([
-            'assets' => [
-                'default' => 'app',
-                'manifests' => [
-                    'app' => [
-                        'path' => $this->fixture('bud_single_runtime/public/app'),
-                        'url' => 'https://k.jo/app',
-                        'assets' => $this->fixture('bud_multi_compiler/public/app/manifest.json'),
-                        'bundles' => $this->fixture('bud_multi_compiler/public/app/entrypoints.json'),
-                    ],
-                ],
-            ],
-        ]),
-    );
-    $app->register(AssetsServiceProvider::class);
-
-    $vite = $app->make(Vite::class);
-    $method = new ReflectionMethod($vite, 'assetPath');
-
-    expect($method->invoke($vite, 'app.js'))->toBe('https://sub.example.com/app/public/app.9876543210.js');
-});
-
-it('Vite::assetPath() does not inject the subsite slug for subdirectory multisite', function () {
-    $this->stub('is_multisite', fn () => true);
-    $this->stub('home_url', fn () => 'https://example.com/subsite');
-
-    $app = new Application();
-    $app->singleton(
-        'config',
-        fn () => new Repository([
-            'assets' => [
-                'default' => 'app',
-                'manifests' => [
-                    'app' => [
-                        'path' => $this->fixture('bud_single_runtime/public/app'),
-                        'url' => 'https://k.jo/app',
-                        'assets' => $this->fixture('bud_multi_compiler/public/app/manifest.json'),
-                        'bundles' => $this->fixture('bud_multi_compiler/public/app/entrypoints.json'),
-                    ],
-                ],
-            ],
-        ]),
-    );
-    $app->register(AssetsServiceProvider::class);
-
-    $vite = $app->make(Vite::class);
-    $method = new ReflectionMethod($vite, 'assetPath');
-
-    expect($method->invoke($vite, 'app.js'))->toBe('https://example.com/app/public/app.9876543210.js');
-});
+    expect(viteAssetPath([
+        'path' => $this->fixture('bud_single_runtime/public/app'),
+        'assets' => $this->fixture('bud_multi_compiler/public/app/manifest.json'),
+        'bundles' => $this->fixture('bud_multi_compiler/public/app/entrypoints.json'),
+    ], $manifestUrl))->toBe($expected);
+})->with([
+    'single-site' => [
+        false,
+        'https://example.com',
+        'https://example.com/app',
+        'https://example.com/app/public/app.9876543210.js',
+    ],
+    'subdomain multisite' => [
+        true,
+        'https://sub.example.com',
+        'https://example.com/app',
+        'https://sub.example.com/app/public/app.9876543210.js',
+    ],
+    'subdirectory multisite (no subsite slug)' => [
+        true,
+        'https://example.com/subsite',
+        'https://example.com/app',
+        'https://example.com/app/public/app.9876543210.js',
+    ],
+    'CDN host (unchanged)' => [
+        true,
+        'https://sub.example.com',
+        'https://cdn.example.net/app',
+        'https://cdn.example.net/app/public/app.9876543210.js',
+    ],
+]);
