@@ -19,7 +19,8 @@ trait Cacheable
     /**
      * Cache key
      *
-     * If no key is specified, the key will default to the class name and post ID
+     * If no key is specified, the key will default to a hash of the class name
+     * and the queried object (or the current URL when there isn't one)
      *
      * @var string
      */
@@ -97,7 +98,7 @@ trait Cacheable
      */
     protected function forget($key = null)
     {
-        return $this->cache()->forget($key ?? static::class . get_the_ID());
+        return $this->cache()->forget($key ?? $this->defaultCacheKey());
     }
 
     /**
@@ -119,23 +120,33 @@ trait Cacheable
      */
     protected function merge()
     {
-        $key = $this->cache_key ?? hash(
-            'crc32b',
-            static::class
-                . serialize(
-                    get_queried_object() ?? collect($_SERVER)->only(
-                        'HTTP_HOST',
-                        'REQUEST_URI',
-                        'QUERY_STRING',
-                        'WP_HOME',
-                    )->toArray(),
-                ),
-        );
-
-        $with = $this->cache($key, function () {
+        $with = $this->cache($this->defaultCacheKey(), function () {
             return $this->with();
         });
 
         return array_merge($with, $this->view->getData(), $this->override());
+    }
+
+    /**
+     * Get the key used to cache the composer data.
+     *
+     * @return string
+     */
+    protected function defaultCacheKey()
+    {
+        return (
+            $this->cache_key ?? hash(
+                'crc32b',
+                static::class
+                    . serialize(
+                        get_queried_object() ?? collect($_SERVER)->only(
+                            'HTTP_HOST',
+                            'REQUEST_URI',
+                            'QUERY_STRING',
+                            'WP_HOME',
+                        )->toArray(),
+                    ),
+            )
+        );
     }
 }
