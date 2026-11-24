@@ -4,6 +4,7 @@ namespace Roots\Acorn\Bootstrap;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Bootstrap\HandleExceptions as FoundationHandleExceptionsBootstrapper;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 use function apply_filters;
@@ -83,9 +84,7 @@ class HandleExceptions extends FoundationHandleExceptionsBootstrapper
      */
     protected function renderHttpResponse(Throwable $e)
     {
-        for ($i = 0; $i < ob_get_level(); $i++) {
-            ob_end_clean();
-        }
+        Response::closeOutputBuffers(0, false);
 
         parent::renderHttpResponse($e);
     }
