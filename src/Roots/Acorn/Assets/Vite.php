@@ -53,15 +53,17 @@ class Vite extends FoundationVite
             return $uri;
         }
 
-        $origin = ($home['scheme'] ?? $parts['scheme'] ?? 'https').'://'.$home['host'];
+        $origin = ($home['scheme'] ?? $parts['scheme'] ?? 'https') . '://' . $home['host'];
 
         if (! empty($home['port'])) {
-            $origin .= ':'.$home['port'];
+            $origin .= ':' . $home['port'];
         }
 
-        return $origin
-            .($parts['path'] ?? '')
-            .(isset($parts['query']) ? '?'.$parts['query'] : '')
-            .(isset($parts['fragment']) ? '#'.$parts['fragment'] : '');
+        return (
+            $origin
+            . ($parts['path'] ?? '')
+            . (isset($parts['query']) ? '?' . $parts['query'] : '')
+            . (isset($parts['fragment']) ? '#' . $parts['fragment'] : '')
+        );
     }
 }

@@ -42,7 +42,12 @@ function viteAssetPath(array $paths, string $manifestUrl): string
     return (new ReflectionMethod($vite, 'assetPath'))->invoke($vite, 'app.js');
 }
 
-it('Vite::assetPath() resolves the host for :dataset', function (bool $multisite, string $homeUrl, string $manifestUrl, string $expected) {
+it('Vite::assetPath() resolves the host for :dataset', function (
+    bool $multisite,
+    string $homeUrl,
+    string $manifestUrl,
+    string $expected,
+) {
     $this->stub('is_multisite', fn () => $multisite);
     $this->stub('home_url', fn () => $homeUrl);
     $this->stub('network_home_url', fn () => 'https://example.com');
@@ -51,7 +56,8 @@ it('Vite::assetPath() resolves the host for :dataset', function (bool $multisite
         'path' => $this->fixture('bud_single_runtime/public/app'),
         'assets' => $this->fixture('bud_multi_compiler/public/app/manifest.json'),
         'bundles' => $this->fixture('bud_multi_compiler/public/app/entrypoints.json'),
-    ], $manifestUrl))->toBe($expected);
+    ], $manifestUrl))
+        ->toBe($expected);
 })->with([
     'single-site' => [
         false,
