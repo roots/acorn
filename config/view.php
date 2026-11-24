@@ -34,6 +34,26 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Precompiled Views
+    |--------------------------------------------------------------------------
+    |
+    | Compiled views are named after a hash of each view's absolute path.
+    | Enabling relative hashes uses the path relative to the content
+    | directory (or the base directory when it's outside of it) instead, so
+    | views compiled somewhere else, like a build server, still match.
+    | Separate installs need separate compiled paths when this is enabled.
+    |
+    | Disabling timestamp checks stops Blade from recompiling views when a
+    | deploy leaves the source files as new as the compiled copies.
+    |
+    */
+
+    'relative_hash' => false,
+
+    'check_cache_timestamps' => true,
+
+    /*
+    |--------------------------------------------------------------------------
     | View Debugger
     |--------------------------------------------------------------------------
     |
