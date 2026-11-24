@@ -6,6 +6,7 @@ use Illuminate\Database\MigrationServiceProvider;
 use Illuminate\Foundation\Providers\ComposerServiceProvider;
 use Illuminate\Foundation\Providers\ConsoleSupportServiceProvider;
 use Illuminate\Foundation\Providers\FoundationServiceProvider;
+use Illuminate\Pagination\PaginationServiceProvider;
 use Illuminate\Support\Collection;
 use Illuminate\Support\DefaultProviders as DefaultProvidersBase;
 use Illuminate\Support\Str;
@@ -24,6 +25,7 @@ class DefaultProviders extends DefaultProvidersBase
         AssetsServiceProvider::class,
         FilesystemServiceProvider::class,
         AcornServiceProvider::class,
+        Pagination\PaginationServiceProvider::class,
         QueueServiceProvider::class,
         View\ViewServiceProvider::class,
     ];
@@ -42,6 +44,7 @@ class DefaultProviders extends DefaultProvidersBase
      */
     protected array $disallowedProviders = [
         ConsoleSupportServiceProvider::class,
+        PaginationServiceProvider::class,
         ViewServiceProvider::class,
     ];
 
